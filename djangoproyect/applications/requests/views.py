@@ -7,4 +7,9 @@ def change_requests(request):
 
 
 def show_requests(request):
+    context = {
+        'requests': [
+            { "document": 10, "applicant": "belso", "manager": "marin", "initial_date": "2020/23/22", "past_days": 3, "status": "en proceso"  }
+        ]
+    }
     return render(request, "show-requests.html")
