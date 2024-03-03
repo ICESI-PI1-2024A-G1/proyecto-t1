@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="Roles" directorySegmentName="seg_0" id="68E42162-B0E5-63AD-3B99-6A0D76A49AC6">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 17:22:39 UTC</createdTime>
+<ownerDesignName>ERdiagram</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<sourcePk>F01A94F3-BD71-24D3-F462-6A3BCAAB54DC</sourcePk>
+<identifying>false</identifying>
+<nameOnSource>is assinged</nameOnSource>
+<nameOnTarget>has</nameOnTarget>
+<optionalSource>true</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>9E174CCA-574B-6288-B7B6-2C7310F3AE8A</sourceEntity>
+<targetCardinalityString>*</targetCardinalityString>
+<targetEntity>CF11D271-28C5-FD45-779C-1FCC52D883F6</targetEntity>
+<transferable>true</transferable>
+<deleteRule>NO ACTION</deleteRule>
+</Relation>
