@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'bootstrap5',
     'Applications.login',
     'Applications.requests',
+    'Applications.teams'
 ]
 
 MIDDLEWARE = [
