@@ -1,0 +1,41 @@
+
+{% extends "master.html" %}
+
+{% block title %}
+  Solicitudes
+{% endblock %}
+
+
+{% block content %}
+    <div class="container col-md-10">
+        <h2>Solicitudes</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Solicitante</th>
+                    <th>Gerente</th>
+                    <th>Fecha Inicial</th>
+                    <th>Fecha Final</th>
+                    <th>Días Pasados</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr>
+                    <td>{{ request.document }}</td>
+                    <td>{{ request.applicant }}</td>
+                    <td>{{ request.manager }}</td>
+                    <td>{{ request.initial_date }}</td>
+                    <td>{{ request.final_date }}</td>
+                    <td>{{ request.past_days }}</td>
+                    <td>{{ request.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}
