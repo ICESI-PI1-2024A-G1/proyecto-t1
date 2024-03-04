@@ -30,6 +30,24 @@ def change_requests(request, id):
         )
 
 
+def search(request, query):
+    print(query)
+    results = Requests.objects.filter(document__icontains=query)
+    data = [
+        {
+            "document": result.document,
+            "applicant": result.applicant,
+            "manager": result.manager,
+            "initial_date": result.initial_date,
+            "final_date": result.final_date,
+            "past_days": result.past_days,
+            "status": result.status,
+        }
+        for result in results
+    ]
+    return JsonResponse(data, safe=False)
+
+
 def show_requests(request):
     requests = Requests.objects.all()
     return render(request, "show-requests.html", {"requests": requests})
