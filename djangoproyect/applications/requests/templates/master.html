@@ -12,11 +12,21 @@
 <body>
 
 <header class="row pt-2 pb-4 px-4 mb-4" style="background-color: #F6F7F8;">
-    <div class="col-6">
+    <div class="col-4">
         <img src="{% static 'login/assets/logo.png' %}" alt="Logo" height="50vh">
     </div>
-    <div class="col-6">
-
+    <div class="col-4 position-relative">
+        <div style="font-size: 2vh;" class="position-absolute top-50 start-50 translate-middle">
+            ¡Bienvenido, {{request.user.first_name}}!
+        </div>
+    </div>
+    <div class="col-2"></div>
+    <div class="col-2 position-relative">
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <a href="/" class="">
+                <i class="fas fa-sign-out-alt" style="font-size:3vh"></i>
+            </a>
+        </div>
     </div>
 </header>
 

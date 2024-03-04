@@ -10,7 +10,7 @@ body {
 .card-body input[type="text"], .card-body input[type="password"] {
     font-family: "Inter", sans-serif;
     font-weight: 400;
-    color: #6D6D6D;
+    color: #3e3e3e;
     background-color: #89B8FF;
     border: none;
     outline: none;

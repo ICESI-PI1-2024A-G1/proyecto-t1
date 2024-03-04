@@ -30,10 +30,10 @@
                     <td>{{ request.final_date }}</td>
                     <td>{{ request.past_days }}</td>
                     <td>
-                        <span id="status_{{ request.id }}">{{ request.status }}</span>
                         <button class="btn btn-link edit-btn" data-request-id="{{ request.id }}">
-                            <i class="fa fa-edit"></i>
+                            <i class="fa fa-edit text-secondary"></i>
                         </button>
+                        <span id="status_{{ request.id }}">{{ request.status }}</span>
                     </td>
                 </tr>
                 {% endfor %}
