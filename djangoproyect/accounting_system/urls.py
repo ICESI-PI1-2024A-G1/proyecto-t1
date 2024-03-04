@@ -16,11 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from applications.login.views import login
+from applications.login import views as loginViews
+from applications.requests import views as requestsViews
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', login)
+    path('login/', loginViews.login_view, name="login"),
+    path('requests/', requestsViews.requests, name="requests")
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
