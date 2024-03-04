@@ -106,9 +106,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    "django.contrib.auth.backends.ModelBackend",
 ]
-
 
 
 # Internationalization
@@ -133,4 +132,6 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-STATICFILES_DIRS = [STATIC_DIR, ]
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]
