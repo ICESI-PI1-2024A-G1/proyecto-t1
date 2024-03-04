@@ -1,42 +1,61 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width,initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
-    <title>{% block title %}{% endblock %}</title>
-</head>
+    {% load static %}
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8" name="viewport" content="width=device-width,initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+        <title>{% block title %}{% endblock %}</title>
+    </head>
 
-<body>
+    <body style="background-color: #F6F7F8;">
 
-<header class="row pt-2 pb-4 px-4 mb-4" style="background-color: #F6F7F8;">
-    <div class="col-4">
-        <img src="{% static 'login/assets/logo.png' %}" alt="Logo" height="50vh">
-    </div>
-    <div class="col-4 position-relative">
-        <div style="font-size: 2vh;" class="position-absolute top-50 start-50 translate-middle">
-            ¡Bienvenido, {{request.user.first_name}}!
+    <header class="row pt-2 pb-4 px-4 mb-4" style="background-color: #F6F7F8;" style="margin-top: 30px;">
+        <div class="col-4 position-relative">
+            <div style="font-size: 2vh;" class="position-absolute top-50 start-50 translate-middle">
+                ¡Bienvenido, {{request.user.first_name}}!
+            </div>
         </div>
-    </div>
-    <div class="col-2"></div>
-    <div class="col-2 position-relative">
-        <div class="position-absolute top-50 start-50 translate-middle">
-            <a href="/" class="">
-                <i class="fas fa-sign-out-alt" style="font-size:3vh"></i>
-            </a>
+        <div class="col-2"></div>
+        <div class="col-2 position-relative">
+            <div class="position-absolute top-50 start-50 translate-middle">
+                <a href="/" class="">
+                    <i class="fas fa-sign-out-alt" style="font-size:3vh"></i>
+                </a>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
 
-{% block content %}
-{% endblock %}
-    
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
-</body>
+    <body>
+        <div class="row ml-2">
+            <div class="col-md-3">
+                <nav class="text-center">
+                    <div class="container mx-auto py-8 col-md-8 bg-white">
+                        <img src="{% static 'requests/assets/CCSA.png' %}" alt="Logo" height="50vh">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#">Solicitudes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#">Recordatorios</a>
+                            </li>
+                        </ul>
 
-</html>
+                    </div>
+                </nav>
+            </div>
+            <main role="main" class="col-md-7 ml-sm-auto px-4 content">
+                <!-- Tu contenido va aquí -->
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+        
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+    </body>
+
+    </html>
