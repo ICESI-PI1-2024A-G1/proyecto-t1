@@ -4,6 +4,6 @@ from applications.requests import views
 
 
 urlpatterns = [
-    path("change-requests/", views.change_requests),
+    path("change-request/<int:id>", views.change_requests),
     path("", views.show_requests),
 ]

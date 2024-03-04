@@ -1,15 +1,14 @@
-
 {% extends "master.html" %}
 
 {% block title %}
   Solicitudes
 {% endblock %}
 
-
 {% block content %}
-    <div class="container col-md-10">
-        <h2>Solicitudes</h2>
-        <table class="table table-bordered">
+<div class="container col-md-10">
+    <h2>Solicitudes</h2>
+    <div class="container" style="overflow-x: auto;">
+        <table id="requestsTable"  class="table table-bordered">
             <thead>
                 <tr>
                     <th>Documento</th>
@@ -23,19 +22,90 @@
             </thead>
             <tbody>
                 {% for request in requests %}
-                <tr>
+                <tr id="request_{{ request.id }}">
                     <td>{{ request.document }}</td>
                     <td>{{ request.applicant }}</td>
                     <td>{{ request.manager }}</td>
                     <td>{{ request.initial_date }}</td>
                     <td>{{ request.final_date }}</td>
                     <td>{{ request.past_days }}</td>
-                    <td>{{ request.status }}</td>
+                    <td>
+                        <span id="status_{{ request.id }}">{{ request.status }}</span>
+                        <button class="btn btn-link edit-btn" data-request-id="{{ request.id }}">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
     </div>
+</div>
 
+<!-- Modal para seleccionar el nuevo estado -->
+<div class="modal fade" id="changeStatusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cambiar Estado</h5>
+            </div>
+            <div class="modal-body">
+                <select id="newStatusSelect" class="form-control">
+                    <!-- Aquí puedes cargar opciones de estado dinámicamente si lo necesitas -->
+                    <option value="EN PROCESO">En Proceso</option>
+                    <option value="APROBADO - CENCO">Aprobado - Cenco</option>
+                    <option value="RECHAZADO - CENCO">Rechazado - Cenco</option>
+                    <option value="APROBADO - DECANO">Aprobado - Decano</option>
+                    <option value="RECHAZADO - DECANO">Rechazado - Decano</option>
+                    <option value="PAGADO - CONTABILIDAD">Pagado - Contabilidad</option>
+                    <option value="RECHAZADO - CONTABILIDAD">Rechazado - Contabilidad</option>
+                    <option value="CERRADO">Cerrado</option>                    
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancelBtn">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="changeStatusBtn">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.edit-btn', function () {
+            var requestId = $(this).data('request-id');
+            $('#changeStatusModal').modal('show');
+
+            $('#changeStatusBtn').off('click').on('click', function () {
+                var newStatus = $('#newStatusSelect').val();
+                $('#changeStatusModal').modal('hide');
+
+                var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+
+                $.ajax({
+                    url: '/requests/change-request/' + requestId,
+                    method: 'POST',
+                    data: {
+                        newStatus: newStatus,
+                        csrfmiddlewaretoken: csrftoken
+                    },
+                    success: function (response) {
+                        $('#status_' + requestId).text(newStatus);
+                    },
+                    error: function () {
+                        alert('Error al cambiar el estado de la solicitud.');
+                    }
+                });
+            });
+        });
+
+
+        $(document).on('click', '#cancelBtn', function () {
+            $('#changeStatusModal').modal('hide');
+        });
+
+    });
+</script>
 {% endblock %}
