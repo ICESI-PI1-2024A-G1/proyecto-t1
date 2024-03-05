@@ -1,0 +1,14 @@
+<tr id="request_{{ request.id }}">
+    <td>{{ request.document }}</td>
+    <td>{{ request.applicant }}</td>
+    <td>{{ request.manager }}</td>
+    <td>{{ request.initial_date }}</td>
+    <td>{{ request.final_date }}</td>
+    <td>{{ request.past_days }}</td>
+    <td>
+        <button class="btn btn-link edit-btn" data-request-id="{{ request.id }}">
+            <i class="fa fa-edit text-secondary"></i>
+        </button>
+        <span id="status_{{ request.id }}">{{ request.status }}</span>
+    </td>
+</tr>

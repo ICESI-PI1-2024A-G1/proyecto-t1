@@ -29,20 +29,7 @@
                 </thead>
                 <tbody>
                     {% for request in requests %}
-                        <tr id="request_{{ request.id }}">
-                            <td>{{ request.document }}</td>
-                            <td>{{ request.applicant }}</td>
-                            <td>{{ request.manager }}</td>
-                            <td>{{ request.initial_date }}</td>
-                            <td>{{ request.final_date }}</td>
-                            <td>{{ request.past_days }}</td>
-                            <td>
-                                <button class="btn btn-link edit-btn" data-request-id="{{ request.id }}">
-                                    <i class="fa fa-edit text-secondary"></i>
-                                </button>
-                                <span id="status_{{ request.id }}">{{ request.status }}</span>
-                            </td>
-                        </tr>
+                        {% include 'layouts/request-layout.html' %}
                     {% endfor %}
                 </tbody>
             </table>
@@ -88,6 +75,7 @@
     $(document).ready(function () {
         $("#performSearchButton").on('click', function() {
             var query = $("#searchBar").val();
+            console.log(query);
             $.ajax({
                 url: `/requests/search/${query}`,
                 data: {'q': query},
@@ -107,11 +95,17 @@
                             data[i].final_date + 
                             '</td><td>' + 
                             data[i].past_days + 
-                            '</td><td>' + 
-                            data[i].status + 
+                            '<td>' +
+                            '<button class="btn btn-link edit-btn" data-request-id="' + data[i].id + '">' +
+                                '<i class="fa fa-edit text-secondary"></i>' +
+                            '</button>' +
+                            '<span id="status_' + data[i].id + '">' + data[i].status + '</span>' +
                             '</td></tr>';
                         tbody.append(fila);
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error en la solicitud AJAX:", error);
                 }
             });
         });
