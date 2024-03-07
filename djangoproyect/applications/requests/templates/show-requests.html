@@ -29,7 +29,20 @@
                 </thead>
                 <tbody>
                     {% for request in requests %}
-                        {% include 'layouts/request-layout.html' %}
+                        <tr id="request_{{ request.id }}">
+                            <td>{{ request.document }}</td>
+                            <td>{{ request.applicant }}</td>
+                            <td>{{ request.manager }}</td>
+                            <td>{{ request.initial_date }}</td>
+                            <td>{{ request.final_date }}</td>
+                            <td>{{ request.past_days }}</td>
+                            <td>
+                                <button class="btn btn-link edit-btn" data-request-id="{{ request.id }}">
+                                    <i class="fa fa-edit text-secondary"></i>
+                                </button>
+                                <span id="status_{{ request.id }}">{{ request.status }}</span>
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -74,35 +87,32 @@
     <script>
     $(document).ready(function () {
         $("#performSearchButton").on('click', function() {
-            var query = $("#searchBar").val();
-            console.log(query);
+            var query = $("#searchBar").val() || 'empty';
             $.ajax({
-                url: `/requests/search/${query}`,
+                url: "/requests/search/" + query,
                 data: {'q': query},
                 success: function(data) {
-                    var tbody = $('#requestsTable');
+                    var tbody = $('#requestsTable tbody');
                     tbody.empty();
-                    for (var i = 0; i < data.length; i++) {
-                        var fila = '<tr><td>' + 
-                            data[i].document + 
-                            '</td><td>' + 
-                            data[i].applicant + 
-                            '</td><td>' + 
-                            data[i].manager + 
-                            '</td><td>' + 
-                            data[i].initial_date + 
-                            '</td><td>' + 
-                            data[i].final_date + 
-                            '</td><td>' + 
-                            data[i].past_days + 
-                            '<td>' +
-                            '<button class="btn btn-link edit-btn" data-request-id="' + data[i].id + '">' +
-                                '<i class="fa fa-edit text-secondary"></i>' +
-                            '</button>' +
-                            '<span id="status_' + data[i].id + '">' + data[i].status + '</span>' +
-                            '</td></tr>';
+                    data.forEach(function(item) {
+                        var fila = `
+                            <tr>
+                                <td>${item.document || ''}</td>
+                                <td>${item.applicant || ''}</td>
+                                <td>${item.manager || ''}</td>
+                                <td>${item.initial_date || ''}</td>
+                                <td>${item.final_date || ''}</td>
+                                <td>${item.past_days || ''}</td>
+                                <td>
+                                    <button class="btn btn-link edit-btn" data-request-id="${item.id}">
+                                        <i class="fa fa-edit text-secondary"></i>
+                                    </button>
+                                    <span id="status_${item.id}">${item.status || ''}</span>
+                                </td>
+                            </tr>
+                        `;
                         tbody.append(fila);
-                    }
+                    });
                 },
                 error: function(xhr, status, error) {
                     console.log("Error en la solicitud AJAX:", error);

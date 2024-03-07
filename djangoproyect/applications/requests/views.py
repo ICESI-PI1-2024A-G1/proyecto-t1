@@ -31,39 +31,27 @@ def change_requests(request, id):
 
 
 def search(request, query):
-    print(query)
-    results = Requests.objects.filter(document__icontains=query)
-    try:
-        data = [
-            {
-                "id": result.id,
-                "document": result.document,
-                "applicant": result.applicant,
-                "manager": result.manager,
-                "initial_date": result.initial_date,
-                "final_date": result.final_date,
-                "past_days": result.past_days,
-                "status": result.status,
-            }
-            for result in results
-        ]
-        return JsonResponse(data, safe=False)
-    except Exception as e:
+    if query != "empty":
+        results = Requests.objects.filter(document__icontains=query)
+    else:
         results = Requests.objects.all()
-        data = [
-            {
-                "id": result.id,
-                "document": result.document,
-                "applicant": result.applicant,
-                "manager": result.manager,
-                "initial_date": result.initial_date,
-                "final_date": result.final_date,
-                "past_days": result.past_days,
-                "status": result.status,
-            }
-            for result in results
-        ]
-        return JsonResponse({data}, safe=False)
+
+    print(results)
+
+    data = [
+        {
+            "id": result.id,
+            "document": result.document,
+            "applicant": result.applicant,
+            "manager": result.manager,
+            "initial_date": result.initial_date,
+            "final_date": result.final_date,
+            "past_days": result.past_days,
+            "status": result.status,
+        }
+        for result in results
+    ]
+    return JsonResponse(data, safe=False)
 
 
 def show_requests(request):
