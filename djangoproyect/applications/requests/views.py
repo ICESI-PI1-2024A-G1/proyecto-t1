@@ -31,7 +31,7 @@ def change_requests(request, id):
 
 
 def search(request, query):
-    if query != "empty":
+    if query != "None":
         results = Requests.objects.filter(document__icontains=query)
     else:
         results = Requests.objects.all()
