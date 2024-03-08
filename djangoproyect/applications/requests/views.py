@@ -36,7 +36,7 @@ def search(request, query):
     else:
         results = Requests.objects.all()
 
-    print(results)
+    # print(results)
 
     data = [
         {
