@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404
+from applications.requests.model.filter_logic import SearchFilter
 from applications.requests.models import Requests
 from django.views.decorators.csrf import csrf_exempt
 
@@ -31,27 +32,10 @@ def change_requests(request, id):
 
 
 def search(request, query):
-    if query != "None":
-        results = Requests.objects.filter(document__icontains=query)
-    else:
-        results = Requests.objects.all()
+    print(query)
+    requests_filter = SearchFilter()
 
-    # print(results)
-
-    data = [
-        {
-            "id": result.id,
-            "document": result.document,
-            "applicant": result.applicant,
-            "manager": result.manager,
-            "initial_date": result.initial_date,
-            "final_date": result.final_date,
-            "past_days": result.past_days,
-            "status": result.status,
-        }
-        for result in results
-    ]
-    return JsonResponse(data, safe=False)
+    return requests_filter.filter_request(query)
 
 
 def show_requests(request):
