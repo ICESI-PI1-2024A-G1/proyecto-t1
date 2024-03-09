@@ -6,11 +6,11 @@ from applications.requests.models import Requests
 class SearchFilter:
     def __init__(self):
         self.filter_mapping = {
-            "id": "id",
-            "document": "document",
-            "applicant": "applicant",
-            "manager": "manager",
-            "status": "status",
+            "id": "number",
+            "document": "string",
+            "applicant": "string",
+            "manager": "string",
+            "status": "string",
         }
 
     def is_number(self, query):
@@ -30,13 +30,17 @@ class SearchFilter:
         for field, value in query_dict.items():
             if field in self.filter_mapping and value != "None":
                 # print("Acutual val: ", value)
-                res = self.is_number(value)
-                # print(field)
-                if not res:
-                    continue
-                # print("Continued with field: ", field)
-                filters |= Q(**{self.filter_mapping[field]: value})
-                # print(filters)
+                if self.filter_mapping[field] == "number":
+                    try:
+                        res = int(value)
+                        filters |= Q(**{field: res})
+                        # print(filters)
+                    except ValueError:
+                        pass
+                else:
+                    if value != "None":
+                        filters |= Q(**{field: value})
+                        # print(filters)
 
         results = Requests.objects.filter(filters)
         data = [

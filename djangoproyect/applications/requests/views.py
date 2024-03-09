@@ -32,7 +32,7 @@ def change_requests(request, id):
 
 
 def search(request, query):
-    print(query)
+    # print(query)
     requests_filter = SearchFilter()
 
     return requests_filter.filter_request(query)
