@@ -1,0 +1,83 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="2013F074-38FC-DD85-C42C-424C4D236E01" name="TRACEABILITY">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-10 14:22:38 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="id" id="5DCC104F-9040-177C-4E45-751ECC997F4F">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-10 14:22:57 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="date" id="7737197E-C55E-758A-C19F-755E73697B78">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-10 14:23:33 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="id1" id="A195A24D-9719-ADBB-16C6-89D7EEF1C396">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-10 14:25:56 UTC</createdTime>
+<generatorID>1EFB22A7-B1F2-F29F-AC28-7C383F767FB3</generatorID>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<referedAttribute>45BA37E5-6BC9-B291-9039-6476E6ADA236</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>10</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="id2" id="342ABEE0-4A11-6F3C-9093-DBEF1A124EFF">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-10 14:27:20 UTC</createdTime>
+<generatorID>058A89F5-963E-C366-DD42-A8E57DCE908A</generatorID>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<referedAttribute>15EA12B8-DF71-7C40-F3D3-6C4390785CE3</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>60</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="D525BD96-22C9-97F1-8FB1-B4695D4B20B4" name="TRACEABILITY PK">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-10 14:23:24 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>5DCC104F-9040-177C-4E45-751ECC997F4F</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

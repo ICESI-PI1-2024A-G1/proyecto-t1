@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "bootstrap5",
     "applications.login",
+    "applications.registration",
     "applications.requests",
     "applications.teams",
 ]
@@ -106,6 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
+    "applications.login.backends.IDBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 

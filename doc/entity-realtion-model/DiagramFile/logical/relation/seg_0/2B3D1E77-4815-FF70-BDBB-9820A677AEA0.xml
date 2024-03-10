@@ -1,0 +1,22 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="CENCO_OWNER" directorySegmentName="seg_0" id="2B3D1E77-4815-FF70-BDBB-9820A677AEA0">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:35:21 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<sourcePk>E1433BA2-457D-B12E-3996-72B573AB1D83</sourcePk>
+<targetPk>D25E834C-902E-9D01-55D0-240B452B8967</targetPk>
+<identifying>false</identifying>
+<nameOnSource>is reviewed</nameOnSource>
+<nameOnTarget>reviews</nameOnTarget>
+<optionalSource>true</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>*</sourceCardinality>
+<sourceEntity>1713B7E9-5D23-0733-8C64-4D72A012A831</sourceEntity>
+<targetCardinalityString>1</targetCardinalityString>
+<targetEntity>DE7C1027-F41A-69D1-B1CF-E64E4217E063</targetEntity>
+<transferable>true</transferable>
+<deleteRule>NO ACTION</deleteRule>
+</Relation>

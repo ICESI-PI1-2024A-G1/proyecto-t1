@@ -1,7 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
 from applications.requests import views
 
 
@@ -38,7 +36,7 @@ def login_view(request):
 
         user = authenticate(
             request,
-            username=request.POST["usuario"],
+            id=request.POST["usuario"],
             password=request.POST["contrasena"],
         )
 
