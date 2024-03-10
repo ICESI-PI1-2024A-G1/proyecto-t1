@@ -14,7 +14,7 @@ Equipos
             <h2 class="mb-4">Equipos</h2>
         </div>
         <div class="text-end">
-            <a href="/teams/add-team" class="btn btn-primary">Crear Equipo <i class="fa fa-plus"></i></a>
+            <a href="/teams/add-team-form" class="btn btn-primary">Crear Equipo <i class="fa fa-plus"></i></a>
         </div>
     </div>
     
@@ -37,7 +37,7 @@ Equipos
 
     <div class="accordion" id="accordionExample">
         {% for team in teams %}
-        <div class="accordion-item">
+        <div class="accordion-item" id="accordionItem{{team.id}}">
             <h2 class="accordion-header" id="heading{{ team.id }}">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapse{{ team.id }}" aria-expanded="true" aria-controls="collapse{{ team.id }}">
@@ -113,8 +113,8 @@ Equipos
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
 
     <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">

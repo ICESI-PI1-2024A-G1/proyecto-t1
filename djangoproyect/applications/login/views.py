@@ -33,37 +33,28 @@ def login_view(request):
         return render(request, "login.html")
     else:
         print(request.POST)
-        
-        try:
-            user = authenticate(
-                request,
-                id=request.POST["usuario"],
-                password=request.POST["contrasena"],
-            )
 
-            if user is not None:
-                if user.is_staff:
-                    login(request, user)
-                    return redirect(views.show_requests)
-                else:
-                    return render(
-                        request,
-                        "login.html",
-                        {"message": "El usuario ingresado no es un administrador."},
-                    )
+        user = authenticate(
+            request,
+            id=request.POST["usuario"],
+            password=request.POST["contrasena"],
+        )
+
+        if user is not None:
+            if user.is_staff:
+                login(request, user)
+                return redirect(views.show_requests)
             else:
                 return render(
                     request,
                     "login.html",
-                    {
-                        "message": "El usuario registrado no está registrado en la plataforma."
-                    },
+                    {"message": "El usuario ingresado no es un administrador"},
                 )
-        except:
+        else:
             return render(
-                    request,
-                    "login.html",
-                    {
-                        "message": "Ingrese un usuario válido."
-                    },
-                )
+                request,
+                "login.html",
+                {
+                    "message": "El usuario registrado no está registrado en la plataforma"
+                },
+            )

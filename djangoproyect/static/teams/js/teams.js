@@ -29,7 +29,7 @@ $(document).ready(function () {
         var teamId = button.data('team-id');
         var modal = $(this);
 
-        $.get(`/teams/add-member/${teamId}`, function (data) {
+        $.get(`/teams/add-member/${teamId}/`, function (data) {
             $("#userList").empty();
             data.forEach(function (user) {
                 $("#userList").append(`<li data-user-id="${user.id}" style="cursor:pointer" class="list-group-item">${user.first_name} ${user.last_name} (@${user.username})</li>`);
@@ -49,13 +49,13 @@ $(document).ready(function () {
             selectedUsers.push($(this).data('user-id'));
         });
 
-        $.post(`/teams/add-member/${teamId}`, { users: selectedUsers, csrfmiddlewaretoken: csrftoken }, function (response) {
+        $.post(`/teams/add-member/${teamId}/`, { users: selectedUsers, csrfmiddlewaretoken: csrftoken }, function (response) {
             var tableId = $('#addMemberModal').data('table-id');
             var tableBody = $(`${tableId} tbody`);
 
             response.users.forEach(function (user) {
                 tableBody.append(
-                    '<tr>' +
+                    `<tr id="member_row_${user.id}">` +
                     `<td> ${user.first_name} ${user.last_name} </td>` +
                     '<td>Miembro</td>' +
                     '<td><button class="btn text-danger delete-member" data-team-id="' + teamId + '" data-member-id="' + user.id + '">Eliminar</button></td>' +
@@ -64,12 +64,12 @@ $(document).ready(function () {
             });
             $('#userList li.active').removeClass('active');
             $('#addMemberModal').modal('hide');
+            loadButtons()
         });
-        loadButtons()
     });
     $(".delete-team").click(function() {
         var teamId = $(this).data("team-id");
-        var $accordionItem = $(this).closest(".accordion-item");
+        var accordionItemId = "#accordionItem" + teamId;
         if (confirm("¿Estás seguro de que quieres eliminar este equipo?")) {
             $.ajax({
                 url: `/teams/delete/${teamId}`,
@@ -78,7 +78,8 @@ $(document).ready(function () {
                     xhr.setRequestHeader("X-CSRFToken", csrftoken);
                 },
                 success: function(response) {
-                    $accordionItem.hide();
+                    $(accordionItemId).hide(); // Oculta el elemento del acordeón
+                    console.log(accordionItemId)
                 },
                 error: function(xhr, status, error) {
                     // Manejar errores (opcional)
@@ -88,5 +89,6 @@ $(document).ready(function () {
             });
         }
     });
+    
     loadButtons()
 });
