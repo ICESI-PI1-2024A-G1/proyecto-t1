@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "bootstrap5",
     "applications.login",
+    "applications.registration",
     "applications.requests",
     "applications.teams",
 ]

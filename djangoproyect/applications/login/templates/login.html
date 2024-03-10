@@ -89,16 +89,15 @@
                                     placeholder="Ingresa tu contraseña" required>
                                 <i class="fa fa-lock icon"></i>
                             </div>
-                            <!-- <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="recordar">
-                                <label class="form-check-label" for="recordar">Recordar inicio de sesión</label>
-                            </div> -->
                             <div class="card-body text-center">
                                 <form>
                                     <button type="submit" class="btn btn-primary">INICIAR SESIÓN</button>
                                 </form>
                             </div>
                         </form>
+                    </div>
+                    <div class="text-center">
+                        <a href="{% url 'registration:register_view' %}" class="btn btn-link text-primary text-decoration-underline">Registrarse</a>
                     </div>
                 </div>
             </div>
