@@ -18,60 +18,60 @@
 
     <body style="background-color: #F6F7F8;">
 
-    <header class="row pt-2 pb-4 px-4 mb-4" style="background-color: #F6F7F8;" style="margin-top: 30px;">
-        <div class="col-4 position-relative">
-            <div style="font-size: 2vh;" class="position-absolute top-50 start-50 translate-middle">
-                ¡Bienvenido, {{request.user.first_name}}!
-            </div>
-        </div>
-        <div class="col-2"></div>
-        <div class="col-2 position-relative">
-            <div class="position-absolute top-50 start-50 translate-middle">
-                <a href="/" class="">
-                    <i class="fas fa-sign-out-alt" style="font-size:3vh"></i>
-                </a>
-            </div>
-        </div>
-    </header>
-
 
     <body>
-        <div class="row ml-2">
-            <div class="col-md-3">
-                <nav>
-                    <div class="container mx-auto py-8 col-md-8 bg-white rounded">
+        <div style="height: 5vh;"></div>
+        <div class="row mt-8">
+              <div class="col-lg-3">
+                <nav class="navbar d-flex flex-column navbar-expand-lg bg-body-tertiary">
+                    <div class="mx-auto bg-white rounded-4">
                         <img src="{% static 'requests/assets/CCSA.png' %}" alt="Logo" height="50vh" class="mb-3 mt-4">
-                        <p class="font-weight small p-1 mb-1 mx-2">General</p>
-                        <ul class="nav flex-column text-center">
-                            <li class="nav-item p-1 mb-1 mx-2">
-                                <a class="nav-link btn-navigation btn btn-primary d-flex justify-content-between align-items-center text-white" href="/requests">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-wallet me-2"></i>Solicitudes
-                                    </div>
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item p-1 mb-1 mx-2">
-                                <a class="nav-link btn-navigation btn btn-primary d-flex justify-content-between align-items-center text-white" href="/teams">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-users me-2"></i>Equipos
-                                    </div>
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item p-1 mb-1 mx-2">
-                                <a class="nav-link active btn btn-navigation btn-primary d-flex justify-content-between align-items-center mb-4" href="#">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-university me-2"></i>Recordatorios
-                                    </div>
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        </ul>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"><i class="fa fa-navicon"></i></span>
+                        </button>
+                        <div class="container collapse navbar-collapse" id="navbarNavAltMarkup">
+                            <div class="d-flex flex-column">
+                                <p class="font-weight small p-1 mb-1 mx-2">General</p>
+                                <ul class="nav flex-column text-center">
+                                    <li class="nav-item p-1 mb-1 mx-2">
+                                    <a class="nav-link btn-navigation btn btn-primary d-flex justify-content-between align-items-center text-white" href="/requests">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-wallet me-2"></i>Solicitudes
+                                        </div>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                    </li>
+                                    <li class="nav-item p-1 mb-1 mx-2">
+                                        <a class="nav-link btn-navigation btn btn-primary d-flex justify-content-between align-items-center text-white" href="/teams">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users"></i>Equipos
+                                            </div>
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item p-1 mb-1 mx-2">
+                                        <a class="nav-link active btn btn-navigation btn-primary d-flex justify-content-between align-items-center mb-4" href="#">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-university"></i>Recordatorios
+                                            </div>
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item p-1 mb-1 mx-2">
+                                        <a class="nav-link active btn btn-navigation btn-primary d-flex justify-content-between align-items-center mb-4" href="/">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
+                                            </div>
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </nav>
             </div>
-            <main role="main" class="col-md-7 ml-sm-auto px-4 content">
+            <main role="main" class="col-lg-8 ml-sm-auto px-4 content">
                 <!-- Tu contenido va aquí -->
                 {% block content %}
                 {% endblock %}
