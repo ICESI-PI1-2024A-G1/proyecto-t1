@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404
+from applications.requests.model.filter_logic import SearchFilter
 from applications.requests.models import Requests
 from django.views.decorators.csrf import csrf_exempt
 
@@ -28,6 +29,13 @@ def change_requests(request, id):
         return JsonResponse(
             {"error": "Esta vista solo acepta solicitudes POST."}, status=400
         )
+
+
+def search(request, query):
+    # print(query)
+    requests_filter = SearchFilter()
+
+    return requests_filter.filter_request(query)
 
 
 def show_requests(request):

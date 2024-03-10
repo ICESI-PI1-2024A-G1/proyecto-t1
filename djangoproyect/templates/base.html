@@ -1,0 +1,65 @@
+    {% load static %}
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8" name="viewport" content="width=device-width,initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+        <title>{% block title %}{% endblock %}</title>
+
+        
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+
+    <body style="background-color: #F6F7F8;">
+
+
+    <body>
+        <div style="height: 5vh;"></div>
+        <div class="row mt-8">
+              <div class="col-lg-3">
+                <nav class="navbar d-flex flex-column navbar-expand-lg bg-body-tertiary">
+                    <div class="mx-auto bg-white rounded-4">
+                        <img src="{% static 'requests/assets/CCSA.png' %}" alt="Logo" height="50vh" class="mb-3 mt-4">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"><i class="fa fa-navicon"></i></span>
+                        </button>
+                        <div class="container collapse navbar-collapse" id="navbarNavAltMarkup">
+                            <div class="d-flex flex-column">
+                                <p class="font-weight small p-1 mb-1 mx-2">General</p>
+                                <ul class="nav flex-column text-center">
+                                    {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
+                                    {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
+                                    {% include 'components/navigation_item.html' with text="Recordatorios" icon_class="fas fa-university" link="/reminders" %}
+                                    <div class="my-2 mx-2 border-bottom border-3"></div>
+                                    {% include 'components/navigation_item.html' with text="Cerrar Sesión" icon_class="fas fa-sign-out-alt" link="/" %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <main role="main" class="col-lg-8 ml-sm-auto px-4 content">
+                <!-- Tu contenido va aquí -->
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+        
+    <script>
+    $(document).ready(function(){
+    $(".btn-navigation").hover(function(){
+        $(this).removeClass("btn-primary text-white").addClass("btn-light text-dark");
+        }, function(){
+        $(this).removeClass("btn-light text-dark").addClass("btn-primary text-white");
+    });
+    });
+    </script>
+    </body>
+
+    </html>
