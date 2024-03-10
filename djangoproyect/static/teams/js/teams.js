@@ -1,4 +1,24 @@
+const loadButtons = () => {
+    $(".delete-member").click(function () {
+        if (!confirm("¿Estás seguro de que quieres eliminar a este miembro?")) return false;
+        var teamId = $(this).data("team-id");
+        var memberId = $(this).data("member-id");
+        $.ajax({
+            url: "/teams/delete-member/" + teamId + "/" + memberId,
+            type: "GET",
+            success: function (response) {
+                $("#member_row_" + memberId).remove();
+            },
+            error: function () {
+                alert("Error al eliminar al miembro");
+            }
+        });
+    });
+}
+
 $(document).ready(function () {
+    var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+
     $(document).on('click', '#userList li', function () {
         $(this).toggleClass('active');
         var hasSelectedUser = $('#userList li.active').length > 0;
@@ -29,8 +49,6 @@ $(document).ready(function () {
             selectedUsers.push($(this).data('user-id'));
         });
 
-        var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
-
         $.post(`/teams/add-member/${teamId}`, { users: selectedUsers, csrfmiddlewaretoken: csrftoken }, function (response) {
             var tableId = $('#addMemberModal').data('table-id');
             var tableBody = $(`${tableId} tbody`);
@@ -44,24 +62,31 @@ $(document).ready(function () {
                     '</tr>'
                 );
             });
-
             $('#userList li.active').removeClass('active');
             $('#addMemberModal').modal('hide');
         });
+        loadButtons()
     });
-    $(".delete-member").click(function () {
-        if (!confirm("¿Estás seguro de que quieres eliminar a este miembro?")) return false;
+    $(".delete-team").click(function() {
         var teamId = $(this).data("team-id");
-        var memberId = $(this).data("member-id");
-        $.ajax({
-            url: "/teams/delete-member/" + teamId + "/" + memberId,
-            type: "GET",
-            success: function (response) {
-                $("#member_row_" + memberId).remove();
-            },
-            error: function () {
-                alert("Error al eliminar al miembro");
-            }
-        });
+        var $accordionItem = $(this).closest(".accordion-item");
+        if (confirm("¿Estás seguro de que quieres eliminar este equipo?")) {
+            $.ajax({
+                url: `/teams/delete/${teamId}`,
+                type: "DELETE",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                },
+                success: function(response) {
+                    $accordionItem.hide();
+                },
+                error: function(xhr, status, error) {
+                    // Manejar errores (opcional)
+                    console.error(error);
+                    alert("Error al eliminar el equipo");
+                }
+            });
+        }
     });
+    loadButtons()
 });

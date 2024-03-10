@@ -1,8 +1,9 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .models import Team
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from .forms import TeamForm
 
 
 # Create your views here.
@@ -60,3 +61,26 @@ def add_member(request, team_id):
                 "users": new_members_data,
             }
         )
+
+
+def add_team(request):
+    if request.method == "GET":
+        form = TeamForm()
+        return render(request, "add-team.html", {"form": form})
+    elif request.method == "POST":
+        form = TeamForm(request.POST)
+        if form.is_valid():
+            # Procesar los datos del formulario
+            team = form.save()
+            # Redirigir a alguna otra vista, por ejemplo, la página de detalle del equipo
+            return redirect("/teams")
+        else:
+            # Si el formulario no es válido, renderizarlo nuevamente con los errores
+            return render(request, "add-team.html", {"form": form})
+
+
+def delete_team(request, team_id):
+    if request.method == "DELETE":
+        team = get_object_or_404(Team, id=team_id)
+        team.delete()
+        return redirect("/teams")

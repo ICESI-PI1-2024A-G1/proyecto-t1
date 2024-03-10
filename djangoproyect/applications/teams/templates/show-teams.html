@@ -9,17 +9,28 @@ Equipos
 {% csrf_token %}
 
 <div class="container">
-    <h2 class="mb-4">Equipos</h2>
+    <div class="d-flex justify-content-between">
+        <div>
+            <h2 class="mb-4">Equipos</h2>
+        </div>
+        <div class="text-end">
+            <a href="/teams/add-team" class="btn btn-primary">Crear Equipo <i class="fa fa-plus"></i></a>
+        </div>
+    </div>
+    
     <div class="d-none d-sm-block container card">
         <div class="row p-4 font-weight-bold">
             <div class="col-4" style="font-weight:bold">
                 Nombre
             </div>
-            <div class="col-6" style="font-weight:bold">
+            <div class="col-4" style="font-weight:bold">
                 Descripción
             </div>
             <div class="col-2" style="font-weight:bold">
                 Fecha de Creación
+            </div>
+            <div class="col-2" style="font-weight: bold;">
+                Acciones
             </div>
         </div>
     </div>
@@ -37,13 +48,16 @@ Equipos
                                     {{ team.name }}
                                 </h4>
                             </div>
-                            <div class="col-sm-12 col-md-6">
+                            <div class="col-sm-12 col-md-4">
                                 <span class="d-sm-none" style="font-weight:bold" >Description:</span>
                                 {{team.description}}
                             </div>
                             <div class="col-sm-12 col-md-2">
                                 <span class="d-sm-none" style="font-weight:bold" >Creation Date:</span>
                                 {{ team.created_at|date:"d-m-Y" }}
+                            </div>
+                            <div class="col-sm-12 col-md-2">
+                                <a class="my-2 btn-sm btn btn-danger delete-team" data-team-id="{{ team.id }}">Eliminar <i class="fa fa-trash"></i></a>
                             </div>
                         </div>
                     </div>
@@ -91,7 +105,7 @@ Equipos
                             </tbody>
                         </table>
 
-                        <button  class="btn btn-primary ms-2 add-member-btn" data-bs-toggle="modal"
+                        <button  class="mx-auto mb-4 btn btn-secondary add-member-btn" data-bs-toggle="modal"
                             data-bs-target="#addMemberModal" data-team-id="{{ team.id }}">
                             Añadir miembro
                             <i class="fa fa-user-plus"></i>
