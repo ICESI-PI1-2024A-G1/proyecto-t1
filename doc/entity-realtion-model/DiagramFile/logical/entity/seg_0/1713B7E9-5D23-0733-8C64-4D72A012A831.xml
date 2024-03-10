@@ -1,0 +1,131 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="1713B7E9-5D23-0733-8C64-4D72A012A831" name="REQUEST">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:06:14 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="id" id="45BA37E5-6BC9-B291-9039-6476E6ADA236">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:08:28 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>10</dataTypeSize>
+<ownDataTypeParameters>10,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="creation_date" id="DF49E4CD-09FA-AA9A-4917-BAB9BDCE416E">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:10:02 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="user_id" id="6E679C75-1318-2299-7047-D64BE41C4C60">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:18:05 UTC</createdTime>
+<generatorID>8C246D3A-39CF-AE26-15DE-0BB57259A4C0</generatorID>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<referedAttribute>8263D39F-7B94-3B61-1442-9AC5F66E1BCD</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>10 BYTE</dataTypeSize>
+<ownDataTypeParameters>10 BYTE,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="id1" id="9E603D26-E58F-14F8-5925-B9F4E62774C9">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:35:46 UTC</createdTime>
+<generatorID>2B3D1E77-4815-FF70-BDBB-9820A677AEA0</generatorID>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<referedAttribute>15EA12B8-DF71-7C40-F3D3-6C4390785CE3</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>60</dataTypeSize>
+<ownDataTypeParameters>60,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="id2" id="70AA533C-A10C-F172-5BE6-8E5E2F83DBCE">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:38:09 UTC</createdTime>
+<generatorID>3AD1D974-571E-6B2A-CC72-2540723258A6</generatorID>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<referedAttribute>15EA12B8-DF71-7C40-F3D3-6C4390785CE3</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>60</dataTypeSize>
+<ownDataTypeParameters>60,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="id3" id="F68CFDA6-D285-F1DC-5071-5B3D649786D2">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:38:25 UTC</createdTime>
+<generatorID>68B69D03-1BD0-19CA-D3DC-663D36EF366D</generatorID>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<referedAttribute>15EA12B8-DF71-7C40-F3D3-6C4390785CE3</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>60</dataTypeSize>
+<ownDataTypeParameters>60,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="id4" id="63075FF8-2A85-DE35-6927-EB30040C90FA">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-10 14:15:22 UTC</createdTime>
+<generatorID>D5D0B19E-FA00-5B46-C1D9-B418FA197140</generatorID>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<referedAttribute>15EA12B8-DF71-7C40-F3D3-6C4390785CE3</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>60</dataTypeSize>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="E1433BA2-457D-B12E-3996-72B573AB1D83" name="REQUEST PK">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 21:08:30 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>45BA37E5-6BC9-B291-9039-6476E6ADA236</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>
