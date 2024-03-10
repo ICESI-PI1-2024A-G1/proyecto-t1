@@ -33,38 +33,11 @@
                             <div class="d-flex flex-column">
                                 <p class="font-weight small p-1 mb-1 mx-2">General</p>
                                 <ul class="nav flex-column text-center">
-                                    <li class="nav-item p-1 mb-1 mx-2">
-                                    <a class="nav-link btn-navigation btn btn-primary d-flex justify-content-between align-items-center text-white" href="/requests">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-wallet me-2"></i>Solicitudes
-                                        </div>
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                    </li>
-                                    <li class="nav-item p-1 mb-1 mx-2">
-                                        <a class="nav-link btn-navigation btn btn-primary d-flex justify-content-between align-items-center text-white" href="/teams">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users"></i>Equipos
-                                            </div>
-                                            <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item p-1 mb-1 mx-2">
-                                        <a class="nav-link active btn btn-navigation btn-primary d-flex justify-content-between align-items-center mb-4" href="#">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-university"></i>Recordatorios
-                                            </div>
-                                            <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item p-1 mb-1 mx-2">
-                                        <a class="nav-link active btn btn-navigation btn-primary d-flex justify-content-between align-items-center mb-4" href="/">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
-                                            </div>
-                                            <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    </li>
+                                    {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
+                                    {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
+                                    {% include 'components/navigation_item.html' with text="Recordatorios" icon_class="fas fa-university" link="/reminders" %}
+                                    <div class="my-2 mx-2 border-bottom border-3"></div>
+                                    {% include 'components/navigation_item.html' with text="Cerrar Sesión" icon_class="fas fa-sign-out-alt" link="/" %}
                                 </ul>
                             </div>
                         </div>
