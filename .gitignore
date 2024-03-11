@@ -137,6 +137,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.obsidian/
+.obsidian/*
 
 # Spyder project settings
 .spyderproject
