@@ -2,17 +2,16 @@
 {% block title %}Solicitudes{% endblock %}
 {% block content %}
     <div class="container">
-        <h2>Solicitudes</h2>
+        <h2>{{request.document}}</h2>
         <div class="container">
             <div class="input-group mb-3">
-                <!-- <span class="input-group-text" id="inputGroup-sizing-default">Buscar</span> -->
+                <span class="input-group-text" id="inputGroup-sizing-default">Buscar</span>
                 <input type="text"
                        id="searchBar"
                        class="form-control"
                        aria-label="Sizing example input"
-                       aria-describedby="inputGroup-sizing-default"
-                       placeholder="Buscar">
-                <button id="performSearchButton" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                       aria-describedby="inputGroup-sizing-default">
+                <button id="performSearchButton" type="button" class="btn btn-primary">Buscar</button>
             </div>
         </div>
         <div class="container" style="overflow-x: auto;">
