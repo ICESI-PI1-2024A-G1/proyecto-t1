@@ -53,9 +53,6 @@ class SearchFilter:
                 "final_date": result.final_date,
                 "past_days": result.past_days,
                 "status": result.status,
-                "beneficiary": result.beneficiary,
-                "reviewer": result.reviewer,
-                "final_approver": result.final_approver,
             }
             for result in results
         ]

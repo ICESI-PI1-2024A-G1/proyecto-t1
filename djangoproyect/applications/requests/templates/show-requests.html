@@ -15,7 +15,7 @@
                 <button id="performSearchButton" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
             </div>
         </div>
-        <div class="container" style="overflow-x: auto;">
+        <div class="container overflow-auto-container">
             <table id="requestsTable"  class="table table-bordered">
                 <thead>
                     <tr>
@@ -25,10 +25,7 @@
                         <th>Fecha Inicial</th>
                         <th>Fecha Final</th>
                         <th>Días Pasados</th>
-                        <th>Beneficiario</th>
-                        <th>Revisó</th>
                         <th>Estado</th>
-                        <th>Aprobó</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,15 +37,12 @@
                             <td>{{ request.initial_date }}</td>
                             <td>{{ request.final_date }}</td>
                             <td>{{ request.past_days }}</td>
-                            <td>{{ request.beneficiary }}</td>
-                            <td>{{ request.reviewer }}</td>
                             <td>
                                 <button class="btn btn-link edit-btn" data-request-id="{{ request.id }}">
                                     <i class="fa fa-edit text-secondary"></i>
                                 </button>
                                 <span id="status_{{ request.id }}">{{ request.status }}</span>
                             </td>
-                            <td>{{ request.final_approver }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
