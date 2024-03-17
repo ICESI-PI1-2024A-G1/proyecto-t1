@@ -45,18 +45,9 @@ def register_view(request):
                     "register.html",
                     {"message": "Las contraseñas no coinciden.", "user_data": user_data},
                 )
-            else:
-                user = User.objects.create_user(
-                id=request.POST["cedula"],
-                username=request.POST["cedula"],
-                first_name=request.POST["nombre"],
-                last_name=request.POST["apellido"],
-                password=request.POST["contrasena"],
-                email=request.POST["correo"],
-                )
-                user.save()
-                messages.success(request, 'Usuario registrado correctamente.')
-                return redirect('login:login_view')
+            else: 
+                print("Creating user")
+                return redirect('registration:verifyEmail_view')
         except Exception as e:
             print(e)
             return render(
@@ -64,3 +55,8 @@ def register_view(request):
                 "register.html",
                 {"message": "La cédula ingresada no es válida.", "user_data": user_data},
             )
+    
+def verify_email_view(request):
+    if request.method == "GET":
+        return render(request, "verifyEmail.html")
+    

@@ -5,4 +5,5 @@ app_name = 'registration'
 
 urlpatterns = [
     path("", views.register_view, name='register_view'),
+    path("verifyEmail/", views.verify_email_view, name='verifyEmail_view'),
 ]
