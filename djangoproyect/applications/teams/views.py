@@ -16,7 +16,9 @@ def delete_member(request, team_id, member_id):
     team = Team.objects.get(id=team_id)
     team.members.remove(member_id)
     team.save()
-    return JsonResponse({"message": f"El miembro {id} ha sido eliminado correctamente"})
+    return JsonResponse(
+        {"message": f"El miembro {member_id} ha sido eliminado correctamente"}
+    )
 
 
 def add_member(request, team_id):
@@ -70,12 +72,9 @@ def add_team(request):
     elif request.method == "POST":
         form = TeamForm(request.POST)
         if form.is_valid():
-            # Procesar los datos del formulario
             team = form.save()
-            # Redirigir a alguna otra vista, por ejemplo, la página de detalle del equipo
             return redirect("/teams")
         else:
-            # Si el formulario no es válido, renderizarlo nuevamente con los errores
             return render(request, "add-team.html", {"form": form})
 
 
@@ -83,4 +82,6 @@ def delete_team(request, team_id):
     if request.method == "DELETE":
         team = get_object_or_404(Team, id=team_id)
         team.delete()
-        return redirect("/teams")
+        return JsonResponse(
+            {"message": f"El equipo {team_id} ha sido eliminado correctamente"}
+        )
