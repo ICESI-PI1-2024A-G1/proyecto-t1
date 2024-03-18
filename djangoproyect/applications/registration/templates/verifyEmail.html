@@ -44,17 +44,19 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
 
-                {% if message %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{message}}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
                 {% endif %}
-
+                
                 <div class="card">
                     <h3 class="titulo-inicio text-center fw-bold fs-2 text-white "> Verificación de email</h3>
                     <div class="card-body">
-                        <form action="/registration/" method="POST">
+                        <form action="{% url 'registration:verifyEmail_view' %}" method="POST">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="verificationCode" class="form-label text-white">Ingrese el código de verificación que enviamos a su email.</label>

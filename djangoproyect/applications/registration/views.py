@@ -1,8 +1,19 @@
 from django.shortcuts import render, redirect
-from applications.login import views
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.conf import settings
+from django.contrib import messages
+import random
+import string
+
+# Variable global para almacenar el código de verificación
+global random_code
+
+def generate_random_code(length=6):
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
 
 def register_view(request):
     if request.method == "GET":
@@ -15,7 +26,7 @@ def register_view(request):
                 "cedula": request.POST.get("cedula", ""),
                 "correo": request.POST.get("correo", "")
             }
-            if User.objects.filter(id=request.POST["cedula"]).exists():
+            if User.objects.filter(id=request.POST["cedula"]).exists() or User.objects.filter(email=request.POST["correo"]).exists():
                 return render(
                     request,
                     "register.html",
@@ -46,7 +57,46 @@ def register_view(request):
                     {"message": "Las contraseñas no coinciden.", "user_data": user_data},
                 )
             else: 
-                print("Creating user")
+                
+                # Obtener los datos del formulario
+                id = request.POST["cedula"]
+                username = request.POST["cedula"]
+                first_name = request.POST["nombre"]
+                last_name = request.POST["apellido"]
+                password = request.POST["contrasena"]
+                email = request.POST["correo"]
+                
+                request.session['id'] = id
+                request.session['username'] = username
+                request.session['first_name'] = first_name
+                request.session['last_name'] = last_name
+                request.session['password'] = password
+                request.session['email'] = email
+
+                # Generar el código de verificación
+                random_code = generate_random_code()
+                request.session['random_code'] = random_code
+                
+                # Crear plantilla de correo
+                template = render_to_string('email_template.html', {
+                    'name': first_name,
+                    'email': email,
+                    'message': 'Su código de verificación es: ' + random_code,
+                    })
+                
+                email = EmailMessage(
+                    'Verificación de correo',
+                    template,
+                    settings.EMAIL_HOST_USER,
+                    [email],
+                )
+                
+                # Envio de correo
+                email.fail_silently = False
+                email.send()
+                
+                messages.success(request, 'Correo enviado exitosamente')
+                
                 return redirect('registration:verifyEmail_view')
         except Exception as e:
             print(e)
@@ -59,4 +109,21 @@ def register_view(request):
 def verify_email_view(request):
     if request.method == "GET":
         return render(request, "verifyEmail.html")
-    
+    else:
+        if request.POST["verificationCode"] == request.session.get('random_code'):
+            
+            id = request.session.get('id')
+            username = request.session.get('username')
+            first_name = request.session.get('first_name')
+            last_name = request.session.get('last_name')
+            password = request.session.get('password')
+            email = request.session.get('email')
+
+            user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+            user.save()
+            
+            messages.success(request, 'Usuario registrado correctamente.')
+            return redirect("login:login_view")
+        else:
+            messages.error(request, 'Código de verificación incorrecto.')
+            return render(request, "verifyEmail.html")
