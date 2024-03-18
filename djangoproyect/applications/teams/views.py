@@ -85,3 +85,16 @@ def delete_team(request, team_id):
         return JsonResponse(
             {"message": f"El equipo {team_id} ha sido eliminado correctamente"}
         )
+
+
+def member_details(request, id):
+    if request.method == "GET":
+        member = get_object_or_404(User, pk=id)
+        member_requests = (
+            member.requests.all()
+        )  # Obtener las solicitudes asociadas al miembro
+        return render(
+            request,
+            "member-details.html",
+            {"member": member, "member_requests": member_requests},
+        )
