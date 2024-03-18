@@ -17,10 +17,10 @@ $(document).ready(function () {
                                 <td>${item.final_date || ''}</td>
                                 <td>${item.past_days || ''}</td>
                                 <td>
-                                    <button class="btn btn-link edit-btn" data-request-id="${item.id}">
-                                        <i class="fa fa-edit text-secondary"></i>
-                                    </button>
-                                    <span id="status_${item.id}">${item.status || ''}</span>
+                                <button class="btn btn-link edit-btn" data-request-id="${item.id}">
+                                <i class="fa fa-edit text-secondary"></i>
+                                </button>
+                                <span id="status_${item.id}">${item.status || ''}</span>
                                 </td>
                             </tr>
                         `;

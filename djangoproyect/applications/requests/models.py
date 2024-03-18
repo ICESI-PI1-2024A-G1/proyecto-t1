@@ -1,6 +1,11 @@
 from django.db import models
 
 
+class Involved(models.Model):
+    email = models.CharField(max_length=320)
+    name = models.CharField(max_length=50)
+
+
 # Create your models here.
 class Requests(models.Model):
     document = models.CharField(max_length=255)
@@ -10,3 +15,9 @@ class Requests(models.Model):
     final_date = models.DateField()
     past_days = models.IntegerField()
     status = models.CharField(max_length=20)
+
+
+class Traceability(models.Model):
+    involved = models.ForeignKey(Involved, on_delete=models.CASCADE)
+    request = models.ForeignKey(Requests, on_delete=models.CASCADE)
+    date = models.DateField()
