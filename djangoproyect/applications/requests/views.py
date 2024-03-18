@@ -42,8 +42,7 @@ def show_requests(request):
     requests = Requests.objects.all()
     return render(request, "show-requests.html", {"requests": requests})
 
+
 def detail_request(request, id):
     detail = Requests.objects.get(pk=id)
-    return render(request, "request-detail.html", {
-        'request': detail
-    })
+    return render(request, "request-detail.html", {"request": detail})
