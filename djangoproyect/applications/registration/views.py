@@ -5,6 +5,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.contrib import messages
+from email.mime.image import MIMEImage
 import random
 import string
 
@@ -56,8 +57,7 @@ def register_view(request):
                     "register.html",
                     {"message": "Las contraseñas no coinciden.", "user_data": user_data},
                 )
-            else: 
-                
+            else:  
                 # Obtener los datos del formulario
                 id = request.POST["cedula"]
                 username = request.POST["cedula"]
@@ -78,16 +78,21 @@ def register_view(request):
                 request.session['random_code'] = random_code
                 
                 # Crear plantilla de correo
-                template = render_to_string('email_template.html', {
-                    'name': first_name,
-                    'email': email,
-                    'message': 'Su código de verificación es: ' + random_code,
-                    })
+                template = render_to_string(
+                    'email_template.html', 
+                    {
+                        'message': (
+                            'Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.'
+                            '\n\nSu código de verificación es: ' + random_code +
+                            '\n\nSi no ha solicitado este correo, por favor ignorelo.'
+                        ),
+                    }
+                )
                 
                 email = EmailMessage(
                     'Verificación de correo',
                     template,
-                    settings.EMAIL_HOST_USER,
+                    'Verificación de Registro Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>',
                     [email],
                 )
                 
