@@ -9,7 +9,7 @@ from email.mime.image import MIMEImage
 import random
 import string
 
-# Variable global para almacenar el código de verificación
+# Global variable to store the random code
 global random_code
 
 def generate_random_code(length=6):
@@ -58,7 +58,7 @@ def register_view(request):
                     {"message": "Las contraseñas no coinciden.", "user_data": user_data},
                 )
             else:  
-                # Obtener los datos del formulario
+                # Obtain the user data
                 id = request.POST["cedula"]
                 username = request.POST["cedula"]
                 first_name = request.POST["nombre"]
@@ -73,11 +73,11 @@ def register_view(request):
                 request.session['password'] = password
                 request.session['email'] = email
 
-                # Generar el código de verificación
+                # Generate random code
                 random_code = generate_random_code()
                 request.session['random_code'] = random_code
                 
-                # Crear plantilla de correo
+                # Create the email template
                 template = render_to_string(
                     'email_template.html', 
                     {
@@ -96,7 +96,7 @@ def register_view(request):
                     [email],
                 )
                 
-                # Envio de correo
+                # Email sender
                 email.fail_silently = False
                 email.send()
                 
