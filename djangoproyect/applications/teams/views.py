@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+
+from applications.requests.models import Requests
 from .models import Team
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
@@ -93,8 +95,38 @@ def member_details(request, id):
         member_requests = (
             member.requests.all()
         )  # Obtener las solicitudes asociadas al miembro
+        all_requests = Requests.objects.all()
+        for r in all_requests:
+            if r in member_requests:
+                r.active = True
+
         return render(
             request,
             "member-details.html",
-            {"member": member, "member_requests": member_requests},
+            {
+                "member": member,
+                "member_requests": member_requests,
+                "all_requests": all_requests,
+            },
         )
+
+
+def assign_requests(request, id):
+    if request.method == "POST":
+        user = get_object_or_404(User, id=id)
+
+        request_list = request.POST.getlist("requests[]")
+        request_ids = [int(r) for r in request_list]
+        all_requests = Requests.objects.all()
+        print(request_ids)
+        for request in all_requests:
+            if request.id in request_ids:
+                request.assigned_users.add(user)
+                print("add")
+                print(request.id)
+            else:
+                request.assigned_users.remove(user)
+                print("remove")
+                print(request.id)
+            request.save()
+        return JsonResponse({"success": True})

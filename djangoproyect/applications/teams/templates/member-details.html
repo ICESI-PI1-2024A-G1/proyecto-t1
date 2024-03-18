@@ -1,5 +1,59 @@
-{{ member.id }}
+{% extends "base.html" %}
 
-{% for request in member_requests %}
-{{request.id}}
-{%endfor%}
+{% block title %}
+Detalles del miembro
+{% endblock %}
+
+{% block content %}
+
+{% csrf_token %}
+
+
+<div class="container">
+    <h2>{{member.first_name}} {{member.last_name}}</h2>
+    <div class="card">
+        <div class="card-body">
+            <h4>Solicitudes Asignadas</h4>
+            <ul class="list-group">
+                {% for request in all_requests %}
+                <li data-req-id="{{request.id}}" class="request-list-item list-group-item {%if request.active%}active{%endif%}">
+                    {{request.id}}
+                </li>
+                {%endfor%}
+            </ul>
+            <button id="assign-requests-btn" class="btn btn-primary my-4">Guardar <i class="fa fa-save"></i></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(() => {
+        let csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+        $(document).on('click', '.request-list-item', function() {
+            const requestId = $(this).data('req-id');
+            $(this).toggleClass("active");
+        });
+
+        $("#assign-requests-btn").on("click", () => {
+            const memberId = "{{member.id}}"
+            let active = $(".request-list-item.active")
+            const selectedRequests = [];
+            active.each(function() {
+                selectedRequests.push($(this).data("req-id"));
+            });
+            console.log(selectedRequests)
+            console.log(active)
+            $.post(`/teams/assign-requests/${memberId}/`, { requests: selectedRequests, csrfmiddlewaretoken: csrftoken })
+                .done(function(data) {
+                    alert("Solicitudes actualizadas correctamente")
+                })
+                .fail(function(error) {
+                    console.error("Error al enviar la solicitud POST", error);
+                    alert("Error al asignar las solicitudes");
+                });
+        });
+    });
+</script>
+
+
+{%endblock%}
