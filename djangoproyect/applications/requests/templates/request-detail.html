@@ -1,8 +1,73 @@
 {% extends "base.html" %}
 {% block title %}Solicitudes{% endblock %}
 {% block content %}
+<div class="super-container">
+</div>
+<div class="card-container" id="card-container">
+    <div class="card">
+        <div><h6>{{request.status}}</h6></div>
+        <h3>{{request.type}}</h3>
+        <div class="log-container">
+            <div class="circe-container">
+                <div class="circle"></div>
+            </div>
+            <p>Creado por: Cristian botina - 03/01/2024</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .log-container{
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .circe-container{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly
+    }
+
+    p{
+        margin-bottom: 0;
+    }
+
+    .circle{
+        width: 15px;
+        height: 15px;
+        background-color: blue;
+        border-radius: 100pc;
+    }
+
+    .super-container{
+        background: rgba(0, 0, 0, 0.25);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 1000;
+        top: 0%;
+        left: 0%;
+    }
+
+    .card-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1010; /* Asegúrate de que esté por encima del overlay */
+    }
+
+    .card {
+        width: 400px; /* Ancho de la card */
+        padding: 20px;
+        background-color: #fff; /* Color de fondo de la card */
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra de la card */
+    }
+</style>
+
     <div class="container">
-        <h2>{{request.document}}</h2>
+        <h2>Solicitudes</h2>
         <div class="container">
             <div class="input-group mb-3">
                 <span class="input-group-text" id="inputGroup-sizing-default">Buscar</span>
@@ -83,6 +148,7 @@
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% load static %}
     <script src="{% static 'requests/js/requests.js' %}"></script>
