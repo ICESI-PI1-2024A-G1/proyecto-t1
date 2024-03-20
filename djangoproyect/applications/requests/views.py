@@ -2,6 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from applications.requests.model.filter_logic import SearchFilter
 from applications.requests.models import Requests
+from applications.requests.models import Traceability
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -44,5 +45,19 @@ def show_requests(request):
 
 
 def detail_request(request, id):
-    detail = Requests.objects.get(pk=id)
-    return render(request, "request-detail.html", {"request": detail})
+    
+    request_instance = get_object_or_404(Requests, pk=id)
+
+    # Obtener todas las instancias de Traceability asociadas a la solicitud
+    traceabilities = Traceability.objects.filter(request=request_instance)
+    traceabilities = Traceability.objects.all().order_by('-id')  # Revertir la lista en la consulta
+
+
+    # Ahora traceabilities contiene todas las instancias de Traceability asociadas a la solicitud con ID request_id
+    # Puedes pasar traceabilities al contexto de tu plantilla o hacer cualquier otro procesamiento necesario
+
+    # Por ejemplo, para imprimir las fechas de las Traceabilitys
+    for traceability in traceabilities:
+        print(traceability.date)
+
+    return render(request, "request-detail.html", {"request": request_instance, "traceabilities": traceabilities})

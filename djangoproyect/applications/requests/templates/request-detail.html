@@ -7,32 +7,61 @@
     <div class="card">
         <div><h6>{{request.status}}</h6></div>
         <h3>{{request.type}}</h3>
-        <div class="log-container">
-            <div class="circe-container">
-                <div class="circle"></div>
+        <div class="states_container">
+            {% for traceability in traceabilities %}
+            <div class="log-container">
+                <div class="circe-container">
+                    <div class="circle{% if forloop.first %}_last{% endif %}"></div>
+                </div>
+                <p>{{traceability.current_status}}: {{traceabilty.involved.name}} - {{traceability.date|date:"d/m/Y"}}</p>
             </div>
-            <p>Creado por: Cristian botina - 03/01/2024</p>
+            {% endfor %}
         </div>
     </div>
 </div>
 
 <style>
+        p{
+        margin-bottom: 0;
+        white-space: nowrap;
+    }   
+    .card {
+        
+        background-color: #fff; /* Color de fondo de la card */
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra de la card */
+    }
+
+
+    .states_container{
+        display: flex;
+        flex-direction: column;
+        width: max-content;
+        align-items: flex-start;
+    }
+
     .log-container{
         display: flex;
-        justify-content: space-evenly;
+        width: 100%;
     }
 
     .circe-container{
         display: flex;
         flex-direction: column;
+        margin-right: 5%;
         justify-content: space-evenly
     }
 
-    p{
-        margin-bottom: 0;
-    }
+
 
     .circle{
+        width: 15px;
+        height: 15px;
+        background-color: gray;
+        border-radius: 100pc;
+    }
+
+    .circle_last{
         width: 15px;
         height: 15px;
         background-color: blue;
@@ -41,8 +70,8 @@
 
     .super-container{
         background: rgba(0, 0, 0, 0.25);
-        width: 100%;
-        height: 100%;
+        width: 110%;
+        height: 110%;
         position: absolute;
         z-index: 1000;
         top: 0%;
@@ -53,103 +82,15 @@
         position: fixed;
         top: 50%;
         left: 50%;
+        width: max-content;
         transform: translate(-50%, -50%);
         z-index: 1010; /* Asegúrate de que esté por encima del overlay */
+
     }
 
-    .card {
-        width: 400px; /* Ancho de la card */
-        padding: 20px;
-        background-color: #fff; /* Color de fondo de la card */
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra de la card */
-    }
+
 </style>
 
-    <div class="container">
-        <h2>Solicitudes</h2>
-        <div class="container">
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-default">Buscar</span>
-                <input type="text"
-                       id="searchBar"
-                       class="form-control"
-                       aria-label="Sizing example input"
-                       aria-describedby="inputGroup-sizing-default">
-                <button id="performSearchButton" type="button" class="btn btn-primary">Buscar</button>
-            </div>
-        </div>
-        <div class="container" style="overflow-x: auto;">
-            <table id="requestsTable"  class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Documento</th>
-                        <th>Solicitante</th>
-                        <th>Gerente</th>
-                        <th>Fecha Inicial</th>
-                        <th>Fecha Final</th>
-                        <th>Días Pasados</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for request in requests %}
-                        <tr id="request_{{ request.id }}">
-                            <td>{{ request.document }}</td>
-                            <td>{{ request.applicant }}</td>
-                            <td>{{ request.manager }}</td>
-                            <td>{{ request.initial_date }}</td>
-                            <td>{{ request.final_date }}</td>
-                            <td>{{ request.past_days }}</td>
-                            <td>
-                                <button class="btn btn-link edit-btn" data-request-id="{{ request.id }}">
-                                    <i class="fa fa-edit text-secondary"></i>
-                                </button>
-                                <span id="status_{{ request.id }}">{{ request.status }}</span>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- Modal para seleccionar el nuevo estado -->
-    <div class="modal fade"
-         id="changeStatusModal"
-         tabindex="-1"
-         role="dialog"
-         aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Cambiar Estado</h5>
-                </div>
-                <div class="modal-body">
-                    <select id="newStatusSelect" class="form-control">
-                        <!-- Aquí puedes cargar opciones de estado dinámicamente si lo necesitas -->
-                        <option value="EN PROCESO">En Proceso</option>
-                        <option value="APROBADO - CENCO">Aprobado - Cenco</option>
-                        <option value="RECHAZADO - CENCO">Rechazado - Cenco</option>
-                        <option value="APROBADO - DECANO">Aprobado - Decano</option>
-                        <option value="RECHAZADO - DECANO">Rechazado - Decano</option>
-                        <option value="PAGADO - CONTABILIDAD">Pagado - Contabilidad</option>
-                        <option value="RECHAZADO - CONTABILIDAD">Rechazado - Contabilidad</option>
-                        <option value="CERRADO">Cerrado</option>
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="button"
-                            class="btn btn-danger"
-                            data-dismiss="modal"
-                            id="cancelBtn">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="changeStatusBtn">Guardar Cambios</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    {% load static %}
-    <script src="{% static 'requests/js/requests.js' %}"></script>
+
 {% endblock %}

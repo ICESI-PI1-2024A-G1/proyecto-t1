@@ -18,9 +18,11 @@ class Requests(models.Model):
     status = models.CharField(max_length=20)
     type = models.CharField(max_length=20)
     assigned_users = models.ManyToManyField(User, related_name="requests")
-
+    
 
 class Traceability(models.Model):
     involved = models.ForeignKey(Involved, on_delete=models.CASCADE)
     request = models.ForeignKey(Requests, on_delete=models.CASCADE)
     date = models.DateField()
+    current_status = models.CharField(max_length=20, null = True)
+    
