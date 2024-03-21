@@ -1,10 +1,5 @@
 import os
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
 import django
-
-django.setup()
-
 import random
 from faker import Faker
 from django.contrib.auth.models import User
@@ -12,7 +7,20 @@ from applications.requests.models import Involved, Requests, Traceability
 from applications.teams.models import Team
 from datetime import datetime, timedelta
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
+django.setup()
 fake = Faker()
+
+"""
+README:
+- Delete the current database sqlite3
+- Make migrations with 'py manage.py makemigrations' and 'py manage.py migrate' commands
+- Execute the python script with 'py generate.py shell'
+    - If you do not have permissions to execute scripts, open PowerShell as administrator and execute 'Set-ExecutionPolicy Unrestricted'
+    - Now execute the command, this will generate sample data for the current models
+- Select all code written by Playermast86, delete it and add it to the gitignore file.
+"""
+
 
 # Create users
 users = []

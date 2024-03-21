@@ -91,22 +91,22 @@ def register_view(request):
                 password = request.POST["contrasena"]
                 email = request.POST["correo"]
 
-                request.session["id"] = id
-                request.session["username"] = username
-                request.session["first_name"] = first_name
-                request.session["last_name"] = last_name
-                request.session["password"] = password
-                request.session["email"] = email
+                # Generate random code
+                random_code = generate_random_code()
+                request.session["random_code"] = random_code
 
-                user = User.objects.create_user(
-                    username=username,
-                    password=password,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name,
+                # Create the email template
+                template = render_to_string(
+                    "email_template.html",
+                    {
+                        "message": (
+                            "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI."
+                            "\n\nSu código de verificación es: "
+                            + random_code
+                            + "\n\nSi no ha solicitado este correo, por favor ignorelo."
+                        ),
+                    },
                 )
-                user.save()
-                return redirect("/")
                 # Generate random code
                 random_code = generate_random_code()
                 request.session["random_code"] = random_code
