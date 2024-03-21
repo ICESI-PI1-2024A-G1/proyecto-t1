@@ -27,7 +27,8 @@
             </thead>
             <tbody>
                 {% for request in requests %}
-                    <tr id="request_{{ request.id }}">
+                <a href="/requests/{{ request.id }}/" style="display: block;">
+                    <tr id="request_{{ request.id }}" onclick="window.location='/requests/{{ request.id }}/'">
                         <td>{{ request.document }}</td>
                         <td>{{ request.applicant }}</td>
                         <td>{{ request.manager }}</td>
@@ -41,6 +42,7 @@
                             <span id="status_{{ request.id }}">{{ request.status }}</span>
                         </td>
                     </tr>
+                </a>
                 {% endfor %}
             </tbody>
         </table>
