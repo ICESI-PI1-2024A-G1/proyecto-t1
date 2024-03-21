@@ -17,7 +17,7 @@ Detalles del miembro
             <ul class="list-group">
                 {% for request in all_requests %}
                 <li data-req-id="{{request.id}}" class="request-list-item list-group-item {%if request.active%}active{%endif%}">
-                    {{request.id}}
+                    {{request.title}} ({{request.id}})
                 </li>
                 {%endfor%}
             </ul>

@@ -53,15 +53,19 @@ $(document).ready(function () {
             var tableId = $('#addMemberModal').data('table-id');
             var tableBody = $(`${tableId} tbody`);
 
+            console.log("aaa")
+
             response.users.forEach(function (user) {
                 tableBody.append(
                     `<tr id="member_row_${user.id}">` +
                     `<td> ${user.first_name} ${user.last_name} </td>` +
                     '<td>Miembro</td>' +
-                    '<td><button class="btn text-danger delete-member" data-team-id="' + teamId + '" data-member-id="' + user.id + '">Eliminar</button></td>' +
+                    '<td><button class="btn text-danger delete-member" data-team-id="' + teamId + '" data-member-id="' + user.id + '">Eliminar</button>' +
+                    `<a class="btn text-info" href="member-details/${user.id}">Detalles</a></td>` +
                     '</tr>'
                 );
             });
+            
             $('#userList li.active').removeClass('active');
             $('#addMemberModal').modal('hide');
             loadButtons()
