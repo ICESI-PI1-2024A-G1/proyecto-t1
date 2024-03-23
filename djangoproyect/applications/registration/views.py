@@ -1,11 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-from django.conf import settings
-from django.contrib import messages
-from email.mime.image import MIMEImage
+import applications.utils as utils
 import random
 import string
 
@@ -83,59 +79,18 @@ def register_view(request):
                     },
                 )
             else:
-                # Obtain the user data
-                id = request.POST["cedula"]
-                username = request.POST["cedula"]
-                first_name = request.POST["nombre"]
-                last_name = request.POST["apellido"]
-                password = request.POST["contrasena"]
-                email = request.POST["correo"]
-
                 # Generate random code
                 random_code = generate_random_code()
                 request.session["random_code"] = random_code
 
-                # Create the email template
-                template = render_to_string(
-                    "email_template.html",
-                    {
-                        "message": (
-                            "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI."
-                            "\n\nSu código de verificación es: "
-                            + random_code
-                            + "\n\nSi no ha solicitado este correo, por favor ignorelo."
-                        ),
-                    },
-                )
-                # Generate random code
-                random_code = generate_random_code()
-                request.session["random_code"] = random_code
-
-                # Create the email template
-                template = render_to_string(
-                    "email_template.html",
-                    {
-                        "message": (
-                            "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI."
-                            "\n\nSu código de verificación es: "
-                            + random_code
-                            + "\n\nSi no ha solicitado este correo, por favor ignorelo."
-                        ),
-                    },
-                )
-
-                email = EmailMessage(
+                # Send verification email
+                utils.send_verification_email(
+                    request,
                     "Verificación de correo",
-                    template,
                     "Verificación de Registro Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                    [email],
-                )
-
-                # Email sender
-                email.fail_silently = False
-                email.send()
-
-                messages.success(request, "Correo enviado exitosamente")
+                    request.POST["correo"],
+                    "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
+                    )
 
                 return redirect("registration:verifyEmail_view")
         except Exception as e:

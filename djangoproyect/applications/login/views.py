@@ -5,9 +5,8 @@ from applications.requests import views
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.conf import settings
 from django.contrib import messages
-from email.mime.image import MIMEImage
+import applications.utils as utils
 import random
 import string
 
@@ -40,29 +39,13 @@ def login_view(request):
                     request.session['random_code'] = random_code
 
                     # Create the email template
-                    template = render_to_string(
-                        'email_template.html', 
-                        {
-                            'message': (
-                                'Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.'
-                                '\n\nSu código de verificación es: ' + random_code +
-                                '\n\nSi no ha solicitado este correo, por favor ignorelo.'
-                            ),
-                        }
-                    )
-                    
-                    email = EmailMessage(
-                        'Verificación de correo',
-                        template,
-                        'Verificación de Registro Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>',
+                    utils.send_verification_email(
+                        request,
+                        "Verificación de correo",
+                        "Verificación de Registro Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
                         [user.email],
+                        "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
                     )
-                    
-                    # Email sender
-                    email.fail_silently = False
-                    email.send()
-                    
-                    messages.success(request, 'Correo enviado exitosamente')
                     
                     return redirect('login:verifyEmail_view')
                 else:
