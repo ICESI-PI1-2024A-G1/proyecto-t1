@@ -14,7 +14,7 @@ def send_verification_email(request, subject, bigSubject, email, message):
         subject,
         template,
         bigSubject,
-        email,
+        [email],
     )
 
     # Email sender

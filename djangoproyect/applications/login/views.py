@@ -43,7 +43,7 @@ def login_view(request):
                         request,
                         "Verificación de correo",
                         "Verificación de Registro Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                        [user.email],
+                        user.email,
                         "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
                     )
                     
