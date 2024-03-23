@@ -154,22 +154,16 @@ def verify_email_view(request):
     if request.method == "GET":
         return render(request, "verifyEmail.html")
     else:
-        if request.POST["verificationCode"] == request.session.get("random_code"):
+        if request.POST["verificationCode"] == request.session.get('random_code'):
+            
+            id = request.session.get('username')
+            username = request.session.get('username')
+            first_name = request.session.get('first_name')
+            last_name = request.session.get('last_name')
+            password = request.session.get('password')
+            email = request.session.get('email')
 
-            id = request.session.get("id")
-            username = request.session.get("username")
-            first_name = request.session.get("first_name")
-            last_name = request.session.get("last_name")
-            password = request.session.get("password")
-            email = request.session.get("email")
-
-            user = User.objects.create_user(
-                username=username,
-                password=password,
-                email=email,
-                first_name=first_name,
-                last_name=last_name,
-            )
+            user = User.objects.create_user(id=id, username=username, password=password, email=email, first_name=first_name, last_name=last_name)
             user.save()
 
             messages.success(request, "Usuario registrado correctamente.")
