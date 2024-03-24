@@ -38,6 +38,8 @@ def login_view(request):
                         user.email,
                         "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
                     )
+
+                    request.session['has_registered'] = True
                     
                     return redirect('login:verifyEmail_view')
                 else:
@@ -66,7 +68,11 @@ def login_view(request):
 
 def verify_email_view(request):
     if request.method == "GET":
-        return render(request, "verifyEmailLog.html")
+        if request.session.get('has_registered') == True:
+            request.session['has_registered'] = False
+            return render(request, "verifyEmailLog.html")
+        else:
+            return redirect("login:login_view")
     else:
         if request.POST["verificationCode"] == request.session.get('random_code'):
             user_id = request.session.get('user_id')
