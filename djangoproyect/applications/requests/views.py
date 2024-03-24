@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from applications.requests.model.filter_logic import SearchFilter
 from applications.requests.models import Requests
@@ -36,7 +36,6 @@ def search(request, query):
     requests_filter = SearchFilter()
 
     return requests_filter.filter_request(query)
-
 
 def show_requests(request):
     requests = Requests.objects.all()

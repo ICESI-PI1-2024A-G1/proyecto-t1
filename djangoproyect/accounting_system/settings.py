@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "applications.registration",
     "applications.requests",
     "applications.teams",
+    "applications.utils",
 ]
 
 MIDDLEWARE = [
@@ -146,5 +147,5 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "playermastgd@gmail.com"
-EMAIL_HOST_PASSWORD = "wgyyadnbsorwrzwl"
+EMAIL_HOST_PASSWORD = "vnumfrvkdinrsfat"
 EMAIL_USE_TLS = True
