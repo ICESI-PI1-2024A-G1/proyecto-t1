@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from applications.requests import views
 from django.contrib import messages
@@ -11,7 +11,12 @@ global random_code
 # Create your views here.
 def login_view(request):
     if request.method == "GET":
-        return render(request, "login.html")
+        if request.user.is_authenticated and request.GET.get('logout') != 'true':
+            return redirect(views.show_requests)
+        else:
+            if request.GET.get('logout') == 'true':
+                logout(request)
+            return render(request, "login.html")
     else:
         try:
             user = authenticate(
@@ -28,7 +33,7 @@ def login_view(request):
                     # Generate random code
                     random_code = utils.generate_random_code()
                     request.session['random_code'] = random_code
-                    print(random_code)
+                    # print("Code: " + random_code)
 
                     # Send verification email
                     utils.send_verification_email(
@@ -38,6 +43,8 @@ def login_view(request):
                         user.email,
                         "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
                     )
+
+                    request.session['has_logged'] = True
                     
                     return redirect('login:verifyEmail_view')
                 else:
@@ -66,7 +73,14 @@ def login_view(request):
 
 def verify_email_view(request):
     if request.method == "GET":
-        return render(request, "verifyEmailLog.html")
+        if request.session.get('has_logged') == True:
+            request.session['has_logged'] = False
+            return render(request, "verifyEmailLog.html")
+        else:
+            if (request.user.is_authenticated):
+                return redirect(views.show_requests)
+            else:
+                return redirect("login:login_view")
     else:
         if request.POST["verificationCode"] == request.session.get('random_code'):
             user_id = request.session.get('user_id')
