@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
+from applications.requests import views
 import applications.utils as utils
 import re
 
@@ -9,7 +10,10 @@ global random_code
 
 def register_view(request):
     if request.method == "GET":
-        return render(request, "register.html")
+        if request.user.is_authenticated:
+            return redirect(views.show_requests)
+        else:
+            return render(request, "register.html")
     else:
         try:
             user_data = {
@@ -113,7 +117,10 @@ def verify_email_view(request):
             request.session['has_registered'] = False
             return render(request, "verifyEmailReg.html")
         else:
-            return redirect("login:login_view")
+            if request.user.is_authenticated:
+                return redirect(views.show_requests)
+            else:
+                return redirect("login:login_view")
     else:
         if request.POST["verificationCode"] == request.session.get('random_code'):
             

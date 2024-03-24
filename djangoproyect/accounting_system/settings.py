@@ -57,6 +57,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+LOGIN_URL = 'login:login_view'
+
 ROOT_URLCONF = "accounting_system.urls"
 
 TEMPLATES = [

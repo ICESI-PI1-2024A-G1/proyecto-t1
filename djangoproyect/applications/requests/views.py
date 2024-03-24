@@ -3,33 +3,33 @@ from django.shortcuts import render, get_object_or_404
 from applications.requests.model.filter_logic import SearchFilter
 from applications.requests.models import Requests
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.decorators import login_required
 
 @csrf_exempt
+@login_required
 def change_requests(request, id):
     if request.method == "POST":
-        # Obtener la solicitud por su ID
+        # Get the request by its ID
         solicitud = get_object_or_404(Requests, pk=id)
 
-        # Obtener el nuevo estado de los datos POST
+        # Get the new status from the POST data
         nuevo_estado = request.POST.get("newStatus")
 
-        # Actualizar el estado de la solicitud
+        # Update the status of the request
         solicitud.status = nuevo_estado
         solicitud.save()
 
-        # Devolver una respuesta exitosa
+        # Return a successful response
         return JsonResponse(
             {
-                "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
+                "message": f"The status of request {id} has been successfully updated."
             }
         )
     else:
-        # Si la solicitud no es POST, devolver un error
+        # If the request is not POST, return an error
         return JsonResponse(
-            {"error": "Esta vista solo acepta solicitudes POST."}, status=400
+            {"error": "This view only accepts POST requests."}, status=400
         )
-
 
 def search(request, query):
     # print(query)
@@ -37,11 +37,13 @@ def search(request, query):
 
     return requests_filter.filter_request(query)
 
+@login_required
 def show_requests(request):
+    print("Logged user: " + request.user.username)
     requests = Requests.objects.all()
     return render(request, "show-requests.html", {"requests": requests})
 
-
+@login_required
 def detail_request(request, id):
     detail = Requests.objects.get(pk=id)
     return render(request, "request-detail.html", {"request": detail})
