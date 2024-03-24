@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.core import mail
 
 class LoginTest(TestCase):
     def setUp(self):
@@ -28,3 +29,9 @@ class LoginTest(TestCase):
         self.client.post(reverse('login:login_view'), {'usuario': '1', 'contrasena': '12345'})
         response = self.client.post(reverse('login:verifyEmail_view'), {'verificationCode': 'wrongcode'})
         self.assertEqual(response.status_code, 200)  # Should render verifyEmail.html
+
+    def test_email_sent_on_verify_email(self):
+        self.client.post(reverse('login:login_view'), {'usuario': '1', 'contrasena': '12345'})
+        self.client.post(reverse('login:verifyEmail_view'), {'verificationCode': self.client.session.get('random_code')})
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Verificación de correo')

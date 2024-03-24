@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 import applications.utils as utils
+import re
 
 # Global variable to store the random code
 global random_code
@@ -41,14 +42,12 @@ def register_view(request):
                         "user_data": user_data,
                     },
                 )
-            elif not request.POST["correo"].endswith(
-                "@u.icesi.edu.co"
-            ) and not request.POST["correo"].endswith("@icesi.edu.co"):
+            elif not re.compile(r"[^@]+@[^@]+\.[^@]+").match(request.POST["correo"]):
                 return render(
                     request,
                     "register.html",
                     {
-                        "message": "El correo ingresado debe ser institucional de ICESI.",
+                        "message": "Por favor, ingrese un correo válido.",
                         "user_data": user_data,
                     },
                 )
@@ -81,7 +80,7 @@ def register_view(request):
                 # Generate random code
                 random_code = utils.generate_random_code()
                 request.session["random_code"] = random_code
-                print(random_code)
+                # print(random_code)
 
                 # Send verification email
                 utils.send_verification_email(
@@ -92,6 +91,9 @@ def register_view(request):
                     "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
                     )
                 
+                # Set has_registered session to limit access to the verifyEmail view
+                request.session['has_registered'] = True
+
                 return redirect('registration:verifyEmail_view')
         except Exception as e:
             print(e)
@@ -107,7 +109,10 @@ def register_view(request):
 
 def verify_email_view(request):
     if request.method == "GET":
-        return render(request, "verifyEmailReg.html")
+        if request.session.get('has_registered') == True:
+            return render(request, "verifyEmailReg.html")
+        else:
+            return redirect('registration:register_view')
     else:
         if request.POST["verificationCode"] == request.session.get('random_code'):
             
