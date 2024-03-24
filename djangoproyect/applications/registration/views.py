@@ -89,7 +89,7 @@ def register_view(request):
                     "Verificación de Registro Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
                     request.POST["correo"],
                     "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
-                    )
+                )
                 
                 # Set has_registered session to limit access to the verifyEmail view
                 request.session['has_registered'] = True
@@ -110,9 +110,10 @@ def register_view(request):
 def verify_email_view(request):
     if request.method == "GET":
         if request.session.get('has_registered') == True:
+            request.session['has_registered'] = False
             return render(request, "verifyEmailReg.html")
         else:
-            return redirect('registration:register_view')
+            return redirect("login:login_view")
     else:
         if request.POST["verificationCode"] == request.session.get('random_code'):
             
