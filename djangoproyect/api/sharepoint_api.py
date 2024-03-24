@@ -39,24 +39,15 @@ class SharePointAPI:
             return JsonResponse(data, safe=False)
 
     @csrf_exempt
-    def create_data(self, request):
+    def create_data(self, data):
         # Ruta para crear un nuevo dato
-        if request.method == "POST":
-            # Obtener los datos del cuerpo de la solicitud
-            body_unicode = request.body.decode("utf-8")
-            body = json.loads(body_unicode)
-
-            # Añadir los nuevos datos al archivo Excel
-            try:
-                df = pd.read_excel(self.excel_path, sheet_name="data")
-                df = df.append(body, ignore_index=True)
-                df.to_excel(self.excel_path, sheet_name="data", index=False)
-            except FileNotFoundError:
-                return JsonResponse({"error": "El archivo no se encontró"}, status=404)
-
-            return JsonResponse(
-                {"mensaje": "Dato creado satisfactoriamente"}, status=201
-            )
+        try:
+            df = pd.read_excel(self.excel_path, sheet_name="data")
+            df = df.append(data, ignore_index=True)
+            df.to_excel(self.excel_path, sheet_name="data", index=False)
+        except FileNotFoundError:
+            return {"error": "El archivo no se encontró"}, 404
+        return {"mensaje": "Dato creado satisfactoriamente"}, 201
 
     @csrf_exempt
     def update_data(self, request, id):
