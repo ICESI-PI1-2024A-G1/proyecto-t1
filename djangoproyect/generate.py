@@ -1,15 +1,17 @@
 import os
 import django
-import random
 from faker import Faker
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
+django.setup()
+fake = Faker()
+
+import random
 from django.contrib.auth.models import User
 from applications.requests.models import Involved, Requests, Traceability
 from applications.teams.models import Team
 from datetime import datetime, timedelta
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
-django.setup()
-fake = Faker()
 
 """
 README:
