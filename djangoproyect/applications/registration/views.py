@@ -71,9 +71,17 @@ def register_view(request):
                     },
                 )
             else:
+                # Save user data in session
+                request.session["first_name"] = request.POST["nombre"]
+                request.session["last_name"] = request.POST["apellido"]
+                request.session["id"] = request.POST["cedula"]
+                request.session["email"] = request.POST["correo"]
+                request.session["password"] = request.POST["contrasena"]
+
                 # Generate random code
                 random_code = utils.generate_random_code()
                 request.session["random_code"] = random_code
+                print(random_code)
 
                 # Send verification email
                 utils.send_verification_email(
@@ -98,14 +106,13 @@ def register_view(request):
 
 
 def verify_email_view(request):
-    print("Sending email")
     if request.method == "GET":
-        return render(request, "verifyEmail.html")
+        return render(request, "verifyEmailReg.html")
     else:
         if request.POST["verificationCode"] == request.session.get('random_code'):
             
-            id = request.session.get('username')
-            username = request.session.get('username')
+            id = request.session.get('id')
+            username = request.session.get('id')
             first_name = request.session.get('first_name')
             last_name = request.session.get('last_name')
             password = request.session.get('password')
@@ -118,4 +125,4 @@ def verify_email_view(request):
             return redirect("login:login_view")
         else:
             messages.error(request, 'Código de verificación incorrecto.')
-            return render(request, "verifyEmail.html")
+            return render(request, "verifyEmailReg.html")

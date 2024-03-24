@@ -28,6 +28,7 @@ def login_view(request):
                     # Generate random code
                     random_code = utils.generate_random_code()
                     request.session['random_code'] = random_code
+                    print(random_code)
 
                     # Send verification email
                     utils.send_verification_email(
@@ -65,7 +66,7 @@ def login_view(request):
 
 def verify_email_view(request):
     if request.method == "GET":
-        return render(request, "verifyEmail.html")
+        return render(request, "verifyEmailLog.html")
     else:
         if request.POST["verificationCode"] == request.session.get('random_code'):
             user_id = request.session.get('user_id')
@@ -76,4 +77,4 @@ def verify_email_view(request):
             return redirect(views.show_requests)
         else:
             messages.error(request, 'Código de verificación incorrecto.')
-            return render(request, "verifyEmail.html")
+            return render(request, "verifyEmailLog.html")
