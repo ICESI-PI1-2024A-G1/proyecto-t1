@@ -3,19 +3,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from applications.requests import views
 from django.contrib import messages
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-from django.contrib import messages
 import applications.utils as utils
-import random
-import string
 
 # Global variable to store the random code
 global random_code
-
-def generate_random_code(length=6):
-    characters = string.ascii_uppercase + string.digits
-    return ''.join(random.choice(characters) for _ in range(length))
 
 # Create your views here.
 def login_view(request):
@@ -35,10 +26,10 @@ def login_view(request):
                     request.session['user_id'] = user.id
                     
                     # Generate random code
-                    random_code = generate_random_code()
+                    random_code = utils.generate_random_code()
                     request.session['random_code'] = random_code
 
-                    # Create the email template
+                    # Send verification email
                     utils.send_verification_email(
                         request,
                         "Verificación de correo",

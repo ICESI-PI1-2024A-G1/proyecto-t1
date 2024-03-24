@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "applications.registration",
     "applications.requests",
     "applications.teams",
+    "applications.utils",
 ]
 
 MIDDLEWARE = [
