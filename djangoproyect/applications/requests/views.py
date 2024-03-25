@@ -42,7 +42,11 @@ def search(request, query):
 @login_required
 def show_requests(request):
     print("Logged user: " + request.user.username)
-    requests = Requests.objects.all()
+    # Get all requests assigned to the current user
+    if request.user.is_staff:
+        requests = Requests.objects.all()
+    else:
+        requests = Requests.objects.filter(assigned_users = request.user.id)
     return render(request, "show-requests.html", {"requests": requests})
 
 

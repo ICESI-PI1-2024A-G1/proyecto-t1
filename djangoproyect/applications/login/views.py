@@ -31,7 +31,7 @@ def login_view(request):
             )
 
             if user is not None:
-                if user.is_staff:
+                if user.is_staff or user.is_leader:
 
                     request.session['user_id'] = user.id
                     
@@ -63,7 +63,7 @@ def login_view(request):
                     request,
                     "login.html",
                     {
-                        "message": "El usuario registrado no está registrado en la plataforma."
+                        "message": "El usuario ingresado no está registrado en la plataforma."
                     },
                 )
         except Exception as e:
