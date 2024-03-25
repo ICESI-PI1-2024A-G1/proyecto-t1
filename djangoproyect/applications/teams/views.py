@@ -134,3 +134,18 @@ def assign_requests(request, id):
                 print(request.id)
             request.save()
         return JsonResponse({"success": True})
+
+
+def edit_team(request, team_id):
+    team = get_object_or_404(Team, pk=team_id)
+    if request.method == "GET":
+        users = User.objects.exclude(id=team.leader.id)
+        return render(request, "edit-team.html", {"users": users, "team": team})
+    elif request.method == "POST":
+        new_leader_id = request.POST.get("new_leader")
+        team.leader = User.objects.get(id=new_leader_id)
+        team.name = request.POST.get("name")
+        team.description = request.POST.get("description")
+
+        team.save()
+        return redirect("/teams/")
