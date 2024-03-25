@@ -17,7 +17,7 @@ Equipos
             <a href="/teams/add-team-form" class="btn btn-primary">Crear Equipo <i class="fa fa-plus"></i></a>
         </div>
     </div>
-    
+
     <div class="d-none d-sm-block container card">
         <div class="row p-4 font-weight-bold">
             <div class="col-4" style="font-weight:bold">
@@ -39,29 +39,33 @@ Equipos
         {% for team in teams %}
         <div class="accordion-item" id="accordionItem{{team.id}}">
             <h2 class="accordion-header" id="heading{{ team.id }}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse{{ team.id }}" aria-expanded="true" aria-controls="collapse{{ team.id }}">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-12 col-md-4">                                
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse{{ team.id }}" aria-expanded="true"
+                                aria-controls="collapse{{ team.id }}">
                                 <h4>
                                     {{ team.name }}
                                 </h4>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <span class="d-sm-none" style="font-weight:bold" >Description:</span>
-                                {{team.description}}
-                            </div>
-                            <div class="col-sm-12 col-md-2">
-                                <span class="d-sm-none" style="font-weight:bold" >Creation Date:</span>
-                                {{ team.created_at|date:"d-m-Y" }}
-                            </div>
-                            <div class="col-sm-12 col-md-2">
-                                <a class="my-2 btn-sm btn btn-danger delete-team" data-team-id="{{ team.id }}">Eliminar <i class="fa fa-trash"></i></a>
-                            </div>
+                            </button>
+                        </div>
+                        <div class="col-sm-12 col-md-4" style="font-size:2vh; font-weight: 400;">
+                            <span class="d-sm-none" style="font-weight:bold">Description:</span>
+                            {{team.description}}
+                        </div>
+                        <div class="col-sm-12 col-md-2" style="font-size:2vh; font-weight: 400;">
+                            <span class="d-sm-none" style="font-weight:bold">Creation Date:</span>
+                            {{ team.created_at|date:"d-m-Y" }}
+                        </div>
+                        <div class="col-sm-12 col-md-2">
+                            <a class="my-2 btn-sm btn btn-danger delete-team" data-team-id="{{ team.id }}">Eliminar <i
+                                    class="fa fa-trash"></i></a>
+                            <a href="/teams/edit-team/{{team.id}}" class="my-2 btn-sm btn btn-secondary">Editar<i
+                                    class="fa fa-edit"></i></a>
                         </div>
                     </div>
-                </button>
+                </div>
             </h2>
             <div id="collapse{{ team.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ team.id }}"
                 data-bs-parent="#accordionExample">
@@ -82,9 +86,6 @@ Equipos
                                         Líder
                                     </td>
                                     <td>
-                                        <button class="btn text-primary"
-                                            data-team-id="{{ team.id }}"
-                                            data-member-id="{{ member.id }}">Cambiar</button>
                                     </td>
                                 </tr>
                                 {% for member in team.members.all %}
@@ -96,8 +97,7 @@ Equipos
                                         Miembro
                                     </td>
                                     <td>
-                                        <button class="btn text-danger delete-member"
-                                            data-team-id="{{ team.id }}"
+                                        <button class="btn text-danger delete-member" data-team-id="{{ team.id }}"
                                             data-member-id="{{ member.id }}">Eliminar</button>
                                         <a class="btn text-info" href="member-details/{{member.id}}">Detalles</a>
                                     </td>
@@ -106,7 +106,7 @@ Equipos
                             </tbody>
                         </table>
 
-                        <button  class="mx-auto mb-4 btn btn-secondary add-member-btn" data-bs-toggle="modal"
+                        <button class="mx-auto mb-4 btn btn-secondary add-member-btn" data-bs-toggle="modal"
                             data-bs-target="#addMemberModal" data-team-id="{{ team.id }}">
                             Añadir miembro
                             <i class="fa fa-user-plus"></i>
@@ -131,7 +131,8 @@ Equipos
                     </ul>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" disabled="true" class="btn btn-primary" id="addMemberSubmit">Añadir <i class="fa fa-check"></i></button>
+                    <button type="button" disabled="true" class="btn btn-primary" id="addMemberSubmit">Añadir <i
+                            class="fa fa-check"></i></button>
                 </div>
             </div>
         </div>
