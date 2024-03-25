@@ -2,10 +2,13 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from applications.requests.models import Requests
 from .models import Team
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from .forms import TeamForm
 from django.contrib.auth.decorators import login_required
+
+
+User = get_user_model()
 
 
 # Create your views here.

@@ -1,12 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from applications.requests import views
 from django.contrib import messages
-import applications.utils as utils
+import utils.utils as utils
+
+
+User = get_user_model()
+
 
 # Global variable to store the random code
 global random_code
+
 
 # Create your views here.
 def login_view(request):
@@ -70,6 +75,7 @@ def login_view(request):
                         "message": "Ingrese un usuario válido."
                     },
                 )
+
 
 def verify_email_view(request):
     if request.method == "GET":

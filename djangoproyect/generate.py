@@ -7,10 +7,12 @@ django.setup()
 fake = Faker()
 
 import random
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from applications.requests.models import Involved, Requests, Traceability
 from applications.teams.models import Team
 from datetime import datetime, timedelta
+
+User = get_user_model()
 
 """
 README:
@@ -26,18 +28,21 @@ README:
 # Create users
 users = []
 for _ in range(10):
+    id = str(random.randint(1000000, 99999999))
     first_name = fake.first_name()
     last_name = fake.last_name()
-    username = fake.user_name()
+    username = id
     email = fake.email()
-    password = fake.password()
+    password = "12345678"
     user = User.objects.create_user(
+        id=id,
         username=username,
         email=email,
         password=password,
         first_name=first_name,
         last_name=last_name,
     )
+    print(f"User created: {user.username}")
     users.append(user)
 
 # Choose one user to be staff
@@ -51,6 +56,7 @@ for _ in range(5):
     name = fake.company()
     description = fake.text()
     leader = random.choice(users)
+    leader.is_leader = True
     team = Team.objects.create(name=name, description=description, leader=leader)
 
     # Seleccionar miembros para el equipo (excluyendo al líder)

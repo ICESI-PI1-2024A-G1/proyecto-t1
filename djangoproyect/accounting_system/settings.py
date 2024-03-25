@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "applications.registration",
     "applications.requests",
     "applications.teams",
-    "applications.utils",
+    "utils",
 ]
 
 MIDDLEWARE = [
@@ -58,6 +58,8 @@ MIDDLEWARE = [
 ]
 
 LOGIN_URL = 'login:login_view'
+
+AUTH_USER_MODEL = 'utils.CustomUser'
 
 ROOT_URLCONF = "accounting_system.urls"
 
