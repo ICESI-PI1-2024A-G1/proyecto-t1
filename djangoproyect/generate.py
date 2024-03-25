@@ -57,6 +57,7 @@ for _ in range(5):
     description = fake.text()
     leader = random.choice(users)
     leader.is_leader = True
+    leader.save()
     team = Team.objects.create(name=name, description=description, leader=leader)
 
     # Seleccionar miembros para el equipo (excluyendo al líder)
