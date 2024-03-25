@@ -50,14 +50,16 @@ staff_user = random.choice(users)
 staff_user.is_staff = True
 staff_user.save()
 
-# Create teams and add members
+# Create teams, leaders and add members
 teams = []
+leaders = []
 for _ in range(5):
     name = fake.company()
     description = fake.text()
     leader = random.choice(users)
     leader.is_leader = True
     leader.save()
+    leaders.append(leader)
     team = Team.objects.create(name=name, description=description, leader=leader)
 
     # Seleccionar miembros para el equipo (excluyendo al líder)
@@ -103,7 +105,7 @@ for _ in range(20):
         title=title,
     )
 
-    assigned_users = random.sample(users, random.randint(1, 3))
+    assigned_users = random.sample(leaders, random.randint(1, 3))
     request.assigned_users.add(*assigned_users)
 
     traceability = Traceability.objects.create(

@@ -14,7 +14,10 @@ User = get_user_model()
 # Create your views here.
 @login_required
 def show_teams(request):
-    teams = Team.objects.all()
+    if request.user.is_staff:
+        teams = Team.objects.all()
+    else:
+        teams = Team.objects.filter(leader_id = request.user.id)
     return render(request, "show-teams.html", {"teams": teams})
 
 

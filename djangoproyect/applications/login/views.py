@@ -31,23 +31,24 @@ def login_view(request):
             )
 
             if user is not None:
-                if user.is_staff:
+                if user.is_staff or user.is_leader:
 
                     request.session['user_id'] = user.id
                     
                     # Generate random code
                     random_code = utils.generate_random_code()
                     request.session['random_code'] = random_code
-                    # print("Code: " + random_code)
+                    print("Code: " + random_code)
 
                     # Send verification email
+                    """
                     utils.send_verification_email(
                         request,
                         "Verificación de correo",
                         "Verificación de Registro Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
                         user.email,
                         "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
-                    )
+                    """
 
                     request.session['has_logged'] = True
                     
@@ -63,7 +64,7 @@ def login_view(request):
                     request,
                     "login.html",
                     {
-                        "message": "El usuario registrado no está registrado en la plataforma."
+                        "message": "El usuario ingresado no está registrado en la plataforma."
                     },
                 )
         except Exception as e:
