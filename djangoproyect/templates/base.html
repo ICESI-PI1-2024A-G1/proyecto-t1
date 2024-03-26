@@ -36,7 +36,6 @@
                                 <ul class="nav flex-column text-center">
                                     {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
                                     {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
-                                    {% include 'components/navigation_item.html' with text="Recordatorios" icon_class="fas fa-university" link="/reminders" %}
                                     {% if request.user.is_superuser %}
                                         {% include 'components/navigation_item.html' with text="Permisos" icon_class="fas fa-user-shield" link="/permissions" %}
                                     {% endif %}
