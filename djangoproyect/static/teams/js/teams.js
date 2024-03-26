@@ -53,8 +53,6 @@ $(document).ready(function () {
             var tableId = $('#addMemberModal').data('table-id');
             var tableBody = $(`${tableId} tbody`);
 
-            console.log("aaa")
-
             response.users.forEach(function (user) {
                 tableBody.append(
                     `<tr id="member_row_${user.id}">` +

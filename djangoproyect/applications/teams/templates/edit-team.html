@@ -7,31 +7,9 @@ Cambiar líder de equipo
 {% block content %}
 
 <div class="container">
-    <form action="/teams/edit-team/{{team.id}}/" method="POST">
+    <form action="" method="POST">
         {% csrf_token %}
-        <div class="form-group">
-            <div class="form-group my-4 ">
-                <label for="id_name">Nombre</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa fa-users"></i></span>
-                    <input value="{{team.name}}" type="text" id="id_name" name="name" class="form-control" placeholder="Nombre del equipo" autofocus required>
-                </div>
-            </div>
-            <div class="form-group my-4 ">
-                <label for="id_description">Descripción</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa fa-file-alt"></i></span>
-                    <textarea style="height:10vh" id="id_description" name="description" class="form-control" placeholder="Descripción">{{team.description}}</textarea>
-                </div>
-            </div>
-            <label for="new_leader">Líder:</label>
-            <select class="form-control" id="new_leader" name="new_leader">
-                <option selected value="{{ team.leader.id }}">{{ team.leader.first_name }} {{team.leader.last_name}} (@{{team.leader.username}})</option>
-                {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.first_name }} {{user.last_name}} (@{{user.username}})</option>
-                {% endfor %}
-            </select>
-        </div>
+        {{form.as_p}}
         <button type="submit" class="btn btn-primary">Guardar selección <i class="fa fa-save"></i></button>
         <a href="/teams/" class="btn btn-danger">Cancelar <i class="fa fa-times"></i></a>
     </form>
