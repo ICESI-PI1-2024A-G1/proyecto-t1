@@ -8,7 +8,7 @@ fake = Faker()
 
 import random
 from django.contrib.auth.models import User
-from applications.requests.models import Involved, Requests, Traceability
+from applications.requests.models import Involved
 from applications.teams.models import Team
 from datetime import datetime, timedelta
 from api.sharepoint_api import SharePointAPI
@@ -26,10 +26,10 @@ README:
 
 EXCEL_FILE_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "static/requests/emulation/requests_database.xlsx",
+    "djangoproyect/static/requests/emulation/requests_database.xlsx",
 )
 
-print(EXCEL_FILE_PATH)
+# print(EXCEL_FILE_PATH)
 
 sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
 
@@ -58,7 +58,7 @@ staff_user.save()
 
 # Create teams and add members
 teams = []
-for _ in range(5):
+for _ in range(10):
     name = fake.company()
     description = fake.text()
     leader = random.choice(users)
@@ -75,14 +75,15 @@ for _ in range(5):
 
 # Create Involved
 involved = []
-for _ in range(15):
+for _ in range(1):
     email = fake.email()
     name = fake.name()
     inv = Involved.objects.create(email=email, name=name)
     involved.append(inv)
 
 # Create Requests and Traceability
-for _ in range(20):
+new_request = {}
+for i in range(1):
     document = fake.file_name()
     applicant = random.choice(users)
     manager = random.choice(users)
@@ -93,41 +94,29 @@ for _ in range(20):
     title = fake.name()
     status = random.choice(["Pending", "Approved", "Rejected"])
     req_type = random.choice(["Type 1", "Type 2", "Type 3"])
-    request = Requests.objects.create(
-        document=document,
-        applicant=applicant.username,
-        manager=manager.username,
-        initial_date=initial_date,
-        final_date=final_date,
-        past_days=past_days,
-        status=status,
-        type=req_type,
-        description=description,
-        title=title,
-    )
     assigned_users = random.sample(users, random.randint(1, 3))
-    request.assigned_users.add(*assigned_users)
-    traceability = Traceability.objects.create(
-        involved=random.choice(involved),
-        request=request,
-        date=fake.date_time_between(start_date="-30d", end_date="+3d"),
-    )
 
-    request_data = {
-        "document": document,
-        "applicant": applicant.username,
-        "manager": manager.username,
-        "initial_date": initial_date.strftime("%Y-%m-%d"),
-        "final_date": final_date.strftime("%Y-%m-%d"),
-        "past_days": past_days,
-        "status": status,
-        "type": req_type,
-        "description": description,
-        "title": title,
-    }
+    new_request["id"] = {i: id}
+    new_request["document"] = {i: document}
+    new_request["applicant"] = {i: applicant}
+    new_request["manager"] = {i: manager}
+    new_request["initial_date"] = {i: initial_date}
+    new_request["final_date"] = {i: final_date}
+    new_request["past_days"] = {i: past_days}
+    new_request["status"] = {i: status}
+    new_request["type"] = {i: req_type}
+    new_request["description"] = {i: description}
+    new_request["tittle"] = {i: title}
+    new_request["assined_users"] = {i: assigned_users}
 
-    response, status_code = sharepoint_api.create_data(request_data)
-    # if status_code == 201:
-    #     print(response)
-    # else:
-    #     print(f"Error: {response}")
+status_code = sharepoint_api.create_data(new_request)
+if status_code == 201:
+    print("Working")
+else:
+    print(f"Error")
+
+    # traceability = Traceability.objects.create(
+    #     involved=random.choice(involved),
+    #     request=sharepoint_api.obtain_single_data(1),
+    #     date=fake.date_time_between(start_date="-30d", end_date="+3d"),
+    # )
