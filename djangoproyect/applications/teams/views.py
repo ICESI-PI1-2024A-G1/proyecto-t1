@@ -13,7 +13,7 @@ User = get_user_model()
 
 ### TEAM VIEWS
 
-
+@login_required
 def show_teams(request):
     if request.user.is_staff:
         teams = Team.objects.all()
