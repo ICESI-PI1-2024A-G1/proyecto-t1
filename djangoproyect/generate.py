@@ -45,9 +45,10 @@ for _ in range(10):
     print(f"User created: {user.username}")
     users.append(user)
 
-# Choose one user to be staff
+# Choose one user to be staff and superuser
 staff_user = random.choice(users)
 staff_user.is_staff = True
+staff_user.is_superuser = True
 staff_user.save()
 
 # Create teams, leaders and add members

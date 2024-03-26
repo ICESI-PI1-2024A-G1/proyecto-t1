@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "applications.requests",
     "applications.teams",
     "applications.errorHandler",
+    "applications.permissions",
     "utils",
 ]
 
