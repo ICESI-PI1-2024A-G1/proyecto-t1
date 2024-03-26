@@ -3,6 +3,7 @@
 {% block content %}
     <div class="container">
         <h2>Permisos</h2>
+        <div id="messageContainer"></div>
         <div class="container">
             <div class="input-group mb-3">
                 <!-- <span class="input-group-text" id="inputGroup-sizing-default">Buscar</span> -->
@@ -40,8 +41,10 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="container d-flex justify-content-center">
+                <button id="saveButton" type="button" class="btn btn-primary">Guardar</button>
+            </div>
         </div>
-    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% load static %}
     <script src="{% static 'permissions/js/users.js' %}"></script>
