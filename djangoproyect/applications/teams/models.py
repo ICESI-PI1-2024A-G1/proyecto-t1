@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Team(models.Model):
@@ -7,9 +7,9 @@ class Team(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     leader = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="leading_teams"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="leading_teams"
     )
-    members = models.ManyToManyField(User, related_name="teams")
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
 
     def __str__(self):
         return self.name

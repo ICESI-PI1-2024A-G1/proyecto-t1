@@ -1,12 +1,17 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 from applications.requests import views
-import applications.utils as utils
+import utils.utils as utils
 import re
+
+
+User = get_user_model()
+
 
 # Global variable to store the random code
 global random_code
+
 
 def register_view(request):
     if request.method == "GET":

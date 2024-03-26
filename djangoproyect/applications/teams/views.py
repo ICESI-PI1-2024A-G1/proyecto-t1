@@ -1,18 +1,24 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-
 from applications.requests.models import Requests
 from .models import Team
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from .forms import TeamForm
+from django.contrib.auth.decorators import login_required
+
+
+User = get_user_model()
 
 
 ### TEAM VIEWS
 
 
 def show_teams(request):
-    teams = Team.objects.all()
+    if request.user.is_staff:
+        teams = Team.objects.all()
+    else:
+        teams = Team.objects.filter(leader_id=request.user.id)
     return render(request, "show-teams.html", {"teams": teams})
 
 

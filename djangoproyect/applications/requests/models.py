@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Involved(models.Model):
@@ -19,7 +19,7 @@ class Requests(models.Model):
     past_days = models.IntegerField()
     status = models.CharField(max_length=20)
     type = models.CharField(max_length=20)
-    assigned_users = models.ManyToManyField(User, related_name="requests")
+    assigned_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="requests")
 
 
 class Traceability(models.Model):

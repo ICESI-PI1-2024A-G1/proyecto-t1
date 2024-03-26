@@ -2,6 +2,8 @@ from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.core import mail
+from applications.requests import views as requests_views
+from applications.teams import views as teams_views
 
 class LoginTest(TestCase):
     def setUp(self):
@@ -35,3 +37,11 @@ class LoginTest(TestCase):
         self.client.post(reverse('login:verifyEmail_view'), {'verificationCode': self.client.session.get('random_code')})
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Verificación de correo')
+
+    def test_access_show_requests_without_login(self):
+        response = self.client.get(reverse(requests_views.show_requests))
+        self.assertEqual(response.status_code, 302)  # Should redirect because user is not logged in
+
+    def test_access_show_teams_without_login(self):
+        response = self.client.get(reverse(teams_views.show_teams))
+        self.assertEqual(response.status_code, 302)  # Should redirect because user is not logged in

@@ -5,8 +5,8 @@ from applications.requests.models import Requests
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
+
 @csrf_exempt
-@login_required
 def change_requests(request, id):
     if request.method == "POST":
         # Get the request by its ID
@@ -31,17 +31,24 @@ def change_requests(request, id):
             {"error": "This view only accepts POST requests."}, status=400
         )
 
+
 def search(request, query):
     # print(query)
     requests_filter = SearchFilter()
 
     return requests_filter.filter_request(query)
 
+
 @login_required
 def show_requests(request):
     print("Logged user: " + request.user.username)
-    requests = Requests.objects.all()
+    # Get all requests assigned to the current user
+    if request.user.is_staff:
+        requests = Requests.objects.all()
+    else:
+        requests = Requests.objects.filter(assigned_users = request.user.id)
     return render(request, "show-requests.html", {"requests": requests})
+
 
 @login_required
 def detail_request(request, id):
