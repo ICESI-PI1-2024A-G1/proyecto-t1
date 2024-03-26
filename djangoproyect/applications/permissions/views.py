@@ -5,7 +5,7 @@ from django.db.models import Case, When, Value, IntegerField
 from applications.permissions.model.filter_logic import SearchFilter
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.contrib import messages
+from django.http import HttpResponseRedirect
 import json
 
 
@@ -14,6 +14,8 @@ User = get_user_model()
 
 @login_required
 def permissions_view(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     users = User.objects.annotate(
         is_superuser_order=Case(
             When(is_superuser=True, then=Value(1)),
