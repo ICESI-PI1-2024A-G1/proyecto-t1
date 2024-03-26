@@ -26,4 +26,7 @@ urlpatterns = [
     path("requests/", include("applications.requests.urls")),
     path("teams/", include("applications.teams.urls")),
     path("registration/", include("applications.registration.urls")),
+    path("error/", include("applications.errorHandler.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+handler404 = 'applications.errorHandler.views.error_404_view'
