@@ -40,7 +40,7 @@ Equipos
                     <td>
                         <a class="my-2 btn-sm btn text-danger delete-team" data-team-id="{{ team.id }}">Eliminar <i
                                 class="fa fa-trash"></i></a>
-                        <a href="/teams/edit-team/{{team.id}}" class="my-2 btn-sm btn text-secondary">Editar<i
+                        <a href="/teams/edit-team/{{team.id}}/" class="my-2 btn-sm btn text-secondary">Editar<i
                                 class="fa fa-edit"></i></a>
                     </td>
                 </tr>
@@ -51,6 +51,6 @@ Equipos
 </div>
 
 {% load static %}
-<script src="{% static 'teams/js/teams.js' %}"></script>
+<script src="{% static '/teams/js/teams.js' %}"></script>
 
 {% endblock %}

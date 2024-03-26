@@ -13,3 +13,9 @@ class TeamForm(forms.ModelForm):
             "leader": forms.Select(attrs={"class": "form-control"}),
             "members": forms.CheckboxSelectMultiple(),
         }
+        labels = {
+            "name": "Nombre",
+            "description": "Descripción",
+            "leader": "Líder",
+            "members": "Miembros",
+        }

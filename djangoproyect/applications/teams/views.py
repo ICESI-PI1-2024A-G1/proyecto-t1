@@ -13,6 +13,7 @@ User = get_user_model()
 
 ### TEAM VIEWS
 
+
 @login_required
 def show_teams(request):
     if request.user.is_staff:
@@ -22,6 +23,7 @@ def show_teams(request):
     return render(request, "show-teams.html", {"teams": teams})
 
 
+@login_required
 def add_team(request):
     if request.method == "GET":
         form = TeamForm()
@@ -30,11 +32,12 @@ def add_team(request):
         form = TeamForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("/teams")
+            return redirect("/teams/")
         else:
             return render(request, "add-team.html", {"form": form})
 
 
+@login_required
 def edit_team(request, team_id):
     team = get_object_or_404(Team, pk=team_id)
     form = TeamForm(instance=team)
@@ -44,11 +47,12 @@ def edit_team(request, team_id):
         form = TeamForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("/teams")
+            return redirect("/teams/")
         else:
             return render(request, "edit-team.html", {"form": form})
 
 
+@login_required
 def delete_team(request, team_id):
     if request.method == "DELETE":
         team = get_object_or_404(Team, id=team_id)
@@ -61,6 +65,7 @@ def delete_team(request, team_id):
 ### MEMBERS VIEWS
 
 
+@login_required
 def assign_requests(request, id):
     if request.method == "GET":
         member = get_object_or_404(User, pk=id)
