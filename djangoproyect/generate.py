@@ -82,8 +82,7 @@ for _ in range(1):
     involved.append(inv)
 
 # Create Requests and Traceability
-new_request = {}
-for i in range(1):
+for i in range(2):
     document = fake.file_name()
     applicant = random.choice(users)
     manager = random.choice(users)
@@ -96,24 +95,26 @@ for i in range(1):
     req_type = random.choice(["Type 1", "Type 2", "Type 3"])
     assigned_users = random.sample(users, random.randint(1, 3))
 
-    new_request["id"] = {i: id}
-    new_request["document"] = {i: document}
-    new_request["applicant"] = {i: applicant}
-    new_request["manager"] = {i: manager}
-    new_request["initial_date"] = {i: initial_date}
-    new_request["final_date"] = {i: final_date}
-    new_request["past_days"] = {i: past_days}
-    new_request["status"] = {i: status}
-    new_request["type"] = {i: req_type}
-    new_request["description"] = {i: description}
-    new_request["tittle"] = {i: title}
-    new_request["assined_users"] = {i: assigned_users}
+    data = {
+        "document": document,
+        "applicant": applicant,
+        "manager": manager,
+        "initial_date": initial_date,
+        "final_date": final_date,
+        "past_days": past_days,
+        "description": description,
+        "title": title,
+        "status": status,
+        "req_type": req_type,
+        "assigned_users": assigned_users,
+    }
 
-status_code = sharepoint_api.create_data(new_request)
-if status_code == 201:
-    print("Working")
-else:
-    print(f"Error")
+    print(data)
+    status_code = sharepoint_api.create_data(data)
+    if status_code == 201:
+        print("Working")
+    else:
+        print(f"Error")
 
     # traceability = Traceability.objects.create(
     #     involved=random.choice(involved),

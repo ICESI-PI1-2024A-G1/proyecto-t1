@@ -7,25 +7,12 @@ from django.views.decorators.csrf import csrf_exempt
 class SharePointAPI:
     def __init__(self, excel_path) -> None:
         self.excel_path = excel_path
-        self.columns_names = [
-            "document",
-            "applicant",
-            "manager",
-            "initial_date",
-            "final_date",
-            "past_days",
-            "status",
-            "type",
-            "description",
-            "title",
-            "assigned_users",
-        ]
 
     @csrf_exempt
     def obtain_single_data(self, id):
         try:
             # Lee el archivo Excel
-            df = pd.read_excel(self.excel_path, sheet_name="data")
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
         except FileNotFoundError:
             return JsonResponse({"error": "El archivo no se encontró"}, status=404)
 
@@ -43,7 +30,7 @@ class SharePointAPI:
     @csrf_exempt
     def get_all_requests(self):
         try:
-            df = pd.read_excel(self.excel_path, sheet_name="data")
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
         except FileNotFoundError:
             return JsonResponse({"error": "El archivo no se encontró"}, status=404)
 
@@ -55,7 +42,7 @@ class SharePointAPI:
     @csrf_exempt
     def update_data(self):
         try:
-            df = pd.read_excel(self.excel_path, sheet_name="data")
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
         except FileNotFoundError:
             return JsonResponse({"error": "El archivo no se encontró"}, status=404)
 
@@ -70,23 +57,33 @@ class SharePointAPI:
             excel_file = pd.ExcelFile(self.excel_path)
 
             if "data" in excel_file.sheet_names:
-                df = pd.read_excel(
-                    self.excel_path, sheet_name="data", names=self.columns_names
-                )
+                df = pd.read_excel(self.excel_path, sheet_name="data", header=None)
+                start_row = len(df)
             else:
-                df = pd.DataFrame(columns=self.columns_names)
+                df = pd.DataFrame()
+                start_row = 0
 
-            df = df.append(data, ignore_index=True)
+            new_data = data.copy()
+            new_data["assigned_users"] = ",".join(
+                [str(user) for user in new_data["assigned_users"]]
+            )
+            new_df = pd.DataFrame([new_data])
 
+            result = pd.concat([df, new_df], ignore_index=True)
+
+            print("DataFrame antes de guardar en el archivo Excel:")
+            print(result)
+
+            # Escribir el DataFrame actualizado en el archivo Excel
             with pd.ExcelWriter(
-                self.excel_path, mode="a", if_sheet_exists="overlay"
+                self.excel_path, mode="a", if_sheet_exists="replace"
             ) as writer:
-                df.to_excel(
+                result.to_excel(
                     writer,
                     sheet_name="data",
                     index=False,
                     header=False,
-                    startrow=writer.sheets["data"].max_row,
+                    startrow=start_row,
                 )
 
             return 201
@@ -100,7 +97,7 @@ class SharePointAPI:
 
         # Actualizar el dato con el ID proporcionado
         try:
-            df = pd.read_excel(self.excel_path, sheet_name="data")
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             df.loc[df["id"] == id] = body
             df.to_excel(self.excel_path, sheet_name="data", index=False)
         except FileNotFoundError:
@@ -111,7 +108,7 @@ class SharePointAPI:
     @csrf_exempt
     def delete_data(self, id):
         try:
-            df = pd.read_excel(self.excel_path, sheet_name="data")
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             df = df[df["id"] != id]
             df.to_excel(self.excel_path, sheet_name="data", index=False)
         except FileNotFoundError:
