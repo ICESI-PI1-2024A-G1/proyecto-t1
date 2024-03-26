@@ -36,6 +36,9 @@
                                     {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
                                     {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
                                     {% include 'components/navigation_item.html' with text="Recordatorios" icon_class="fas fa-university" link="/reminders" %}
+                                    {% if request.user.is_superuser %}
+                                        {% include 'components/navigation_item.html' with text="Permisos" icon_class="fas fa-user-shield" link="/permissions" %}
+                                    {% endif %}
                                     <div class="my-2 mx-2 border-bottom border-3"></div>
                                     {% include 'components/navigation_item.html' with text="Cerrar Sesión" icon_class="fas fa-sign-out-alt" link="/logout?logout=true" %}
                                 </ul>
