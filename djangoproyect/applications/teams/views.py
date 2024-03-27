@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from .forms import TeamForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
 
 User = get_user_model()
@@ -14,6 +15,7 @@ User = get_user_model()
 ### TEAM VIEWS
 
 
+@never_cache
 @login_required
 def show_teams(request):
     if request.user.is_staff:
@@ -23,6 +25,7 @@ def show_teams(request):
     return render(request, "show-teams.html", {"teams": teams})
 
 
+@never_cache
 @login_required
 def add_team(request):
     if request.method == "GET":
@@ -37,6 +40,7 @@ def add_team(request):
             return render(request, "add-team.html", {"form": form})
 
 
+@never_cache
 @login_required
 def edit_team(request, team_id):
     team = get_object_or_404(Team, pk=team_id)
@@ -52,6 +56,7 @@ def edit_team(request, team_id):
             return render(request, "edit-team.html", {"form": form})
 
 
+@never_cache
 @login_required
 def delete_team(request, team_id):
     if request.method == "DELETE":
@@ -65,6 +70,7 @@ def delete_team(request, team_id):
 ### MEMBERS VIEWS
 
 
+@never_cache
 @login_required
 def assign_requests(request, id):
     if request.method == "GET":
