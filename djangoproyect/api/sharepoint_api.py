@@ -13,7 +13,7 @@ class SharePointAPI:
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             data = df[df["id"] == id].to_dict(orient="records")
-            if data:
+            if len(data) > 0:
                 return JsonResponse(data=data[0], status=200, safe=False)
             else:
                 raise Http404("Solicitud no encontrada.")
@@ -90,11 +90,20 @@ class SharePointAPI:
     def delete_data(self, id) -> JsonResponse:
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
+            original_rows = len(df)
             df = df[df["id"] != id]
-            df.to_excel(self.excel_path, sheet_name="data", index=False)
-            return JsonResponse(
-                {"mensaje": "Dato eliminado satisfactoriamente"}, status=200, safe=False
-            )
+            new_rows = len(df)
+            if new_rows < original_rows:
+                df.to_excel(self.excel_path, sheet_name="data", index=False)
+                return JsonResponse(
+                    {"mensaje": "Dato eliminado satisfactoriamente"},
+                    status=200,
+                    safe=False,
+                )
+            else:
+                raise Http404(
+                    "No se encontró la información asociada al ID proporcionado"
+                )
         except FileNotFoundError:
             raise Http404("El archivo no se encontró")
 
