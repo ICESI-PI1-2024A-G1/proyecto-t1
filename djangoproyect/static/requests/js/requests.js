@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $("#performSearchButton").on('click', function () {
-        var query = $("#searchBar").val() || 'None';
+        var query = $("#searchBar").val() || '';
         $.ajax({
             url: "/requests/search/" + query,
             data: { 'q': query },

@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -120,3 +120,29 @@ class SharePointAPI:
             return JsonResponse({"error": "El archivo no se encontró"}, status=404)
 
         return JsonResponse({"mensaje": "Dato eliminado satisfactoriamente"})
+
+    @csrf_exempt
+    def search_data(self, query):
+        try:
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
+
+            filtered_df = df.copy()
+            if query == "None":
+                return self.get_all_requests()
+            if isinstance(query, str):
+                query = query.lower()
+                filtered_df = filtered_df[
+                    filtered_df.apply(
+                        lambda x: x.astype(str).str.lower().str.contains(query), axis=1
+                    ).any(axis=1)
+                ]
+            else:
+                filtered_df = filtered_df[
+                    filtered_df.apply(lambda x: x == query, axis=1).any(axis=1)
+                ]
+
+            # Convertir el resultado filtrado a un diccionario de registros
+            ans = filtered_df.to_dict(orient="records")
+            return ans
+        except FileNotFoundError:
+            raise Http404("File not found")

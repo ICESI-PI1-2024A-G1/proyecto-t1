@@ -1,13 +1,10 @@
 import os
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, get_object_or_404
-from applications.requests.model.filter_logic import SearchFilter
+from django.http import Http404, JsonResponse
+from django.shortcuts import render
 from api.sharepoint_api import SharePointAPI
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from pathlib import Path
 from django.conf import settings
-import json
 
 EXCEL_FILE_PATH = os.path.join(
     settings.BASE_DIR,
@@ -52,10 +49,17 @@ def change_requests(request, id):
 
 
 def search(request, query):
-    # Realizar la búsqueda utilizando SharePointAPI
-    filtered_requests = sharepoint_api.search_request(query)
+    try:
+        results = sharepoint_api.search_data(query=query)
 
-    return JsonResponse(filtered_requests)
+        if results:
+            return JsonResponse(results, safe=False)
+        else:
+            raise Http404("Excel file not reachable")
+    except Http404 as e:
+        return JsonResponse({"error": str(e)}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": "No se pudo realizar la operación"}, status=500)
 
 
 @login_required
