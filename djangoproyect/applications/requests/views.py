@@ -70,13 +70,19 @@ def search(request, query):
 @never_cache
 @login_required
 def show_requests(request):
-    print("Logged user: " + request.user.username)
-    # Get all requests assigned to the current user
-    if request.user.is_staff:
-        requests = Requests.objects.all()
-    else:
-        requests = Requests.objects.filter(assigned_users = request.user.id)
-    return render(request, "show-requests.html", {"requests": requests})
+    try:
+        response = sharepoint_api.get_all_requests()
+        if response.status_code == 200:
+            requests_data = json.loads(response.content)
+            return render(request, "show-requests.html", {"requests": requests_data})
+        else:
+            raise Http404("No se pudieron cargar las solicitudes.")
+    except Http404 as e:
+        return JsonResponse({"error": str(e)}, status=404)
+    except Exception as e:
+        return JsonResponse(
+            {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
+        )
 
 
 @never_cache
