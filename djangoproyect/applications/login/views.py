@@ -16,6 +16,8 @@ global random_code
 # Create your views here.
 def login_view(request):
     if request.method == "GET":
+        request.session['has_logged'] = False
+        request.session['has_requested_password'] = False
         if request.user.is_authenticated and request.GET.get('logout') != 'true':
             return redirect(views.show_requests)
         else:
@@ -81,7 +83,6 @@ def verify_email_view(request):
     context = {'form_action': 'login:verifyEmail_view'}
     if request.method == "GET":
         if request.session.get('has_logged') == True:
-            request.session['has_logged'] = False
             return render(request, "verifyEmailLog.html", context)
         else:
             if (request.user.is_authenticated):
@@ -143,7 +144,6 @@ def verify_email_reset_view(request):
     context = {'form_action': 'login:verify_email_reset_view'}
     if request.method == "GET":
         if request.session.get('has_requested_password') == True:
-            request.session['has_requested_password'] = False
             return render(request, "verifyEmailLog.html", context)
         else:
             if request.user.is_authenticated:
@@ -161,7 +161,13 @@ def verify_email_reset_view(request):
 # Change password after verifying identity       
 def change_password_view(request):
     if request.method == "GET":
-        return render(request, "change_password.html")
+        if request.session.get('has_requested_password') == True:
+            return render(request, "change_password.html")
+        else:
+            if request.user.is_authenticated:
+                return redirect(views.show_requests)
+            else:
+                return redirect("login:login_view")
     else:
         password = request.POST["password"]
         confirm_password = request.POST["confirmPassword"]
