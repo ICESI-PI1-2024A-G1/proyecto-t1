@@ -201,3 +201,5 @@ djangoproyect/applications/teams/migrations/0005_merge_20240310_0950.py
 
 **/migrations/*
 !**/migrations/__init__.py
+
+.env

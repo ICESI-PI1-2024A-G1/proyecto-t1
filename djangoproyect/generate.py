@@ -1,21 +1,25 @@
 import os
 import django
 from faker import Faker
+from dotenv import load_dotenv
 
+load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
 django.setup()
 fake = Faker()
 
 import random
-from django.contrib.auth.models import User
-from applications.requests.models import Involved
+from django.contrib.auth import get_user_model
+from applications.requests.models import Involved, Requests, Traceability
 from applications.teams.models import Team
 from datetime import datetime, timedelta
 from api.sharepoint_api import SharePointAPI
 
+User = get_user_model()
 
 """
 README:
+- Add to the .env file the ADMIN_PASSWORD and ADMIN_EMAIL fields
 - Delete the current database sqlite3
 - Make migrations with 'py manage.py makemigrations' and 'py manage.py migrate' commands
 - Execute the python script with 'py generate.py shell'
@@ -33,35 +37,55 @@ EXCEL_FILE_PATH = os.path.join(
 
 sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
 
+# Create superuser
+
+if not User.objects.filter(id=0).exists():
+    admin = User.objects.create_user(
+        id=os.getenv("ADMIN_PASSWORD"),
+        username="admin",
+        email=os.getenv("ADMIN_EMAIL"),
+        password=os.getenv("ADMIN_PASSWORD"),
+        first_name="Accounting",
+        last_name="Admin",
+        is_staff=True,
+        is_superuser=True,
+        is_leader=True,
+    )
+    admin.save()
+    print(admin)
+
 
 # Create users
 users = []
 for _ in range(10):
+    id = str(random.randint(1000000, 99999999))
     first_name = fake.first_name()
     last_name = fake.last_name()
-    username = fake.user_name()
+    username = id
     email = fake.email()
-    password = fake.password()
+    password = "12345678"
     user = User.objects.create_user(
+        id=id,
         username=username,
         email=email,
         password=password,
         first_name=first_name,
         last_name=last_name,
     )
+    print(f"User created: {user.username}")
     users.append(user)
 
-# Choose one user to be staff
-staff_user = random.choice(users)
-staff_user.is_staff = True
-staff_user.save()
 
-# Create teams and add members
+# Create teams, leaders and add members
 teams = []
-for _ in range(10):
+leaders = []
+for _ in range(5):
     name = fake.company()
     description = fake.text()
     leader = random.choice(users)
+    leader.is_leader = True
+    leader.save()
+    leaders.append(leader)
     team = Team.objects.create(name=name, description=description, leader=leader)
 
     # Seleccionar miembros para el equipo (excluyendo al líder)
@@ -82,7 +106,7 @@ for _ in range(1):
     involved.append(inv)
 
 # Create Requests and Traceability
-for i in range(2):
+for i in range(10):
     document = fake.file_name()
     applicant = random.choice(users)
     manager = random.choice(users)
@@ -91,9 +115,35 @@ for i in range(2):
     past_days = (datetime.now().date() - initial_date).days
     description = fake.text()
     title = fake.name()
-    status = random.choice(["Pending", "Approved", "Rejected"])
+    status = random.choice(
+        [
+            "EN PROCESO",
+            "APROBADO - CENCO",
+            "RECHAZADO - CENCO",
+            "APROBADO - DECANO",
+            "RECHAZADO - DECANO",
+            "PAGADO - CONTABILIDAD",
+            "RECHAZADO - CONTABILIDAD",
+            "CERRADO",
+        ]
+    )
     req_type = random.choice(["Type 1", "Type 2", "Type 3"])
-    assigned_users = random.sample(users, random.randint(1, 3))
+
+    request = Requests.objects.create(
+        document=document,
+        applicant=applicant.username,
+        manager=manager.username,
+        initial_date=initial_date,
+        final_date=final_date,
+        past_days=past_days,
+        status=status,
+        type=req_type,
+        description=description,
+        title=title,
+    )
+
+    assigned_users = random.sample(leaders, random.randint(1, 3))
+    request.assigned_users.add(*assigned_users)
 
     data = {
         "document": document,
@@ -109,10 +159,9 @@ for i in range(2):
         "assigned_users": assigned_users,
     }
 
-    print(data)
     status_code = sharepoint_api.create_data(data)
     if status_code == 201:
-        print("Working")
+        print("Created request for applicant: " + applicant.username)
     else:
         print(f"Error")
 

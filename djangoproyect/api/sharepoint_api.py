@@ -9,23 +9,14 @@ class SharePointAPI:
         self.excel_path = excel_path
 
     @csrf_exempt
-    def obtain_single_data(self, id):
+    def get_request_by_id(self, id):
         try:
-            # Lee el archivo Excel
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
         except FileNotFoundError:
             return JsonResponse({"error": "El archivo no se encontró"}, status=404)
 
-        # Encuentra el dato con el ID proporcionado
         data = df[df["id"] == id].to_dict(orient="records")
-
-        if not data:
-            return JsonResponse(
-                {"error": "No se encontró el dato con el ID proporcionado"},
-                status=404,
-            )
-
-        return JsonResponse(data[0], safe=False)
+        return data[0]
 
     @csrf_exempt
     def get_all_requests(self):
@@ -33,11 +24,8 @@ class SharePointAPI:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
         except FileNotFoundError:
             return JsonResponse({"error": "El archivo no se encontró"}, status=404)
-
-        # Convierte los datos a formato JSON
         data = df.to_dict(orient="records")
-
-        return JsonResponse(data, safe=False)
+        return data
 
     @csrf_exempt
     def update_data(self):
@@ -57,7 +45,7 @@ class SharePointAPI:
             excel_file = pd.ExcelFile(self.excel_path)
 
             if "data" in excel_file.sheet_names:
-                df = pd.read_excel(self.excel_path, sheet_name="data", header=None)
+                df = pd.read_excel(self.excel_path, sheet_name="data")
                 start_row = len(df)
             else:
                 df = pd.DataFrame()
@@ -67,24 +55,36 @@ class SharePointAPI:
             new_data["assigned_users"] = ",".join(
                 [str(user) for user in new_data["assigned_users"]]
             )
+
+            new_data["id"] = start_row + 1
+
             new_df = pd.DataFrame([new_data])
 
             result = pd.concat([df, new_df], ignore_index=True)
 
-            print("DataFrame antes de guardar en el archivo Excel:")
-            print(result)
+            # print("DataFrame antes de guardar en el archivo Excel:")
+            # print(result)
 
             # Escribir el DataFrame actualizado en el archivo Excel
-            with pd.ExcelWriter(
-                self.excel_path, mode="a", if_sheet_exists="replace"
-            ) as writer:
-                result.to_excel(
-                    writer,
-                    sheet_name="data",
-                    index=False,
-                    header=False,
-                    startrow=start_row,
-                )
+            result.to_excel(
+                self.excel_path,
+                sheet_name="data",
+                index=False,
+                columns=[
+                    "id",  # Agregar el ID como la primera columna
+                    "document",
+                    "applicant",
+                    "manager",
+                    "initial_date",
+                    "final_date",
+                    "past_days",
+                    "description",
+                    "title",
+                    "status",
+                    "req_type",
+                    "assigned_users",
+                ],
+            )
 
             return 201
         except Exception as e:
@@ -92,14 +92,19 @@ class SharePointAPI:
             return 500
 
     @csrf_exempt
-    def update_data(self, new_data, id):
-        body = json.loads(new_data)
+    def update_data(self, id, new_data):
 
         # Actualizar el dato con el ID proporcionado
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
-            df.loc[df["id"] == id] = body
-            df.to_excel(self.excel_path, sheet_name="data", index=False)
+            # Buscar la fila con el ID proporcionado y actualizar sus valores
+            mask = df["id"] == id
+            if not df[mask].empty:
+                for column_name, new_value in new_data.items():
+                    df.loc[mask, column_name] = new_value
+
+                df.to_excel(self.excel_path, sheet_name="data", index=False)
+                return JsonResponse({"mensaje": "Dato actualizado satisfactoriamente"})
         except FileNotFoundError:
             return JsonResponse({"error": "El archivo no se encontró"}, status=404)
 

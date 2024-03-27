@@ -11,7 +11,11 @@ class TeamForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control"}),
             "leader": forms.Select(attrs={"class": "form-control"}),
-            "members": forms.SelectMultiple(
-                attrs={"class": "form-control", "size": "5", "style": "height: 100px;"}
-            ),
+            "members": forms.CheckboxSelectMultiple(),
+        }
+        labels = {
+            "name": "Nombre",
+            "description": "Descripción",
+            "leader": "Líder",
+            "members": "Miembros",
         }

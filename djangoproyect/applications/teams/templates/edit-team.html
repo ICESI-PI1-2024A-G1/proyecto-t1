@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+Cambiar líder de equipo
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="btn btn-primary">Guardar selección <i class="fa fa-save"></i></button>
+        <a href="/teams/" class="btn btn-danger">Cancelar <i class="fa fa-times"></i></a>
+    </form>
+</div>
+
+{% endblock %}

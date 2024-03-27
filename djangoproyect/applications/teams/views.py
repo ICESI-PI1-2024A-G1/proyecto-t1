@@ -1,72 +1,29 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-
 from applications.requests.models import Requests
 from .models import Team
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from .forms import TeamForm
+from django.contrib.auth.decorators import login_required
 
 
-# Create your views here.
+User = get_user_model()
+
+
+### TEAM VIEWS
+
+
+@login_required
 def show_teams(request):
-    teams = Team.objects.all()
+    if request.user.is_staff:
+        teams = Team.objects.all()
+    else:
+        teams = Team.objects.filter(leader_id=request.user.id)
     return render(request, "show-teams.html", {"teams": teams})
 
 
-def delete_member(request, team_id, member_id):
-    team = Team.objects.get(id=team_id)
-    team.members.remove(member_id)
-    team.save()
-    return JsonResponse(
-        {"message": f"El miembro {member_id} ha sido eliminado correctamente"}
-    )
-
-
-def add_member(request, team_id):
-    if request.method == "GET":
-        team = get_object_or_404(Team, id=team_id)
-        users = User.objects.exclude(id__in=team.members.all()).exclude(
-            id=team.leader.id
-        )
-        users_data = [
-            {
-                "id": user.id,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "username": user.username,
-            }
-            for user in users
-        ]
-
-        return JsonResponse(users_data, safe=False)
-    elif request.method == "POST":
-        team = get_object_or_404(Team, id=team_id)
-        selected_users_ids = [
-            int(user_id) for user_id in request.POST.getlist("users[]")
-        ]
-        team.members.add(*selected_users_ids)
-        team.save()
-
-        new_members = User.objects.filter(id__in=selected_users_ids)
-        new_members_data = [
-            {
-                "id": user.id,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "username": user.username,
-            }
-            for user in new_members
-        ]
-
-        return JsonResponse(
-            {
-                "message": "Miembros añadidos con éxito al equipo.",
-                "users": new_members_data,
-            }
-        )
-
-
+@login_required
 def add_team(request):
     if request.method == "GET":
         form = TeamForm()
@@ -74,12 +31,28 @@ def add_team(request):
     elif request.method == "POST":
         form = TeamForm(request.POST)
         if form.is_valid():
-            team = form.save()
-            return redirect("/teams")
+            form.save()
+            return redirect("/teams/")
         else:
             return render(request, "add-team.html", {"form": form})
 
 
+@login_required
+def edit_team(request, team_id):
+    team = get_object_or_404(Team, pk=team_id)
+    form = TeamForm(instance=team)
+    if request.method == "GET":
+        return render(request, "edit-team.html", {"form": form})
+    elif request.method == "POST":
+        form = TeamForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("/teams/")
+        else:
+            return render(request, "edit-team.html", {"form": form})
+
+
+@login_required
 def delete_team(request, team_id):
     if request.method == "DELETE":
         team = get_object_or_404(Team, id=team_id)
@@ -89,12 +62,14 @@ def delete_team(request, team_id):
         )
 
 
-def member_details(request, id):
+### MEMBERS VIEWS
+
+
+@login_required
+def assign_requests(request, id):
     if request.method == "GET":
         member = get_object_or_404(User, pk=id)
-        member_requests = (
-            member.requests.all()
-        )  # Obtener las solicitudes asociadas al miembro
+        member_requests = member.requests.all()
         all_requests = Requests.objects.all()
         for r in all_requests:
             if r in member_requests:
@@ -102,7 +77,7 @@ def member_details(request, id):
 
         return render(
             request,
-            "member-details.html",
+            "assign-requests.html",
             {
                 "member": member,
                 "member_requests": member_requests,
@@ -110,9 +85,7 @@ def member_details(request, id):
             },
         )
 
-
-def assign_requests(request, id):
-    if request.method == "POST":
+    elif request.method == "POST":
         user = get_object_or_404(User, id=id)
 
         request_list = request.POST.getlist("requests[]")
