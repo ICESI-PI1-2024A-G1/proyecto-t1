@@ -9,69 +9,45 @@ class SharePointAPI:
         self.excel_path = excel_path
 
     @csrf_exempt
-    def get_request_by_id(self, id):
+    def get_request_by_id(self, id) -> JsonResponse:
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
+            data = df[df["id"] == id].to_dict(orient="records")
+            if data:
+                return JsonResponse(data=data[0], status=200, safe=False)
+            else:
+                raise Http404("Solicitud no encontrada.")
         except FileNotFoundError:
-            return JsonResponse({"error": "El archivo no se encontró"}, status=404)
-
-        data = df[df["id"] == id].to_dict(orient="records")
-        return data[0]
+            raise Http404("El archivo no se encontró")
 
     @csrf_exempt
-    def get_all_requests(self):
+    def get_all_requests(self) -> JsonResponse:
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
+            data = df.to_dict(orient="records")
+            return JsonResponse(data, status=200, safe=False)
         except FileNotFoundError:
-            return JsonResponse({"error": "El archivo no se encontró"}, status=404)
-        data = df.to_dict(orient="records")
-        return data
+            raise Http404("El archivo no se encontró")
 
     @csrf_exempt
-    def update_data(self):
-        try:
-            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
-        except FileNotFoundError:
-            return JsonResponse({"error": "El archivo no se encontró"}, status=404)
-
-        # Convierte los datos a formato JSON
-        data = df.to_dict(orient="records")
-
-        return JsonResponse(data, safe=False)
-
-    @csrf_exempt
-    def create_data(self, data):
+    def create_data(self, data) -> JsonResponse:
         try:
             excel_file = pd.ExcelFile(self.excel_path)
-
-            if "data" in excel_file.sheet_names:
-                df = pd.read_excel(self.excel_path, sheet_name="data")
-                start_row = len(df)
-            else:
-                df = pd.DataFrame()
-                start_row = 0
-
+            df = pd.read_excel(self.excel_path, sheet_name="data")
+            start_row = len(df)
             new_data = data.copy()
             new_data["assigned_users"] = ",".join(
                 [str(user) for user in new_data["assigned_users"]]
             )
-
             new_data["id"] = start_row + 1
-
             new_df = pd.DataFrame([new_data])
-
             result = pd.concat([df, new_df], ignore_index=True)
-
-            # print("DataFrame antes de guardar en el archivo Excel:")
-            # print(result)
-
-            # Escribir el DataFrame actualizado en el archivo Excel
             result.to_excel(
                 self.excel_path,
                 sheet_name="data",
                 index=False,
                 columns=[
-                    "id",  # Agregar el ID como la primera columna
+                    "id",
                     "document",
                     "applicant",
                     "manager",
@@ -85,47 +61,47 @@ class SharePointAPI:
                     "assigned_users",
                 ],
             )
-
-            return 201
+            return JsonResponse(
+                {"mensaje": "Información creada correctamente"}, status=201, safe=False
+            )
         except Exception as e:
-            print(f"Error: {e}")
-            return 500
+            raise Http404("No se pudo crear la solicitud.")
 
     @csrf_exempt
-    def update_data(self, id, new_data):
-
-        # Actualizar el dato con el ID proporcionado
+    def update_data(self, id, new_data) -> JsonResponse:
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
-            # Buscar la fila con el ID proporcionado y actualizar sus valores
             mask = df["id"] == id
             if not df[mask].empty:
                 for column_name, new_value in new_data.items():
                     df.loc[mask, column_name] = new_value
-
                 df.to_excel(self.excel_path, sheet_name="data", index=False)
-                return JsonResponse({"mensaje": "Dato actualizado satisfactoriamente"})
+                return JsonResponse(
+                    {"mensaje": "Dato actualizado satisfactoriamente"},
+                    status=200,
+                    safe=False,
+                )
+            else:
+                raise Http404("Solicitud no encontrada.")
         except FileNotFoundError:
-            return JsonResponse({"error": "El archivo no se encontró"}, status=404)
-
-        return JsonResponse({"mensaje": "Dato actualizado satisfactoriamente"})
+            raise Http404("El archivo no se encontró")
 
     @csrf_exempt
-    def delete_data(self, id):
+    def delete_data(self, id) -> JsonResponse:
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             df = df[df["id"] != id]
             df.to_excel(self.excel_path, sheet_name="data", index=False)
+            return JsonResponse(
+                {"mensaje": "Dato eliminado satisfactoriamente"}, status=200, safe=False
+            )
         except FileNotFoundError:
-            return JsonResponse({"error": "El archivo no se encontró"}, status=404)
-
-        return JsonResponse({"mensaje": "Dato eliminado satisfactoriamente"})
+            raise Http404("El archivo no se encontró")
 
     @csrf_exempt
-    def search_data(self, query):
+    def search_data(self, query) -> JsonResponse:
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
-
             filtered_df = df.copy()
             if query == "None":
                 return self.get_all_requests()
@@ -140,9 +116,7 @@ class SharePointAPI:
                 filtered_df = filtered_df[
                     filtered_df.apply(lambda x: x == query, axis=1).any(axis=1)
                 ]
-
-            # Convertir el resultado filtrado a un diccionario de registros
             ans = filtered_df.to_dict(orient="records")
-            return ans
+            return JsonResponse(ans, status=200, safe=False)
         except FileNotFoundError:
-            raise Http404("File not found")
+            raise Http404("El archivo no se encontró")

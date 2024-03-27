@@ -1,3 +1,4 @@
+import json
 import os
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
@@ -19,32 +20,33 @@ sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
 
 @csrf_exempt
 def change_requests(request, id):
-    if request.method == "POST":
-        # Obtener la solicitud por su ID desde SharePointAPI
-        curr_request = sharepoint_api.get_request_by_id(id)
-        print(curr_request)
-        if curr_request:
-            # Obtener el nuevo estado de los datos POST
-            new_status = request.POST.get("newStatus")
-            curr_request["status"] = new_status
-            # Actualizar el estado de la solicitud en SharePointAPI
-            sharepoint_api.update_data(id, curr_request)
-
-            # Devolver una respuesta exitosa
-            return JsonResponse(
-                {
-                    "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
-                }
-            )
-        else:
-            return JsonResponse(
-                {"error": f"No se encontró la solicitud con ID {id} en SharePointAPI."},
-                status=404,
-            )
-    else:
-        # If the request is not POST, return an error
+    if request.method != "POST":
         return JsonResponse(
             {"error": "This view only accepts POST requests."}, status=400
+        )
+
+    try:
+        curr_request = sharepoint_api.get_request_by_id(id)
+        if curr_request.status_code == 200:
+            new_status = request.POST.get("newStatus")
+            curr_request_data = json.loads(curr_request.content)
+            curr_request_data["status"] = new_status
+            response = sharepoint_api.update_data(id, curr_request_data)
+            if response.status_code == 200:
+                return JsonResponse(
+                    {
+                        "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
+                    }
+                )
+            else:
+                raise Http404("No se pudo actualizar la solicitud.")
+        else:
+            raise Http404(f"No se encontró la solicitud con ID {id} en SharePointAPI.")
+    except Http404 as e:
+        return JsonResponse({"error": str(e)}, status=404)
+    except Exception as e:
+        return JsonResponse(
+            {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
         )
 
 
@@ -52,32 +54,48 @@ def search(request, query):
     try:
         results = sharepoint_api.search_data(query=query)
 
-        if results:
-            return JsonResponse(results, safe=False)
+        if results.status_code == 200:
+            return JsonResponse(json.loads(results.content), safe=False)
         else:
-            raise Http404("Excel file not reachable")
+            raise Http404("El archivo Excel no está disponible")
     except Http404 as e:
         return JsonResponse({"error": str(e)}, status=404)
     except Exception as e:
-        return JsonResponse({"error": "No se pudo realizar la operación"}, status=500)
+        return JsonResponse(
+            {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
+        )
 
 
 @login_required
 def show_requests(request):
-    # Obtener todas las solicitudes desde SharePointAPI
-    requests = sharepoint_api.get_all_requests()
-    return render(request, "show-requests.html", {"requests": requests})
+    try:
+        response = sharepoint_api.get_all_requests()
+        if response.status_code == 200:
+            requests_data = json.loads(response.content)
+            return render(request, "show-requests.html", {"requests": requests_data})
+        else:
+            raise Http404("No se pudieron cargar las solicitudes.")
+    except Http404 as e:
+        return JsonResponse({"error": str(e)}, status=404)
+    except Exception as e:
+        return JsonResponse(
+            {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
+        )
 
 
 @login_required
 def detail_request(request, id):
-    # Obtener los detalles de una solicitud por su ID desde SharePointAPI
-    detail = sharepoint_api.get_request_by_id(id)
-
-    if detail:
-        return render(request, "request-detail.html", {"request": detail})
-    else:
+    try:
+        detail = sharepoint_api.get_request_by_id(id)
+        if detail.status_code == 200:
+            return render(
+                request, "request-detail.html", {"request": json.loads(detail.content)}
+            )
+        else:
+            raise Http404(f"No se encontró la solicitud con ID {id} en SharePointAPI.")
+    except Http404 as e:
+        return JsonResponse({"error": str(e)}, status=404)
+    except Exception as e:
         return JsonResponse(
-            {"error": f"No se encontró la solicitud con ID {id} en SharePointAPI."},
-            status=404,
+            {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
         )
