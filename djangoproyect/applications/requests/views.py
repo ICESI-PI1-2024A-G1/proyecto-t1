@@ -99,3 +99,7 @@ def detail_request(request, id):
         return JsonResponse(
             {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
         )
+
+
+def show_traceability(request, request_id):
+    pass

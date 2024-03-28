@@ -25,6 +25,13 @@ class Requests(models.Model):
 
 
 class Traceability(models.Model):
-    involved = models.ForeignKey(Involved, on_delete=models.CASCADE)
-    request = models.ForeignKey(Requests, on_delete=models.CASCADE)
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="modifier",
+        default=None,
+    )
+    request = models.CharField(max_length=10)
     date = models.DateField()
+    prevState = models.CharField(max_length=50, null=True)
+    newState = models.CharField(max_length=50, default=None)

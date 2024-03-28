@@ -1,5 +1,7 @@
+import json
 import os
 import django
+from django.conf import settings
 from faker import Faker
 from dotenv import load_dotenv
 
@@ -10,7 +12,7 @@ fake = Faker()
 
 import random
 from django.contrib.auth import get_user_model
-from applications.requests.models import Involved, Requests, Traceability
+from applications.requests.models import Involved, Traceability
 from applications.teams.models import Team
 from datetime import datetime, timedelta
 from api.sharepoint_api import SharePointAPI
@@ -146,8 +148,15 @@ for i in range(10):
 
     sharepoint_api.create_data(data)
 
-    # traceability = Traceability.objects.create(
-    #     involved=random.choice(involved),
-    #     request=sharepoint_api.obtain_single_data(1),
-    #     date=fake.date_time_between(start_date="-30d", end_date="+3d"),
-    # )
+t_request = sharepoint_api.get_all_requests()
+t_request = json.loads(t_request.content)
+for i in range(10):
+    user = User.objects.first()
+    temp_r = t_request.pop(random.randint(0, len(t_request) - 1))
+    new_id = temp_r["id"]
+    traceability = Traceability.objects.create(
+        modified_by=user,
+        request=fake.word(),
+        date=fake.date_time_between(start_date="-30d", end_date="+3d"),
+        newState=temp_r["status"],
+    )
