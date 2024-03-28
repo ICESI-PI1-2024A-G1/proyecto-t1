@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.contrib.auth import get_user_model
+import utils.utils as utils
 
 from applications.teams.models import Team
 
@@ -33,7 +34,17 @@ def change_status(request, id):
             if curr_request.status_code == 200:
                 new_status = request.POST.get("newStatus")
                 curr_request_data = json.loads(curr_request.content)
+                prev_status = curr_request_data["status"]
                 curr_request_data["status"] = new_status
+                team_id = curr_request_data["team"]
+                team = get_object_or_404(Team, pk=team_id)
+                utils.send_verification_email(
+                    request,
+                    f"Actualización del estado de la solicitud {curr_request_data["id"]}",
+                    "Notificación Vía Sistema de Contabilidad | Universidad Icesi",
+                    team.leader.email,
+                    f"Hola, como miembro del equipo {team.name}, el miembro identificado como {request.user} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}",
+                )
                 response = sharepoint_api.update_data(id, curr_request_data)
                 if response.status_code == 200:
                     return JsonResponse(
@@ -127,7 +138,17 @@ def assign_request(request, request_id):
             user_id = request.POST["user_id"]
             manager = get_object_or_404(User, pk=user_id)
             curr_request["manager"] = manager
+            teams = Team.objects.filter(leader=request.user)
+            team = len(teams) if teams[0].id else ""
+            curr_request["team"] = team
             sharepoint_api.update_data(request_id, curr_request)
+            utils.send_verification_email(
+                request,
+                "Solicitud Asignada",
+                "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                manager.email,
+                f"Hola, como miembro del equipo {teams[0].name}, el líder {manager.first_name} {manager.last_name} le ha asignado una nueva solicitud en el Sistema de Contabilidad",
+            )
         except Exception as e:
             print(e)
         return redirect("/requests/")

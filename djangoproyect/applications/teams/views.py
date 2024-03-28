@@ -44,7 +44,7 @@ def edit_team(request, team_id):
     if request.method == "GET":
         return render(request, "edit-team.html", {"form": form})
     elif request.method == "POST":
-        form = TeamForm(request.POST)
+        form = TeamForm(request.POST, instance=team)
         if form.is_valid():
             form.save()
             return redirect("/teams/")
@@ -60,3 +60,11 @@ def delete_team(request, team_id):
         return JsonResponse(
             {"message": f"El equipo {team_id} ha sido eliminado correctamente"}
         )
+
+
+@login_required
+def show_members(request, id):
+    if request.method == "GET":
+        team = get_object_or_404(Team, pk=id)
+        members = team.members.all()
+        return render(request, "show-members.html", {"members": members})

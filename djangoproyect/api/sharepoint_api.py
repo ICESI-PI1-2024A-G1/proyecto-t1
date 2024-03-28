@@ -12,6 +12,7 @@ class SharePointAPI:
             "id",
             "status",
             "manager",
+            "team",
             "initial_date",
             "final_date",
             "fullname",

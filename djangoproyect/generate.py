@@ -124,6 +124,7 @@ for i in range(10):
     data = {
         "status": random.choice(status_options),
         "manager": random.choice(users),
+        "team": random.choice(teams).id,
         "initial_date": initial_date.strftime("%d-%m-%Y"),
         "final_date": final_date.strftime("%d-%m-%Y"),
         "fullname": fake.name(),

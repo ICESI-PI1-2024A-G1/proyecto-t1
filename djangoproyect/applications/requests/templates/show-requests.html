@@ -21,6 +21,7 @@
                     <th>Solicitante</th>
                     <th>Motivo</th>
                     <th>Gestor</th>
+                    <th>Equipo</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -33,6 +34,7 @@
                     <td>{{ request.fullname }}</td>
                     <td>{{ request.reason }}</td>
                     <td>{{ request.manager }}</td>
+                    <td>{{ request.team  }}</td>
                     <td>
                         <p id="status_{{ request.id }}">{{ request.status }}</p>
                     </td>
