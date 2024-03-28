@@ -31,8 +31,11 @@ README:
 """
 
 EXCEL_FILE_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "djangoproyect/static/requests/emulation/requests_database.xlsx",
+    settings.BASE_DIR,
+    "static",
+    "requests",
+    "emulation",
+    "requests_database.xlsx",
 )
 
 # print(EXCEL_FILE_PATH)
