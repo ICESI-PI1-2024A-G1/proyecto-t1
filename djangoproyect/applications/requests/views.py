@@ -159,6 +159,5 @@ def assign_request(request, request_id):
         return redirect("/requests/")
     
 def show_traceability(request, request_id):
-    # How traceability is linked to a request
     traceability = Traceability.objects.get(request=request_id)
     return render(request, "show-traceability.html", {"trace":traceability})
