@@ -5,8 +5,31 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 class SharePointAPI:
+
     def __init__(self, excel_path) -> None:
         self.excel_path = excel_path
+        self.request_columns = [
+            "id",
+            "status",
+            "manager",
+            "team",
+            "initial_date",
+            "final_date",
+            "fullname",
+            "faculty",
+            "document",
+            "phone_number",
+            "email",
+            "CENCO",
+            "reason",
+            "bank",
+            "account_type",
+            "health_provider",
+            "pension_fund",
+            "arl",
+            "contract_value",
+            "is_one_time_payment",
+        ]
 
     @csrf_exempt
     def get_request_by_id(self, id) -> JsonResponse:
@@ -36,9 +59,6 @@ class SharePointAPI:
             df = pd.read_excel(self.excel_path, sheet_name="data")
             start_row = len(df)
             new_data = data.copy()
-            new_data["assigned_users"] = ",".join(
-                [str(user) for user in new_data["assigned_users"]]
-            )
             new_data["id"] = start_row + 1
             new_df = pd.DataFrame([new_data])
             result = pd.concat([df, new_df], ignore_index=True)
@@ -46,20 +66,7 @@ class SharePointAPI:
                 self.excel_path,
                 sheet_name="data",
                 index=False,
-                columns=[
-                    "id",
-                    "document",
-                    "applicant",
-                    "manager",
-                    "initial_date",
-                    "final_date",
-                    "past_days",
-                    "description",
-                    "title",
-                    "status",
-                    "req_type",
-                    "assigned_users",
-                ],
+                columns=self.request_columns,
             )
             return JsonResponse(
                 {"mensaje": "Información creada correctamente"}, status=201, safe=False

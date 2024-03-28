@@ -48,7 +48,7 @@ def edit_team(request, team_id):
     if request.method == "GET":
         return render(request, "edit-team.html", {"form": form})
     elif request.method == "POST":
-        form = TeamForm(request.POST)
+        form = TeamForm(request.POST, instance=team)
         if form.is_valid():
             form.save()
             return redirect("/teams/")
@@ -72,40 +72,8 @@ def delete_team(request, team_id):
 
 @never_cache
 @login_required
-def assign_requests(request, id):
+def show_members(request, id):
     if request.method == "GET":
-        member = get_object_or_404(User, pk=id)
-        member_requests = member.requests.all()
-        all_requests = Requests.objects.all()
-        for r in all_requests:
-            if r in member_requests:
-                r.active = True
-
-        return render(
-            request,
-            "assign-requests.html",
-            {
-                "member": member,
-                "member_requests": member_requests,
-                "all_requests": all_requests,
-            },
-        )
-
-    elif request.method == "POST":
-        user = get_object_or_404(User, id=id)
-
-        request_list = request.POST.getlist("requests[]")
-        request_ids = [int(r) for r in request_list]
-        all_requests = Requests.objects.all()
-        print(request_ids)
-        for request in all_requests:
-            if request.id in request_ids:
-                request.assigned_users.add(user)
-                print("add")
-                print(request.id)
-            else:
-                request.assigned_users.remove(user)
-                print("remove")
-                print(request.id)
-            request.save()
-        return JsonResponse({"success": True})
+        team = get_object_or_404(Team, pk=id)
+        members = team.members.all()
+        return render(request, "show-members.html", {"members": members})

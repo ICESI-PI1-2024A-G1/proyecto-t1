@@ -19,7 +19,9 @@ Equipos
         <table id="teamsTable" class="table table-bordered">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Nombre</th>
+                    <th>Líder</th>
                     <th>Descripción</th>
                     <th>Fecha de Creación</th>
                     <th>Acciones</th>
@@ -29,7 +31,13 @@ Equipos
                 {% for team in teams %}
                 <tr>
                     <td>
+                        {{ team.id }}
+                    </td>
+                    <td>
                         {{ team.name }}
+                    </td>
+                    <td>
+                        {{ team.leader }}
                     </td>
                     <td>
                         {{ team.description }}
@@ -42,6 +50,8 @@ Equipos
                                 class="fa fa-trash"></i></a>
                         <a href="/teams/edit-team/{{team.id}}/" class="my-2 btn-sm btn text-secondary">Editar<i
                                 class="fa fa-edit"></i></a>
+                        <button onclick="showModal('Miembros del equipo {{team.name}}', '/teams/show-members/{{team.id}}')" class="btn text-primary">Miembros <i class="fa fa-users"></i></button>
+
                     </td>
                 </tr>
                 {% endfor %}

@@ -112,41 +112,40 @@ for _ in range(1):
 
 # Create Requests and Traceability
 for i in range(10):
-    document = fake.file_name()
-    applicant = random.choice(users)
-    manager = random.choice(users)
+
+    status_options = [
+        "EN PROCESO",
+        "APROBADO - CENCO",
+        "RECHAZADO - CENCO",
+        "APROBADO - DECANO",
+        "RECHAZADO - DECANO",
+        "PAGADO - CONTABILIDAD",
+        "RECHAZADO - CONTABILIDAD",
+        "CERRADO",
+    ]
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
     final_date = initial_date + timedelta(days=random.randint(1, 30))
-    past_days = (datetime.now().date() - initial_date).days
-    description = fake.text()
-    title = fake.name()
-    status = random.choice(
-        [
-            "EN PROCESO",
-            "APROBADO - CENCO",
-            "RECHAZADO - CENCO",
-            "APROBADO - DECANO",
-            "RECHAZADO - DECANO",
-            "PAGADO - CONTABILIDAD",
-            "RECHAZADO - CONTABILIDAD",
-            "CERRADO",
-        ]
-    )
-    req_type = random.choice(["Type 1", "Type 2", "Type 3"])
-    assigned_users = random.sample(leaders, random.randint(1, 3))
 
     data = {
-        "document": document,
-        "applicant": applicant,
-        "manager": manager,
-        "initial_date": initial_date,
-        "final_date": final_date,
-        "past_days": past_days,
-        "description": description,
-        "title": title,
-        "status": status,
-        "req_type": req_type,
-        "assigned_users": assigned_users,
+        "status": random.choice(status_options),
+        "manager": random.choice(users),
+        "team": random.choice(teams).id,
+        "initial_date": initial_date.strftime("%d-%m-%Y"),
+        "final_date": final_date.strftime("%d-%m-%Y"),
+        "fullname": fake.name(),
+        "faculty": fake.company(),
+        "document": fake.random_number(digits=10),
+        "phone_number": fake.phone_number(),
+        "email": fake.email(),
+        "CENCO": fake.word(),
+        "reason": fake.text(),
+        "bank": fake.company(),
+        "account_type": random.choice(["Ahorros", "Corriente"]),
+        "health_provider": fake.company(),
+        "pension_fund": fake.company(),
+        "arl": fake.company(),
+        "contract_value": fake.random_number(digits=7),
+        "is_one_time_payment": random.choice([True, False]),
     }
 
     sharepoint_api.create_data(data)

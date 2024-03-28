@@ -48,9 +48,9 @@
                 </nav>
             </div>
             <main role="main" class="col-lg-8 ml-sm-auto px-4 content">
-                <!-- Tu contenido va aquí -->
                 {% block content %}
                 {% endblock %}
+                {% include 'components/modal.html' %}
             </main>
         </div>
         
@@ -62,6 +62,13 @@
         $(this).removeClass("btn-light text-dark").addClass("btn-primary text-white");
     });
     });
+    const showModal = (title, url) => {
+        $.get(url, function (data) {
+            $('#detailsContent').html(data);
+            $('#detailsModal').modal('show');
+            $('#detailsModalLabel').text(title);
+        });
+    }
     </script>
     </body>
 
