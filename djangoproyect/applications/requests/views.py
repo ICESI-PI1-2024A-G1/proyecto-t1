@@ -41,7 +41,7 @@ def change_status(request, id):
                 utils.send_verification_email(
                     request,
                     f"Actualización del estado de la solicitud {curr_request_data["id"]}",
-                    "Notificación Vía Sistema de Contabilidad | Universidad Icesi",
+                    "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
                     team.leader.email,
                     f"Hola, como miembro del equipo {team.name}, el miembro identificado como {request.user} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}",
                 )
@@ -61,6 +61,7 @@ def change_status(request, id):
         except Http404 as e:
             return JsonResponse({"error": str(e)}, status=404)
         except Exception as e:
+            print(e)
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
             )
