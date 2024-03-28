@@ -5,6 +5,7 @@ from django.shortcuts import render
 from api.sharepoint_api import SharePointAPI
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.conf import settings
 
 EXCEL_FILE_PATH = os.path.join(
@@ -66,6 +67,7 @@ def search(request, query):
         )
 
 
+@never_cache
 @login_required
 def show_requests(request):
     try:
@@ -83,6 +85,7 @@ def show_requests(request):
         )
 
 
+@never_cache
 @login_required
 def detail_request(request, id):
     try:
