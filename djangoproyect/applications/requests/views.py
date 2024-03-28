@@ -1,6 +1,6 @@
 import json
 import os
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from api.sharepoint_api import SharePointAPI
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from applications.requests.models import Traceability
 import utils.utils as utils
 
 from applications.teams.models import Team
@@ -156,3 +157,8 @@ def assign_request(request, request_id):
         except Exception as e:
             print(e)
         return redirect("/requests/")
+    
+def show_traceability(request, request_id):
+    # How traceability is linked to a request
+    traceability = Traceability.objects.get(request=request_id)
+    return render(request, "show-traceability.html", {"trace":traceability})

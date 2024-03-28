@@ -158,7 +158,7 @@ for i in range(10):
     new_id = temp_r["id"]
     traceability = Traceability.objects.create(
         modified_by=user,
-        request=fake.word(),
+        request=new_id,
         date=fake.date_time_between(start_date="-30d", end_date="+3d"),
         newState=temp_r["status"],
     )

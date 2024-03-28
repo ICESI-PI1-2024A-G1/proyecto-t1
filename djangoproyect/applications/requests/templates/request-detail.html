@@ -1,8 +1,12 @@
 {% load bootstrap5 %}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
-
 <div class="container">
+    <button onclick="showModal('Trazabilidad', '/requests/show-traceability/{{ request.id }}')"
+            class="btn details-btn text-primary">
+        <i class="fa fa-eye"></i>
+        Mostrar estado anterior
+    </button>
     <table class="table table-striped">
         <tbody>
             <tr>
