@@ -86,25 +86,28 @@
                     <div class="card-body">
                         <form action="/" method="POST">
                             {% csrf_token %}
-                            <div class="input-container">
-                                <input type="text" class="form-control" id="usuario" name="usuario"
-                                    placeholder="Ingresa tu usuario" required>
-                                <i class="fa fa-user icon"></i>
-                            </div>
-                            <div class="input-container">
-                                <input type="password" class="form-control" id="contrasena" name="contrasena"
-                                    placeholder="Ingresa tu contraseña" required>
-                                <i class="fa fa-lock icon"></i>
+                            <div class="form-group">
+                                <div class="input-container">
+                                    <input type="text" class="form-control" id="usuario" name="usuario"
+                                        placeholder="Ingresa tu usuario" required>
+                                    <i class="fa fa-user icon"></i>
+                                </div>
+                                <div class="input-container">
+                                    <input type="password" class="form-control" id="contrasena" name="contrasena"
+                                        placeholder="Ingresa tu contraseña" required>
+                                    <i class="fa fa-lock icon"></i>
+                                </div>
                             </div>
                             <div class="card-body text-center">
                                 <form>
-                                    <button type="submit" class="btn btn-primary">INICIAR SESIÓN</button>
+                                    <button type="submit" class="btn btn-primary mt-2">INICIAR SESIÓN</button>
                                 </form>
                             </div>
                         </form>
                     </div>
-                    <div class="text-center">
+                    <div class="d-flex flex-column align-items-center">
                         <a href="{% url 'registration:register_view' %}" class="btn btn-link text-primary text-decoration-underline">Registrarse</a>
+                        <a href="{% url 'login:reset_password_view' %}" class="btn btn-link text-primary text-decoration-underline">¿Olvidaste tu contraseña?</a>
                     </div>
                 </div>
             </div>

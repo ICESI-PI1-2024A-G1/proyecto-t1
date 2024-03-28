@@ -6,12 +6,14 @@ from applications.permissions.model.filter_logic import SearchFilter
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.http import HttpResponseRedirect
+from django.views.decorators.cache import never_cache
 import json
 
 
 User = get_user_model()
 
 
+@never_cache
 @login_required
 def permissions_view(request):
     if not request.user.is_superuser:
