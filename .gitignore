@@ -206,3 +206,4 @@ djangoproyect/applications/teams/migrations/0005_merge_20240310_0950.py
 
 **/requests_database.xlsx
 **/requests_test_database.xlsx
+**/requests_database_test.xlsx

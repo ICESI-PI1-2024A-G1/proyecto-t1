@@ -41,6 +41,7 @@ EXCEL_FILE_PATH = os.path.join(
 # print(EXCEL_FILE_PATH)
 
 sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
+sharepoint_api.clear_db()
 
 # Create superuser
 

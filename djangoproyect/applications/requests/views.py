@@ -30,54 +30,53 @@ User = get_user_model()
 
 
 @csrf_exempt
+@login_required
 def change_status(request, id):
-    if request.method == "GET":
-        return render(request, "change-status.html", {"id": id})
-    elif request.method == "POST":
-        try:
-            curr_request = sharepoint_api.get_request_by_id(id)
-            print(curr_request)
-            new_status = request.POST.get("newStatus")
-            print(new_status)
-            curr_request_data = json.loads(curr_request.content)
-            prev_status = curr_request_data["status"]
-            curr_request_data["status"] = new_status
-            team_id = curr_request_data["team"]
-            Traceability.objects.create(
-                modified_by = request.user,
-                prev_state = prev_status,
-                new_state = new_status,
-                date = datetime.now(),
-                request=id
-            )
+    try:
+        curr_request = sharepoint_api.get_request_by_id(id)
+        curr_request_data = json.loads(curr_request.content)
+        if request.method == "GET":
+            return render(request, "change-status.html", {"request": curr_request_data})
+        elif request.method == "POST":
+                new_status = request.POST.get("newStatus")
+                prev_status = curr_request_data["status"]
+                curr_request_data["status"] = new_status
+                team_id = curr_request_data["team"]
+                Traceability.objects.create(
+                    modified_by = request.user,
+                    prev_state = prev_status,
+                    new_state = new_status,
+                    date = datetime.now(),
+                    request=id
+                )
 
-            if(not math.isnan(team_id)):
-                team = Team.objects.filter(id=team_id)
-                if(team.exists()):
-                    utils.send_verification_email(
-                        request,
-                        f"Actualización del estado de la solicitud {curr_request_data["id"]}",
-                        "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                        team[0].leader.email,
-                        f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}",
+                if(not math.isnan(team_id)):
+                    team = Team.objects.filter(id=team_id)
+                    if(team.exists()):
+                        utils.send_verification_email(
+                            request,
+                            f"Actualización del estado de la solicitud {curr_request_data["id"]}",
+                            "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                            team[0].leader.email,
+                            f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}",
+                        )
+                response = sharepoint_api.update_data(id, curr_request_data)
+                    
+                if response.status_code == 200:
+                    return JsonResponse(
+                        {
+                            "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
+                        }
                     )
-            response = sharepoint_api.update_data(id, curr_request_data)
-                
-            if response.status_code == 200:
-                return JsonResponse(
-                    {
-                        "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
-                    }
-                )
-            else:
-                return JsonResponse(
-                    {"error": f"No se pudo realizar la operación: {response}"}, status=500
-                )
+                else:
+                    return JsonResponse(
+                        {"error": f"No se pudo realizar la operación: {response}"}, status=500
+                    )
 
-        except Exception as e:
-            return JsonResponse(
-                {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
-            )
+    except Exception as e:
+        return JsonResponse(
+            {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
+        )
 
 
 def search(request, query):
@@ -161,7 +160,6 @@ def assign_request(request, request_id):
             manager = get_object_or_404(User, pk=user_id)
             curr_request["manager"] = manager
             teams = Team.objects.filter(leader=request.user)
-            print(teams[0].id)
             team = teams[0].id if teams.exists() else ""
             curr_request["team"] = team
             sharepoint_api.update_data(request_id, curr_request)
@@ -178,7 +176,8 @@ def assign_request(request, request_id):
         except Exception as e:
             print(e)
         return redirect("/requests/")
-    
+
+@login_required
 def show_traceability(request, request_id):
     traceability = Traceability.objects.filter(request=request_id)
     return render(request, "show-traceability.html", {"traceability":traceability})
