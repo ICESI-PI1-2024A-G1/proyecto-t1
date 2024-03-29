@@ -40,6 +40,13 @@ def change_status(request, id):
                 curr_request_data["status"] = new_status
                 team_id = curr_request_data["team"]
                 team = get_object_or_404(Team, pk=team_id)
+
+                #traceability update
+                trace = Traceability.objects.get(request=curr_request_data["id"])
+                trace.prev_state = trace.new_state
+                trace.new_state = new_status
+                trace.save()
+
                 utils.send_verification_email(
                     request,
                     f"Actualización del estado de la solicitud {curr_request_data["id"]}",
