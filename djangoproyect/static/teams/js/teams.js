@@ -1,5 +1,7 @@
 
 $(document).ready(function () {
+    DataTableInit("teamsTable")
+
     const csrfTokenMeta = document.querySelector('meta[name="csrf_token"]');
     const csrftoken = csrfTokenMeta.getAttribute('content');
     $(".delete-team").click(function() {
