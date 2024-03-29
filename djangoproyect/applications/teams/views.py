@@ -7,7 +7,19 @@ from django.shortcuts import get_object_or_404
 from .forms import TeamForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from api.sharepoint_api import SharePointAPI
+import os
+from django.conf import settings
 
+EXCEL_FILE_PATH = os.path.join(
+    settings.BASE_DIR,
+    "static",
+    "requests",
+    "emulation",
+    "requests_database.xlsx",
+)
+
+sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
 
 User = get_user_model()
 
@@ -62,6 +74,7 @@ def delete_team(request, team_id):
     if request.method == "DELETE":
         team = get_object_or_404(Team, id=team_id)
         team.delete()
+        sharepoint_api.remove_team(team_id)
         return JsonResponse(
             {"message": f"El equipo {team_id} ha sido eliminado correctamente"}
         )

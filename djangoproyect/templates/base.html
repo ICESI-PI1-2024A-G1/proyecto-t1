@@ -54,6 +54,14 @@
         </div>
 
         <script>
+            const DataTableInit = id => {
+                $(`#${id}`).DataTable({
+                    "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Todos"]],
+                    "language": {
+                        "url": "{% static 'general/json/datatables-ES.json' %}"
+                    },
+                });
+            }
             $(document).ready(function(){
                 $(".btn-navigation").hover(function(){
                     $(this).removeClass("btn-primary text-white").addClass("btn-light text-dark");

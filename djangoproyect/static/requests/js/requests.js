@@ -18,7 +18,8 @@ const changeStatus = id => {
     $('#detailsModal').modal('hide');
 }
 
-$(document).ready(function () {
+$(document).ready(function () {    
+    DataTableInit("requestsTable")
     $("#performSearchButton").on('click', function () {
         var query = $("#searchBar").val() || '';
         $.ajax({

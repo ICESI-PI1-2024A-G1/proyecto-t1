@@ -87,7 +87,10 @@ leaders = []
 for _ in range(5):
     name = fake.company()
     description = fake.text()
-    leader = random.choice(users)
+    leader = random.choice(
+        User.objects.exclude(id__in=[leader.id for leader in leaders])
+    )
+    # leader = random.choice(users)
     leader.is_leader = True
     leader.save()
     leaders.append(leader)
