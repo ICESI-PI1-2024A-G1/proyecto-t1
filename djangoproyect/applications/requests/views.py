@@ -1,4 +1,5 @@
 import json
+import math
 import os
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -91,12 +92,18 @@ def show_requests(request):
         response = sharepoint_api.get_all_requests()
         if response.status_code == 200:
             requests_data = json.loads(response.content)
+            user_str = request.user.__str__()
+            if not request.user.is_staff and not request.user.is_leader:
+                requests_data = [ r for r in requests_data if r["manager"] == user_str ]
+            for r in requests_data:
+                r["team"] = "" if math.isnan(r["team"]) else int(r["team"])
             return render(request, "show-requests.html", {"requests": requests_data})
         else:
             raise Http404("No se pudieron cargar las solicitudes.")
     except Http404 as e:
         return JsonResponse({"error": str(e)}, status=404)
     except Exception as e:
+        print(e)
         return JsonResponse(
             {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
         )
