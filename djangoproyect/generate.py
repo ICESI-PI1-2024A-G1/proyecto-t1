@@ -152,7 +152,7 @@ for i in range(10):
 
 t_request = sharepoint_api.get_all_requests()
 t_request = json.loads(t_request.content)
-for i in range(10):
+for i in range(len(t_request)):
     user = User.objects.first()
     temp_r = t_request.pop(random.randint(0, len(t_request) - 1))
     new_id = temp_r["id"]
@@ -160,5 +160,5 @@ for i in range(10):
         modified_by=user,
         request=new_id,
         date=fake.date_time_between(start_date="-30d", end_date="+3d"),
-        newState=temp_r["status"],
+        new_state=temp_r["status"],
     )
