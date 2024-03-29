@@ -163,6 +163,7 @@ for i in range(len(t_request)):
         modified_by=user,
         request=new_id,
         date=fake.date_time_between(start_date="-30d", end_date="+3d"),
+        reason=fake.text(),
         prev_state=temp_r["status"],
         new_state=random.choice(status_options),
     )

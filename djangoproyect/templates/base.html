@@ -64,6 +64,7 @@
             const showModal = (title, url) => {
                 $.get(url, function (data) {
                     $('#detailsContent').html(data);
+                    $('#detailsModal .modal-dialog').addClass('modal-lg');
                     $('#detailsModal').modal('show');
                     $('#detailsModalLabel').text(title);
                 });

@@ -46,13 +46,12 @@
                         <p id="status_{{ request.id }}">{{ request.status }}</p>
                     </td>
                     <td>
-                        <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}')"
+                    <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}')"
                         class="btn details-btn " data-request-id="{{ request.id }}">
                         Detalles
                         <i class="fa fa-info"></i>
                     </button>
-                        <button
-                        onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
+                    <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
                         class="btn details-btn text-primary">
                         <i class="fa fa-eye"></i>
                         Cambios

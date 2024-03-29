@@ -11,6 +11,7 @@ const changeStatus = id => {
         method: 'POST',
         data: {
             newStatus: newStatus,
+            reason: reason,
             csrfmiddlewaretoken: csrftoken
         },
         success: function (response) {
