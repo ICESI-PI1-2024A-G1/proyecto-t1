@@ -26,6 +26,7 @@ urlpatterns = [
     path("requests/", include("applications.requests.urls")),
     path("teams/", include("applications.teams.urls")),
     path("registration/", include("applications.registration.urls")),
+    path("emailContact/", include("applications.emailContact.urls")),
     path("permissions/", include("applications.permissions.urls")),
     path("error/", include("applications.errorHandler.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

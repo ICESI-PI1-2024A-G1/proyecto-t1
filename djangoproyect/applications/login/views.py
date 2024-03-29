@@ -60,7 +60,7 @@ def login_view(request):
                     request,
                     "login.html",
                     {
-                        "message": "El usuario ingresado no está registrado en la plataforma."
+                        "message": "Por favor, revisa las credenciales."
                     },
                 )
         except Exception as e:
