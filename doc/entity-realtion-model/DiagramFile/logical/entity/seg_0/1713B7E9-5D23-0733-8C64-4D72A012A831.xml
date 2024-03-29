@@ -111,7 +111,7 @@
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <dataTypeSize>60</dataTypeSize>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
+<ownDataTypeParameters>60,,</ownDataTypeParameters>
 </Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">

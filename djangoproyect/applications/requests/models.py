@@ -18,7 +18,6 @@ class Requests(models.Model):
     final_date = models.DateField()
     past_days = models.IntegerField()
     status = models.CharField(max_length=20)
-    type = models.CharField(max_length=20)
     assigned_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="requests"
     )
