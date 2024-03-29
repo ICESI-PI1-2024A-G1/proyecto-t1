@@ -5,6 +5,9 @@ const changeStatus = id => {
     if (reason === '') {
         alert('Debe ingresar un motivo para cambiar el estado de la solicitud.');
         return;
+    } else if (reason.length > 70) {
+        alert('El motivo no debe superar los 70 caracteres.');
+        return;
     }
     $.ajax({
         url: '/requests/change-status/' + id,

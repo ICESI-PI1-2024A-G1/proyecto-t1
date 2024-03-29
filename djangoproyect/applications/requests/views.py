@@ -56,15 +56,13 @@ def change_status(request, id):
             if(not math.isnan(team_id)):
                 team = Team.objects.filter(id=team_id)
                 if(team.exists()):
-                    '''
                     utils.send_verification_email(
                         request,
                         f"Actualización del estado de la solicitud {curr_request_data["id"]}",
                         "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
                         team[0].leader.email,
-                        f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}",
+                        f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                     )
-                    '''
             response = sharepoint_api.update_data(id, curr_request_data)
                 
             if response.status_code == 200:
@@ -170,7 +168,6 @@ def assign_request(request, request_id):
             curr_request["team"] = team
             sharepoint_api.update_data(request_id, curr_request)
             try:
-                '''
                 utils.send_verification_email(
                     request,
                     "Solicitud Asignada",
@@ -178,7 +175,6 @@ def assign_request(request, request_id):
                     manager.email,
                     f"Hola, como miembro del equipo {teams[0].name}, el líder {manager.first_name} {manager.last_name} le ha asignado una nueva solicitud en el Sistema de Contabilidad",
                 )
-                '''
             except:
                 print("El destino no se encontró")                
         except Exception as e:
