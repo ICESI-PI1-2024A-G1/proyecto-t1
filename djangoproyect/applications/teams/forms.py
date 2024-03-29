@@ -17,5 +17,5 @@ class TeamForm(forms.ModelForm):
             "name": "Nombre",
             "description": "Descripción",
             "leader": "Líder",
-            "members": "Miembros",
+            "members": "Miembros (al menos 1)",
         }
