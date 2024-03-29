@@ -45,6 +45,7 @@ class VerifyEmailViewTest(TestCase):
         session['last_name'] = 'User'
         session['email'] = 'test@u.icesi.edu.co'
         session['password'] = '123456789'
+        session['has_registered'] = True
         session.save()
 
     def test_verify_email_view_get(self):
