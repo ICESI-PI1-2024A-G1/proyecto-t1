@@ -22,6 +22,7 @@ def send_verification_email(request, subject, bigSubject, email, message):
 
     # Email sender
     email.fail_silently = False
+    print(email)
     email.send()
 
     messages.success(request, "Correo enviado exitosamente")

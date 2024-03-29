@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "applications.teams",
     "applications.errorHandler",
     "applications.permissions",
+    "applications.emailContact",
     "utils",
 ]
 
