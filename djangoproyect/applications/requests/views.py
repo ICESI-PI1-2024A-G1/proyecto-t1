@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import math
 import os
@@ -43,11 +44,17 @@ def change_status(request, id):
                 team = get_object_or_404(Team, pk=team_id)
 
                 #traceability update
-                trace = Traceability.objects.get(request=curr_request_data["id"])
-                trace.modified_by = request.user
-                trace.prev_state = trace.new_state
-                trace.new_state = new_status
-                trace.save()
+                # trace.modified_by = request.user
+                # trace.prev_state = trace.new_state
+                # trace.new_state = new_status
+                # trace.save()
+                Traceability.objects.create(
+                    modified_by = request.user,
+                    prev_state = prev_status,
+                    new_state = new_status,
+                    date = datetime.now(),
+                    request=id
+                )
 
                 utils.send_verification_email(
                     request,
@@ -174,5 +181,5 @@ def assign_request(request, request_id):
         return redirect("/requests/")
     
 def show_traceability(request, request_id):
-    traceability = Traceability.objects.get(request=request_id)
-    return render(request, "show-traceability.html", {"trace":traceability})
+    traceability = Traceability.objects.filter(request=request_id)
+    return render(request, "show-traceability.html", {"traceability":traceability})

@@ -1,18 +1,28 @@
 <div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <p>
-                <strong>Fecha:</strong> {{ trace.date }}
-            </p>
-            <p>
-                <strong>Modificado por:</strong> {{ trace.modified_by }}
-            </p>
-            <p>
-                <strong>Estado anterior:</strong> {{ trace.prev_state }}
-            </p>
-            <p>
-                <strong>Estado actual:</strong> {{ trace.new_state }}
-            </p>
-        </div>
-    </div>
+    <table class="table table-stripped">
+        <thead>
+            <th>Fecha</th>
+            <th>Modificado por</th>
+            <th>Estado Anterior</th>
+            <th>Nuevo Estado</th>
+        </thead>
+        <tbody>
+            {% for trace in traceability %}
+            <tr>
+                <td>
+                    {{ trace.date }}        
+                </td>
+                <td>
+                    {{ trace.modified_by }}        
+                </td>
+                <td>
+                    {{ trace.prev_state }}        
+                </td>
+                <td>
+                    {{ trace.new_state }}        
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
