@@ -1,6 +1,11 @@
 const changeStatus = id => {
     var csrftoken = $('[name=csrfmiddlewaretoken]').val();
     var newStatus = $('#newStatusSelect').val();
+    var reason = $('#reasonTextarea').val();
+    if (reason === '') {
+        alert('Debe ingresar un motivo para cambiar el estado de la solicitud.');
+        return;
+    }
     $.ajax({
         url: '/requests/change-status/' + id,
         method: 'POST',

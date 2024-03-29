@@ -41,6 +41,7 @@ def login_view(request):
                 print("Code: " + random_code)
 
                 # Send verification email
+                '''
                 utils.send_verification_email(
                     request,
                     "Verificación de correo",
@@ -50,6 +51,7 @@ def login_view(request):
                     + random_code
                     + "\n\nSi no ha solicitado este correo, por favor ignorelo.",
                 )
+                '''
                 request.session["has_logged"] = True
 
                 return redirect("login:verifyEmail_view")

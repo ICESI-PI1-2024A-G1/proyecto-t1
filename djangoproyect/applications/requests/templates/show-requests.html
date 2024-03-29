@@ -59,11 +59,13 @@
                     </button>
                 </td>
                     <td>
-                        <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
-                            class="btn details-btn " data-request-id="{{ request.id }}">
-                            Asignar
-                            <i class="fa fa-user-plus"></i>
-                        </button>
+                        {% if request.user.is_superuser or request.user.is_leader or request.user.is_staff %}
+                            <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
+                                    class="btn details-btn " data-request-id="{{ request.id }}">
+                                Asignar
+                                <i class="fa fa-user-plus"></i>
+                            </button>
+                        {% endif %}
                         <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
                             class="btn text-success" data-request-id="{{ request.id }}">
                             Cambiar Estado
