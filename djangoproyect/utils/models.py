@@ -24,13 +24,14 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     id = models.CharField(primary_key=True, max_length=10)
-    username = models.CharField(max_length=10, null=True, blank=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    username = models.CharField(max_length=10, null=True, blank=True, )
+    first_name = models.CharField(max_length=30, verbose_name='Nombre')
+    last_name = models.CharField(max_length=30, verbose_name='Apellido')
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
-    is_staff = models.BooleanField(default=False)
-    is_leader = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False, verbose_name='Miembro')
+    is_leader = models.BooleanField(default=False,verbose_name='Lider')
+    
 
     USERNAME_FIELD = "id"
     REQUIRED_FIELDS = [
@@ -46,6 +47,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     class Meta:
+        verbose_name = 'Usuario' 
+        verbose_name_plural = 'Usuarios'  
         db_table = "auth_user_mod"
 
     def get_full_name(self):

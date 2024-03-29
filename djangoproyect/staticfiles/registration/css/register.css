@@ -1,0 +1,54 @@
+body {
+    font-family: "Inter", sans-serif;
+}
+
+.card-header .titulo-inicio {
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+}
+
+.card-body input[type="text"], .card-body input[type="password"] {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    color: #3e3e3e;
+    background-color: #89B8FF;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.card-body input.form-check-label {
+    font-size: 10px;
+}
+
+.form-check-label[for="recordar"] {
+    font-size: 14px;
+    color: #6D6D6D;
+}
+
+.card-body button {
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    background-color: #89B8FF;
+    height: 70px;
+    width: 200px;
+    border-radius: 12px !important;
+}
+
+.input-container {
+    position: relative;
+}
+
+.form-control {
+    padding-left: 30px;
+}
+
+.icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+  
