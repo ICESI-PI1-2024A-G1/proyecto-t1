@@ -12,6 +12,19 @@
             <button id="performSearchButton" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
         </div>
     </div> -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% elif message %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
     <div class="container col-12">
         <table id="requestsTable" class="table table-bordered overflow-x-auto">
             <thead>
@@ -46,24 +59,25 @@
                         <p id="status_{{ request.id }}">{{ request.status }}</p>
                     </td>
                     <td>
-                        <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}')"
+                    <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}')"
                         class="btn details-btn " data-request-id="{{ request.id }}">
                         Detalles
                         <i class="fa fa-info"></i>
                     </button>
-                        <button
-                        onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
+                    <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
                         class="btn details-btn text-primary">
                         <i class="fa fa-eye"></i>
                         Cambios
                     </button>
                 </td>
                     <td>
-                        <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
-                            class="btn details-btn " data-request-id="{{ request.id }}">
-                            Asignar
-                            <i class="fa fa-user-plus"></i>
-                        </button>
+                        {% if request.user.is_superuser or request.user.is_leader or request.user.is_staff %}
+                            <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
+                                    class="btn details-btn " data-request-id="{{ request.id }}">
+                                Asignar
+                                <i class="fa fa-user-plus"></i>
+                            </button>
+                        {% endif %}
                         <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
                             class="btn text-success" data-request-id="{{ request.id }}">
                             Cambiar Estado

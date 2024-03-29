@@ -41,12 +41,14 @@ def change_status(request, id):
             print(new_status)
             curr_request_data = json.loads(curr_request.content)
             prev_status = curr_request_data["status"]
+            new_reason = request.POST.get("reason")
             curr_request_data["status"] = new_status
             team_id = curr_request_data["team"]
             Traceability.objects.create(
                 modified_by = request.user,
                 prev_state = prev_status,
                 new_state = new_status,
+                reason = new_reason,
                 date = datetime.now(),
                 request=id
             )
@@ -59,7 +61,7 @@ def change_status(request, id):
                         f"Actualización del estado de la solicitud {curr_request_data["id"]}",
                         "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
                         team[0].leader.email,
-                        f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}",
+                        f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                     )
             response = sharepoint_api.update_data(id, curr_request_data)
                 
