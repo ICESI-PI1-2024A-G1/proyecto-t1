@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from applications.requests.models import Traceability
 import utils.utils as utils
 
 from applications.teams.models import Team
@@ -40,6 +41,14 @@ def change_status(request, id):
                 curr_request_data["status"] = new_status
                 team_id = curr_request_data["team"]
                 team = get_object_or_404(Team, pk=team_id)
+
+                #traceability update
+                trace = Traceability.objects.get(request=curr_request_data["id"])
+                trace.modified_by = request.user
+                trace.prev_state = trace.new_state
+                trace.new_state = new_status
+                trace.save()
+
                 utils.send_verification_email(
                     request,
                     f"Actualización del estado de la solicitud {curr_request_data["id"]}",
@@ -163,3 +172,7 @@ def assign_request(request, request_id):
         except Exception as e:
             print(e)
         return redirect("/requests/")
+    
+def show_traceability(request, request_id):
+    traceability = Traceability.objects.get(request=request_id)
+    return render(request, "show-traceability.html", {"trace":traceability})
