@@ -1,89 +1,79 @@
-from django.test import TestCase
+import random
+from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.middleware.csrf import get_token
 from applications.teams.models import Team
+from faker import Faker
+from django.contrib.auth import authenticate, login, logout
+
+User = get_user_model()
+fake = Faker()
 
 
 class TeamTestCase(TestCase):
     def setUp(self):
-        self.user1 = User.objects.create_user(
-            username="user1",
-            first_name="belso",
-            last_name="muchacho",
-            password="testpassword",
-        )
-        self.user2 = User.objects.create_user(
-            username="user2",
-            first_name="yuluka",
-            last_name="gigante",
-            password="testpassword",
-        )
-        self.team = Team.objects.create(
-            name="Test Team",
-            description="Test description",
-            leader=self.user1,
-        )
-        self.team.members.add(self.user2)
-        self.client.login(username="user1", password="testpassword")
+        self.client = Client()
+        self.users = []
+        self.teams = []
 
-    def test_add_member_view(self):
-        print(self.team)
-        response = self.client.get(reverse("add_member", args=[self.team.id]))
+        self.user = User.objects.create_user(
+            id="admin",
+            username="admin",
+            email="test@example.com",
+            first_name="admin",
+            password="password",
+            is_staff=True,
+        )
+
+        for i in range(10):
+            user = User.objects.create(
+                id=f"0000{i}",
+                username=f"0000{i}",
+                password="123",
+                email=fake.email(),
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+            )
+            self.users.append(user)
+
+        for i in range(5):
+            leader = self.users[1]
+            leader.is_leader = True
+            leader.save()
+            team = Team.objects.create(
+                name=fake.company(), description=fake.text(), leader=leader
+            )
+            team_members = random.sample(
+                [user for user in self.users if user != leader], random.randint(3, 5)
+            )
+            team.members.add(*team_members)
+            self.teams.append(team)
+        self.client.login(id="admin", password="password")
+
+    def test_show_teams_many(self):
+        response = self.client.get(reverse("teams:show_teams"))
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["teams"]), len(Team.objects.all()))
 
-        response = self.client.post(
-            reverse("add_member", args=[self.team.id]),
-            {"users[]": [self.user1.id]},
-        )
+    def test_show_teams_empty(self):
+        Team.objects.all().delete()
+        response = self.client.get(reverse("teams:show_teams"))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            response.content,
-            {
-                "message": "Miembros añadidos con éxito al equipo.",
-                "users": [
-                    {
-                        "first_name": self.user1.first_name,
-                        "last_name": self.user1.last_name,
-                        "id": self.user1.id,
-                        "username": self.user1.username,
-                    }
-                ],
-            },
-        )
+        self.assertEqual(len(response.context["teams"]), len(Team.objects.all()))
 
-    def test_delete_member_view(self):
-        response = self.client.delete(
-            reverse("delete_member", args=[self.team.id, self.user2.id])
-        )
+    def test_show_teams_unauthorized(self):
+        self.client.logout()
+        response = self.client.get(reverse("teams:show_teams"))
+        self.assertRedirects(response, "/logout/?next=/teams/", 302)
+
+    def test_show_teams_leader(self):
+        self.user.is_staff = False
+        self.user.save()
+        teams = Team.objects.all()
+        for i in range(3):
+            self.teams[i].leader = self.user
+            self.teams[i].save()
+        response = self.client.get(reverse("teams:show_teams"))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            response.content,
-            {"message": "El miembro 2 ha sido eliminado correctamente"},
-        )
-
-    def test_add_team_view(self):
-        response = self.client.get(reverse("add_team"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "add-team.html")
-
-        csrf_token = response.cookies["csrftoken"].value
-
-        response = self.client.post(
-            reverse("add_team"),
-            {
-                "name": "New Test Team",
-                "description": "New test description",
-                "leader": self.user2.id,
-                "members": [],
-                "csrfmiddlewaretoken": csrf_token,
-            },
-        )
-
-    def test_delete_team_view(self):
-        response = self.client.delete(reverse("delete_team", args=[self.team.id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            response.content,
-            {"message": f"El equipo {self.team.id} ha sido eliminado correctamente"},
-        )
+        self.assertEqual(len(response.context["teams"]), 3)
