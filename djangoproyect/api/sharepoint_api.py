@@ -3,6 +3,8 @@ import pandas as pd
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from applications.teams.models import Team
+
 
 class SharePointAPI:
 
@@ -136,3 +138,33 @@ class SharePointAPI:
             return JsonResponse(ans, status=200, safe=False)
         except FileNotFoundError:
             raise Http404("El archivo no se encontró")
+
+    @csrf_exempt
+    def remove_team(self, id) -> JsonResponse:
+        try:
+            # Cargar el archivo Excel
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
+
+            # Reemplazar el ID del equipo con NaN en el campo "team" del Excel
+            df.loc[df["team"] == id, "team"] = pd.NA
+
+            # Guardar el archivo Excel actualizado
+            df.to_excel(
+                self.excel_path,
+                sheet_name="data",
+                index=False,
+                columns=self.request_columns,
+            )
+
+            return JsonResponse(
+                {"mensaje": f"Equipo con ID {id} removido correctamente"},
+                status=200,
+                safe=False,
+            )
+        except Exception as e:
+            return JsonResponse(
+                {"error": str(e)},
+                status=500,
+                safe=False,
+            )
+
