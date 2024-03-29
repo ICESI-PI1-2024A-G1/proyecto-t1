@@ -1,6 +1,6 @@
 import json
 import os
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from api.sharepoint_api import SharePointAPI
 from django.views.decorators.csrf import csrf_exempt
@@ -43,6 +43,7 @@ def change_status(request, id):
 
                 #traceability update
                 trace = Traceability.objects.get(request=curr_request_data["id"])
+                trace.modified_by = request.user
                 trace.prev_state = trace.new_state
                 trace.new_state = new_status
                 trace.save()
