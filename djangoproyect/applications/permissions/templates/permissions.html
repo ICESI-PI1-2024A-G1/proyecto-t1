@@ -46,18 +46,6 @@
             </div>
         </div>
     
-    <script>
-    $(document).ready(() => {
-        $('#usersTable').DataTable({
-            "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Todos"]],
-            // "language": {
-            //     "url": '//cdn.datatables.net/plug-ins/2.0.2/i18n/es-ES.json'
-            // },
-        });
-    })
-    </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% load static %}
     <script src="{% static 'permissions/js/users.js' %}"></script>
 {% endblock %}

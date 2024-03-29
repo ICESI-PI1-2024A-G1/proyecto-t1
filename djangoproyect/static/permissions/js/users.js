@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    DataTableInit("usersTable")
     $("#performSearchButton").on('click', function () {
         var query = $("#searchBar").val() || 'None';
         $.ajax({
