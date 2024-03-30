@@ -214,4 +214,4 @@ djangoproyect/applications/teams/migrations/0005_merge_20240310_0950.py
 **/node_modules
 
 # Ignore Tailwind CSS build cache
-**/tailwindcss-cache
+**/static/CACHE
