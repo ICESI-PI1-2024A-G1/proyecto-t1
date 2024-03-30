@@ -1,3 +1,8 @@
+"""
+Request Test
+
+This module contains test cases for the views related to requests in the application.
+"""
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from applications.requests.models import Traceability
@@ -15,8 +20,21 @@ settings.EXCEL_FILE_PATH = settings.EXCEL_FILE_PATH_TEST
 
 
 class RequestViewTest(TestCase):
+    """
+    Test case class for testing request views.
 
+    This class contains test cases for various functionalities of the request views.
+
+    Attributes:
+        client (Client): A Django test client instance.
+        api (SharePointAPI): An instance of the SharePointAPI class.
+        user (User): A user instance for testing purposes.
+        requests (list): A list of request data for testing purposes.
+    """
     def setUp(self):
+        """
+        Set up test data and initialize necessary instances.
+        """
         self.client = Client()
         self.api = SharePointAPI(settings.EXCEL_FILE_PATH)
         self.api.clear_db()
@@ -72,12 +90,18 @@ class RequestViewTest(TestCase):
             self.requests.append(data)
 
     def test_show_requests_admin(self):
+        """
+        Test case for displaying requests by an admin user.
+        """
         response = self.client.get(reverse("requests:show_requests"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("requests:show_requests.html")
         self.assertEqual(self.requests, response.context["requests"])
 
     def test_show_requests_member(self):
+        """
+        Test case for displaying requests by a non-admin user.
+        """
         self.user.is_staff = False
         self.user.save()
         response = self.client.get(reverse("requests:show_requests"))
@@ -89,12 +113,18 @@ class RequestViewTest(TestCase):
         self.assertEqual(len(user_requests), len(response.context["requests"]))
 
     def test_show_request_unauthorized(self):
+        """
+        Test case for attempting to access requests page without authentication.
+        """
         self.client.logout()
         response = self.client.get(reverse("requests:show_requests"))
         self.assertRedirects(response, "/logout/?next=/requests/", 302)
         self.assertTemplateUsed("login:login")
 
     def test_request_detail(self):
+        """
+        Test case for displaying details of a request.
+        """
         curr_request = self.requests[0]
         response = self.client.get(
             reverse("requests:request_detail", args=[curr_request["id"]])
@@ -104,10 +134,16 @@ class RequestViewTest(TestCase):
         self.assertEqual(response.context["request"]["id"], curr_request["id"])
 
     def test_request_detail_not_found(self):
+        """
+        Test case for attempting to access details of a non-existing request.
+        """
         response = self.client.get(reverse("requests:request_detail", args=[999]))
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_request_detail_not_unauthorized(self):
+        """
+        Test case for attempting to access details of a request without authentication.
+        """
         curr_request = self.requests[0]
         self.client.logout()
         response = self.client.get(
@@ -117,6 +153,9 @@ class RequestViewTest(TestCase):
         self.assertTemplateUsed("login:login.html")
 
     def test_change_status_view(self):
+        """
+        Test case for accessing the change status view.
+        """
         curr_request = self.requests[0]
         response = self.client.get(
             reverse("requests:change_status", args=[curr_request["id"]])
@@ -126,6 +165,9 @@ class RequestViewTest(TestCase):
         self.assertTemplateUsed("change-status.html")
 
     def test_change_status_view_unauthorized(self):
+        """
+        Test case for attempting to access the change status view without authentication.
+        """
         curr_request = self.requests[0]
         self.client.logout()
         response = self.client.get(
@@ -135,10 +177,16 @@ class RequestViewTest(TestCase):
         self.assertTemplateUsed("login:login.html")
 
     def test_change_status_view_not_found(self):
+        """
+        Test case for attempting to access the change status view for a non-existing request.
+        """
         response = self.client.get(reverse("requests:change_status", args=[999]))
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_change_status(self):
+        """
+        Test case for changing the status of a request.
+        """
         curr_request = self.requests[0]
         prev_state = curr_request["status"]
         new_status = "Rejected"
@@ -152,6 +200,9 @@ class RequestViewTest(TestCase):
         self.assertEqual(updated_traceability.new_state, new_status)
 
     def test_change_status_unauthorized(self):
+        """
+        Test case for attempting to change the status of a request without authentication.
+        """
         curr_request = self.requests[0]
         self.client.logout()
         data = {"newStatus": "Approved"}
@@ -162,11 +213,17 @@ class RequestViewTest(TestCase):
         self.assertTemplateUsed("login:login.html")
 
     def test_change_status_not_found(self):
+        """
+        Test case for attempting to change the status of a non-existing request.
+        """
         data = {"newStatus": "Approved"}
         response = self.client.post(reverse("requests:change_status", args=[999]), data)
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_assign_request_view(self):
+        """
+        Test case for accessing the assign request view.
+        """
         curr_request = self.requests[0]
         response = self.client.get(reverse("requests:assign_request", args=[curr_request["id"]]))
         self.assertEqual(response.status_code, 200)
@@ -174,16 +231,26 @@ class RequestViewTest(TestCase):
         self.assertEqual(response.context["request"]["id"], curr_request["id"])
 
     def test_assign_request_view_unauthorized(self):
+        """
+        Test case for attempting to access the assign request view without authentication.
+        """
         self.client.logout()
         response = self.client.get(reverse("requests:assign_request", args=[1]))
         self.assertRedirects(response, "/logout/?next=/requests/assign-request/1", 302)
         self.assertTemplateUsed("login:login.html")
 
     def test_assign_request_view_not_found(self):
+        """
+        Test case for attempting to access the assign request view for a non-existing request.
+        """
         response = self.client.get(reverse("requests:assign_request", args=[999]))
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_show_traceability(self):
+        """
+        Test case for displaying traceability of a request.
+        """
+
         curr_request = self.requests[0]
         response = self.client.get(
             reverse("requests:show_traceability", args=[curr_request["id"]])
@@ -192,12 +259,18 @@ class RequestViewTest(TestCase):
         self.assertTemplateUsed("show-traceability.html")
 
     def test_show_traceability_not_found(self):
+        """
+        Test case for attempting to display traceability of a non-existing request.
+        """
         response = self.client.get(
             reverse("requests:show_traceability", args=[300])
         )
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_show_traceability_unauthorized(self):
+        """
+        Test case for attempting to display traceability of a request without authentication.
+        """
         curr_request = self.requests[0]
         self.client.logout()
         response = self.client.get(
