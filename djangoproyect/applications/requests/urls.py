@@ -15,4 +15,5 @@ urlpatterns = [
         views.show_traceability,
         name="traceability",
     ),
+    path("test-view/", views.test_view),
 ]

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "applications.permissions",
     "applications.emailContact",
     "utils",
+    "compressor",
 ]
 
 MIDDLEWARE = [
@@ -101,7 +102,6 @@ DATABASES = {
         "NAME": BASE_DIR / "test_db.sqlite3",
     },
 }
-
 
 
 # Password validation
@@ -161,3 +161,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = "ccsa101010@gmail.com"
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
+
+COMPRESS_ROOT = os.path.join(BASE_DIR, "static")
+
+COMPRESS_ENABLED = True
+
+STATICFILES_FINDERS = ("compressor.finders.CompressorFinder",)

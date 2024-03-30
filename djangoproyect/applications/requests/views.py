@@ -184,3 +184,6 @@ def assign_request(request, request_id):
 def show_traceability(request, request_id):
     traceability = Traceability.objects.filter(request=request_id)
     return render(request, "show-traceability.html", {"traceability":traceability})
+
+def test_view(request):
+    return render(request, "test-view.html")
