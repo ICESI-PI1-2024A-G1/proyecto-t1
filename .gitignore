@@ -208,10 +208,10 @@ djangoproyect/applications/teams/migrations/0005_merge_20240310_0950.py
 **/requests_test_database.xlsx
 
 # Ignore compiled CSS
-/static/css/*.css
+djangoproyect/static/css/*.css
 
 # Ignore node_modules directory
-/node_modules
+djangoproyect/node_modules
 
 # Ignore Tailwind CSS build cache
-/tailwindcss-cache
+djangoproyect/tailwindcss-cache
