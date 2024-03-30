@@ -1,3 +1,8 @@
+"""
+Request views
+
+This module contains views for handling requests-related operations within the application.
+"""
 from datetime import datetime
 import json
 import math
@@ -26,6 +31,25 @@ User = get_user_model()
 @csrf_exempt
 @login_required
 def change_status(request, id):
+    """
+    Allows users to change the status of a request.
+
+    HTTP Methods:
+    - GET: Renders a form to change the status of the request.
+    - POST: Handles form submission, updates the status of the request, and records traceability.
+
+    Dependencies:
+    - sharepoint_api: For accessing request data in SharePoint.
+    - Traceability: Model for recording changes in request status.
+    - utils.utils.send_verification_email: Utility function to send notification emails.
+
+    Parameters:
+    - request: Django request object.
+    - id: ID of the request to be updated.
+
+    Returns:
+    - JsonResponse: JSON response indicating the result of the operation.
+    """
     if request.method == "GET":
         curr_request = sharepoint_api.get_request_by_id(id)
         curr_request_data = json.loads(curr_request.content)
@@ -86,6 +110,22 @@ def change_status(request, id):
             )
 
 def search(request, query):
+    """
+    Performs a search for requests based on a query string.
+
+    HTTP Method:
+    - GET
+
+    Dependencies:
+    - sharepoint_api: For searching request data based on the query.
+
+    Parameters:
+    - request: Django request object.
+    - query: Query string for searching requests.
+
+    Returns:
+    - JsonResponse: JSON response containing search results or error message.
+    """
     try:
         results = sharepoint_api.search_data(query=query)
 
@@ -104,6 +144,22 @@ def search(request, query):
 @never_cache
 @login_required
 def show_requests(request):
+    """
+    Renders a page displaying all requests.
+
+    HTTP Method:
+    - GET
+
+    Dependencies:
+    - sharepoint_api: For retrieving all request data.
+    - Team: Model for accessing team information.
+
+    Parameters:
+    - request: Django request object.
+
+    Returns:
+    - render: Renders the HTML template with request data.
+    """
     try:
         response = sharepoint_api.get_all_requests()
         if response.status_code == 200:
@@ -128,6 +184,22 @@ def show_requests(request):
 @never_cache
 @login_required
 def detail_request(request, id):
+    """
+    Renders a page displaying details of a specific request.
+
+    HTTP Method:
+    - GET
+
+    Dependencies:
+    - sharepoint_api: For retrieving details of the specified request.
+
+    Parameters:
+    - request: Django request object.
+    - id: ID of the request to be displayed.
+
+    Returns:
+    - render: Renders the HTML template with request details.
+    """
     try:
         api_response = sharepoint_api.get_request_by_id(id)
         detail = json.loads(api_response.content)
@@ -149,6 +221,25 @@ def detail_request(request, id):
 
 @login_required
 def assign_request(request, request_id):
+    """
+    Allows users to assign a request to another user.
+
+    HTTP Methods:
+    - GET: Renders a form to select a user for assignment.
+    - POST: Handles form submission, updates the request with the assigned user, and sends a notification email.
+
+    Dependencies:
+    - sharepoint_api: For retrieving and updating request data.
+    - Team: Model for accessing team information.
+    - utils.utils.send_verification_email: Utility function to send notification emails.
+
+    Parameters:
+    - request: Django request object.
+    - request_id: ID of the request to be assigned.
+
+    Returns:
+    - redirect: Redirects to the requests page after assignment.
+    """
     api_response = sharepoint_api.get_request_by_id(request_id)
     curr_request = json.loads(api_response.content)
     if request.method == "GET":
@@ -185,5 +276,21 @@ def assign_request(request, request_id):
 
 @login_required
 def show_traceability(request, request_id):
+    """
+    Renders a page displaying the traceability of a specific request.
+
+    HTTP Method:
+    - GET
+
+    Dependencies:
+    - Traceability: Model for accessing traceability information.
+
+    Parameters:
+    - request: Django request object.
+    - request_id: ID of the request for which traceability is to be displayed.
+
+    Returns:
+    - render: Renders the HTML template with traceability information.
+    """
     traceability = Traceability.objects.filter(request=request_id)
     return render(request, "show-traceability.html", {"traceability":traceability})
