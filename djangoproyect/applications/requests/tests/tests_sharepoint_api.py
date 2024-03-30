@@ -1,3 +1,8 @@
+"""
+Sharepoint api 
+
+This module contains test cases for the SharePointAPI class.
+"""
 from datetime import timedelta
 import json
 from django.conf import settings
@@ -13,7 +18,20 @@ fake = Faker()
 
 
 class SharePointAPITestCase(TestCase):
+    """
+    Test case class for testing the SharePointAPI class.
+
+    This class contains test cases for various functionalities of the SharePointAPI class
+    to assure a robust functionality whenever it retrieves the data.
+
+    Attributes:
+        excel_path (str): The path to the Excel file used for testing.
+        api (SharePointAPI): An instance of the SharePointAPI class.
+    """
     def setUp(self):
+        """
+        Set up test data and initialize the SharePointAPI instance.
+        """
         self.excel_path = settings.EXCEL_FILE_PATH
         self.api = SharePointAPI(settings.EXCEL_FILE_PATH)
         self.api.clear_db()
@@ -57,29 +75,47 @@ class SharePointAPITestCase(TestCase):
             data["id"] = i + 1
 
     def test_get_request_by_id_success(self):
+        """
+        Test case for successfully retrieving a request by ID.
+        """
         response = self.api.get_request_by_id(10)
         self.assertEqual(response.status_code, 200)
       
 
     def test_get_request_by_id_not_found(self):
+        """
+        Test case for attempting to retrieve a request by an invalid ID.
+        """
         with self.assertRaises(Http404):
             self.api.get_request_by_id(9999)
 
     def test_get_request_by_id_file_not_found(self):
+        """
+        Test case for attempting to retrieve a request by ID when the file is not found.
+        """
         self.api = SharePointAPI("/ruta/no/existente/requests_test_database.xlsx")
         with self.assertRaises(Http404):
             self.api.get_request_by_id(2)
 
     def test_get_all_requests_success(self):
+        """
+        Test case for successfully retrieving all requests.
+        """
         response = self.api.get_all_requests()
         self.assertEqual(response.status_code, 200)
 
     def test_get_all_requests_file_not_found(self):
+        """
+        Test case for attempting to retrieve all requests when the file is not found.
+        """
         self.api = SharePointAPI("/ruta/no/existente/requests_test_database.xlsx")
         with self.assertRaises(Http404):
             self.api.get_all_requests()
 
     def test_create_data_success(self):
+        """
+        Test case for successfully creating new request data.
+        """
         data = {
             "document": "test_document",
             "applicant": "test_applicant",
@@ -97,6 +133,9 @@ class SharePointAPITestCase(TestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_create_data_failure(self):
+        """
+        Test case for attempting to create new request data when the file is not found.
+        """
         self.api = SharePointAPI("/ruta/no/existente/requests_test_database.xlsx")
         data = {
             "document": "test_document",
@@ -115,18 +154,27 @@ class SharePointAPITestCase(TestCase):
             self.api.create_data(data)
 
     def test_update_data_success(self):
+        """
+        Test case for successfully updating request data.
+        """
         id_to_update = 2
         new_data = {"status": "updated_status"}
         response = self.api.update_data(id_to_update, new_data)
         self.assertEqual(response.status_code, 200)
 
     def test_update_data_not_found(self):
+        """
+        Test case for attempting to update request data with an invalid ID.
+        """
         id_to_update = 9999 
         new_data = {"status": "updated_status"}
         with self.assertRaises(Http404):
             self.api.update_data(id_to_update, new_data)
 
     def test_delete_data_success(self):
+        """
+        Test case for successfully deleting request data.
+        """
         self.api.create_data(
             {
                 "document": "test_document",
@@ -150,17 +198,26 @@ class SharePointAPITestCase(TestCase):
        
 
     def test_delete_data_not_found(self):
+        """
+        Test case for attempting to delete request data with an invalid ID.
+        """
         id_to_delete = 9999 
         with self.assertRaises(Http404):
             self.api.delete_data(id_to_delete)
 
     def test_search_data_success(self):
+        """
+        Test case for successfully searching request data.
+        """
         query = "test" 
         response = self.api.search_data(query)
         self.assertEqual(response.status_code, 200)
        
 
     def test_search_data_no_results(self):
+        """
+        Test case for searching request data with no results.
+        """
         query = "no_results_for_this_query"  
         response = self.api.search_data(query)
         self.assertEqual(response.status_code, 200)
