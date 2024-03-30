@@ -9,6 +9,8 @@
 <sourcePk>D525BD96-22C9-97F1-8FB1-B4695D4B20B4</sourcePk>
 <targetPk>E1433BA2-457D-B12E-3996-72B573AB1D83</targetPk>
 <identifying>false</identifying>
+<nameOnSource>is recorded</nameOnSource>
+<nameOnTarget>records</nameOnTarget>
 <optionalSource>false</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>*</sourceCardinality>
