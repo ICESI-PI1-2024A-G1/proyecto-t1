@@ -2,5 +2,7 @@ from django.apps import AppConfig
 
 
 class EmailcontactConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'applications.emailContact'
+    """App configuration for emailContact."""
+
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "applications.emailContact"
