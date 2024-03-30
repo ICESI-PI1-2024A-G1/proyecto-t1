@@ -38,7 +38,7 @@ EXCEL_FILE_PATH = os.path.join(
     "requests_database.xlsx",
 )
 
-# print(EXCEL_FILE_PATH)
+# print(EXCEL_FILE_PATH)    
 
 # Clear contents
 sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
@@ -120,7 +120,88 @@ for _ in range(1):
     involved.append(inv)
 
 # Create Requests and Traceability
+    
 for i in range(10):
+    faculty=["Ciencias Administrativas y económicas", 
+             "Ingeniería, Diseño y Ciencias Aplicadas",
+             "Ciencias Humanas",
+             "Ciencias de la Salid"]
+    banks = [
+    "Banco de Bogotá",
+    "Bancolombia",
+    "Banco Davivienda",
+    "Banco Popular",
+    "Banco AV Villas",
+    "Banco Caja Social",
+    "Banco de Occidente",
+    "Banco GNB Sudameris",
+    "Banco Itaú",
+    "Bancoomeva",
+    "Banco Pichincha",
+    "Banco Santander Colombia",
+    "BBVA Colombia",
+    "Citibank Colombia",
+    "Scotiabank Colpatria",
+    "Banco Finandina",
+    "HSBC",
+    "Citibank",
+    "JPMorgan Chase",
+    "Bank of America",
+    "Barclays",
+    "BNP Paribas",
+    "Deutsche Bank",
+    "UBS",
+    "Santander",
+    "Credit Suisse",
+    "ING Group",
+    "Goldman Sachs",
+    "Morgan Stanley",
+    "Wells Fargo",
+    "Standard Chartered",
+    "Banco Santander",
+    "Royal Bank of Canada",
+    "Banco Sabadell",
+    "Banco Bilbao Vizcaya Argentaria (BBVA)",
+    "The Bank of Tokyo-Mitsubishi UFJ"
+    ]
+    eps= [
+    "Sura",
+    "Sanitas",
+    "Famisanar",
+    "Compensar",
+    "Medimás",
+    "Salud Total",
+    "Coomeva",
+    "Nueva EPS",
+    "Aliansalud",
+    "SOS",
+    "Cafesalud",
+    "Coosalud",
+    "Savia Salud",
+    "Mutual Ser",
+    "Cruz Blanca",
+    "Capital Salud",
+    "Comfenalco",
+    "Comfama",
+    "Comfandi",
+    "Comfasucre"
+    ]   
+    pension_fund = [
+    "Porvenir",
+    "Protección",
+    "Colfondos",
+    "Skandia",
+    "Old Mutual",
+    "Colpensiones",
+    "Habitat",
+    "Horizonte",
+    "Crecer",
+    "Fiduprevisora",
+    "Cafam",
+    "Confuturo",
+    "CFA",
+    "Fondo Nacional del Ahorro"
+    ]
 
     status_options = [
         "EN PROCESO",
@@ -132,6 +213,24 @@ for i in range(10):
         "RECHAZADO - CONTABILIDAD",
         "CERRADO",
     ]
+
+    arls= [
+    "Sura ARL",
+    "Positiva ARL",
+    "Colmena Seguros ARL",
+    "Seguros Bolívar ARL",
+    "Axa Colpatria ARL",
+    "Liberty Seguros ARL",
+    "Bolívar ARL",
+    "Mapfre ARL",
+    "Equidad Seguros ARL",
+    "Seguros del Estado ARL",
+    "Mundial de Seguros ARL",
+    "La Previsora ARL",
+    "Seguros Generales Suramericana ARL",
+    "Seguros del Sur ARL",
+    "Protección ARL"
+    ]
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
     final_date = initial_date + timedelta(days=random.randint(1, 30))
 
@@ -142,17 +241,17 @@ for i in range(10):
         "initial_date": initial_date.strftime("%d-%m-%Y"),
         "final_date": final_date.strftime("%d-%m-%Y"),
         "fullname": fake.name(),
-        "faculty": fake.company(),
+        "faculty": random.choice(faculty),
         "document": fake.random_number(digits=10),
         "phone_number": fake.phone_number(),
         "email": fake.email(),
-        "CENCO": fake.word(),
+        "CENCO": fake.random_number(digits=5),
         "reason": fake.text(),
-        "bank": fake.company(),
+        "bank": random.choice(banks),
         "account_type": random.choice(["Ahorros", "Corriente"]),
-        "health_provider": fake.company(),
-        "pension_fund": fake.company(),
-        "arl": fake.company(),
+        "health_provider": random.choice(eps),
+        "pension_fund": random.choice(pension_fund),
+        "arl": random.choice(arls),
         "contract_value": fake.random_number(digits=7),
         "is_one_time_payment": random.choice([True, False]),
     }

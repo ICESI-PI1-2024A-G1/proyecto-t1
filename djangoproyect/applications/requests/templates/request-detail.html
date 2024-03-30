@@ -74,11 +74,11 @@
             </tr>
             <tr>
                 <th scope="row">Valor de Contrato</th>
-                <td>{{ request.contract_value }}</td>
+                <td>${{ request.contract_value }}</td>
             </tr>
             <tr>
                 <th scope="row">Pago Único</th>
-                <td>{{ request.is_one_time_payment }}</td>
+                <td>{{ request.is_one_time_payment|yesno:"Sí,No" }}</td>
             </tr>
         </tbody>
     </table>
