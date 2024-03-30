@@ -9,12 +9,12 @@ class UserAdmin(admin.ModelAdmin):
         extra_context = extra_context or {}
         extra_context['show_save_and_continue'] = False
         return super().change_view(request, object_id, form_url, extra_context=extra_context)
-    list_display=('first_name', 'last_name', 'is_staff', 'is_leader')
+    list_display=('first_name', 'last_name', 'is_superuser', 'is_leader')
     search_fields=('first_name','last_name')
-    list_editable=('is_staff', 'is_leader')
-    list_filter=('is_staff', 'is_leader')
+    list_editable=('is_superuser', 'is_leader')
+    list_filter=('is_superuser', 'is_leader')
     list_per_page=10
-    exclude=('last_login', 'is_superuser', 'groups', 'user_permissions')
+    exclude=('last_login', 'groups', 'user_permissions', 'is_staff')
     form = CustomUserChangeForm
 
 admin.site.unregister(CustomUser)
