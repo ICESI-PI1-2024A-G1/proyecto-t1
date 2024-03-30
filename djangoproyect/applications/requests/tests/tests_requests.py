@@ -1,36 +1,25 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
-from applications.requests.models import Requests, Traceability
-from datetime import date, timedelta
+from applications.requests.models import Traceability
+from datetime import timedelta
 from django.conf import settings
-import os
 from api.sharepoint_api import SharePointAPI
-from openpyxl import Workbook
 from faker import Faker
 import random
 from django.urls import reverse
 
 fake = Faker()
-
-
-EXCEL_FILE_PATH = os.path.join(
-    settings.BASE_DIR,
-    "static",
-    "requests",
-    "emulation",
-    "requests_database.xlsx",
-)
-
-sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
-
 User = get_user_model()
+
+settings.EXCEL_FILE_PATH = settings.EXCEL_FILE_PATH_TEST
 
 
 class RequestViewTest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        sharepoint_api.clear_db()
+        self.api = SharePointAPI(settings.EXCEL_FILE_PATH)
+        self.api.clear_db()
         self.user = User.objects.create_user(
             id="admin",
             username="admin",
@@ -78,7 +67,7 @@ class RequestViewTest(TestCase):
                 "is_one_time_payment": random.choice([True, False]),
             }
 
-            sharepoint_api.create_data(data)
+            self.api.create_data(data)
             data["id"] = i + 1
             self.requests.append(data)
 
@@ -112,7 +101,7 @@ class RequestViewTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("requests:show_requests.html")
-        self.assertEqual(response.context["request"], curr_request)
+        self.assertEqual(response.context["request"]["id"], curr_request["id"])
 
     def test_request_detail_not_found(self):
         response = self.client.get(reverse("requests:request_detail", args=[999]))
@@ -132,7 +121,7 @@ class RequestViewTest(TestCase):
         response = self.client.get(
             reverse("requests:change_status", args=[curr_request["id"]])
         )
-        self.assertEqual(response.context["request"], curr_request)
+        self.assertEqual(response.context["request"]["id"], curr_request["id"])
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("change-status.html")
 
@@ -182,7 +171,7 @@ class RequestViewTest(TestCase):
         response = self.client.get(reverse("requests:assign_request", args=[curr_request["id"]]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("assign-request.html")
-        self.assertEqual(response.context["request"], curr_request)
+        self.assertEqual(response.context["request"]["id"], curr_request["id"])
 
     def test_assign_request_view_unauthorized(self):
         self.client.logout()

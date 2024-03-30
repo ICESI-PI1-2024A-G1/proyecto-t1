@@ -16,15 +16,9 @@ import utils.utils as utils
 
 from applications.teams.models import Team
 
-EXCEL_FILE_PATH = os.path.join(
-    settings.BASE_DIR,
-    "static",
-    "requests",
-    "emulation",
-    "requests_database.xlsx",
-)
+from django.conf import settings
 
-sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
+sharepoint_api = SharePointAPI(settings.EXCEL_FILE_PATH)
 
 User = get_user_model()
 

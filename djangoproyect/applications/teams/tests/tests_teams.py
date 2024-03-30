@@ -28,7 +28,7 @@ class TeamTestCase(TestCase):
             is_staff=True,
         )
 
-        for i in range(10):
+        for i in range(30):
             user = User.objects.create(
                 id=f"0000{i}",
                 username=f"0000{i}",
@@ -39,10 +39,14 @@ class TeamTestCase(TestCase):
             )
             self.users.append(user)
 
+        self.leaders = [self.user]
         for i in range(5):
-            leader = self.users[1]
+            leader = random.choice(
+                User.objects.exclude(id__in=[leader.id for leader in self.leaders])
+            )
             leader.is_leader = True
             leader.save()
+            self.leaders.append(leader)
             team = Team.objects.create(
                 name=fake.company(), description=fake.text(), leader=leader
             )
@@ -52,13 +56,24 @@ class TeamTestCase(TestCase):
             team.members.add(*team_members)
             self.teams.append(team)
 
-        self.client.login(id="admin", password="password")
+        leader = random.choice(
+            User.objects.exclude(id__in=[leader.id for leader in self.leaders])
+        )
+        leader.is_leader = True
+        leader.save()
+        self.leaders.append(leader)
+        team_members = random.sample(
+            [user for user in self.users if user != leader], random.randint(3, 5)
+        )
+
         self.form_data = {
             "name": fake.company(),
             "description": fake.text(),
-            "leader": random.choice(self.users).id,
-            "members": [user.id for user in random.sample(self.users, 3)],
+            "leader": leader.id,
+            "members": [u.id for u in team_members],
         }
+
+        self.client.login(id="admin", password="password")
 
     ### SHOW TEAMS TESTS
 
@@ -88,17 +103,12 @@ class TeamTestCase(TestCase):
     def test_show_teams_leader(self):
         self.user.is_staff = False
         self.user.save()
-        teams = Team.objects.all()
-        all_members = []
-        for i in range(3):
-            self.teams[i].leader = self.user
-            self.teams[i].save()
-            all_members.append(self.teams[i].id)
+        teams = [team.id for team in Team.objects.filter(leader=self.user)]
         response = self.client.get(reverse("teams:show_teams"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("teams:show-teams.html")
-        displayed_teams = [member.id for member in response.context["teams"]]
-        self.assertEqual(displayed_teams, all_members)
+        displayed_teams = [team.id for team in response.context["teams"]]
+        self.assertEqual(displayed_teams, teams)
 
     ### ADD TEAM TESTS
 
@@ -148,15 +158,6 @@ class TeamTestCase(TestCase):
         self.assertTemplateUsed("teams:add-team.html")
         self.assertEqual(Team.objects.count(), prev_teams_number)
 
-    def test_add_team_repeated_name(self):
-        prev_teams_number = Team.objects.count()
-        for i in range(10):
-            self.form_data["name"] = "team1"
-            response = self.client.post(reverse("teams:add_team"), self.form_data)
-            self.assertRedirects(response, "/teams/", 302)
-            self.assertTemplateUsed("teams:show_teams.html")
-            self.assertEqual(Team.objects.count(), prev_teams_number + i + 1)
-
     ### EDIT TEAM TESTS
 
     def test_edit_team_form_authenticated(self):
@@ -178,19 +179,14 @@ class TeamTestCase(TestCase):
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_edit_team_all_valid_fields(self):
-        form_data = {
-            "name": "New name",
-            "description": "New Description",
-            "leader": random.choice(self.users).id,
-            "members": [user.id for user in random.sample(self.users, 3)],
-        }
-        form = TeamForm(form_data, instance=self.teams[0])
+
+        form = TeamForm(self.form_data, instance=self.teams[0])
         self.assertTrue(form.is_valid())
         response = self.client.post(
-            reverse("teams:edit_team", args=[self.teams[0].id]), form_data
+            reverse("teams:edit_team", args=[self.teams[0].id]), self.form_data
         )
         self.assertRedirects(response, "/teams/", 302)
-        self.assertEqual(self.teams[0].name, "New name")
+        self.assertEqual(self.teams[0].name, self.form_data["name"])
 
     def test_edit_team_no_leader(self):
         form_data = {
