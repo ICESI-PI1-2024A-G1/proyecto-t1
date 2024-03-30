@@ -1,16 +1,20 @@
-import json
 import os
 from openpyxl import Workbook
 import pandas as pd
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from applications.teams.models import Team
-
 
 class SharePointAPI:
+    """Class to control the information comming from the sharepoint api"""
 
     def __init__(self, excel_path) -> None:
+        """
+        Initializes the SharePointAPI object.
+
+        Args:
+            excel_path (str): The path to the Excel file.
+        """
         self.excel_path = excel_path
         self.request_columns = [
             "id",
@@ -36,6 +40,9 @@ class SharePointAPI:
         ]
 
     def clear_db(self):
+        """
+        Clears the database by removing the Excel file and creating a new one.
+        """
         try:
             os.remove(self.excel_path)
             print("Database clear")
@@ -49,6 +56,18 @@ class SharePointAPI:
 
     @csrf_exempt
     def get_request_by_id(self, id) -> JsonResponse:
+        """
+        Retrieves a request by its ID from the Excel data.
+
+        Args:
+            id (int): The ID of the request.
+
+        Returns:
+            JsonResponse: JSON response containing the request data.
+
+        Raises:
+            Http404: If the request is not found.
+        """
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             data = df[df["id"] == id].to_dict(orient="records")
@@ -61,6 +80,15 @@ class SharePointAPI:
 
     @csrf_exempt
     def get_all_requests(self) -> JsonResponse:
+        """
+        Retrieves all requests from the Excel data.
+
+        Returns:
+            JsonResponse: JSON response containing all request data.
+
+        Raises:
+            Http404: If the file is not found.
+        """
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             data = df.to_dict(orient="records")
@@ -70,6 +98,18 @@ class SharePointAPI:
 
     @csrf_exempt
     def create_data(self, data) -> JsonResponse:
+        """
+        Creates new data in the Excel file.
+
+        Args:
+            data (dict): The data to be created.
+
+        Returns:
+            JsonResponse: JSON response confirming the creation.
+
+        Raises:
+            Http404: If the request creation fails.
+        """
         try:
             excel_file = pd.ExcelFile(self.excel_path)
             df = pd.read_excel(self.excel_path, sheet_name="data")
@@ -92,6 +132,19 @@ class SharePointAPI:
 
     @csrf_exempt
     def update_data(self, id, new_data) -> JsonResponse:
+        """
+        Updates existing data in the Excel file.
+
+        Args:
+            id (int): The ID of the data to be updated.
+            new_data (dict): The updated data.
+
+        Returns:
+            JsonResponse: JSON response confirming the update.
+
+        Raises:
+            Http404: If the request update fails.
+        """
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             mask = df["id"] == id
@@ -111,6 +164,18 @@ class SharePointAPI:
 
     @csrf_exempt
     def delete_data(self, id) -> JsonResponse:
+        """
+        Deletes data from the Excel file.
+
+        Args:
+            id (int): The ID of the data to be deleted.
+
+        Returns:
+            JsonResponse: JSON response confirming the deletion.
+
+        Raises:
+            Http404: If the data deletion fails.
+        """
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             original_rows = len(df)
@@ -132,6 +197,18 @@ class SharePointAPI:
 
     @csrf_exempt
     def search_data(self, query) -> JsonResponse:
+        """
+        Searches data in the Excel file based on a query.
+
+        Args:
+            query (str or dict): The query string or dictionary.
+
+        Returns:
+            JsonResponse: JSON response containing the search results.
+
+        Raises:
+            Http404: If the search fails.
+        """
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             filtered_df = df.copy()
@@ -155,6 +232,18 @@ class SharePointAPI:
 
     @csrf_exempt
     def remove_team(self, id) -> JsonResponse:
+        """
+        Removes a team from the data by setting its team ID to NaN.
+
+        Args:
+            id (int): The ID of the team to be removed.
+
+        Returns:
+            JsonResponse: JSON response confirming the removal.
+
+        Raises:
+            Exception: If the team removal fails.
+        """
         try:
             # Cargar el archivo Excel
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
