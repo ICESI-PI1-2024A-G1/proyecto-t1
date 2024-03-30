@@ -59,7 +59,7 @@ class SharePointAPITestCase(TestCase):
     def test_get_request_by_id_success(self):
         response = self.api.get_request_by_id(10)
         self.assertEqual(response.status_code, 200)
-        # Aquí puedes agregar más comprobaciones según la respuesta esperada
+      
 
     def test_get_request_by_id_not_found(self):
         with self.assertRaises(Http404):
@@ -121,7 +121,7 @@ class SharePointAPITestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_update_data_not_found(self):
-        id_to_update = 9999  # Un ID que no existe
+        id_to_update = 9999 
         new_data = {"status": "updated_status"}
         with self.assertRaises(Http404):
             self.api.update_data(id_to_update, new_data)
@@ -147,21 +147,21 @@ class SharePointAPITestCase(TestCase):
         id_to_delete = data[len(data) - 1]
         response = self.api.delete_data(id_to_delete["id"])
         self.assertEqual(response.status_code, 200)
-        # Agrega comprobaciones adicionales si es necesario
+       
 
     def test_delete_data_not_found(self):
-        id_to_delete = 9999  # Un ID que no existe
+        id_to_delete = 9999 
         with self.assertRaises(Http404):
             self.api.delete_data(id_to_delete)
 
     def test_search_data_success(self):
-        query = "test"  # Un término de búsqueda que debería tener resultados
+        query = "test" 
         response = self.api.search_data(query)
         self.assertEqual(response.status_code, 200)
-        # Agrega comprobaciones adicionales si es necesario
+       
 
     def test_search_data_no_results(self):
-        query = "no_results_for_this_query"  # Un término de búsqueda que no debería tener resultados
+        query = "no_results_for_this_query"  
         response = self.api.search_data(query)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), [])
