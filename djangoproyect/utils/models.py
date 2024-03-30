@@ -31,6 +31,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=128)
     is_staff = models.BooleanField(default=False, verbose_name='Miembro')
     is_leader = models.BooleanField(default=False,verbose_name='Lider')
+    is_superuser = models.BooleanField(default=False,verbose_name='Super Usuario')
     
 
     USERNAME_FIELD = "id"

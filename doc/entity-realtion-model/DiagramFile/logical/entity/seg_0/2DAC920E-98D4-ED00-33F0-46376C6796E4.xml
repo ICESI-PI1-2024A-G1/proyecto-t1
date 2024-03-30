@@ -24,8 +24,7 @@
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<dataTypeSize>10</dataTypeSize>
-<ownDataTypeParameters>10,,</ownDataTypeParameters>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
 <Attribute name="user_id" id="E518C023-6925-3F82-2C69-FD53F229D2E3">
 <createdBy>aleji</createdBy>
@@ -40,6 +39,39 @@
 <use>1</use>
 <dataTypeSize>10 BYTE</dataTypeSize>
 <ownDataTypeParameters>10 BYTE,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="name" id="22716E97-68CC-BC25-D9E6-E4A538E2C14F">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-29 23:13:53 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="description" id="D5B2823F-560F-7A12-194F-7986303EE46E">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-29 23:14:00 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="creation_date" id="FCB23144-9E8E-9E52-709D-C59E6487B7B9">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-29 23:14:12 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">

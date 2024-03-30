@@ -16,7 +16,7 @@ global random_code
 def register_view(request):
     if request.method == "GET":
         if request.user.is_authenticated:
-            return redirect(views.show_requests)
+            return redirect("/requests")
         else:
             return render(request, "register.html")
     else:
@@ -97,13 +97,15 @@ def register_view(request):
                     "Verificación de correo",
                     "Verificación de Registro Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
                     request.POST["correo"],
-                    "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: " + random_code + "\n\nSi no ha solicitado este correo, por favor ignorelo."
+                    "Hola, bienvenido al Sistema de Contabilidad de la Universidad ICESI.\n\nSu código de verificación es: "
+                    + random_code
+                    + "\n\nSi no ha solicitado este correo, por favor ignorelo.",
                 )
-                
-                # Set has_registered session to limit access to the verifyEmail view
-                request.session['has_registered'] = True
 
-                return redirect('registration:verifyEmail_view')
+                # Set has_registered session to limit access to the verifyEmail view
+                request.session["has_registered"] = True
+
+                return redirect("registration:verifyEmail_view")
         except Exception as e:
             print(e)
             return render(
@@ -118,29 +120,36 @@ def register_view(request):
 
 def verify_email_view(request):
     if request.method == "GET":
-        if request.session.get('has_registered') == True:
-            request.session['has_registered'] = False
+        if request.session.get("has_registered") == True:
+            request.session["has_registered"] = False
             return render(request, "verifyEmailReg.html")
         else:
             if request.user.is_authenticated:
-                return redirect(views.show_requests)
+                return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:
-        if request.POST["verificationCode"] == request.session.get('random_code'):
-            
-            id = request.session.get('id')
-            username = request.session.get('id')
-            first_name = request.session.get('first_name')
-            last_name = request.session.get('last_name')
-            password = request.session.get('password')
-            email = request.session.get('email')
+        if request.POST["verificationCode"] == request.session.get("random_code"):
 
-            user = User.objects.create_user(id=id, username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+            id = request.session.get("id")
+            username = request.session.get("id")
+            first_name = request.session.get("first_name")
+            last_name = request.session.get("last_name")
+            password = request.session.get("password")
+            email = request.session.get("email")
+
+            user = User.objects.create_user(
+                id=id,
+                username=username,
+                password=password,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+            )
             user.save()
-            
-            messages.success(request, 'Usuario registrado correctamente.')
+
+            messages.success(request, "Usuario registrado correctamente.")
             return redirect("login:login_view")
         else:
-            messages.error(request, 'Código de verificación incorrecto.')
+            messages.error(request, "Código de verificación incorrecto.")
             return render(request, "verifyEmailReg.html")

@@ -1,15 +1,9 @@
 <select id="newStatusSelect" class="form-control">
-    <!-- Aquí puedes cargar opciones de estado dinámicamente si lo necesitas -->
-    <option value="EN PROCESO">En Proceso</option>
-    <option value="APROBADO - CENCO">Aprobado - Cenco</option>
-    <option value="RECHAZADO - CENCO">Rechazado - Cenco</option>
-    <option value="APROBADO - DECANO">Aprobado - Decano</option>
-    <option value="RECHAZADO - DECANO">Rechazado - Decano</option>
-    <option value="PAGADO - CONTABILIDAD">Pagado - Contabilidad</option>
-    <option value="RECHAZADO - CONTABILIDAD">Rechazado - Contabilidad</option>
-    <option value="CERRADO">Cerrado</option>
+    {% for status in status_options %}
+    <option value="{{status}}" {% if status == request.status %}selected{%endif%} >{{status}}</option>
+    {% endfor %}
 </select>
 
 <textarea id="reasonTextarea" class="form-control mt-3" placeholder="Motivo:" rows="5"></textarea>
 
-<button onclick="changeStatus('{{id}}')" type="button" class="btn btn-primary my-4" id="changeStatusBtn">Guardar</button>
+<button onclick="changeStatus('{{id}}')" type="button" class="btn btn-primary my-4" id="changeStatusBtn">Guardar</button> 

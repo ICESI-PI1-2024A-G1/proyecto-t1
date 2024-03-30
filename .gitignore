@@ -215,3 +215,4 @@ djangoproyect/applications/teams/migrations/0005_merge_20240310_0950.py
 
 # Ignore Tailwind CSS build cache
 **/static/CACHE
+**/requests_database_test.xlsx

@@ -40,7 +40,13 @@ EXCEL_FILE_PATH = os.path.join(
 
 # print(EXCEL_FILE_PATH)
 
+# Clear contents
 sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
+sharepoint_api.clear_db()
+Traceability.objects.all().delete()
+Team.objects.all().delete()
+User.objects.all().delete()
+Involved.objects.all().delete()
 
 # Create superuser
 

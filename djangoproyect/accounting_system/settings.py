@@ -89,6 +89,22 @@ TEMPLATES = [
 WSGI_APPLICATION = "accounting_system.wsgi.application"
 
 
+EXCEL_FILE_PATH = os.path.join(
+    BASE_DIR,
+    "static",
+    "requests",
+    "emulation",
+    "requests_database.xlsx",
+)
+EXCEL_FILE_PATH_TEST = os.path.join(
+    BASE_DIR,
+    "static",
+    "requests",
+    "emulation",
+    "requests_test_database.xlsx",
+)
+
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -158,7 +174,7 @@ STATICFILES_DIRS = [
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "ccsa101010@gmail.com"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_ADDRESS")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 

@@ -16,32 +16,37 @@ import utils.utils as utils
 
 from applications.teams.models import Team
 
-EXCEL_FILE_PATH = os.path.join(
-    settings.BASE_DIR,
-    "static",
-    "requests",
-    "emulation",
-    "requests_database.xlsx",
-)
+from django.conf import settings
 
-sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
+sharepoint_api = SharePointAPI(settings.EXCEL_FILE_PATH)
 
 User = get_user_model()
 
 
 @csrf_exempt
+@login_required
 def change_status(request, id):
     if request.method == "GET":
-        return render(request, "change-status.html", {"id": id})
+        curr_request = sharepoint_api.get_request_by_id(id)
+        curr_request_data = json.loads(curr_request.content)
+        status_options = [
+            "EN PROCESO",
+            "APROBADO - CENCO",
+            "RECHAZADO - CENCO",
+            "APROBADO - DECANO",
+            "RECHAZADO - DECANO",
+            "PAGADO - CONTABILIDAD",
+            "RECHAZADO - CONTABILIDAD",
+            "CERRADO",
+        ]
+        return render(request, "change-status.html", {"request": curr_request_data, "status_options": status_options})
     elif request.method == "POST":
         try:
             curr_request = sharepoint_api.get_request_by_id(id)
-            print(curr_request)
-            new_status = request.POST.get("newStatus")
-            print(new_status)
             curr_request_data = json.loads(curr_request.content)
-            prev_status = curr_request_data["status"]
+            new_status = request.POST.get("newStatus")
             new_reason = request.POST.get("reason")
+            prev_status = curr_request_data["status"]
             curr_request_data["status"] = new_status
             team_id = curr_request_data["team"]
             Traceability.objects.create(
@@ -64,7 +69,6 @@ def change_status(request, id):
                         f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request_data["id"]}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                     )
             response = sharepoint_api.update_data(id, curr_request_data)
-                
             if response.status_code == 200:
                 return JsonResponse(
                     {
@@ -80,7 +84,6 @@ def change_status(request, id):
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
             )
-
 
 def search(request, query):
     try:
@@ -163,7 +166,6 @@ def assign_request(request, request_id):
             manager = get_object_or_404(User, pk=user_id)
             curr_request["manager"] = manager
             teams = Team.objects.filter(leader=request.user)
-            print(teams[0].id)
             team = teams[0].id if teams.exists() else ""
             curr_request["team"] = team
             sharepoint_api.update_data(request_id, curr_request)
@@ -180,7 +182,8 @@ def assign_request(request, request_id):
         except Exception as e:
             print(e)
         return redirect("/requests/")
-    
+
+@login_required
 def show_traceability(request, request_id):
     traceability = Traceability.objects.filter(request=request_id)
     return render(request, "show-traceability.html", {"traceability":traceability})

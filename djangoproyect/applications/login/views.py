@@ -19,7 +19,7 @@ def login_view(request):
         request.session["has_logged"] = False
         request.session["has_requested_password"] = False
         if request.user.is_authenticated and request.GET.get("logout") != "true":
-            return redirect(views.show_requests)
+            return redirect("/requests")
         else:
             if request.GET.get("logout") == "true":
                 logout(request)
@@ -38,10 +38,9 @@ def login_view(request):
                 # Generate random code
                 random_code = utils.generate_random_code()
                 request.session["random_code"] = random_code
-                print("Code: " + random_code)
+                # print("Code: " + random_code)
 
                 # Send verification email
-                '''
                 utils.send_verification_email(
                     request,
                     "Verificación de correo",
@@ -51,7 +50,6 @@ def login_view(request):
                     + random_code
                     + "\n\nSi no ha solicitado este correo, por favor ignorelo.",
                 )
-                '''
                 request.session["has_logged"] = True
 
                 return redirect("login:verifyEmail_view")
@@ -59,9 +57,7 @@ def login_view(request):
                 return render(
                     request,
                     "login.html",
-                    {
-                        "message": "Por favor, revisa las credenciales."
-                    },
+                    {"message": "Por favor, revisa las credenciales."},
                 )
         except Exception as e:
             print(e)
@@ -80,7 +76,7 @@ def verify_email_view(request):
             return render(request, "verifyEmailLog.html", context)
         else:
             if request.user.is_authenticated:
-                return redirect(views.show_requests)
+                return redirect("/requests/")
             else:
                 return redirect("login:login_view")
     else:
@@ -90,7 +86,7 @@ def verify_email_view(request):
             backend = "django.contrib.auth.backends.ModelBackend"
             user.backend = backend
             login(request, user)
-            return redirect(views.show_requests)
+            return redirect("/requests/")
         else:
             messages.error(request, "Código de verificación incorrecto.")
             return render(request, "verifyEmailLog.html", context)
@@ -117,7 +113,7 @@ def reset_password_view(request):
             # Generate random code
             random_code = utils.generate_random_code()
             request.session["random_code"] = random_code
-            print("Code: " + random_code)
+            # print("Code: " + random_code)
             user = User.objects.get(id=id)
             email = user.email
             # Send verification email
@@ -145,7 +141,7 @@ def verify_email_reset_view(request):
             return render(request, "verifyEmailLog.html", context)
         else:
             if request.user.is_authenticated:
-                return redirect(views.show_requests)
+                return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:
@@ -163,7 +159,7 @@ def change_password_view(request):
             return render(request, "change_password.html")
         else:
             if request.user.is_authenticated:
-                return redirect(views.show_requests)
+                return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:

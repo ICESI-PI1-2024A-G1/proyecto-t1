@@ -1,4 +1,6 @@
 import json
+import os
+from openpyxl import Workbook
 import pandas as pd
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -32,6 +34,18 @@ class SharePointAPI:
             "contract_value",
             "is_one_time_payment",
         ]
+
+    def clear_db(self):
+        try:
+            os.remove(self.excel_path)
+            print("Database clear")
+        except:
+            pass
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "data"
+        workbook.save(self.excel_path)
+        workbook.close()
 
     @csrf_exempt
     def get_request_by_id(self, id) -> JsonResponse:
@@ -167,4 +181,3 @@ class SharePointAPI:
                 status=500,
                 safe=False,
             )
-

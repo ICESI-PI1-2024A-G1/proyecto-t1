@@ -2,7 +2,7 @@
     <form action="/requests/assign-request/{{request.id}}" method="POST">
         {% csrf_token %}
         <div class="form-group">
-            <label for="userSelector">Seleccionar Usuario:</label>
+            <label for="userSelector">Usuarios en tu equipo:</label>
             <select class="form-control" id="userSelector" name="user_id">
                 {% for user in users %}
                 <option value="{{user.id}}">{{user}}</option>

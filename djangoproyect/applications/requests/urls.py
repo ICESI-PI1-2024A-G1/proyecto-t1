@@ -2,8 +2,10 @@ from django.urls import path
 
 from applications.requests import views
 
+app_name = "requests"
+
 urlpatterns = [
-    path("", views.show_requests),
+    path("", views.show_requests, name="show_requests"),
     path("change-status/<int:id>", views.change_status, name="change_status"),
     path("search/<str:query>", views.search, name="search"),
     path("<int:id>/", views.detail_request, name="request_detail"),
@@ -13,7 +15,7 @@ urlpatterns = [
     path(
         "show-traceability/<int:request_id>",
         views.show_traceability,
-        name="traceability",
+        name="show_traceability",
     ),
     path("test-view/", views.test_view),
 ]
