@@ -1,3 +1,9 @@
+"""
+Permissions' views modules
+
+This module contains view functions for managing permissions for users in the appliactions
+it is intended for the admin to manage how the users can access the data in the application
+"""
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -16,6 +22,18 @@ User = get_user_model()
 @never_cache
 @login_required
 def permissions_view(request):
+    """
+    View function for displaying permissions.
+
+    Only accessible to superusers, redirects if the user is not a superuser.
+    Retrieves users and orders them by superuser status and last name.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        HttpResponse: The rendered permissions.html template with users.
+    """
     if not request.user.is_superuser:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     users = User.objects.annotate(
@@ -28,7 +46,21 @@ def permissions_view(request):
     return render(request, "permissions.html", {"users": users})
 
 def search(request, query):
-    # print(query)
+    """
+    View function for searching users.
+
+    This function is responsible for handling user search queries.
+    
+    Args:
+        request (HttpRequest): The request object.
+        query (str): The search query.
+
+    Returns:
+        JsonResponse: JSON response containing filtered users.
+
+    Notes:
+        The function initializes a SearchFilter object and uses it to filter users based on the provided query.
+    """
     users_filter = SearchFilter()
 
     return users_filter.filter_users(query)
@@ -36,6 +68,25 @@ def search(request, query):
 
 @csrf_exempt
 def update_user_permissions(request):
+    """
+    View function for updating user permissions.
+
+    This function handles the updating of user permissions'.
+    It expects a POST request containing JSON data with user IDs and permission changes.
+    It updates the permissions for the specified users.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        JsonResponse: JSON response indicating success or failure.
+
+    Notes:
+        - The function is exempted from CSRF protection.
+        - Expects a POST request with JSON data containing user IDs and their permission changes.
+        - Iterates over the received data, updates user permissions accordingly, and saves the changes.
+        - Returns a JSON response indicating the status of the operation.
+    """
     if request.method == 'POST':
         data = json.loads(request.body)
         for item in data:
