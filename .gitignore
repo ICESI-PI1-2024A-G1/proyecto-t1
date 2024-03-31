@@ -187,7 +187,6 @@ pip-selfcheck.json
 # End of https://www.toptal.com/developers/gitignore/api/venv,django
 
 *.vpp
-djangoproyect/applications/teams/migrations/0005_merge_20240310_0950.py
 
 # Ajelandro's documentation
 *.xml
