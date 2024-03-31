@@ -1,3 +1,9 @@
+"""
+Request Test
+
+This module contains test cases for the views related to teams in the application.
+"""
+
 import random
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -14,6 +20,18 @@ fake = Faker()
 
 
 class TeamTestCase(TestCase):
+    """
+    TestCase class for testing the Teams app.
+
+    Attributes:
+        client (Client): Django test client for making requests.
+        users (list): List of User instances created for testing.
+        teams (list): List of Team instances created for testing.
+        user (User): User instance representing the admin user for testing.
+        leaders (list): List of User instances representing team leaders.
+        form_data (dict): Dictionary representing form data for testing.
+    """
+
     def setUp(self):
         self.client = Client()
         self.users = []
@@ -78,6 +96,9 @@ class TeamTestCase(TestCase):
     ### SHOW TEAMS TESTS
 
     def test_show_teams_many(self):
+        """
+        Tests displaying all teams when many teams exist.
+        """
         response = self.client.get(reverse("teams:show_teams"))
         self.assertEqual(response.status_code, 200)
         displayed_teams = [member.id for member in response.context["teams"]]
@@ -86,6 +107,9 @@ class TeamTestCase(TestCase):
         self.assertTemplateUsed("teams:show-teams.html")
 
     def test_show_teams_empty(self):
+        """
+        Tests displaying teams when no teams exist.
+        """
         Team.objects.all().delete()
         response = self.client.get(reverse("teams:show_teams"))
         self.assertEqual(response.status_code, 200)
@@ -95,12 +119,18 @@ class TeamTestCase(TestCase):
         self.assertTemplateUsed("teams:show-teams.html")
 
     def test_show_teams_unauthorized(self):
+        """
+        Test displaying teams when the user is not authorized.
+        """
         self.client.logout()
         response = self.client.get(reverse("teams:show_teams"))
         self.assertRedirects(response, "/logout/?next=/teams/", 302)
         self.assertTemplateUsed("login:login.html")
 
     def test_show_teams_leader(self):
+        """
+        Test displaying teams for a user who is a leader.
+        """
         self.user.is_staff = False
         self.user.save()
         teams = [team.id for team in Team.objects.filter(leader=self.user)]
@@ -113,24 +143,36 @@ class TeamTestCase(TestCase):
     ### ADD TEAM TESTS
 
     def test_add_team_form_authenticated(self):
+        """
+        Test displaying the add team form when the user is authenticated.
+        """
         response = self.client.get(reverse("teams:add_team"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("teams:add-team.html")
         self.assertIsNotNone(response.context["form"])
 
     def test_add_team_form_unauthorized(self):
+        """
+        Test accessing the add team form when the user is not authorized.
+        """
         self.client.logout()
         response = self.client.get(reverse("teams:add_team"))
         self.assertRedirects(response, "/logout/?next=/teams/add-team-form/", 302)
         self.assertTemplateUsed("login:login.html")
 
     def test_add_team_form_unauthorized(self):
+        """
+        Test posting data to the add team form when the user is not authorized.
+        """
         self.client.logout()
         response = self.client.post(reverse("teams:add_team"))
         self.assertRedirects(response, "/logout/?next=/teams/add-team-form/", 302)
         self.assertTemplateUsed("login:login.html")
 
     def test_add_team_all_valid_fields(self):
+        """
+        Test adding a team with all valid fields.
+        """
         prev_teams_number = Team.objects.count()
         form = TeamForm(self.form_data)
         self.assertTrue(form.is_valid())
@@ -139,6 +181,9 @@ class TeamTestCase(TestCase):
         self.assertEqual(Team.objects.count(), prev_teams_number + 1)
 
     def test_add_team_no_leader(self):
+        """
+        Test adding a team without a leader.
+        """
         self.form_data.pop("leader")
         prev_teams_number = Team.objects.count()
         form = TeamForm(self.form_data)
@@ -149,6 +194,9 @@ class TeamTestCase(TestCase):
         self.assertEqual(Team.objects.count(), prev_teams_number)
 
     def test_add_team_no_members(self):
+        """
+        Test adding a team without any members.
+        """
         self.form_data["members"] = []
         prev_teams_number = Team.objects.count()
         form = TeamForm(self.form_data)
@@ -161,12 +209,18 @@ class TeamTestCase(TestCase):
     ### EDIT TEAM TESTS
 
     def test_edit_team_form_authenticated(self):
+        """
+        Test displaying the edit team form when the user is authenticated.
+        """
         response = self.client.get(reverse("teams:edit_team", args=[self.teams[0].id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("teams:edit-team.html")
         self.assertIsNotNone(response.context["form"])
 
     def test_edit_team_form_unauthorized(self):
+        """
+        Test accessing the edit team form when the user is not authorized.
+        """
         self.client.logout()
         response = self.client.get(reverse("teams:edit_team", args=[self.teams[0].id]))
         self.assertRedirects(
@@ -175,11 +229,16 @@ class TeamTestCase(TestCase):
         self.assertTemplateUsed("login:login.html")
 
     def test_edit_team_not_found(self):
+        """
+        Test accessing the edit team form for a non-existent team.
+        """
         response = self.client.get(reverse("teams:edit_team", args=[300]))
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_edit_team_all_valid_fields(self):
-
+        """
+        Test editing a team with all valid fields.
+        """
         form = TeamForm(self.form_data, instance=self.teams[0])
         self.assertTrue(form.is_valid())
         response = self.client.post(
@@ -189,6 +248,9 @@ class TeamTestCase(TestCase):
         self.assertEqual(self.teams[0].name, self.form_data["name"])
 
     def test_edit_team_no_leader(self):
+        """
+        Test editing a team without a leader.
+        """
         form_data = {
             "name": "Updated Team Name",
             "description": "Updated Team Description",
@@ -205,6 +267,9 @@ class TeamTestCase(TestCase):
         self.assertNotEqual(self.teams[0].name, "New name")
 
     def test_edit_team_no_members(self):
+        """
+        Test editing a team without any members.
+        """
         form_data = {
             "name": "Updated Team Name",
             "description": "Updated Team Description",
@@ -224,10 +289,16 @@ class TeamTestCase(TestCase):
     ### DELETE TEAM TESTS
 
     def test_delete_team_not_found(self):
+        """
+        Test deleting a non-existent team.
+        """
         response = self.client.delete(reverse("teams:edit_team", args=[300]))
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_delete_team_valid(self):
+        """
+        Test deleting an existing team.
+        """
         prev_teams_count = Team.objects.count()
         response = self.client.delete(
             reverse("teams:delete_team", args=[self.teams[0].id])
@@ -239,6 +310,9 @@ class TeamTestCase(TestCase):
     ### SHOW MEMBERS TESTS
 
     def test_show_members_authenticated(self):
+        """
+        Test displaying members of a team when the user is authenticated.
+        """
         members = [member.id for member in self.teams[0].members.all()]
         response = self.client.get(
             reverse("teams:show_members", args=[self.teams[0].id])
@@ -250,10 +324,16 @@ class TeamTestCase(TestCase):
         self.assertEqual(members, displayed_members)
 
     def test_show_members_not_found(self):
+        """
+        Test accessing members of a non-existent team.
+        """
         response = self.client.get(reverse("teams:show_members", args=[300]))
         self.assertTemplateUsed("errorHandler:error_404_view.html")
 
     def test_show_members_unauthorized(self):
+        """
+        Test accessing members of a team when the user is not authorized.
+        """
         self.client.logout()
         response = self.client.get(
             reverse("teams:show_members", args=[self.teams[0].id])

@@ -6,6 +6,7 @@ $(document).ready(function () {
      */
     DataTableInit("teamsTable")
 
+    // Fetch CSRF token from meta tag
     const csrfTokenMeta = document.querySelector('meta[name="csrf_token"]');
     const csrftoken = csrfTokenMeta.getAttribute('content');
 
@@ -23,14 +24,17 @@ $(document).ready(function () {
                 url: `/teams/delete/${teamId}/`,
                 type: "DELETE",
                 beforeSend: function(xhr) {
+                    // Set CSRF token in request header
                     xhr.setRequestHeader("X-CSRFToken", csrftoken);
                 },
                 success: function(response) {
-                    location.reload()
+                    // Reload the page after successful deletion
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
-                    alert("Error al eliminar el equipo");
+                    // Display an alert for error in deletion
+                    alert("Error deleting team");
                 }
             });
         }
