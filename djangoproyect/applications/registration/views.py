@@ -1,3 +1,9 @@
+"""
+Registration views
+
+This module contains views for handling registration-related operations within the application.
+"""
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib import messages
@@ -14,6 +20,20 @@ global random_code
 
 
 def register_view(request):
+    """
+    View function for user registration.
+
+    Handles user registration by validating user input and sending a verification email.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered HTML response or redirection to another view.
+
+    Raises:
+        Exception: If there's an error during registration.
+    """
     if request.method == "GET":
         if request.user.is_authenticated:
             return redirect("/requests")
@@ -119,6 +139,17 @@ def register_view(request):
 
 
 def verify_email_view(request):
+    """
+    View function for verifying email during registration.
+
+    Verifies the email using the provided code and creates a new user upon successful verification.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered HTML response or redirection to another view.
+    """
     if request.method == "GET":
         if request.session.get("has_registered") == True:
             request.session["has_registered"] = False
