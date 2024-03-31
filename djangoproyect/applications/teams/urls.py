@@ -1,3 +1,9 @@
+"""
+Request urls
+
+This module defines URL patterns for the teams application.
+"""
+
 from django.urls import path
 from applications.teams import views
 
