@@ -16,14 +16,20 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
     path("", include("applications.login.urls")),
     path("requests/", include("applications.requests.urls")),
     path("teams/", include("applications.teams.urls")),
     path("registration/", include("applications.registration.urls")),
+    path("emailContact/", include("applications.emailContact.urls")),
+    path("permissions/", include("applications.permissions.urls")),
+    path("error/", include("applications.errorHandler.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+handler404 = "applications.errorHandler.views.error_404_view"

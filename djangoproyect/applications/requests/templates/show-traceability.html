@@ -1,0 +1,32 @@
+<div class="container">
+    <table class="table table-stripped">
+        <thead>
+            <th>Fecha</th>
+            <th>Modificado por</th>
+            <th>Motivo</th>
+            <th>Estado Anterior</th>
+            <th>Nuevo Estado</th>
+        </thead>
+        <tbody>
+            {% for trace in traceability %}
+            <tr>
+                <td>
+                    {{ trace.date }}        
+                </td>
+                <td>
+                    {{ trace.modified_by }}        
+                </td>
+                <td>
+                    {{ trace.reason }}
+                </td>
+                <td>
+                    {{ trace.prev_state }}        
+                </td>
+                <td>
+                    {{ trace.new_state }}        
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

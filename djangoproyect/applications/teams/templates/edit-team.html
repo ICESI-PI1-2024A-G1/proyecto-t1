@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+Cambiar líder de equipo
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body p-4">
+            <h2>Editar Equipo</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{form.as_p}}
+                <div class="mt-4 mx-auto col-md-4 d-flex justify-content-between">
+                    <div>
+                        <a href="/teams" class="btn btn-danger">Cancelar <i class="fa fa-times"></i></a>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Guardar <i class="fa fa-user-plus"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

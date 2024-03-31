@@ -1,0 +1,9 @@
+<select id="newStatusSelect" class="form-control">
+    {% for status in status_options %}
+    <option value="{{status}}" {% if status == request.status %}selected{%endif%} >{{status}}</option>
+    {% endfor %}
+</select>
+
+<textarea id="reasonTextarea" class="form-control mt-3" placeholder="Motivo:" rows="5"></textarea>
+
+<button onclick="changeStatus('{{id}}')" type="button" class="btn btn-primary my-4" id="changeStatusBtn">Guardar</button> 
