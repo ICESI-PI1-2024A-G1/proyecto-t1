@@ -15,6 +15,18 @@ global random_code
 
 # Create your views here.
 def login_view(request):
+    """Handles user login and session management.
+
+    GET: Renders the login page.
+    POST: Authenticates user credentials, generates and sends a verification email for account confirmation.
+
+    Args:
+        request: HttpRequest object.
+
+    Returns:
+        GET: Rendered login page.
+        POST: Redirects to 'login:verifyEmail_view' if authentication is successful; else, renders the login page with an error message.
+    """
     if request.method == "GET":
         request.session["has_logged"] = False
         request.session["has_requested_password"] = False
@@ -70,6 +82,18 @@ def login_view(request):
 
 # Verification after login
 def verify_email_view(request):
+    """Handles verification after login using a verification code.
+
+    GET: Renders the verification page.
+    POST: Verifies the entered verification code and logs the user in if successful; else, displays an error message.
+
+    Args:
+        request: HttpRequest object.
+
+    Returns:
+        GET: Rendered verification page.
+        POST: Redirects to '/requests/' if verification is successful; else, renders the verification page with an error message.
+    """
     context = {"form_action": "login:verifyEmail_view"}
     if request.method == "GET":
         if request.session.get("has_logged") == True:
@@ -104,6 +128,18 @@ Change password methods
 
 # Request id after clicking "Forgot password?"
 def reset_password_view(request):
+    """Handles the request to reset the password.
+
+    GET: Renders the reset password page.
+    POST: Sends a verification email for password reset if the user exists; else, displays an error message.
+
+    Args:
+        request: HttpRequest object.
+
+    Returns:
+        GET: Rendered reset password page.
+        POST: Redirects to 'login:verify_email_reset_view' if user exists; else, renders the reset password page with an error message.
+    """
     if request.method == "GET":
         return render(request, "reset_password.html")
     else:
@@ -135,6 +171,18 @@ def reset_password_view(request):
 
 # Verification after putting id in "Forgot password?" to verify identity
 def verify_email_reset_view(request):
+    """Handles verification after requesting a password reset.
+
+    GET: Renders the verification page.
+    POST: Verifies the entered verification code and redirects to 'login:change_password_view' if successful; else, displays an error message.
+
+    Args:
+        request: HttpRequest object.
+
+    Returns:
+        GET: Rendered verification page.
+        POST: Redirects to 'login:change_password_view' if verification is successful; else, renders the verification page with an error message.
+    """
     context = {"form_action": "login:verify_email_reset_view"}
     if request.method == "GET":
         if request.session.get("has_requested_password") == True:
@@ -154,6 +202,18 @@ def verify_email_reset_view(request):
 
 # Change password after verifying identity
 def change_password_view(request):
+    """Handles password change after verifying identity.
+
+    GET: Renders the change password page.
+    POST: Changes the password if password criteria are met; else, displays an error message.
+
+    Args:
+        request: HttpRequest object.
+
+    Returns:
+        GET: Rendered change password page.
+        POST: Redirects to 'login:login_view' if password is changed successfully; else, renders the change password page with an error message.
+    """
     if request.method == "GET":
         if request.session.get("has_requested_password") == True:
             return render(request, "change_password.html")
