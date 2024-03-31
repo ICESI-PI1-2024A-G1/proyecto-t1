@@ -48,6 +48,13 @@ class SharePointAPI:
             print("Database clear")
         except:
             pass
+        if not os.path.exists(os.path.dirname(self.excel_path)):
+            try:
+                os.makedirs(os.path.dirname(self.excel_path))
+                print("Directories created")
+            except Exception as e:
+                print(f"Error creating directories: {e}")
+                return
         workbook = Workbook()
         sheet = workbook.active
         sheet.title = "data"
