@@ -12,14 +12,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_DIR = BASE_DIR / "static"
+STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -30,7 +27,7 @@ SECRET_KEY = "django-insecure-95449s^(61a15=_djg!^xah_a5@bg+q*0jyf7+0s8vmxtyv^j=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -47,10 +44,6 @@ INSTALLED_APPS = [
     "applications.registration",
     "applications.requests",
     "applications.teams",
-    "applications.errorHandler",
-    "applications.permissions",
-    "applications.emailContact",
-    "utils",
 ]
 
 MIDDLEWARE = [
@@ -62,10 +55,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-LOGIN_URL = "login:login_view"
-
-AUTH_USER_MODEL = "utils.CustomUser"
 
 ROOT_URLCONF = "accounting_system.urls"
 
@@ -86,22 +75,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "accounting_system.wsgi.application"
-
-
-EXCEL_FILE_PATH = os.path.join(
-    BASE_DIR,
-    "static",
-    "requests",
-    "emulation",
-    "requests_database.xlsx",
-)
-EXCEL_FILE_PATH_TEST = os.path.join(
-    BASE_DIR,
-    "static",
-    "requests",
-    "emulation",
-    "requests_test_database.xlsx",
-)
 
 
 # Database
@@ -146,7 +119,7 @@ AUTHENTICATION_BACKENDS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = "es"
+LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
@@ -158,8 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -173,6 +145,6 @@ STATICFILES_DIRS = [
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_ADDRESS")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = "playermastgd@gmail.com"
+EMAIL_HOST_PASSWORD = "wgyyadnbsorwrzwl"
 EMAIL_USE_TLS = True

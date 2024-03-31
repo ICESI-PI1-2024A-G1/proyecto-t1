@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="2DAC920E-98D4-ED00-33F0-46376C6796E4" name="TEAM">
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="37FA8F16-FACD-E618-2CF3-76F7849C1770" name="NOTIFICATION">
 <createdBy>aleji</createdBy>
-<createdTime>2024-03-03 17:28:54 UTC</createdTime>
+<createdTime>2024-03-03 17:45:15 UTC</createdTime>
 <ownerDesignName>DiagramFile</ownerDesignName>
 <engineerTo>
 <item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
@@ -15,9 +15,9 @@
 <minVolumes>0</minVolumes>
 <normalForm>Third</normalForm>
 <attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
-<Attribute name="team_id" id="6EF8AE6E-0D4C-04E5-3402-5B30B8852A23">
+<Attribute name="id" id="036B9907-ACEF-E72E-CA09-4D29C6BA6F5D">
 <createdBy>aleji</createdBy>
-<createdTime>2024-03-03 17:29:03 UTC</createdTime>
+<createdTime>2024-03-03 17:52:25 UTC</createdTime>
 <ownerDesignName>DiagramFile</ownerDesignName>
 <engineerTo>
 <item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
@@ -27,32 +27,41 @@
 <dataTypeSize>10</dataTypeSize>
 <ownDataTypeParameters>10,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="user_id" id="E518C023-6925-3F82-2C69-FD53F229D2E3">
+<Attribute name="date" id="8C4E7995-31DA-A486-707A-B950B0E3686F">
 <createdBy>aleji</createdBy>
-<createdTime>2024-03-03 17:56:19 UTC</createdTime>
-<generatorID>3EB8484C-8DD2-C058-D60A-2C398A643AF6</generatorID>
+<createdTime>2024-03-03 17:52:16 UTC</createdTime>
 <ownerDesignName>DiagramFile</ownerDesignName>
 <engineerTo>
 <item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
 </engineerTo>
-<referedAttribute>8263D39F-7B94-3B61-1442-9AC5F66E1BCD</referedAttribute>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<dataTypeSize>10 BYTE</dataTypeSize>
-<ownDataTypeParameters>10 BYTE,,</ownDataTypeParameters>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="description" id="1D686DD0-DF09-A19E-DFDB-86BACFCAA965">
+<createdBy>aleji</createdBy>
+<createdTime>2024-03-03 17:52:29 UTC</createdTime>
+<ownerDesignName>DiagramFile</ownerDesignName>
+<engineerTo>
+<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<dataTypeSize>280 BYTE</dataTypeSize>
+<ownDataTypeParameters>280 BYTE,,</ownDataTypeParameters>
 </Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
-<identifier id="A9054736-AB28-42DC-0355-7F0EB6866CF7" name="TEAM PK">
+<identifier id="8EDAE776-3E42-C36B-CAA2-804EF795ECF8" name="NOTIFICATION PK">
 <createdBy>aleji</createdBy>
-<createdTime>2024-03-03 17:57:02 UTC</createdTime>
+<createdTime>2024-03-03 17:57:15 UTC</createdTime>
 <ownerDesignName>DiagramFile</ownerDesignName>
 <engineerTo>
 <item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
 </engineerTo>
 <pk>true</pk>
 <usedAttributes>
-<attributeRef>6EF8AE6E-0D4C-04E5-3402-5B30B8852A23</attributeRef>
+<attributeRef>036B9907-ACEF-E72E-CA09-4D29C6BA6F5D</attributeRef>
 </usedAttributes>
 </identifier>
 </identifiers>

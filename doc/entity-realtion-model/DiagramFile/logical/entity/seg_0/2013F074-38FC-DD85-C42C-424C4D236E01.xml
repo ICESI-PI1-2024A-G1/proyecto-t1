@@ -49,7 +49,7 @@
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <dataTypeSize>10</dataTypeSize>
-<ownDataTypeParameters>10,,</ownDataTypeParameters>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
 <Attribute name="id2" id="342ABEE0-4A11-6F3C-9093-DBEF1A124EFF">
 <createdBy>aleji</createdBy>
@@ -63,18 +63,6 @@
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <dataTypeSize>60</dataTypeSize>
-<ownDataTypeParameters>60,,</ownDataTypeParameters>
-</Attribute>
-<Attribute name="reason" id="1DB5F924-D9B6-092A-7550-4A685BB51908">
-<createdBy>aleji</createdBy>
-<createdTime>2024-03-29 23:10:45 UTC</createdTime>
-<ownerDesignName>DiagramFile</ownerDesignName>
-<engineerTo>
-<item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
-</engineerTo>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 </Attribute>
 </attributes>

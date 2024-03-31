@@ -7,8 +7,6 @@
 <item key="99726D15-6743-6D56-D3BC-1CC763F27EAC" value="true"/>
 </engineerTo>
 <identifying>false</identifying>
-<nameOnSource>belongs</nameOnSource>
-<nameOnTarget>has a current</nameOnTarget>
 <optionalSource>true</optionalSource>
 <optionalTarget>false</optionalTarget>
 <sourceCardinality>1</sourceCardinality>

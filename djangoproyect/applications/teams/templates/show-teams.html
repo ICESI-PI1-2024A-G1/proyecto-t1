@@ -6,6 +6,8 @@ Equipos
 
 {% block content %}
 
+{% csrf_token %}
+
 <div class="container">
     <div class="d-flex justify-content-between">
         <div>
@@ -15,52 +17,128 @@ Equipos
             <a href="/teams/add-team-form" class="btn btn-primary">Crear Equipo <i class="fa fa-plus"></i></a>
         </div>
     </div>
-    <div class="container overflow-auto-container overflow-x-scroll">
-        <table id="teamsTable" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Líder</th>
-                    <th>Descripción</th>
-                    <th>Fecha de Creación</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for team in teams %}
-                <tr>
-                    <td>
-                        {{ team.id }}
-                    </td>
-                    <td>
-                        {{ team.name }}
-                    </td>
-                    <td>
-                        {{ team.leader }}
-                    </td>
-                    <td>
-                        {{ team.description }}
-                    </td>
-                    <td>
-                        {{ team.created_at|date:"d-m-Y" }}
-                    </td>
-                    <td>
-                        <a class="my-2 btn-sm btn text-danger delete-team" data-team-id="{{ team.id }}">Eliminar <i
-                                class="fa fa-trash"></i></a>
-                        <a href="/teams/edit-team/{{team.id}}/" class="my-2 btn-sm btn text-secondary">Editar<i
-                                class="fa fa-edit"></i></a>
-                        <button onclick="showModal('Miembros del equipo {{team.name}}', '/teams/show-members/{{team.id}}')" class="btn text-primary">Miembros <i class="fa fa-users"></i></button>
+    
+    <div class="d-none d-sm-block container card">
+        <div class="row p-4 font-weight-bold">
+            <div class="col-4" style="font-weight:bold">
+                Nombre
+            </div>
+            <div class="col-4" style="font-weight:bold">
+                Descripción
+            </div>
+            <div class="col-2" style="font-weight:bold">
+                Fecha de Creación
+            </div>
+            <div class="col-2" style="font-weight: bold;">
+                Acciones
+            </div>
+        </div>
+    </div>
 
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="accordion" id="accordionExample">
+        {% for team in teams %}
+        <div class="accordion-item" id="accordionItem{{team.id}}">
+            <h2 class="accordion-header" id="heading{{ team.id }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{ team.id }}" aria-expanded="true" aria-controls="collapse{{ team.id }}">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">                                
+                                <h4>
+                                    {{ team.name }}
+                                </h4>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <span class="d-sm-none" style="font-weight:bold" >Description:</span>
+                                {{team.description}}
+                            </div>
+                            <div class="col-sm-12 col-md-2">
+                                <span class="d-sm-none" style="font-weight:bold" >Creation Date:</span>
+                                {{ team.created_at|date:"d-m-Y" }}
+                            </div>
+                            <div class="col-sm-12 col-md-2">
+                                <a class="my-2 btn-sm btn btn-danger delete-team" data-team-id="{{ team.id }}">Eliminar <i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </button>
+            </h2>
+            <div id="collapse{{ team.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ team.id }}"
+                data-bs-parent="#accordionExample">
+                <div class="accordion-body p-0">
+                    <div class="container p-0 col-md-8 mx-auto">
+                        <table class="table" id="team_{{ team.id }}_table">
+                            <thead>
+                                <th>Nombre</th>
+                                <th>Rol</th>
+                                <th>Acciones</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {{team.leader.first_name}} {{team.leader.last_name}}
+                                    </td>
+                                    <td>
+                                        Líder
+                                    </td>
+                                    <td>
+                                        <button class="btn text-primary"
+                                            data-team-id="{{ team.id }}"
+                                            data-member-id="{{ member.id }}">Cambiar</button>
+                                    </td>
+                                </tr>
+                                {% for member in team.members.all %}
+                                <tr id="member_row_{{ member.id }}">
+                                    <td>
+                                        {{member.first_name}} {{member.last_name}}
+                                    </td>
+                                    <td>
+                                        Miembro
+                                    </td>
+                                    <td>
+                                        <button class="btn text-danger delete-member"
+                                            data-team-id="{{ team.id }}"
+                                            data-member-id="{{ member.id }}">Eliminar</button>
+                                        <a class="btn text-info" href="member-details/{{member.id}}">Detalles</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <button  class="mx-auto mb-4 btn btn-secondary add-member-btn" data-bs-toggle="modal"
+                            data-bs-target="#addMemberModal" data-team-id="{{ team.id }}">
+                            Añadir miembro
+                            <i class="fa fa-user-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMemberModalLabel">Añadir miembro al equipo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="userList" class="list-group">
+                        <!-- User list will be here -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" disabled="true" class="btn btn-primary" id="addMemberSubmit">Añadir <i class="fa fa-check"></i></button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 {% load static %}
-<script src="{% static '/teams/js/teams.js' %}"></script>
+<script src="{% static 'teams/js/teams.js' %}"></script>
 
 {% endblock %}

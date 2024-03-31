@@ -1,36 +1,6 @@
-const changeStatus = id => {
-    var csrftoken = $('[name=csrfmiddlewaretoken]').val();
-    var newStatus = $('#newStatusSelect').val();
-    var reason = $('#reasonTextarea').val();
-    if (reason === '') {
-        alert('Debe ingresar un motivo para cambiar el estado de la solicitud.');
-        return;
-    } else if (reason.length > 70) {
-        alert('El motivo no debe superar los 70 caracteres.');
-        return;
-    }
-    $.ajax({
-        url: '/requests/change-status/' + id,
-        method: 'POST',
-        data: {
-            newStatus: newStatus,
-            reason: reason,
-            csrfmiddlewaretoken: csrftoken
-        },
-        success: function (response) {
-            $('#status_' + id).text(newStatus);
-        },
-        error: function () {
-            alert('Error al cambiar el estado de la solicitud.');
-        }
-    });
-    $('#detailsModal').modal('hide');
-}
-
-$(document).ready(function () {    
-    DataTableInit("requestsTable")
+$(document).ready(function () {
     $("#performSearchButton").on('click', function () {
-        var query = $("#searchBar").val() || '';
+        var query = $("#searchBar").val() || 'None';
         $.ajax({
             url: "/requests/search/" + query,
             data: { 'q': query },
@@ -62,4 +32,34 @@ $(document).ready(function () {
             }
         });
     });
+    $(document).on('click', '.edit-btn', function () {
+        var requestId = $(this).data('request-id');
+        $('#changeStatusModal').modal('show');
+
+        $('#changeStatusBtn').off('click').on('click', function () {
+            var newStatus = $('#newStatusSelect').val();
+            $('#changeStatusModal').modal('hide');
+
+            var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                url: '/requests/change-request/' + requestId,
+                method: 'POST',
+                data: {
+                    newStatus: newStatus,
+                    csrfmiddlewaretoken: csrftoken
+                },
+                success: function (response) {
+                    $('#status_' + requestId).text(newStatus);
+                },
+                error: function () {
+                    alert('Error al cambiar el estado de la solicitud.');
+                }
+            });
+        });
+    });
+    $(document).on('click', '#cancelBtn', function () {
+        $('#changeStatusModal').modal('hide');
+    });
+
 });

@@ -196,14 +196,3 @@ djangoproyect/applications/teams/migrations/0005_merge_20240310_0950.py
 **/*.local
 **/*.git
 **/*.DS_Store
-
-**/db.sqlite3
-
-**/migrations/*
-!**/migrations/__init__.py
-
-.env
-
-**/requests_database.xlsx
-**/requests_test_database.xlsx
-**/requests_database_test.xlsx

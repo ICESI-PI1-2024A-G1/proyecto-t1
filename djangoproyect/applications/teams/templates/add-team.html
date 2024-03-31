@@ -6,13 +6,39 @@ Equipos
 
 {% block content %}
 
+{% csrf_token %}
+
 <div class="container">
     <div class="card">
         <div class="card-body p-4">
             <h2>Crear Equipo</h2>
             <form method="post">
                 {% csrf_token %}
-                {{form.as_p}}
+                <div class="form-group my-4 ">
+                    <label for="id_name">Nombre</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-users"></i></span>
+                        <input type="text" id="id_name" name="name" class="form-control" placeholder="Nombre del equipo" autofocus required>
+                    </div>
+                </div>
+                <div class="form-group my-4 ">
+                    <label for="id_description">Descripción</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-file-alt"></i></span>
+                        <textarea id="id_description" name="description" class="form-control" placeholder="Descripción"></textarea>
+                    </div>
+                </div>
+                <div class="form-group my-4 ">
+                    <label for="id_leader">Líder</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        {{ form.leader }}
+                    </div>
+                </div>
+                <div class="form-group my-4 ">
+                    <label for="id_members">Miembros</label>
+                    {{ form.members }}
+                </div>
                 <div class="mt-4 mx-auto col-md-4 d-flex justify-content-between">
                     <div>
                         <a href="/teams" class="btn btn-danger">Cancelar <i class="fa fa-times"></i></a>
@@ -21,9 +47,12 @@ Equipos
                         <button type="submit" class="btn btn-primary">Guardar <i class="fa fa-user-plus"></i></button>
                     </div>
                 </div>
+                
             </form>
+
         </div>
     </div>
+    
 </div>
 
 
