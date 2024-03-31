@@ -1,3 +1,8 @@
+/**
+ * Changes the status of a request.
+ *
+ * @param {number} id - The ID of the request to change status for.
+ */
 const changeStatus = id => {
     var csrftoken = $('[name=csrfmiddlewaretoken]').val();
     var newStatus = $('#newStatusSelect').val();
@@ -27,7 +32,12 @@ const changeStatus = id => {
     $('#detailsModal').modal('hide');
 }
 
-$(document).ready(function () {    
+$(document).ready(function () {   
+    /**
+     * Initializes DataTable with the given table ID and handles search functionality.
+     *
+     * @param {string} tableId - The ID of the table to initialize DataTable on.
+     */ 
     DataTableInit("requestsTable")
     $("#performSearchButton").on('click', function () {
         var query = $("#searchBar").val() || '';
