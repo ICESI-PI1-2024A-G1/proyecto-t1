@@ -6,6 +6,22 @@ User = get_user_model()
 
 
 class TeamForm(forms.ModelForm):
+    """
+    Form for handling team data input.
+
+    Attributes:
+        Meta (inner class): Specifies the model and fields to include in the form.
+        widgets (dict): Defines the HTML widget types for form fields.
+        labels (dict): Customizes labels for form fields.
+
+    Methods:
+        __init__(self, *args, **kwargs): Initializes form with custom logic.
+        clean_members(self): Custom validation to ensure leader is not included as a member.
+
+    Note:
+        This form is used for creating and updating team data.
+    """
+
     class Meta:
         model = Team
         fields = ["name", "description", "leader", "members"]
@@ -33,6 +49,15 @@ class TeamForm(forms.ModelForm):
             self.fields["members"].queryset = User.objects.exclude(id=leader_id)
 
     def clean_members(self):
+        """
+        Custom validation method to ensure leader is not included as a member.
+
+        Returns:
+            queryset: Validated members queryset.
+
+        Raises:
+            forms.ValidationError: If the leader is selected as a member.
+        """
         members = self.cleaned_data.get("members")
         leader = self.cleaned_data.get("leader")
 

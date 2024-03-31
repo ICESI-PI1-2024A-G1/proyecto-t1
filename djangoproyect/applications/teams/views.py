@@ -30,6 +30,19 @@ User = get_user_model()
 @never_cache
 @login_required
 def show_teams(request):
+    """
+    View to display a list of teams based on user permissions.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        HttpResponse: A rendered HTML template displaying teams.
+
+    Notes:
+        - If the user is staff, all teams are displayed.
+        - If the user is not staff, only teams led by the user are displayed.
+    """
     if request.user.is_staff:
         teams = Team.objects.all()
     else:
@@ -40,6 +53,20 @@ def show_teams(request):
 @never_cache
 @login_required
 def add_team(request):
+    """
+    View to add a new team.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        HttpResponse: A rendered HTML template for adding a team.
+
+    Notes:
+        - GET request renders an empty form.
+        - POST request processes form submission.
+        - Redirects to the teams list on successful form submission.
+    """
     if request.method == "GET":
         form = TeamForm()
         return render(request, "add-team.html", {"form": form})
@@ -55,6 +82,21 @@ def add_team(request):
 @never_cache
 @login_required
 def edit_team(request, team_id):
+    """
+    View to edit an existing team.
+
+    Args:
+        request (HttpRequest): The request object.
+        team_id (int): The ID of the team to edit.
+
+    Returns:
+        HttpResponse: A rendered HTML template for editing a team.
+
+    Notes:
+        - GET request renders a form pre-filled with team data.
+        - POST request processes form submission for editing.
+        - Redirects to the teams list on successful form submission.
+    """
     team = get_object_or_404(Team, pk=team_id)
     form = TeamForm(instance=team)
     if request.method == "GET":
@@ -71,6 +113,21 @@ def edit_team(request, team_id):
 @never_cache
 @login_required
 def delete_team(request, team_id):
+    """
+    View to delete a team.
+
+    Args:
+        request (HttpRequest): The request object.
+        team_id (int): The ID of the team to delete.
+
+    Returns:
+        JsonResponse: JSON response confirming team deletion.
+
+    Notes:
+        - Requires a DELETE request method.
+        - Deletes the team and removes it from SharePoint API.
+        - Returns a JSON message confirming successful deletion.
+    """
     if request.method == "DELETE":
         team = get_object_or_404(Team, id=team_id)
         team.delete()
@@ -86,6 +143,16 @@ def delete_team(request, team_id):
 @never_cache
 @login_required
 def show_members(request, id):
+    """
+    View to display members of a team.
+
+    Args:
+        request (HttpRequest): The request object.
+        id (int): The ID of the team whose members to display.
+
+    Returns:
+        HttpResponse: A rendered HTML template displaying team members.
+    """
     if request.method == "GET":
         team = get_object_or_404(Team, pk=id)
         members = team.members.all()
