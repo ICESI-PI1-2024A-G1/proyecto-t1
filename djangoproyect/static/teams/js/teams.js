@@ -1,21 +1,25 @@
-/**
- * Initializes the DataTable for the specified table element.
- * @param {string} tableId - The ID of the table element to initialize as a DataTable.
- */
 $(document).ready(function () {
-    DataTableInit("teamsTable");
+    /**
+     * Initializes DataTable with the given table ID.
+     *
+     * @param {string} tableId - The ID of the table to initialize DataTable on.
+     */
+    DataTableInit("teamsTable")
 
     // Fetch CSRF token from meta tag
     const csrfTokenMeta = document.querySelector('meta[name="csrf_token"]');
     const csrftoken = csrfTokenMeta.getAttribute('content');
 
     /**
-     * Event handler for clicking on the delete team button.
+     * Handles click event on delete team button.
      */
     $(".delete-team").click(function() {
         var teamId = $(this).data("team-id");
-        if (confirm("Are you sure you want to delete this team?")) {
-            // Send AJAX request to delete team
+
+        /**
+         * Confirms and deletes the team if confirmed.
+         */
+        if (confirm("¿Estás seguro de que quieres eliminar este equipo?")) {
             $.ajax({
                 url: `/teams/delete/${teamId}/`,
                 type: "DELETE",

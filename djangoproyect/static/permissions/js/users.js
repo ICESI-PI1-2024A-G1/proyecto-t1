@@ -1,5 +1,15 @@
+/**
+ * Initializes DataTable with the given table ID.
+ *
+ * @param {string} tableId - The ID of the table to initialize DataTable on.
+ */
 $(document).ready(function () {
     DataTableInit("usersTable")
+     /**
+     * Handles click event on the search button.
+     *
+     * @param {Event} event - The click event object.
+     */
     $("#performSearchButton").on('click', function () {
         var query = $("#searchBar").val() || 'None';
         $.ajax({
@@ -30,6 +40,11 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
+    /**
+     * Handles click event on the save button.
+     *
+     * @param {Event} event - The click event object.
+     */
     $(document).on('click', '#saveButton', function() {
         var checkboxes = $('#usersTable tbody input[type="checkbox"]');
         var newValues = [];
