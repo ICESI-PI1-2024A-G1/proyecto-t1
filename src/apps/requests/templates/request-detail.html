@@ -1,0 +1,85 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<div class="container">
+    <table class="table table-striped">
+        <tbody>
+            <tr>
+                <th scope="row">ID</th>
+                <td>{{ request.id }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Estado</th>
+                <td>{{ request.status }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Gestor</th>
+                <td>{{ request.manager }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Fecha Inicial</th>
+                <td>{{ request.initial_date }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Fecha Final</th>
+                <td>{{ request.final_date }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Nombre Completo</th>
+                <td>{{ request.fullname }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Facultad</th>
+                <td>{{ request.faculty }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Documento</th>
+                <td>{{ request.document }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Teléfono</th>
+                <td>{{ request.phone_number }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Correo Electrónico</th>
+                <td>{{ request.email }}</td>
+            </tr>
+            <tr>
+                <th scope="row">CENCO</th>
+                <td>{{ request.CENCO }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Motivo</th>
+                <td>{{ request.reason }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Banco</th>
+                <td>{{ request.bank }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Tipo de Cuenta</th>
+                <td>{{ request.account_type }}</td>
+            </tr>
+            <tr>
+                <th scope="row">EPS</th>
+                <td>{{ request.health_provider }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Fondo de Pensiones</th>
+                <td>{{ request.pension_fund }}</td>
+            </tr>
+            <tr>
+                <th scope="row">ARL</th>
+                <td>{{ request.arl }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Valor de Contrato</th>
+                <td>${{ request.contract_value }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Pago Único</th>
+                <td>{{ request.is_one_time_payment|yesno:"Sí,No" }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

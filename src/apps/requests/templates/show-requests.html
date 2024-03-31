@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Solicitudes{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h2>Solicitudes</h2>
+    <!-- <div class="container">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Buscar</span>
+            <input type="text" id="searchBar" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
+            <button id="performSearchButton" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+        </div>
+    </div> -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% elif message %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+    <div class="container col-12 overflow-x-scroll">
+        <table id="requestsTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fechas</th>
+                    <th>Solicitante</th>
+                    <th class="col-4">Motivo</th>
+                    <th>Gestor</th>
+                    <th>Estado</th>
+                    <th>Detalles</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr id="request_{{ request.id }}">
+                    <td>{{ request.id }}</td>
+                    <td class="col-2 text-sm">
+                        <div>Inicio: {{ request.initial_date }}</div>
+                        <div>Final: {{ request.final_date }}</div>
+                    </td>
+                    <td>{{ request.fullname }}</td>
+                    <td>{{ request.reason }}</td>
+                    <td>
+                        {{ request.manager }}
+                        {% if request.team %}
+                        (Equipo {{ request.team }})
+                        {% endif %}
+                    </td>
+                    <td>
+                        <p id="status_{{ request.id }}">{{ request.status }}</p>
+                    </td>
+                    <td>
+                    <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}')"
+                        class="btn details-btn " data-request-id="{{ request.id }}">
+                        Detalles
+                        <i class="fa fa-info"></i>
+                    </button>
+                    <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
+                        class="btn details-btn text-primary">
+                        <i class="fa fa-eye"></i>
+                        Cambios
+                    </button>
+                </td>
+                    <td>
+                        {% if user.is_superuser or user.is_leader or user.is_staff %}
+                            <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
+                                    class="btn details-btn " data-request-id="{{ request.id }}">
+                                Asignar
+                                <i class="fa fa-user-plus"></i>
+                            </button>
+                        {% endif %}
+                        <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
+                            class="btn text-success" data-request-id="{{ request.id }}">
+                            Cambiar Estado
+                            <i class="fa fa-edit"></i>
+                        </button>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% load static %}
+<script src="{% static 'requests/js/requests.js' %}"></script>
+{% endblock %}

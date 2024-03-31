@@ -1,0 +1,14 @@
+<div class="container">
+    <form action="/requests/assign-request/{{request.id}}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="userSelector">Usuarios en tu equipo:</label>
+            <select class="form-control" id="userSelector" name="user_id">
+                {% for user in users %}
+                <option value="{{user.id}}">{{user}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary my-4">Asignar <i class="fa fa-check"></i></button>
+    </form>
+</div>

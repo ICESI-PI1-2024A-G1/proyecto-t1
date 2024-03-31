@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}
+Equipos
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="d-flex justify-content-between">
+        <div>
+            <h2 class="mb-4">Equipos</h2>
+        </div>
+        <div class="text-end">
+            <a href="/teams/add-team-form" class="btn btn-primary">Crear Equipo <i class="fa fa-plus"></i></a>
+        </div>
+    </div>
+    <div class="container overflow-auto-container overflow-x-scroll">
+        <table id="teamsTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Líder</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Creación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td>
+                        {{ team.id }}
+                    </td>
+                    <td>
+                        {{ team.name }}
+                    </td>
+                    <td>
+                        {{ team.leader }}
+                    </td>
+                    <td>
+                        {{ team.description }}
+                    </td>
+                    <td>
+                        {{ team.created_at|date:"d-m-Y" }}
+                    </td>
+                    <td>
+                        <a class="my-2 btn-sm btn text-danger delete-team" data-team-id="{{ team.id }}">Eliminar <i
+                                class="fa fa-trash"></i></a>
+                        <a href="/teams/edit-team/{{team.id}}/" class="my-2 btn-sm btn text-secondary">Editar<i
+                                class="fa fa-edit"></i></a>
+                        <button onclick="showModal('Miembros del equipo {{team.name}}', '/teams/show-members/{{team.id}}')" class="btn text-primary">Miembros <i class="fa fa-users"></i></button>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% load static %}
+<script src="{% static '/teams/js/teams.js' %}"></script>
+
+{% endblock %}

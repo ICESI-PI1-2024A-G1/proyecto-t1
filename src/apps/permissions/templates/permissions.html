@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Permisos{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2>Permisos</h2>
+        <div id="messageContainer"></div>
+        <!-- <div class="container">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Buscar</span> 
+                <input type="text"
+                       id="searchBar"
+                       class="form-control"
+                       aria-label="Sizing example input"
+                       aria-describedby="inputGroup-sizing-default"
+                       placeholder="Buscar">
+                <button id="performSearchButton" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+        </div> -->
+        <div class="container overflow-auto-container">
+            <table id="usersTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Documento</th> 
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Correo electrónico</th>
+                        <th>Administrador</th>
+                        <th>Líder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr id="user_{{ user.id }}">
+                            <td>{{ user.id }}{% if user.is_superuser %} (SU) {% endif %}</td>
+                            <td>{{ user.last_name }}</td>
+                            <td>{{ user.first_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td><input type="checkbox" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_staff|yesno:"checked," }}></td>
+                            <td><input type="checkbox" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_leader|yesno:"checked," }}></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="container d-flex justify-content-center">
+                <button id="saveButton" type="button" class="btn btn-primary my-4">Guardar cambios <i class="fa fa-save"></i></button>
+            </div>
+        </div>
+    
+    {% load static %}
+    <script src="{% static 'permissions/js/users.js' %}"></script>
+{% endblock %}
