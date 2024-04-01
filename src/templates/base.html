@@ -38,8 +38,8 @@
                                     {% if request.user.is_superuser %}
                                         {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-cog" link="/admin/utils/customuser" %}
                                     {% endif %}
-                                    {% if request.user.is_leader and not request.user.is_superuser%}
-                                        {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions" %}
+                                    {% if request.user.is_staff and not request.user.is_superuser%}
+                                        {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions/" %}
                                     {% endif %}
                                     {% include 'components/navigation_item.html' with text="Contacto" icon_class="fas fa-envelope" link="/emailContact" %}
                                     <div class="my-2 mx-2 border-bottom border-3"></div>
