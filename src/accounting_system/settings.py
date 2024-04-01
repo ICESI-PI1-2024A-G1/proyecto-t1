@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "apps.errorHandler",
     "apps.permissions",
     "apps.emailContact",
+    "apps.forms",
     "utils",
 ]
 
