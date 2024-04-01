@@ -186,7 +186,7 @@ pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/venv,django
 
-*.vpp
+*.vpp.bak*
 
 # Ajelandro's documentation
 *.xml
