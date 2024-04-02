@@ -103,6 +103,12 @@ EXCEL_FILE_PATH_TEST = os.path.join(
     "emulation",
     "requests_test_database.xlsx",
 )
+EXCEL_FORMS_PATH = os.path.join(
+    BASE_DIR,
+    "static",
+    "forms",
+    "templates",
+)
 
 
 # Database

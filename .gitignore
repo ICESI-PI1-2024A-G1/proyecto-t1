@@ -206,3 +206,7 @@ pip-selfcheck.json
 **/requests_database.xlsx
 **/requests_test_database.xlsx
 **/requests_database_test.xlsx
+
+# forms
+
+**/forms/templates/*

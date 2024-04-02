@@ -3,6 +3,8 @@ from openpyxl import Workbook
 import pandas as pd
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
 
 
 class SharePointAPI:
@@ -277,3 +279,62 @@ class SharePointAPI:
                 status=500,
                 safe=False,
             )
+
+    def get_form_render(self, form_name):
+        try:
+            excel_file_path = os.path.join(self.excel_path, form_name)
+            wb = load_workbook(excel_file_path)
+            sheet = wb.active
+            data = []
+
+            # Obtener información sobre celdas combinadas
+            merged_cells_ranges = sheet.merged_cells.ranges
+            merged_cells_map = {}  # Mapa para rastrear las celdas combinadas
+            spans_map = {}
+            print(sheet.merged_cells.ranges)
+
+            for merged_range in merged_cells_ranges:
+                min_row, min_col, max_row, max_col = (
+                    merged_range.min_row,
+                    merged_range.min_col,
+                    merged_range.max_row,
+                    merged_range.max_col,
+                )
+                spans_map[(min_row, min_col)] = (
+                    max_row - min_row + 1,
+                    max_col - min_col + 1,
+                )
+                for row in range(min_row, max_row + 1):
+                    for col in range(min_col, max_col + 1):
+                        merged_cells_map[(row, col)] = (min_row, min_col)
+
+            for row in sheet.iter_rows(values_only=False):
+                row_data = []
+                for cell in row:
+                    row_idx, col_idx = cell.row, cell.column
+                    display = True
+                    row_span = col_span = 1
+                    if (row_idx, col_idx) in merged_cells_map:
+                        # Si la celda está combinada, usar el valor de la celda de origen
+                        origin_row, origin_col = merged_cells_map[(row_idx, col_idx)]
+                        is_origin = row_idx == origin_row and col_idx == origin_col
+                        row_idx = origin_row
+                        col_idx = origin_col
+                        if not is_origin:
+                            display = False
+                    if (row_idx, col_idx) in spans_map:
+                        row_span, col_span = spans_map[(row_idx, col_idx)]
+                    row_data.append(
+                        {
+                            "value": cell.value if cell.value is not None else "",
+                            "row_span": row_span,
+                            "col_span": col_span,
+                            "row_idx": row_idx,
+                            "col_idx": col_idx,
+                            "display": display,
+                        }
+                    )
+                data.append(row_data)
+            return JsonResponse(data, status=200, safe=False)
+        except FileNotFoundError:
+            raise Http404("El archivo no se encontró")
