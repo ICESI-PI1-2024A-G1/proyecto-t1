@@ -10,9 +10,9 @@
 </div>
 
 <div class="row">
-    <div class="container col-md-8">
+    <div class="container col-md-8 overflow-x-scroll">
         <h4>Añadir campos</h4>
-        <table class="small table table-bordered">
+        <table class="table table-bordered">
             {% for row in sheet %}
             <tr>
                 {% for cell in row %}
@@ -30,44 +30,63 @@
     <div class="container col-md-4">
         <h4>Vista previa</h4>
         <div id="form-preview">
-            
+
         </div>
     </div>
 </div>
 
 
 <script>
-    let fields = []
     $(document).ready( function () {
+        let form_fields = []
         $(".form-cell").on("click", function () {
-            let row = $(this).data("row-idx")
-            let col = $(this).data("col-idx")
-            let form_type = prompt("ingresa el tipo: ")
-            let form_label = prompt("ingresa la etiqueta: ")
+            let row = $(this).data("row-idx");
+            let col = $(this).data("col-idx");
+            let form_type = prompt("Ingresa el tipo:");
+            let form_label = prompt("Ingresa la etiqueta:");
+            let form_name = prompt("Ingresa el nombre:");
 
-            fields.push( {
+            form_fields.push({
                 "col": col,
                 "row": row,
+                "name": form_name,
                 "type": form_type,
                 "label": form_label
-            } )
+            })
 
-            console.log(fields)
-        })
-    })
-    $(".form-cell").hover(
-        function () {
-            $(this).addClass("bg-secondary text-white");
-        },
-        function () {
-            $(this).removeClass("bg-secondary text-white");
+            console.log(form_fields); // Verificar los datos que se están enviando
+            let curr_cell = $(this)
+            // Enviar la solicitud POST
+            $.ajax({
+                url: "/forms/form-preview/",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ form_fields: form_fields }),
+                success: function (data) {
+                    $("#form-preview").html(data)
+                    console.log($(this))
+                    curr_cell.addClass("selected")
+                    curr_cell.addClass("bg-primary")
+                    curr_cell.addClass("bg-opacity-50")
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+        $(".form-cell").hover(
+            function () {
+                $(this).addClass("bg-secondary text-white");
+            },
+            function () {
+                $(this).removeClass("bg-secondary text-white");
         }
-    );
-    $("#save-form").on("dblclick", function() {
+        );
+        $("#save-form").on("dblclick", function() {
             $.ajax({
                 type: "POST",
                 url: "/forms",
-                data: JSON.stringify({ "fields": fields }),
+                data: JSON.stringify({ "form_fields": form_fields }),
                 contentType: "application/json",
                 success: function(response) {
                     console.log(response);
@@ -77,6 +96,7 @@
                 }
             });
         });
+    })
 </script>
 
 {% endblock %}

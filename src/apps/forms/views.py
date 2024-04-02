@@ -20,3 +20,14 @@ def show_forms(request):
     elif request.method == "POST":
         fields = request.POST.getlist("fields[]")
         print(fields)
+
+
+@csrf_exempt
+def form_preview(request):
+    if request.method == "POST":
+        data = json.loads(request.body.decode("utf-8"))
+        form_fields = data.get("form_fields")
+        print(form_fields)
+        return render(
+            request, "dynamic-form.html", {"fields": form_fields, "showSubmit": False}
+        )

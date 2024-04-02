@@ -291,7 +291,6 @@ class SharePointAPI:
             merged_cells_ranges = sheet.merged_cells.ranges
             merged_cells_map = {}  # Mapa para rastrear las celdas combinadas
             spans_map = {}
-            print(sheet.merged_cells.ranges)
 
             for merged_range in merged_cells_ranges:
                 min_row, min_col, max_row, max_col = (
