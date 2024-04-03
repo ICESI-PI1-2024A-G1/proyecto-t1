@@ -12,8 +12,13 @@ import json
 
 @csrf_exempt
 def show_forms(request):
+    return render(request, "show-forms.html")
+
+
+@csrf_exempt
+def add_form(request):
     if request.method == "GET":
-        return render(request, "show-forms.html")
+        return render(request, "add-form.html")
     elif request.method == "POST":
         fields = request.POST.getlist("fields[]")
         print(fields)
