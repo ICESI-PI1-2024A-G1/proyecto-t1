@@ -4,40 +4,44 @@
 
 <div class="d-flex justify-content-between">
     <h1>Formularios</h1>
-    <button class="btn btn-primary" id="save-form">
-        Guardar <i class="fa fa-save"></i>
-    </button>
+</div>
+
+<div class="row d-flex justify-content-between">
+    <div class="col-md-8">
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="excel-file-input">Plantilla Excel</label>
+            <input type="file" name="excel_template" class="form-control" id="excel-file-input" accept=".xlsx">
+          </div>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-primary" id="save-form">
+            Guardar <i class="fa fa-save"></i>
+        </button>
+    </div>
 </div>
 
 <div class="row">
     <div class="container col-md-8 overflow-x-scroll">
         <h4>Añadir campos</h4>
-        <table class="table table-bordered">
-            {% for row in sheet %}
-            <tr>
-                {% for cell in row %}
-                {% if cell.display %}
-                <td class="form-cell" style="cursor:pointer" id="cell-{{cell.row_idx}}-{{cell.col_idx}}" data-row-idx="{{cell.row_idx}}" data-col-idx="{{cell.col_idx}}" rowspan="{{cell.row_span}}" colspan="{{cell.col_span}}" >
-                        {{ cell.value }}
-                        <!-- {{ cell.row_span }} {{ cell.col_span }} {{ cell.row_idx }} {{ cell.col_idx}} {{ cell.display }} -->
-                    </td>
-                {% endif %}
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
+        <div id="excel-preview">
+            <!-- Excel view will be here -->
+        </div>
     </div>
     <div class="container col-md-4">
         <h4>Vista previa</h4>
-        <div id="form-preview">
-
+        <div>
+            <div class="card">
+                <div class="card-body" id="form-preview">
+                    <!-- Form preview will be here -->
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 
 <script>
-    $(document).ready( function () {
+    const load_listeners = () => {
         let form_fields = []
         $(".form-cell").on("click", function () {
             let row = $(this).data("row-idx");
@@ -90,6 +94,30 @@
                 contentType: "application/json",
                 success: function(response) {
                     console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+    }
+    $(document).ready( function () {
+        load_listeners()
+        $("#excel-file-input").on("change", function() {
+            let formData = new FormData();
+            formData.append("excel_template", $(this)[0].files[0]);
+
+            $.ajax({
+                url: "/forms/load-template/",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    $("#excel-preview").html(data);
+                    $("#form-preview").empty()
+                    load_listeners()
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);

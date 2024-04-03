@@ -13,13 +13,20 @@ import json
 @csrf_exempt
 def show_forms(request):
     if request.method == "GET":
-        sharepoint_api = SharePointAPI(os.path.join(settings.EXCEL_FORMS_PATH))
-        api_response = sharepoint_api.get_form_render("sample.xlsx")
-        sheet = json.loads(api_response.content)
-        return render(request, "show-forms.html", {"sheet": sheet})
+        return render(request, "show-forms.html")
     elif request.method == "POST":
         fields = request.POST.getlist("fields[]")
         print(fields)
+
+
+@csrf_exempt
+def load_excel_template(request):
+    if request.method == "POST":
+        template_file = request.FILES["excel_template"]
+        sharepoint_api = SharePointAPI(settings.EXCEL_FILE_PATH)
+        api_response = sharepoint_api.get_form_render(excel_file=template_file)
+        sheet = json.loads(api_response.content)
+        return render(request, "excel-preview.html", {"sheet": sheet})
 
 
 @csrf_exempt

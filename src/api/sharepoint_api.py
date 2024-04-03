@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 from openpyxl import Workbook
 import pandas as pd
@@ -280,10 +281,14 @@ class SharePointAPI:
                 safe=False,
             )
 
-    def get_form_render(self, form_name):
+    def get_form_render(self, form_name=None, excel_file=None):
         try:
-            excel_file_path = os.path.join(self.excel_path, form_name)
-            wb = load_workbook(excel_file_path)
+            if excel_file:
+                content = excel_file.read()
+                wb = load_workbook(filename=BytesIO(content))
+            else:
+                excel_file_path = os.path.join(self.excel_path, form_name)
+                wb = load_workbook(excel_file_path)
             sheet = wb.active
             data = []
 
