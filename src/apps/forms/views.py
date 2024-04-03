@@ -1,4 +1,5 @@
 import math
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
 # Create your views here.
@@ -101,5 +102,11 @@ def fill_form(request, id):
         
         excel_form = ExcelForm.objects.get(pk=id)
         sharepoint_api = SharePointAPI(settings.EXCEL_FILE_PATH)
-        sharepoint_api.fill_form(excel_form.excel_file, form_fields)
+        sharepoint_api.fill_form(excel_form.excel_file, form_fields,)
         return redirect("/forms/")
+    
+@csrf_exempt
+def delete_form(request, id):
+    if request.method == "DELETE":
+        ExcelForm.objects.get(pk=id).delete()
+        return JsonResponse({"message": "El formulario se ha enviado correctamente"})

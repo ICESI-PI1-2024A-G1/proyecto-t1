@@ -10,4 +10,5 @@ urlpatterns = [
     path("form-preview/", views.form_preview, name="form-preview"),
     path("load-template/", views.load_excel_template, name="load_template"),
     path("fill-form/<int:id>/", views.fill_form, name="fill_form"),
+    path("delete-form/<int:id>/", views.delete_form, name="delete_form"),
 ]

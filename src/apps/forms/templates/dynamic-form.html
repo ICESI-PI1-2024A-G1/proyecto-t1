@@ -26,9 +26,11 @@ Formulario {{form.name}}
             {% endfor %}
         </div>
     </div>
-    <div class="text-center">
-        <button class=" my-4 btn btn-primary" type="submit">Guardar <i class="fa fa-save"></i> </button>
-    </div>
+    {% if not isPreview %}
+        <div class="text-center">
+            <button class=" my-4 btn btn-primary" type="submit">Guardar <i class="fa fa-save"></i> </button>
+        </div>
+    {% endif %}
 </form>
 
 {% endblock %}
