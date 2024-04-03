@@ -9,4 +9,5 @@ urlpatterns = [
     path("add-form/", views.add_form, name="add_form"),
     path("form-preview/", views.form_preview, name="form-preview"),
     path("load-template/", views.load_excel_template, name="load_template"),
+    path("fill-form/<int:id>/", views.fill_form, name="fill_form"),
 ]

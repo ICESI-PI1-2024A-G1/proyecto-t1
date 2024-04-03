@@ -1,3 +1,4 @@
+from datetime import datetime
 from io import BytesIO
 import os
 from openpyxl import Workbook
@@ -5,7 +6,9 @@ import pandas as pd
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from openpyxl import load_workbook
-from openpyxl.utils import get_column_letter
+from django.conf import settings
+from openpyxl.styles import Alignment
+
 
 
 class SharePointAPI:
@@ -342,3 +345,21 @@ class SharePointAPI:
             return JsonResponse(data, status=200, safe=False)
         except FileNotFoundError:
             raise Http404("El archivo no se encontró")
+
+    def fill_form(self, excel_file, form_fields):
+        content = excel_file.read()
+        wb = load_workbook(filename=BytesIO(content))
+        sheet = wb.active
+        for field in form_fields:
+            row_idx = int(field["row_idx"])
+            col_idx = int(field["col_idx"])
+            cell_value = field["value"]
+            cell = sheet.cell(row=row_idx, column=col_idx)
+            cell.value = cell_value
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+
+        curr_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        output_path = os.path.join(settings.MEDIA_ROOT, "filled_forms")
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+        wb.save(os.path.join(output_path, f"filled-{curr_date}.xlsx"))

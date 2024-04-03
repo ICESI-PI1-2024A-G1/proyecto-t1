@@ -84,3 +84,22 @@ def form_preview(request):
         return render(
             request, "dynamic-form.html", {"form": form, "isPreview": True, "showBackBtn": False}
         )
+
+@csrf_exempt
+def fill_form(request, id):
+    if request.method == "POST":
+        post_request = request.POST
+        form_fields = []
+        for key, value in post_request.items():
+            [ field_type, row_idx, col_idx ] = key.split("-")
+            form_fields.append({
+                "type": field_type,
+                "row_idx": row_idx,
+                "col_idx": col_idx,
+                "value": value,
+            })
+        
+        excel_form = ExcelForm.objects.get(pk=id)
+        sharepoint_api = SharePointAPI(settings.EXCEL_FILE_PATH)
+        sharepoint_api.fill_form(excel_form.excel_file, form_fields)
+        return redirect("/forms/")
