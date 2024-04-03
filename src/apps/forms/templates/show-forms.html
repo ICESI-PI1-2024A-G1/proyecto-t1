@@ -2,4 +2,27 @@
 {% block title %}Solicitudes{% endblock %}
 {% block content %}
 <h1>Formularios</h1>
+
+{% for form in forms %}
+<div class="card card-body">
+    <h4>
+        {{form.name}}
+    </h4>
+    {{form.description}}
+
+    {{form.excel_file}}
+
+    <ul class="list-group">
+        {% for field in form.form_fields.all %}
+        <li class="list-group-item">
+            {{ field.type }}
+            {{ field.name }}
+            {{ field.label }}
+        </li>
+        {% endfor %}
+
+    </ul>
+</div>
+{% endfor %}
+
 {% endblock %}

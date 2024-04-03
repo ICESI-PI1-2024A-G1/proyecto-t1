@@ -6,19 +6,28 @@
     <h1>Añadir Formulario</h1>
 </div>
 
-<div class="row d-flex justify-content-between">
-    <div class="col-md-8">
-        <div class="input-group mb-3">
-            <label class="input-group-text" for="excel-file-input">Plantilla Excel</label>
-            <input type="file" name="excel_template" class="form-control" id="excel-file-input" accept=".xlsx">
-          </div>
+<form action="/forms/add-form/" method="POST" enctype="multipart/form-data">
+    <div class="row d-flex justify-content-between">
+        <div class="col-sm-3 mb-3">
+            <label for="excel-name-input" class="form-label">Nombre</label>
+            <input name="name" type="text" class="form-control" id="excel-name-input" placeholder="Nombre" required>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <label for="excel-desc-input" class="form-label">Email address</label>
+            <input name="description" type="text" class="form-control" id="excel-desc-input" placeholder="Descripción" required>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <label for="excel-file-input" class="form-label">Email address</label>
+            <input name="excel_template" type="file" name="excel_template" class="form-control" id="excel-file-input" accept=".xlsx" required>
+        </div>
+        <input type="hidden" name="form_fields" id="form-fields-input">
+        <div class="col-sm-2 ">
+            <button type="submit" class="btn btn-primary" id="save-form">
+                Guardar <i class="fa fa-save"></i>
+            </button>
+        </div>
     </div>
-    <div class="col-md-4">
-        <button class="btn btn-primary" id="save-form">
-            Guardar <i class="fa fa-save"></i>
-        </button>
-    </div>
-</div>
+</form>    
 
 <div class="row">
     <div class="container col-md-8 overflow-x-scroll">
@@ -41,8 +50,8 @@
 
 
 <script>
+    let form_fields = []
     const load_listeners = () => {
-        let form_fields = []
         $(".form-cell").on("click", function () {
             let row = $(this).data("row-idx");
             let col = $(this).data("col-idx");
@@ -51,8 +60,8 @@
             let form_name = prompt("Ingresa el nombre:");
 
             form_fields.push({
-                "col": col,
-                "row": row,
+                "col_idx": col,
+                "row_idx": row,
                 "name": form_name,
                 "type": form_type,
                 "label": form_label
@@ -86,33 +95,40 @@
                 $(this).removeClass("bg-secondary text-white");
         }
         );
-        $("#save-form").on("dblclick", function() {
-            var formData = new FormData();
-            formData.append('excel_template', $('#excel-file-input')[0].files[0]);
-            formData.append('form_fields', JSON.stringify(form_fields));
-
+        
+        
+    }
+    $(document).ready( function () {
+        load_listeners()
+        $("#save-form").on("click", function() {
+            $("#form-fields-input").val(JSON.stringify(form_fields));
+            $("form").submit()
+            /*
+            var formData = {
+                nombre: $('#excel-name-input').val(),
+                descripcion: $('#excel-desc-input').val(),
+                excel_template: $('#excel-file-input')[0].files[0],
+                form_fields: form_fields
+            };
+    
             $.ajax({
                 type: "POST",
-                url: "/forms",
-                data: formData,
-                processData: false,
-                contentType: false,
+                url: "/forms/",
+                data: JSON.stringify(formData),
+                contentType: "application/json",
                 success: function(response) {
-                    console.log(response);
+                    console.log(response)
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
                 }
             });
+            */
         });
-
-    }
-    $(document).ready( function () {
-        load_listeners()
         $("#excel-file-input").on("change", function() {
             let formData = new FormData();
             formData.append("excel_template", $(this)[0].files[0]);
-
+            
             $.ajax({
                 url: "/forms/load-template/",
                 type: "POST",
@@ -123,6 +139,7 @@
                     $("#excel-preview").html(data);
                     $("#form-preview").empty()
                     load_listeners()
+                    form_fields = []
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
