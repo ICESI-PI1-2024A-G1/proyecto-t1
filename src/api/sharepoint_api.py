@@ -8,7 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from openpyxl import load_workbook
 from django.conf import settings
 from openpyxl.styles import Alignment
-
+import xlwings as xw
+import tempfile
 
 
 class SharePointAPI:
@@ -347,19 +348,25 @@ class SharePointAPI:
             raise Http404("El archivo no se encontró")
 
     def fill_form(self, excel_file, form_fields):
-        content = excel_file.read()
-        wb = load_workbook(filename=BytesIO(content))
-        sheet = wb.active
+        wb = xw.Book(excel_file.path)
+        wb.app.visible = False
+        sheet = wb.sheets[0]
+
         for field in form_fields:
             row_idx = int(field["row_idx"])
             col_idx = int(field["col_idx"])
             cell_value = field["value"]
-            cell = sheet.cell(row=row_idx, column=col_idx)
+            cell = sheet.cells(row_idx, col_idx)
             cell.value = cell_value
-            cell.alignment = Alignment(horizontal="center", vertical="center")
+            cell.api.HorizontalAlignment = -4108
+            cell.api.VerticalAlignment = -4108
 
         curr_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         output_path = os.path.join(settings.MEDIA_ROOT, "filled_forms")
         if not os.path.exists(output_path):
             os.makedirs(output_path)
-        wb.save(os.path.join(output_path, f"filled-{curr_date}.xlsx"))
+        output_file_path = os.path.join(output_path, f"filled-{curr_date}.xlsx")
+        wb.save(output_file_path)
+        wb.close()
+
+        return output_file_path
