@@ -1,27 +1,34 @@
 {% extends "base.html" %}
 {% block title %}Solicitudes{% endblock %}
 {% block content %}
-<h1>Formularios</h1>
+
+
+<div class="d-flex justify-content-between">
+    <div>
+        <h2 class="mb-4">Formularios</h2>
+    </div>
+    <div class="text-end">
+        <a href="/forms/add-form/" class="btn btn-primary">Crear Formulario <i class="fa fa-plus"></i></a>
+    </div>
+</div>
 
 {% for form in forms %}
 <div class="card card-body">
     <h4>
         {{form.name}}
     </h4>
-    {{form.description}}
+    <p>
+        <strong>
+            Descipción:
+        </strong>
+        {{form.description}}
+    </p>
+    <a href="/static/media/{{form.excel_file}}">Plantilla de Excel</a>
 
-    {{form.excel_file}}
+    <a href="/forms/{{form.id}}">
+        Detalles
+    </a>
 
-    <ul class="list-group">
-        {% for field in form.form_fields.all %}
-        <li class="list-group-item">
-            {{ field.type }}
-            {{ field.name }}
-            {{ field.label }}
-        </li>
-        {% endfor %}
-
-    </ul>
 </div>
 {% endfor %}
 

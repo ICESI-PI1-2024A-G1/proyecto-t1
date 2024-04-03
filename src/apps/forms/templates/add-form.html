@@ -13,11 +13,11 @@
             <input name="name" type="text" class="form-control" id="excel-name-input" placeholder="Nombre" required>
         </div>
         <div class="col-sm-3 mb-3">
-            <label for="excel-desc-input" class="form-label">Email address</label>
+            <label for="excel-desc-input" class="form-label">Descripción</label>
             <input name="description" type="text" class="form-control" id="excel-desc-input" placeholder="Descripción" required>
         </div>
         <div class="col-sm-3 mb-3">
-            <label for="excel-file-input" class="form-label">Email address</label>
+            <label for="excel-file-input" class="form-label">Plantilla de Excel</label>
             <input name="excel_template" type="file" name="excel_template" class="form-control" id="excel-file-input" accept=".xlsx" required>
         </div>
         <input type="hidden" name="form_fields" id="form-fields-input">
@@ -38,12 +38,7 @@
     </div>
     <div class="container col-md-4">
         <h4>Vista previa</h4>
-        <div>
-            <div class="card">
-                <div class="card-body" id="form-preview">
-                    <!-- Form preview will be here -->
-                </div>
-            </div>
+        <div id="form-preview">
         </div>
     </div>
 </div>

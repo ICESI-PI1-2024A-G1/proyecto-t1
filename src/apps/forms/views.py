@@ -65,6 +65,10 @@ def load_excel_template(request):
         sheet = json.loads(api_response.content)
         return render(request, "excel-preview.html", {"sheet": sheet})
 
+def form_details(request, id):
+    if request.method == "GET":
+        form = ExcelForm.objects.get(pk=id)
+        return render(request, "dynamic-form.html", {"form":form, "isPreview":False, "showBackBtn": True})
 
 @csrf_exempt
 def form_preview(request):
@@ -72,6 +76,11 @@ def form_preview(request):
         data = json.loads(request.body.decode("utf-8"))
         form_fields = data.get("form_fields")
         # print(form_fields)
+        form = {
+            "form_fields": {
+                "all": form_fields
+            }
+        }
         return render(
-            request, "dynamic-form.html", {"fields": form_fields, "showSubmit": False}
+            request, "dynamic-form.html", {"form": form, "isPreview": True, "showBackBtn": False}
         )
