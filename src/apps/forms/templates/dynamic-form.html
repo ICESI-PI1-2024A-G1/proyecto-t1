@@ -1,0 +1,36 @@
+{% extends "landing_base.html" %}
+{% block title %}
+Formulario {{form.name}}
+{% endblock %}
+
+{% block content %}
+
+{% if showBackBtn %}
+<a href="/forms/" class="btn text-danger"> <i class="fa fa-arrow-circle-left"></i> Regresar</a>
+{% endif %}
+
+<form action="/forms/fill-form/{{form.id}}/" method="POST">
+    <div class="card">
+        {% if not isPreview %}
+        <div class="card-header">
+            <h2>{{form.name}}</h2>
+            {{form.description}}
+        </div>
+        {% endif %}
+        <div class="card-body">
+            {% for field in form.form_fields.all %}
+            <div class="mb-3">
+                <label for="{{field.name}}" class="form-label">{{field.label}}</label>
+                <input name="{{field.name}}" type="{{ field.type }}" id="{{field.name}}" class="form-control" placeholder="{{ field.label }}">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if not isPreview %}
+        <div class="text-center">
+            <button class=" my-4 btn btn-primary" type="submit">Guardar <i class="fa fa-save"></i> </button>
+        </div>
+    {% endif %}
+</form>
+
+{% endblock %}

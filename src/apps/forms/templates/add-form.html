@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Solicitudes{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between">
+    <h1>Añadir Formulario</h1>
+</div>
+
+<form action="/forms/add-form/" method="POST" enctype="multipart/form-data">
+    <div class="row d-flex justify-content-between">
+        <div class="col-sm-3 mb-3">
+            <label for="excel-name-input" class="form-label">Nombre</label>
+            <input name="name" type="text" class="form-control" id="excel-name-input" placeholder="Nombre" required>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <label for="excel-desc-input" class="form-label">Descripción</label>
+            <input name="description" type="text" class="form-control" id="excel-desc-input" placeholder="Descripción" required>
+        </div>
+        <div class="col-sm-3 mb-3">
+            <label for="excel-file-input" class="form-label">Plantilla de Excel</label>
+            <input name="excel_template" type="file" name="excel_template" class="form-control" id="excel-file-input" accept=".xlsx" required>
+        </div>
+        <input type="hidden" name="form_fields" id="form-fields-input">
+        <div class="col-sm-2 ">
+            <button type="submit" class="btn btn-primary" id="save-form">
+                Guardar <i class="fa fa-save"></i>
+            </button>
+        </div>
+    </div>
+</form>    
+
+<div class="row">
+    <div class="container col-md-8 overflow-x-scroll">
+        <h4>Añadir campos</h4>
+        <div id="excel-preview">
+            <!-- Excel view will be here -->
+        </div>
+    </div>
+    <div class="container col-md-4">
+        <h4>Vista previa</h4>
+        <div id="form-preview">
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let form_fields = []
+    const load_listeners = () => {
+        $(".form-cell").on("click", function () {
+            let row = $(this).data("row-idx");
+            let col = $(this).data("col-idx");
+            let form_type = prompt("Ingresa el tipo:");
+            let form_label = prompt("Ingresa la etiqueta:");
+            let form_name = prompt("Ingresa el nombre:");
+
+            form_fields.push({
+                "col_idx": col,
+                "row_idx": row,
+                "name": form_name,
+                "type": form_type,
+                "label": form_label
+            })
+
+            console.log(form_fields); // Verificar los datos que se están enviando
+            let curr_cell = $(this)
+            // Enviar la solicitud POST
+            $.ajax({
+                url: "/forms/form-preview/",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ form_fields: form_fields }),
+                success: function (data) {
+                    $("#form-preview").html(data)
+                    console.log($(this))
+                    curr_cell.addClass("selected")
+                    curr_cell.addClass("bg-primary")
+                    curr_cell.addClass("bg-opacity-50")
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+        $(".form-cell").hover(
+            function () {
+                $(this).addClass("bg-secondary text-white");
+            },
+            function () {
+                $(this).removeClass("bg-secondary text-white");
+        }
+        );
+        
+        
+    }
+    $(document).ready( function () {
+        load_listeners()
+        $("#save-form").on("click", function() {
+            $("#form-fields-input").val(JSON.stringify(form_fields));
+            $("form").submit()
+            /*
+            var formData = {
+                nombre: $('#excel-name-input').val(),
+                descripcion: $('#excel-desc-input').val(),
+                excel_template: $('#excel-file-input')[0].files[0],
+                form_fields: form_fields
+            };
+    
+            $.ajax({
+                type: "POST",
+                url: "/forms/",
+                data: JSON.stringify(formData),
+                contentType: "application/json",
+                success: function(response) {
+                    console.log(response)
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+            */
+        });
+        $("#excel-file-input").on("change", function() {
+            let formData = new FormData();
+            formData.append("excel_template", $(this)[0].files[0]);
+            
+            $.ajax({
+                url: "/forms/load-template/",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    $("#excel-preview").html(data);
+                    $("#form-preview").empty()
+                    load_listeners()
+                    form_fields = []
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    })
+</script>
+
+{% endblock %}
