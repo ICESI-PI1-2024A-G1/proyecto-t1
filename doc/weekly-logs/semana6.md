@@ -1,4 +1,4 @@
-**Bitácora de la Semana 3 con Metodología Scrum: Desarrollo del Módulo de Contabilidad CCSA**
+**Bitácora de la Semana 6 con Metodología Scrum: Desarrollo del Módulo de Contabilidad CCSA**
 
 **Roles:**
 
