@@ -1,10 +1,6 @@
 body {
     font-family: "Inter", sans-serif;
 }
-
-.overflow-hidden {
-    overflow: hidden;
-}
   
 .background-image {
     background-image: url('../../general/media/icesi_quality_background.jpg');
