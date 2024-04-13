@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block title %}Formularios{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between">
+    <div>
+        <h2 class="mb-4">Solicitud de anticipo para gastos de viaje</h2>
+    </div>
+</div>
+
+<!-- Avisos -->
+
+<p class="font-italic"><strong>Por favor tenga en cuenta lo
+        siguiente:</strong></p>
+<ol>
+    <li>Los anticipos en moneda nacional deben solicitarse con tres días hábiles
+        antes de la fecha de viaje (como mínimo)</li>
+    <li>Los anticipos en moneda extranjera (dólar y euro) deben solicitarse
+        cinco días hábiles antes de la fecha de viaje (como mínimo)</li>
+    <li>Todos los soportes de legalización deben venir a nombre de la
+        <strong>Universidad Icesi Nit. 890.316.745-5</strong>. Documento sin
+        este requisito, será rechazado en la legalización.</li>
+    <li>Utilice este formato para solicitar anticipo para los gastos de viaje de
+        colaboradores. (únicamente)</li>
+    <li>Se debe pasar a PDF para el envío a la oficina de contabilidad</li>
+    <li>Formato de uso interno.</li>
+</ol>
+
+<div class="my-2 mx-2 border-bottom border-3"></div>
+
+<!-- Datos de usuario -->
+
+<form>
+    <div class="mb-2">
+        <label class="h5"><strong>Identificación</strong></label>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="requestDate">Fecha de solicitud</label>
+                <input type="date" class="form-control" id="requestDate"
+                    value="{{ now }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="travelerName">Nombre del viajero</label>
+                <input type="text" class="form-control" id="travelerName">
+            </div>
+            <div class="form-group">
+                <label for="idNumber">No. de identificación</label>
+                <input type="number" class="form-control" id="idNumber">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="dependence">Dependencia</label>
+                <select class="form-control" id="dependence">
+                    <option>Op1</option>
+                    <option>Op2</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="costCenter">Centro de costos</label>
+                <select class="form-control" id="costCenter">
+                    <option>Op1</option>
+                    <option>Op2</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Datos de viaje -->
+
+    <div class="mb-2 mt-3">
+        <label class="h5"><strong>Viaje</strong></label>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="destinationCity">Ciudad de destino</label>
+                <input type="text" class="form-control" id="destinationCity">
+            </div>
+            <div class="form-group">
+                <label for="departureDate">Fecha de salida</label>
+                <input type="date" class="form-control" id="departureDate">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="returnDate">Fecha de regreso</label>
+                <input type="date" class="form-control" id="returnDate">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="travelReason">Motivo del viaje</label>
+        <textarea class="form-control" id="travelReason" rows="3"></textarea>
+    </div>
+    <div class="form-group text-center mt-3">
+        <label>Su anticipo es en moneda extranjera:</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="currency"
+                id="dollars" value="dollars">
+            <label class="form-check-label" for="dollars">Dólares</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="currency"
+                id="euros" value="euros">
+            <label class="form-check-label" for="euros">Euros</label>
+        </div>
+    </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Presupuesto de gasto -->
+
+    <div class="mb-2 mt-3">
+        <label class="h5"><strong>Presupuesto de gasto</strong></label>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-1">
+            <label>Transporte Aeropuerto</label>
+        </div>
+        <div class="col-md-6 mb-1">
+            <input type="number" class="form-control" placeholder="0">
+        </div>
+        <div class="col-md-6 mb-1">
+            <label>Transporte Local</label>
+        </div>
+        <div class="col-md-6 mb-1">
+            <input type="number" class="form-control" placeholder="0">
+        </div>
+        <div class="col-md-6 mb-1">
+            <label>Alimentación</label>
+        </div>
+        <div class="col-md-6 mb-1">
+            <input type="number" class="form-control" placeholder="0">
+        </div>
+        <div class="col-md-6 mb-1">
+            <label>Alojamiento</label>
+        </div>
+        <div class="col-md-6 mb-1">
+            <input type="number" class="form-control" placeholder="0">
+        </div>
+        <div class="col-md-6 mb-1">
+            <label>Impuestos de Salida</label>
+        </div>
+        <div class="col-md-6 mb-1">
+            <input type="number" class="form-control" placeholder="0">
+        </div>
+        <div class="col-md-6 mb-1">
+            <label>Otros (detallar) :</label>
+        </div>
+        <div class="col-md-6 mb-1">
+            <input type="number" class="form-control" placeholder="0">
+        </div>
+        <div class="col-md-6 mb-1">
+            <label>TOTAL :</label>
+        </div>
+        <div class="col-md-6 mb-1">
+            <input type="number" id="total" class="form-control" placeholder="0" readonly>
+        </div>
+    </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+</form>
+
+<div class="mb-2 mt-3">
+    <label class="h5"><strong>Autorización de descuento</strong></label>
+</div>
+
+<!-- Autorización -->
+
+<p class="text-center">
+    <i>Si pasados 15 días después de finalizar el viaje no he legalizado este anticipo; autorizo que su valor me sea descontado por nómina en el mes más próximo.</i>
+</p>
+
+<div class="row" style="margin-top: 100px;">
+    <div class="col-md-6 mb-1 text-center">
+        <div style="border-bottom: 1px solid black;"></div>
+        <label>Nombre de quien elabora</label>
+    </div>
+    <div class="col-md-6 mb-1 text-center">
+        <div style="border-bottom: 1px solid black;"></div>
+        <label>Nombre Ordenador de Gasto</label>
+    </div>
+</div>
+
+<div class="my-2 mx-2 border-bottom border-3"></div>
+
+<!-- Datos bancarios -->
+
+<div class="mb-2 mt-3">
+    <label class="h5"><strong>Datos bancarios</strong></label>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-1">
+        <label>Banco:</label>
+        <input type="text" class="form-control">
+    </div>
+    <div class="col-md-6 mb-1">
+        <label>Tipo de cuenta:</label>
+        <input type="text" class="form-control">
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 mb-1">
+        <label>N° de cuenta:</label>
+        <input type="text" class="form-control">
+    </div>
+</div>
+
+<div class="my-2 mx-2 border-bottom border-3"></div>
+
+<!-- Observaciones -->
+
+<div class="mb-2 mt-3">
+    <label class="h5"><strong>Observaciones</strong></label>
+</div>
+
+<div>
+    <textarea class="form-control" rows="3"></textarea>
+</div>
+
+<div class="d-flex justify-content-center">
+    <button class="btn btn-primary mt-3" onclick="saveForm()">Guardar y enviar</button>
+</div>
+
+<script src="../../static/forms/js/commands.js"></script>
+
+{% endblock %}

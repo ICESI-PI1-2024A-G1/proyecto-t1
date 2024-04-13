@@ -50,7 +50,7 @@ def login_view(request):
                 # Generate random code
                 random_code = utils.generate_random_code()
                 request.session["random_code"] = random_code
-                # print("Code: " + random_code)
+                print("Code: " + random_code)
 
                 # Send verification email
                 utils.send_verification_email(
