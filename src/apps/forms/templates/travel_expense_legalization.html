@@ -52,15 +52,23 @@
                 <label for="travelerName">Nombre del viajero</label>
                 <input type="text" class="form-control" id="travelerName" value="{{ request.user.first_name }} {{ request.user.last_name }}" disabled>
             </div>
-        </div>
-        <div class="col">
             <div class="form-group">
                 <label for="idNumber">No. de identificación</label>
                 <input type="number" class="form-control" id="idNumber" value="{{ request.user.id }}" disabled>
             </div>
+        </div>
+        <div class="col">
             <div class="form-group">
                 <label for="dependence">Dependencia</label>
                 <select class="form-control" id="dependence">
+                    <option value="">Selecciona una opción</option>
+                    <option>Op1</option>
+                    <option>Op2</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="costCenter">Centro de costos</label>
+                <select class="form-control" id="costCenter">
                     <option value="">Selecciona una opción</option>
                     <option>Op1</option>
                     <option>Op2</option>
@@ -82,11 +90,15 @@
                 <label for="destinationCity">Ciudad de destino</label>
                 <input type="text" class="form-control" id="destinationCity">
             </div>
-        </div>
-        <div class="col-md-6">
             <div class="form-group">
                 <label for="departureDate">Fecha de salida</label>
                 <input type="date" class="form-control" id="departureDate">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="returnDate">Fecha de regreso</label>
+                <input type="date" class="form-control" id="returnDate">
             </div>
         </div>
     </div>
@@ -206,10 +218,14 @@
         <i>Autorizo que el saldo a favor de la Universidad Icesi, sea descontado en una sola cuota en el siguiente pago de nómina: <strong>Sí</strong></i>
     </p>
 
-    <div class="row justify-content-center" style="margin-top: 100px;">
+    <div class="row" style="margin-top: 100px;">
         <div class="col-md-6 mb-1 text-center">
             <div style="border-bottom: 1px solid black;"></div>
             <label>Nombre de quien elabora</label>
+        </div>
+        <div class="col-md-6 mb-1 text-center">
+            <div style="border-bottom: 1px solid black;"></div>
+            <label>Nombre Ordenador de Gasto</label>
         </div>
     </div>
 

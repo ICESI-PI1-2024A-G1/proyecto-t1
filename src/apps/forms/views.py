@@ -23,7 +23,8 @@ def advance_legalization(request):
 @csrf_exempt
 def billing_account(request):
     if request.method == "GET":
-        return render(request, "billing_account.html")
+        today = date.today().isoformat()
+        return render(request, "billing_account.html", {"today": today})
 
 @csrf_exempt
 def requisition(request):

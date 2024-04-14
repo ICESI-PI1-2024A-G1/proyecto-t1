@@ -6,12 +6,238 @@
 
 <div class="d-flex justify-content-between">
     <div>
-        <h2 class="mb-4">Cuenta de cobro</h2>
+        <h2 class="mb-4">Cuenta de cobro para contratos de Gestión Humana</h2>
     </div>
 </div>
 
-<!-- Data -->
+<!-- Announcement -->
 
+<p class="font-italic"><strong>Por favor, lea la siguiente información:</strong></p>
+
+<p>
+    A continuación, se presenta el formato de declaración de ingresos por renta de
+    trabajo no proveniente de una relación laboral, legal o reglamentaria con la
+    Universidad Icesi. Este documento está diseñado para recabar la información
+    necesaria de acuerdo con la normativa tributaria colombiana, específicamente en
+    cumplimiento con la Ley 2277 del año 2022, reglamentada por el Decreto 2231 de
+    diciembre de 2023.
+</p>
+
+<p>
+    Por favor, complete todos los campos solicitados de manera precisa y veraz. Su
+    colaboración es fundamental para garantizar el cumplimiento de las obligaciones
+    fiscales correspondientes.
+</p>
+
+<!-- User data -->
+
+<form>
+    {{ form.csrf_token }}
+    <div class="mb-2">
+        <label class="h5"><strong>Datos del solicitante</strong></label>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="requestDate">Fecha de solicitud</label>
+                <input type="date" class="form-control" id="requestDate"
+                    value="{{ today }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="fullName">Nombre completo</label>
+                <input type="text" class="form-control" id="fullName" value="{{ request.user.first_name }} {{ request.user.last_name }}" disabled>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="idNumber">No. de identificación</label>
+                <input type="number" class="form-control" id="idNumber" value="{{ request.user.id }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="idValue">Valor (en pesos colombianos $)</label>
+                <input type="number" class="form-control" id="idValue">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="conceptReason">Concepto</label>
+        <textarea class="form-control" id="conceptReason" rows="3"></textarea>
+    </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Check boxes -->
+
+    <p>
+        Con el fin de atender lo establecido en la Ley 2277 del año 2022, reglamentada con el
+        Decreto 2231 de diciembre de 2023 <strong>declaro, bajo la gravedad de juramento, que:</strong>
+    </p>
+    <br>
+    <p>
+        Los ingresos recibidos como persona natural por concepto de renta de trabajo no
+        proveniente de una relación laboral, legal o reglamentaria correspondiente a los servicios
+        prestados a <strong>LA UNIVERSIDAD ICESI</strong> durante el año 2024, se les dará el siguiente tratamiento: 
+    </p>
+
+    <div class="form-group">
+        <p>a. Se tomarán costos y deducciones asociados a las rentas de trabajo por los servicios prestados:</p>
+
+        <div>
+            <input type="radio" id="option1" name="retention" value="option1">
+            <label for="option1">(SI) Retención en la fuente artículos 392 y 401 del Estatuto Tributario</label>
+        </div>
+
+        <div>
+            <input type="radio" id="option2" name="retention" value="option2">
+            <label for="option2">(NO) Retención en la fuente artículo 383 del Estatuto Tributario</label>
+        </div>
+
+        <p>Si no marca ninguna opción, se aplicará la retención de los artículos 392 y 401 del ET.</p>
+    </div>
+
+    <div class="form-group" style="display: flex; align-items: flex-start;">
+        <p style="margin-right: 10px;">b. Soy declarante del Impuesto de Renta: </p>
+
+        <div style="display: flex; align-items: center; margin-right: 10px;">
+            <label for="taxPayerYes" style="margin-right: 5px;">SI</label>
+            <input type="radio" id="taxPayerYes" name="taxPayer" value="yes">
+        </div>
+
+        <div style="display: flex; align-items: center;">
+            <label for="taxPayerNo" style="margin-right: 5px;">NO</label>
+            <input type="radio" id="taxPayerNo" name="taxPayer" value="no">
+        </div>
+    </div>
+
+    <div class="form-group" style="display: flex; align-items: flex-start;">
+        <p style="margin-right: 10px;">c. Soy residente fiscal en Colombia: </p>
+
+        <div style="display: flex; align-items: center; margin-right: 10px;">
+            <label for="residentYes" style="margin-right: 5px;">SI</label>
+            <input type="radio" id="residentYes" name="resident" value="yes">
+        </div>
+
+        <div style="display: flex; align-items: center;">
+            <label for="residentNo" style="margin-right: 5px;">NO</label>
+            <input type="radio" id="residentNo" name="resident" value="no">
+        </div>
+    </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Authorization -->
+
+    <div class="mb-2 mt-3">
+        <label class="h5"><strong>Autorización y firma</strong></label>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="requestCity">Ciudad</label>
+                <input type="text" class="form-control" id="requestCity">
+            </div>
+            <div class="form-group">
+                <label for="address">Dirección</label>
+                <input type="text" class="form-control" id="address">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="phoneNumber">Teléfono</label>
+                <input type="tel" class="form-control" id="phoneNumber">
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center" style="margin-top: 100px;">
+        <div class="col-md-6 mb-1 text-center">
+            <div style="border-bottom: 1px solid black;"></div>
+            <label>Firma</label>
+        </div>
+    </div>
+
+    <!-- Bank data -->
+
+    <div class="mb-2 mt-3">
+        <label class="h5"><strong>Datos bancarios</strong></label>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-1">
+            <label>Banco:</label>
+            <select class="form-control">
+                <option value="">Selecciona una opción</option>
+                <option>BANCOLOMBIA</option>
+                <option>BANCO AGRARIO</option>
+                <option>BANCO AV VILLAS</option>
+                <option>BANCO CAJA SOCIAL</option>
+                <option>BANCO COOPERATIVO COOPCENTRAL</option>
+                <option>BANCO CREDIFINANCIERA SA.</option>
+                <option>BANCO DAVIVIENDA</option>
+                <option>BANCO DE BOGOTÁ</option>
+                <option>BANCO DE LAS MICROFINANZAS BANCAMIA S.A.</option>
+                <option>BANCO DE OCCIDENTE</option>
+                <option>BANCO FALABELLA S.A.</option>
+                <option>BANCO FINANDINA S.A.</option>
+                <option>BANCO GNB COLOMBIA S.A</option>
+                <option>BANCO GNB SUDAMERIS</option>
+                <option>BANCO MUNDO MUJER</option>
+                <option>BANCO PICHINCHA</option>
+                <option>BANCO POPULAR</option>
+                <option>BANCO PROCREDIT</option>
+                <option>BANCO SANTANDER DE NEGOCIOS</option>
+                <option>BANCO SERFINANZA</option>
+                <option>BANCO W S.A</option>
+                <option>BANCOOMEVA</option>
+                <option>BANCÓLDEX S.A.</option>
+                <option>BBVA</option>
+                <option>BNP PARIBAS</option>
+                <option>CITIBANK</option>
+                <option>COLTEFINANCIERA S.A.</option>
+                <option>CONFIAR</option>
+                <option>COOFINEP COOPERATIVA FINANCIERA</option>
+                <option>COOPERATIVA FINANCIERA DE ANTIOQUIA</option>
+                <option>COTRAFA COOPERATIVA FINANCIERA</option>
+                <option>Daviplata</option>
+                <option>FINANCIERA JURISCOOP S.A. COMPAÑÍA DE FINANCIAMIENTO</option>
+                <option>GIROS Y FINANZAS COMPAÑÍA DE FINANCIAMIENTO S.A.</option>
+                <option>ITAÚ</option>
+                <option>ITAÚ antes CorpBanca</option>
+                <option>MIBANCO S.A.</option>
+                <option>NEQUI</option>
+                <option>Rappipay</option>
+                <option>Scotiabank Colpatria S.A</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-1">
+            <label>Tipo de cuenta:</label>
+            <select class="form-control">
+                <option value="">Selecciona una opción</option>
+                <option value="Ahorros">Ahorros</option>
+                <option value="Corriente">Corriente</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-1">
+            <label>N° de cuenta:</label>
+            <input type="number" class="form-control" id="idBank">
+        </div>
+        <div class="col-md-6 mb-1">
+            <label>N° de CEX:</label>
+            <input type="number" class="form-control" id="idCex">
+        </div>
+    </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <div class="d-flex justify-content-center">
+        <button class="btn btn-primary mt-3" onclick="saveForm()">Guardar y enviar</button>
+    </div>
+</form>
+
+    
 
 
 {% endblock %}
