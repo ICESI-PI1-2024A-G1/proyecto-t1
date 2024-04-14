@@ -5,13 +5,14 @@ from datetime import date
 @csrf_exempt
 def travel_advance_request(request):
     if request.method == "GET":
-        context = {'now': date.today()}
-        return render(request, "travel_advance_request.html")
+        today = date.today().isoformat()
+        return render(request, "travel_advance_request.html", {"today": today})
 
 @csrf_exempt
 def travel_expense_legalization(request):
     if request.method == "GET":
-        return render(request, "travel_expense_legalization.html")
+        today = date.today().isoformat()
+        return render(request, "travel_expense_legalization.html", {"today": today})
 
 @csrf_exempt
 def advance_legalization(request):

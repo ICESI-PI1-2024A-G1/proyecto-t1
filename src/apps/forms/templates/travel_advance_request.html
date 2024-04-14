@@ -2,13 +2,15 @@
 {% block title %}Formularios{% endblock %}
 {% block content %}
 
+<!--Title-->
+
 <div class="d-flex justify-content-between">
     <div>
         <h2 class="mb-4">Solicitud de anticipo para gastos de viaje</h2>
     </div>
 </div>
 
-<!-- Avisos -->
+<!-- Announcement -->
 
 <p class="font-italic"><strong>Por favor tenga en cuenta lo
         siguiente:</strong></p>
@@ -28,7 +30,7 @@
 
 <div class="my-2 mx-2 border-bottom border-3"></div>
 
-<!-- Datos de usuario -->
+<!-- User data -->
 
 <form>
     <div class="mb-2">
@@ -39,7 +41,7 @@
             <div class="form-group">
                 <label for="requestDate">Fecha de solicitud</label>
                 <input type="date" class="form-control" id="requestDate"
-                    value="{{ now }}" disabled>
+                    value="{{ today }}" disabled>
             </div>
             <div class="form-group">
                 <label for="travelerName">Nombre del viajero</label>
@@ -54,6 +56,7 @@
             <div class="form-group">
                 <label for="dependence">Dependencia</label>
                 <select class="form-control" id="dependence">
+                    <option value="">Selecciona una opción</option>
                     <option>Op1</option>
                     <option>Op2</option>
                 </select>
@@ -61,6 +64,7 @@
             <div class="form-group">
                 <label for="costCenter">Centro de costos</label>
                 <select class="form-control" id="costCenter">
+                    <option value="">Selecciona una opción</option>
                     <option>Op1</option>
                     <option>Op2</option>
                 </select>
@@ -70,7 +74,7 @@
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
-    <!-- Datos de viaje -->
+    <!-- Travel data -->
 
     <div class="mb-2 mt-3">
         <label class="h5"><strong>Viaje</strong></label>
@@ -113,7 +117,7 @@
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
-    <!-- Presupuesto de gasto -->
+    <!-- Expenditure budget -->
 
     <div class="mb-2 mt-3">
         <label class="h5"><strong>Presupuesto de gasto</strong></label>
@@ -170,7 +174,7 @@
     <label class="h5"><strong>Autorización de descuento</strong></label>
 </div>
 
-<!-- Autorización -->
+<!-- Authorization -->
 
 <p class="text-center">
     <i>Si pasados 15 días después de finalizar el viaje no he legalizado este anticipo; autorizo que su valor me sea descontado por nómina en el mes más próximo.</i>
@@ -189,7 +193,7 @@
 
 <div class="my-2 mx-2 border-bottom border-3"></div>
 
-<!-- Datos bancarios -->
+<!-- Bank data -->
 
 <div class="mb-2 mt-3">
     <label class="h5"><strong>Datos bancarios</strong></label>
@@ -202,7 +206,11 @@
     </div>
     <div class="col-md-6 mb-1">
         <label>Tipo de cuenta:</label>
-        <input type="text" class="form-control">
+        <select class="form-control">
+            <option value="">Selecciona una opción</option>
+            <option value="Ahorros">Ahorros</option>
+            <option value="Corriente">Corriente</option>
+        </select>
     </div>
 </div>
 <div class="row">
@@ -214,7 +222,7 @@
 
 <div class="my-2 mx-2 border-bottom border-3"></div>
 
-<!-- Observaciones -->
+<!-- Observations -->
 
 <div class="mb-2 mt-3">
     <label class="h5"><strong>Observaciones</strong></label>
@@ -228,6 +236,6 @@
     <button class="btn btn-primary mt-3" onclick="saveForm()">Guardar y enviar</button>
 </div>
 
-<script src="../../static/forms/js/commands.js"></script>
+<script src="../../static/forms/js/travel_advance_request.js"></script>
 
 {% endblock %}

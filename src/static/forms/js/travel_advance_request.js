@@ -1,20 +1,20 @@
-// selecciona todos los campos de entrada excepto el total
+// selects all input fields except the total field
 var inputs = document.querySelectorAll('input[type=number]:not(#total)');
 
-// agrega un evento de cambio a cada campo de entrada
+// adds an event listener to each input field
 inputs.forEach(function(input) {
     input.addEventListener('change', updateTotal);
 });
 
-// actualiza el total
+// updates the total field
 function updateTotal() {
     var total = 0;
 
-    // suma los valores de todos los campos de entrada
+    // sum all the input fields
     inputs.forEach(function(input) {
         total += Number(input.value);
     });
 
-    // actualiza el campo de entrada total
+    // update the total field
     document.getElementById('total').value = total;
 }
