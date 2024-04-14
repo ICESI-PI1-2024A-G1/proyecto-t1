@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Solicitudes{% endblock %}
+{% block content %}
+
+
+<div class="d-flex justify-content-between">
+    <div>
+        <h2 class="mb-4">Formularios</h2>
+    </div>
+    <div class="text-end">
+        <a href="/forms/add-form/" class="btn btn-primary">Crear Formulario <i class="fa fa-plus"></i></a>
+    </div>
+</div>
+
+{% for form in forms %}
+<div id="form-{{form.id}}" class="card card-body">
+    <div class="row">
+        <div class="col-md-8">
+            <h4>
+                {{form.name}}
+            </h4>
+        </div>
+        <div class="col-md-4">
+            <button data-form-id="{{form.id}}" class="btn btn-danger delete-form-btn">Eliminar <i class="fa fa-trash"></i></button>
+        </div>
+    </div>
+    <p>
+        <strong>
+            Descipción:
+        </strong>
+        {{form.description}}
+    </p>
+    <a href="/static/media/{{form.excel_file}}">Plantilla de Excel</a>
+
+    <a href="/forms/{{form.id}}">
+        Detalles
+    </a>
+
+</div>
+{% endfor %}
+
+<script>
+$(document).ready(function() {
+    $(".delete-form-btn").on("click", function() {
+        var formId = $(this).data("form-id");
+        var confirmation = confirm("¿Estás seguro de que deseas eliminar este formulario?");
+        if (confirmation) {
+            $.ajax({
+                url: `/forms/delete-form/${formId}/`,
+                type: "DELETE",
+                success: function(response) {
+                    $(`#form-${formId}`).remove();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+    })
+})
+</script>
+
+{% endblock %}

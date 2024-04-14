@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_DIR = BASE_DIR / "static"
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     "apps.errorHandler",
     "apps.permissions",
     "apps.emailContact",
+    "apps.forms",
     "utils",
 ]
 
@@ -102,7 +104,15 @@ EXCEL_FILE_PATH_TEST = os.path.join(
     "emulation",
     "requests_test_database.xlsx",
 )
+EXCEL_FORMS_PATH = os.path.join(
+    BASE_DIR,
+    "static",
+    "forms",
+    "templates",
+)
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
