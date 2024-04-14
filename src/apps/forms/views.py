@@ -24,7 +24,7 @@ def advance_legalization(request):
 def billing_account(request):
     if request.method == "GET":
         today = date.today().isoformat()
-        return render(request, "billing_account.html", {"today": today})
+        return render(request, "billing_account.html", {"today": today, 'include_cex': True})
 
 @csrf_exempt
 def requisition(request):

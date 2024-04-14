@@ -150,85 +150,13 @@
         </div>
     </div>
 
-    <div class="row justify-content-center" style="margin-top: 100px;">
-        <div class="col-md-6 mb-1 text-center">
-            <div style="border-bottom: 1px solid black;"></div>
-            <label>Firma</label>
-        </div>
-    </div>
+    {% include 'signblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
 
     <!-- Bank data -->
 
-    <div class="mb-2 mt-3">
-        <label class="h5"><strong>Datos bancarios</strong></label>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6 mb-1">
-            <label>Banco:</label>
-            <select class="form-control">
-                <option value="">Selecciona una opción</option>
-                <option>BANCOLOMBIA</option>
-                <option>BANCO AGRARIO</option>
-                <option>BANCO AV VILLAS</option>
-                <option>BANCO CAJA SOCIAL</option>
-                <option>BANCO COOPERATIVO COOPCENTRAL</option>
-                <option>BANCO CREDIFINANCIERA SA.</option>
-                <option>BANCO DAVIVIENDA</option>
-                <option>BANCO DE BOGOTÁ</option>
-                <option>BANCO DE LAS MICROFINANZAS BANCAMIA S.A.</option>
-                <option>BANCO DE OCCIDENTE</option>
-                <option>BANCO FALABELLA S.A.</option>
-                <option>BANCO FINANDINA S.A.</option>
-                <option>BANCO GNB COLOMBIA S.A</option>
-                <option>BANCO GNB SUDAMERIS</option>
-                <option>BANCO MUNDO MUJER</option>
-                <option>BANCO PICHINCHA</option>
-                <option>BANCO POPULAR</option>
-                <option>BANCO PROCREDIT</option>
-                <option>BANCO SANTANDER DE NEGOCIOS</option>
-                <option>BANCO SERFINANZA</option>
-                <option>BANCO W S.A</option>
-                <option>BANCOOMEVA</option>
-                <option>BANCÓLDEX S.A.</option>
-                <option>BBVA</option>
-                <option>BNP PARIBAS</option>
-                <option>CITIBANK</option>
-                <option>COLTEFINANCIERA S.A.</option>
-                <option>CONFIAR</option>
-                <option>COOFINEP COOPERATIVA FINANCIERA</option>
-                <option>COOPERATIVA FINANCIERA DE ANTIOQUIA</option>
-                <option>COTRAFA COOPERATIVA FINANCIERA</option>
-                <option>Daviplata</option>
-                <option>FINANCIERA JURISCOOP S.A. COMPAÑÍA DE FINANCIAMIENTO</option>
-                <option>GIROS Y FINANZAS COMPAÑÍA DE FINANCIAMIENTO S.A.</option>
-                <option>ITAÚ</option>
-                <option>ITAÚ antes CorpBanca</option>
-                <option>MIBANCO S.A.</option>
-                <option>NEQUI</option>
-                <option>Rappipay</option>
-                <option>Scotiabank Colpatria S.A</option>
-            </select>
-        </div>
-        <div class="col-md-6 mb-1">
-            <label>Tipo de cuenta:</label>
-            <select class="form-control">
-                <option value="">Selecciona una opción</option>
-                <option value="Ahorros">Ahorros</option>
-                <option value="Corriente">Corriente</option>
-            </select>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 mb-1">
-            <label>N° de cuenta:</label>
-            <input type="number" class="form-control" id="idBank">
-        </div>
-        <div class="col-md-6 mb-1">
-            <label>N° de CEX:</label>
-            <input type="number" class="form-control" id="idCex">
-        </div>
-    </div>
+    {% include 'bankblock.html' %}
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
@@ -236,8 +164,5 @@
         <button class="btn btn-primary mt-3" onclick="saveForm()">Guardar y enviar</button>
     </div>
 </form>
-
-    
-
 
 {% endblock %}
