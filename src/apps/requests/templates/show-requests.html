@@ -30,6 +30,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Documento</th>
                     <th>Fechas</th>
                     <th>Solicitante</th>
                     <th class="col-4">Motivo</th>
@@ -43,6 +44,7 @@
                 {% for request in requests %}
                 <tr id="request_{{ request.id }}">
                     <td>{{ request.id }}</td>
+                    <td>{{ request.document }}</td>
                     <td class="col-2 text-sm">
                         <div>Inicio: {{ request.initial_date }}</div>
                         <div>Final: {{ request.final_date }}</div>
