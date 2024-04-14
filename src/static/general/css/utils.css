@@ -1,3 +1,36 @@
 .overflow-hidden {
     overflow: hidden;
 }
+
+.max-width-s {
+    flex: 0 0 20%;
+}
+
+.dp-blue {
+    background-color: #0f284c !important;
+}
+
+.md-blue {
+    background-color: #0f4176;
+}
+
+.br-blue {
+    background-color: #0e9aef;
+}
+
+#mySidenav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    /* ajusta el ancho según sea necesario */
+    background-color: #f8f9fa;
+    /* ajusta el color de fondo según sea necesario */
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+#mySidenav img {
+    margin-bottom: 20px;
+}
