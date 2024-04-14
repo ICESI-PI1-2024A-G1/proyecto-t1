@@ -56,9 +56,9 @@ class TeamTestCase(TestCase):
                 last_name=fake.last_name(),
             )
             self.users.append(user)
-
+        names = ["Contabilidad", "Lógistica", "Programacion académica","Contratación"]
         self.leaders = [self.user]
-        for i in range(5):
+        for i in range(4):
             leader = random.choice(
                 User.objects.exclude(id__in=[leader.id for leader in self.leaders])
             )
@@ -66,7 +66,7 @@ class TeamTestCase(TestCase):
             leader.save()
             self.leaders.append(leader)
             team = Team.objects.create(
-                name=fake.company(),
+                name=names[i],
                 description=fake.text(max_nb_chars=100),
                 leader=leader,
             )
@@ -141,6 +141,22 @@ class TeamTestCase(TestCase):
         self.assertTemplateUsed("teams:show-teams.html")
         displayed_teams = [team.id for team in response.context["teams"]]
         self.assertEqual(displayed_teams, teams)
+
+    def test_show_teams_all_names(self):
+        """
+        Test displaying teams and assert that default names are set.
+        """
+        self.user.is_staff = True
+        self.user.is_superuser = True
+        self.user.save()
+        response = self.client.get(reverse("teams:show_teams"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed("teams:show-teams.html")
+        displayed_teams = [team.name for team in response.context["teams"]]
+        self.assertEqual(displayed_teams[0], "Contabilidad")
+        self.assertEqual(displayed_teams[1], "Lógistica")
+        self.assertEqual(displayed_teams[2], "Programacion académica")
+        self.assertEqual(displayed_teams[3], "Contratación")
 
     ### ADD TEAM TESTS
 
