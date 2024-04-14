@@ -17,7 +17,8 @@ def travel_expense_legalization(request):
 @csrf_exempt
 def advance_legalization(request):
     if request.method == "GET":
-        return render(request, "advance_legalization.html")
+        today = date.today().isoformat()
+        return render(request, "advance_legalization.html", {"today": today})
 
 @csrf_exempt
 def billing_account(request):
@@ -27,5 +28,6 @@ def billing_account(request):
 @csrf_exempt
 def requisition(request):
     if request.method == "GET":
-        return render(request, "requisition.html")
+        today = date.today().isoformat()
+        return render(request, "requisition.html", {"today": today})
 
