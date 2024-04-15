@@ -93,9 +93,9 @@ class SearchFilter:
                 "last_name": result.last_name,
                 "first_name": result.first_name,
                 "email": result.email,
-                "is_staff": result.is_staff,
                 "is_leader": result.is_leader,
-                "is_superuser": result.is_superuser,
+                "is_member": result.is_member,
+                "is_applicant": result.is_applicant,
             }
             for result in results
         ]

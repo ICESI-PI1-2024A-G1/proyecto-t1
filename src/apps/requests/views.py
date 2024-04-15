@@ -165,7 +165,7 @@ def show_requests(request):
         if response.status_code == 200:
             requests_data = json.loads(response.content)
             user_str = request.user.__str__()
-            if not request.user.is_staff and not request.user.is_leader:
+            if not request.user.is_leader and not request.user.is_leader:
                 requests_data = [ r for r in requests_data if r["manager"] == user_str ]
             for r in requests_data:
                 r["team"] = "" if math.isnan(r["team"]) else int(r["team"])

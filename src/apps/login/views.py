@@ -45,6 +45,12 @@ def login_view(request):
             )
 
             if user is not None:
+                if not user.is_superuser and not user.is_leader and not user.is_member and not user.is_applicant:
+                    return render(
+                        request,
+                        "login.html",
+                        {"message": "Usuario no autorizado. Comuníquese con el administrador."},
+                    )
                 request.session["user_id"] = user.id
 
                 # Generate random code

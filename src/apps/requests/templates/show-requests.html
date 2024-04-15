@@ -71,7 +71,7 @@
                     </button>
                 </td>
                     <td>
-                        {% if user.is_superuser or user.is_leader or user.is_staff %}
+                        {% if user.is_superuser or user.is_leader or user.is_member %}
                             <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
                                     class="btn details-btn " data-request-id="{{ request.id }}">
                                 Asignar

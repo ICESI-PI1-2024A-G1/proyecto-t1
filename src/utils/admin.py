@@ -28,7 +28,6 @@ class UserAdmin(admin.ModelAdmin):
     list_editable = ("is_superuser", "is_leader")
     list_filter = ("is_superuser", "is_leader")
     list_per_page = 10
-    exclude = ("last_login", "groups", "user_permissions", "is_staff")
     form = CustomUserChangeForm
 
 

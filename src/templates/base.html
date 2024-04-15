@@ -34,7 +34,7 @@
                                 <p class="font-weight small p-1 mb-1 mx-2">General</p>
                                 <ul class="nav flex-column text-center">
                                     {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
-                                    {% if request.user.is_superuser or request.user.is_staff or request.user.is_leader%}
+                                    {% if request.user.is_superuser or request.user.is_leader%}
                                         {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
                                     {% endif %}
                                         {% if request.user.is_superuser%}
