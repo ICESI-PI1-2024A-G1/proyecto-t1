@@ -27,60 +27,55 @@
     </head>
     <body>
         <div class="d-flex flex-wrap">
-            <!--Navbar horizontal-->
-            <nav class="navbar md-blue fixed-top mt-0" id="horizontalNavbar">
-                <!-- Botón de alternancia para contraer y expandir el segundo navbar -->
-                <button class="navbar-toggler bg-white ml-2"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#verticalNavbar"
-                        aria-controls="verticalNavbar"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                        style="margin-left: 10px">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <span class="text-white" style="margin-left: 10px;">Bienvenido</span>
-                <!-- Contenedor para los elementos del navbar -->
-                <ul class="navbar-nav ms-auto mr-3" style="margin-right: 10px;">
-                    <li class="nav-item">
-                        <a class="nav-link details-btn text-white" href="/logout?logout=true">
-                            <i class="fas fa-sign-out-alt me-2"></i>
-                            Cerrar sesión
-                        </a>
-                    </li>
-                </ul>
-            </nav>
             <!--Navbar vertical-->
-            <nav class="navbar d-flex flex-column navbar-expand-lg dp-blue v-100 max-width-s collapse"
-                 style="padding-top:5%"
-                 id="verticalNavbar">
-                <div class="text-center" style="background-color:white; width: 100%">
-                    <img src="{% static 'requests/assets/CCSA.png' %}" alt="Logo" height="50w">
-                </div>
-                <div id="navbarNavAltMarkup"
-                     class="mt-5"
-                     style="width: 100%;
-                            height: 100%">
-                    <div class="d-flex flex-column h-100">
-                        <ul class="nav flex-column text-center text-black">
-                            {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
-                            {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
-                            {% if request.user.is_superuser %}
-                                {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-cog" link="/admin/utils/customuser" %}
-                            {% endif %}
-                            {% if request.user.is_leader and not request.user.is_superuser %}
-                                {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions" %}
-                            {% endif %}
-                            {% include 'components/navigation_item.html' with text="Contacto" icon_class="fas fa-envelope" link="/emailContact" %}
-                        </ul>
+            <nav class="navbar navbar-light md-blue fixed-top">
+                <div class="container-fluid">
+                    <button class="navbar-toggler bg-white"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasNavbar"
+                            aria-controls="offcanvasNavbar">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <span class="navbar-brand text-white">Bienvenido</span>
+                    <a class="nav-link details-btn text-white" href="/logout?logout=true">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        Cerrar sesión
+                    </a>
+                    <div class="offcanvas offcanvas-start"
+                         tabindex="-1"
+                         id="offcanvasNavbar"
+                         aria-labelledby="offcanvasNavbarLabel">
+                        <div class="offcanvas-header">
+                            <div class="text-center">
+                                <img src="{% static 'requests/assets/CCSA.png' %}"
+                                     class="rounded"
+                                     alt="Logo"
+                                     height="50w">
+                            </div>
+                            <button type="button"
+                                    class="btn-close text-reset"
+                                    data-bs-dismiss="offcanvas"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                                {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
+                                {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
+                                {% if request.user.is_superuser %}
+                                    {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-cog" link="/admin/utils/customuser" %}
+                                {% endif %}
+                                {% if request.user.is_leader and not request.user.is_superuser %}
+                                    {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions" %}
+                                {% endif %}
+                                {% include 'components/navigation_item.html' with text="Contacto" icon_class="fas fa-envelope" link="/emailContact" %}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </nav>
             <!-- Contenido principal -->
-            <main role="main"
-                  class="col-lg-8 ml-sm-auto px-4 content"
-                  style="margin-top: 5%">
+            <main role="main" class="ml-sm-auto px-4 content" style="margin-top: 5%">
                 {% block content %}{% endblock %}
                 {% include 'components/modal.html' %}
             </main>
