@@ -6,31 +6,39 @@
     flex: 0 0 20%;
 }
 
-.dp-blue {
+/* Obscure blue*/
+.obs-blue {
     background-color: #0f284c !important;
 }
 
-.md-blue {
+/* deep blue */
+.dp-blue {
     background-color: #0f4176;
 }
 
+/* Mid blue */
+.md-blue {
+    background-color: #00599c;
+}
+
+/* Slightly Blue */
+.sl-blue {
+background-color: #347ab6;
+}
+
+/* Bright blue */
 .br-blue {
     background-color: #0e9aef;
 }
 
-#mySidenav {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 250px;
-    /* ajusta el ancho según sea necesario */
-    background-color: #f8f9fa;
-    /* ajusta el color de fondo según sea necesario */
-    overflow-x: hidden;
-    padding-top: 20px;
+.md-gray {
+    background-color: #b3b3b3;
 }
 
-#mySidenav img {
-    margin-bottom: 20px;
+.dp-gray {
+    background-color: #333333;
+}
+
+.br-green {
+    background-color: #0fb066;
 }

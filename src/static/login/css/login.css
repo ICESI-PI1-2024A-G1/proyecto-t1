@@ -3,7 +3,7 @@ body {
 }
   
 .background-image {
-    background-image: url('../../general/media/icesi_quality_background.jpg');
+    background-image: url('../../login/assets/icesi_background.jpeg');
     background-size: cover;
     background-position: center;
     width: 100vw;
