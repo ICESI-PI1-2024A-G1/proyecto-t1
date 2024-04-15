@@ -48,7 +48,11 @@ document.getElementById('signButton').addEventListener('click', function(event) 
                     html: canvas,
                     showCancelButton: true,
                     preConfirm: () => {
-                        return signaturePad.toDataURL(); // return the drawn signature
+                        if (signaturePad.isEmpty()) {
+                            return Promise.reject("Por favor dibuja tu firma.");
+                        } else {
+                            return signaturePad.toDataURL(); // return the drawn signature
+                        }
                     }
                 })
                 .then((result) => {
@@ -61,29 +65,23 @@ document.getElementById('signButton').addEventListener('click', function(event) 
                 signaturePad.clear();
                 break;
             case "upload":
-                document.getElementById('signatureImage').click();
+                Swal.fire({
+                    title: 'Subir imagen',
+                    input: 'file',
+                    inputAttributes: {
+                        'accept': 'image/*',
+                        'aria-label': 'Sube tu firma'
+                    }
+                }).then((result) => {
+                    if (result.value) {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            document.getElementById('signature').innerHTML = '<img src="' + e.target.result + '" style="max-width: 100%; height: auto;">';
+                        };
+                        reader.readAsDataURL(result.value);
+                    }
+                });
                 break;
         }
     });
-});
-
-// Image upload
-document.getElementById('signatureImage').addEventListener('change', function(event) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById('signature').innerHTML = '<img src="' + e.target.result + '">';
-    };
-    reader.readAsDataURL(event.target.files[0]);
-});
-
-// Save the drawn signature
-document.getElementById('saveButton').addEventListener('click', function(event) {
-    event.preventDefault();
-    if (signaturePad.isEmpty()) {
-        alert("Por favor dibuja tu firma.");
-    } else {
-        var dataUrl = signaturePad.toDataURL();
-        document.getElementById('signature').innerHTML = '<img src="' + dataUrl + '">';
-        canvas.style.display = 'none';
-    }
 });

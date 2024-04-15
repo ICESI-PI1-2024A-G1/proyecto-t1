@@ -1,20 +1,19 @@
-// selects all input fields except the total field
-var inputs = document.querySelectorAll('input[type=number]:not(#total)');
+window.onload = function() {
+    var inputs = document.querySelectorAll('.budget-input');
+    var totalInput = document.getElementById('total');
 
-// adds an event listener to each input field
-inputs.forEach(function(input) {
-    input.addEventListener('change', updateTotal);
-});
-
-// updates the total field
-function updateTotal() {
-    var total = 0;
-
-    // sum all the input fields
     inputs.forEach(function(input) {
-        total += Number(input.value);
+        input.addEventListener('input', function() {
+            var sum = 0;
+            inputs.forEach(function(input) {
+                if (input.value) {
+                    var value = parseFloat(input.value);
+                    if (!isNaN(value)) {
+                        sum += value;
+                    }
+                }
+            });
+            totalInput.value = sum;
+        });
     });
-
-    // update the total field
-    document.getElementById('total').value = total;
-}
+};

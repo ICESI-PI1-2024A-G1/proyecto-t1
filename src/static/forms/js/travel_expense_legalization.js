@@ -1,6 +1,7 @@
 // adds a new row to the table
 document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('addRow').addEventListener('click', function() {
+        event.preventDefault();
         var table = document.querySelector('tbody');
         var newRow = document.createElement('tr');
 
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
     // removes the last row from the table
     document.getElementById('removeRow').addEventListener('click', function() {
+        event.preventDefault();
         var table = document.querySelector('tbody');
         var rows = Array.from(table.children);
         var totalsRowIndex = rows.findIndex(row => row.id === 'totals');
