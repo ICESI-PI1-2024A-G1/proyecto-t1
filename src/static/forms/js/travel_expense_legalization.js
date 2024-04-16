@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
         var table = document.querySelector('tbody');
         var newRow = document.createElement('tr');
 
+        // Get the current number of rows
+        var currentRowCount = table.querySelectorAll('tr:not(#totals):not(#advance):not(#employeeBalance):not(#icesiBalance)').length;
+
         for (var i = 0; i < 7; i++) {
             var newCell = document.createElement('td');
             var input = document.createElement('input');
@@ -12,6 +15,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             input.className = 'form-control';
             if (i >= 4) {
                 input.placeholder = '0';
+                input.id = ['total', 'advance', 'employeeBalance', 'icesiBalance'][i - 4] + (currentRowCount + 1);
+                input.name = input.id;
             }
             newCell.appendChild(input);
             newRow.appendChild(newCell);
@@ -76,9 +81,11 @@ function updateTotals() {
     // update "Saldo a favor del empleado" and "Saldo a favor de ICESI" fields
     employeeBalance.forEach((balance, i) => {
         document.getElementById('employeeBalance' + (i + 1)).value = balance;
+        console.log(balance);
     });
 
     icesiBalance.forEach((balance, i) => {
         document.getElementById('icesiBalance' + (i + 1)).value = balance;
+        console.log(balance);
     });
 }
