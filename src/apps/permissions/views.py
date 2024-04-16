@@ -96,6 +96,7 @@ def update_user_permissions(request):
                 user.is_leader = permission == 'is_leader'
                 user.is_member = permission == 'is_member'
                 user.is_applicant = permission == 'is_applicant'
+                user.is_none = permission == 'is_none'
             user.save()
         return JsonResponse({'status': 'success', 'message': 'Permisos actualizados correctamente.'})
     else:

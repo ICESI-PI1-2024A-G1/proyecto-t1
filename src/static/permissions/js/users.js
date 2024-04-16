@@ -28,6 +28,7 @@ $(document).ready(function () {
                                 <td><input type="radio" name="permission_${item.id}" value="is_leader" ${item.is_superuser ? 'disabled' : ''} ${item.is_leader ? 'checked' : ''}></td>
                                 <td><input type="radio" name="permission_${item.id}" value="is_member" ${item.is_superuser ? 'disabled' : ''} ${item.is_member ? 'checked' : ''}></td>
                                 <td><input type="radio" name="permission_${item.id}" value="is_applicant" ${item.is_superuser ? 'disabled' : ''} ${item.is_applicant ? 'checked' : ''}></td>
+                                <td><input type="radio" name="permission_${item.id}" value="is_applicant" ${item.is_superuser ? 'disabled' : ''} ${item.is_none ? 'checked' : ''}></td>
                             </tr>
                         `;
                     tbody.append(fila);

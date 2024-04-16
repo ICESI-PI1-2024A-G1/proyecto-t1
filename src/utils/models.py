@@ -66,6 +66,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_leader = models.BooleanField(default=False, verbose_name="Lider")
     is_superuser = models.BooleanField(default=False, verbose_name="Super Usuario")
     is_applicant = models.BooleanField(default=False, verbose_name="Solicitante")
+    is_none = models.BooleanField(default=False, verbose_name="Ninguno")
 
     USERNAME_FIELD = "id"
     REQUIRED_FIELDS = [
