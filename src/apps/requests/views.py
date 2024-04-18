@@ -165,7 +165,7 @@ def show_requests(request):
         if response.status_code == 200:
             requests_data = json.loads(response.content)
             user_str = request.user.__str__()
-            if not request.user.is_leader and not request.user.is_leader:
+            if not request.user.is_superuser:
                 requests_data = [ r for r in requests_data if r["manager"] == user_str ]
             for r in requests_data:
                 r["team"] = "" if math.isnan(r["team"]) else int(r["team"])
@@ -175,7 +175,6 @@ def show_requests(request):
     except Http404 as e:
         return JsonResponse({"error": str(e)}, status=404)
     except Exception as e:
-        print(e)
         return JsonResponse(
             {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
         )

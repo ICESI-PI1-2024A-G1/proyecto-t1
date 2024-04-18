@@ -40,73 +40,15 @@
 
 <form action="/forms/travel_advance_request" method="POST">
     {{ form.csrf_token }}
-    <div class="mb-2">
-        <label class="h5"><strong>Identificación</strong></label>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label for="requestDate">Fecha de solicitud</label>
-                <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ today }}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="travelerName">Nombre del viajero</label>
-                <input type="text" class="form-control" id="travelerName" name="travelerName" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="idNumber">No. de identificación</label>
-                <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.user.id }}" readonly>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label for="dependence">Dependencia</label>
-                <select class="form-control" id="dependence" name="dependence" required>
-                    <option value="">Selecciona una opción</option>
-                    <option {% if form_data.dependence == "Op1" %}selected{% endif %}>Op1</option>
-                    <option {% if form_data.dependence == "Op2" %}selected{% endif %}>Op2</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="costCenter">Centro de costos</label>
-                <select class="form-control" id="costCenter" name="costCenter" required>
-                    <option value="">Selecciona una opción</option>
-                    <option {% if form_data.costCenter == "Op1" %}selected{% endif %}>Op1</option>
-                    <option {% if form_data.costCenter == "Op2" %}selected{% endif %}>Op2</option>
-                </select>
-            </div>
-        </div>
-    </div>
+    
+    {% include 'formBlocks/idblock.html' %}
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
     <!-- Travel data -->
 
-    <div class="mb-2 mt-3">
-        <label class="h5"><strong>Viaje</strong></label>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="destinationCity">Ciudad de destino</label>
-                <input type="text" class="form-control" id="destinationCity" name="destinationCity" value="{{ form_data.destinationCity }}" required>
-            </div>
-            <div class="form-group">
-                <label for="departureDate">Fecha de salida</label>
-                <input type="date" class="form-control" id="departureDate" name="departureDate" value="{{ form_data.departureDate }}" required>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="returnDate">Fecha de regreso</label>
-                <input type="date" class="form-control" id="returnDate" name="returnDate" value="{{ form_data.returnDate }}" required>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="travelReason">Motivo del viaje</label>
-        <textarea class="form-control" id="travelReason" name="travelReason" rows="3" required>{{ form_data.travelReason }}</textarea>
-    </div>
+    {% include 'formBlocks/travelblock.html' %}
+
     <div class="form-group text-center mt-3">
         <label>Su anticipo es en moneda extranjera:</label>
         <div class="form-check form-check-inline">
@@ -187,13 +129,13 @@
         <i>Si pasados 15 días después de finalizar el viaje no he legalizado este anticipo; autorizo que su valor me sea descontado por nómina en el mes más próximo.</i>
     </p>
 
-    {% include 'signblock.html' %}
+    {% include 'formBlocks/signblock.html' %}
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
     <!-- Bank data -->
 
-    {% include 'bankblock.html' %}
+    {% include 'formBlocks/bankblock.html' %}
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 

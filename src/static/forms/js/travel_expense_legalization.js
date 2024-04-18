@@ -81,11 +81,9 @@ function updateTotals() {
     // update "Saldo a favor del empleado" and "Saldo a favor de ICESI" fields
     employeeBalance.forEach((balance, i) => {
         document.getElementById('employeeBalance' + (i + 1)).value = balance;
-        console.log(balance);
     });
 
     icesiBalance.forEach((balance, i) => {
         document.getElementById('icesiBalance' + (i + 1)).value = balance;
-        console.log(balance);
     });
 }

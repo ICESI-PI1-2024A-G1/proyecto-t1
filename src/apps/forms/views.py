@@ -1,23 +1,23 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date
-from apps.forms.models import TravelRequest, TravelInfo, ExpenseDetail
+from apps.forms.models import TravelAdvanceRequest, TravelExpenseLegalization, TravelExpenseLegalization_Table, AdvanceLegalization, AdvanceLegalization_Table
 from django.contrib import messages
 
 @csrf_exempt
 def travel_advance_request(request):
     today = date.today().isoformat()
     if request.method == "GET":
-        return render(request, "travel_advance_request.html", {"today": today})
+        return render(request, "userForms/travel_advance_request.html", {"today": today})
     else:
         form_data = request.POST
 
         if form_data.get('signatureStatus') != 'Yes':
             messages.error(request, 'Por favor, firme el formulario.')
-            return render(request, "travel_advance_request.html", {"today": today, "form_data": form_data})
+            return render(request, "userForms/travel_advance_request.html", {"today": today, "form_data": form_data})
         else:
             # Create a new TravelRequest instance
-            travel_request = TravelRequest()
+            travel_request = TravelAdvanceRequest()
 
             # Set the fields from the form data
             travel_request.request_date = form_data['requestDate']
@@ -53,22 +53,24 @@ def travel_advance_request(request):
             travel_request.save()
 
             messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
-            return render(request, "travel_advance_request.html", {"form_data": form_data})
+            return render(request, "userForms/travel_advance_request.html", {"today": today})
 
 @csrf_exempt
 def travel_expense_legalization(request):
+    today = date.today().isoformat()
     if request.method == "GET":
-        today = date.today().isoformat()
-        return render(request, "travel_expense_legalization.html", {"today": today})
+        return render(request, "userForms/travel_expense_legalization.html", {"today": today})
     else:
         form_data = request.POST
 
         if form_data.get('signatureStatus') != 'Yes':
             messages.error(request, 'Por favor, firme el formulario.')
-            return render(request, "travel_expense_legalization.html", {"today": today, "form_data": form_data})
+            return render(request, "userForms/travel_expense_legalization.html", {"today": today, "form_data": form_data})
         else:
-            travel_legalization = TravelInfo()
+            # Create a new GeneralData object
+            travel_legalization = TravelExpenseLegalization()
 
+            # Set the fields of the GeneralData object
             travel_legalization.request_date = form_data['requestDate']
             travel_legalization.traveler_name = form_data['travelerName']
             travel_legalization.id_number = form_data['idNumber']
@@ -95,10 +97,12 @@ def travel_expense_legalization(request):
             travel_legalization.account_type = form_data['accountType']
             travel_legalization.account_number = form_data['accountNumber']
             travel_legalization.observations = form_data['observations']
+            
+            # Save the GeneralData object
             travel_legalization.save()
 
             for i in range(4):
-                expense_detail = ExpenseDetail()
+                expense_detail = TravelExpenseLegalization_Table()
                 expense_detail.travel_info = travel_legalization
                 expense_detail.category = form_data['category_' + str(i)]
                 expense_detail.provider = form_data['provider_' + str(i)]
@@ -110,24 +114,85 @@ def travel_expense_legalization(request):
                 expense_detail.save()
 
             messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
-            return render(request, "travel_expense_legalization.html", {"form_data": form_data})
+            return render(request, "userForms/travel_expense_legalization.html", {"today": today})
 
 
 @csrf_exempt
 def advance_legalization(request):
+    today = date.today().isoformat()
     if request.method == "GET":
-        today = date.today().isoformat()
-        return render(request, "advance_legalization.html", {"today": today})
+        return render(request, "userForms/advance_legalization.html", {"today": today})
+    else:
+        form_data = request.POST
+
+        if form_data.get('signatureStatus') != 'Yes':
+            messages.error(request, 'Por favor, firme el formulario.')
+            return render(request, "userForms/advance_legalization.html", {"today": today, "form_data": form_data})
+        else:
+            # Create a new GeneralData object
+            advance_legalization = AdvanceLegalization()
+
+            # Set the fields of the GeneralData object
+            advance_legalization.request_date = form_data['requestDate']
+            advance_legalization.traveler_name = form_data['travelerName']
+            advance_legalization.id_number = form_data['idNumber']
+            advance_legalization.dependence = form_data['dependence']
+            advance_legalization.cost_center = form_data['costCenter']
+            advance_legalization.purchase_reason = form_data['purchaseReason']
+            advance_legalization.total = form_data['total']
+            advance_legalization.advance_total = form_data['advanceTotal']
+            advance_legalization.employee_balance_value = form_data['employeeBalanceValue']
+            advance_legalization.icesi_balance_value = form_data['icesiBalanceValue']
+            advance_legalization.signature_status = form_data['signatureStatus'] == 'Yes'
+            advance_legalization.bank = form_data['bank']
+            advance_legalization.account_type = form_data['accountType']
+            advance_legalization.account_number = form_data['accountNumber']
+            advance_legalization.observations = form_data['observations']
+
+            # Save the GeneralData object
+            advance_legalization.save()
+
+            # Loop through the expense details
+            i = 0
+            while f'category_{i}' in form_data:
+                # Create a new ExpenseDetail object
+                expense_detail = AdvanceLegalization_Table()
+
+                # Set the fields of the ExpenseDetail object
+                expense_detail.general_data = advance_legalization
+                expense_detail.category = form_data[f'category_{i}']
+                expense_detail.provider = form_data[f'provider_{i}']
+                expense_detail.pesos = form_data[f'pesos_{i}']
+                expense_detail.concept = form_data[f'concept_{i}']
+
+                # Save the ExpenseDetail object
+                expense_detail.save()
+
+                i += 1
+
+            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
+            return render(request, "userForms/advance_legalization.html", {"today": today})
+        
 
 @csrf_exempt
 def billing_account(request):
+    today = date.today().isoformat()
     if request.method == "GET":
-        today = date.today().isoformat()
-        return render(request, "billing_account.html", {"today": today, 'include_cex': True})
+        return render(request, "userForms/billing_account.html", {"today": today, 'include_cex': True})
+    else:
+        form_data = request.POST.dict()
+
+        if form_data.get('signatureStatus') != 'Yes':
+            messages.error(request, 'Por favor, firme el formulario.')
+            return render(request, "userForms/billing_account.html", {"today": today, "form_data": form_data, 'include_cex': True})
+        else:
+            print(form_data)
+            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
+            return render(request, "userForms/billing_account.html", {"today": today, 'include_cex': True})
 
 @csrf_exempt
 def requisition(request):
+    today = date.today().isoformat()
     if request.method == "GET":
-        today = date.today().isoformat()
-        return render(request, "requisition.html", {"today": today})
+        return render(request, "userForms/requisition.html", {"today": today})
 

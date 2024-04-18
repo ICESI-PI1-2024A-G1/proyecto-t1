@@ -1,7 +1,7 @@
 from django.db import models
 import json
 
-class TravelRequest(models.Model):
+class TravelAdvanceRequest(models.Model):
     request_date = models.DateField()
     traveler_name = models.CharField(max_length=200)
     id_number = models.CharField(max_length=200)
@@ -25,7 +25,7 @@ class TravelRequest(models.Model):
     def get_expenses(self):
         return json.loads(self.expenses)
 
-class TravelInfo(models.Model):
+class TravelExpenseLegalization(models.Model):
     request_date = models.DateField()
     traveler_name = models.CharField(max_length=200)
     id_number = models.CharField(max_length=200)
@@ -53,8 +53,8 @@ class TravelInfo(models.Model):
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
 
-class ExpenseDetail(models.Model):
-    travel_info = models.ForeignKey(TravelInfo, on_delete=models.CASCADE)
+class TravelExpenseLegalization_Table(models.Model):
+    travel_info = models.ForeignKey(TravelExpenseLegalization, on_delete=models.CASCADE)
     category = models.CharField(max_length=200)
     provider = models.CharField(max_length=200)
     nit = models.CharField(max_length=200)
@@ -73,3 +73,27 @@ class ExpenseDetail(models.Model):
             'dollars': str(self.dollars),
             'euros': str(self.euros),
         })
+
+class AdvanceLegalization(models.Model):
+    request_date = models.DateField()
+    traveler_name = models.CharField(max_length=200)
+    id_number = models.CharField(max_length=200)
+    dependence = models.CharField(max_length=200)
+    cost_center = models.CharField(max_length=200)
+    purchase_reason = models.TextField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    advance_total = models.DecimalField(max_digits=10, decimal_places=2)
+    employee_balance_value = models.DecimalField(max_digits=10, decimal_places=2)
+    icesi_balance_value = models.DecimalField(max_digits=10, decimal_places=2)
+    signature_status = models.BooleanField()
+    bank = models.CharField(max_length=200)
+    account_type = models.CharField(max_length=200)
+    account_number = models.CharField(max_length=200)
+    observations = models.TextField()
+
+class AdvanceLegalization_Table(models.Model):
+    general_data = models.ForeignKey(AdvanceLegalization, on_delete=models.CASCADE)
+    category = models.CharField(max_length=200)
+    provider = models.CharField(max_length=200)
+    pesos = models.DecimalField(max_digits=10, decimal_places=2)
+    concept = models.TextField()

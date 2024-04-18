@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         var table = document.querySelector('tbody');
         var newRow = document.createElement('tr');
 
+        var rowNumber = table.getElementsByTagName('tr').length - 4;
+
         for (var i = 0; i < 4; i++) {
             var newCell = document.createElement('td');
             var input = document.createElement('input');
@@ -12,6 +14,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             if (i == 2) {
                 input.placeholder = '0';
             }
+            console.log(rowNumber);
+            input.name = ['category', 'provider', 'pesos', 'concept'][i] + '_' + rowNumber;
             newCell.appendChild(input);
             newRow.appendChild(newCell);
         }
