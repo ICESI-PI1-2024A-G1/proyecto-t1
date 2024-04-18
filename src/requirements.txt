@@ -6,3 +6,5 @@ pandas==2.2.1
 openpyxl==3.1.2
 python-dotenv==1.0.1
 xlwings==0.31.1
+django-compressor==4.4
+django-sass-processor==1.4

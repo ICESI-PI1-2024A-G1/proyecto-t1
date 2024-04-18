@@ -209,3 +209,5 @@ pip-selfcheck.json
 
 # forms
 /static/forms/templates/*
+
+**/node_modules/
