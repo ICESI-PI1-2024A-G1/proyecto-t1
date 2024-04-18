@@ -1,0 +1,62 @@
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.max-width-s {
+    flex: 0 0 20%;
+}
+
+/* Obscure blue*/
+.obs-blue {
+    background-color: #0f284c !important;
+}
+
+.table{
+    color: #b3b3b3;
+}
+
+.table td, 
+.table th{
+    color: #858796;
+}
+
+.table-wrapper .dataTables_filter input[type="search"] {
+    background-color: lightgrey; /* Cambia el color de fondo del cuadro de búsqueda */
+  }
+
+  .table-wrapper .dataTables_length {
+    color: red; /* Cambia el color del texto "Mostrar [número] entradas" */
+  }
+
+
+/* deep blue */
+.dp-blue {
+    background-color: #0f4176;
+}
+
+/* Mid blue */
+.md-blue {
+    background-color: #00599c;
+}
+
+/* Slightly Blue */
+.sl-blue {
+background-color: #347ab6;
+}
+
+/* Bright blue */
+.br-blue {
+    background-color: #0e9aef;
+}
+
+.md-gray {
+    background-color: #b3b3b3;
+}
+
+.dp-gray {
+    background-color: #333333;
+}
+
+.br-green {
+    background-color: #0fb066;
+}

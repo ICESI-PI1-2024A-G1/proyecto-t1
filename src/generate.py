@@ -88,7 +88,7 @@ for _ in range(10):
 
 
 # Create teams, leaders and add members
-names = ["Contabilidad", "Lógistica", "Programacion académica","Contratación"]
+names = ["Contabilidad", "Logística", "Programacion académica","Contratación"]
 teams = []
 leaders = []
 for i in range(4):
