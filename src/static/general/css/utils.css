@@ -11,8 +11,8 @@
     background-color: #0f284c !important;
 }
 
-.table{
-    color: #b3b3b3;
+.table, .title{
+    color: #858796;
 }
 
 .table td, 
