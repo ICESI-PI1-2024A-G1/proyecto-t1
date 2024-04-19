@@ -10,6 +10,17 @@
     </div>
 </div>
 
+<!-- Messages -->
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
 <!-- Announcement -->
 
 <p class="font-italic"><strong>Por favor tenga en cuenta lo
@@ -25,7 +36,7 @@
 
 <!-- User data -->
 
-<form>
+<form action="/forms/requisition" method="POST">
     {{ form.csrf_token }}
     <div class="mb-2">
         <label class="h5"><strong>Datos</strong></label>
@@ -34,22 +45,22 @@
         <div class="col">
             <div class="form-group">
                 <label for="requestDate">Fecha</label>
-                <input type="date" class="form-control" id="requestDate"
-                    value="{{ today }}" disabled>
+                <input type="date" class="form-control" id="requestDate" name="requestDate"
+                    value="{{ today }}" readonly>
             </div>
             <div class="form-group">
                 <label for="fullName">A favor de</label>
-                <input type="text" class="form-control" id="fullName" value="{{ request.user.first_name }} {{ request.user.last_name }}" disabled>
+                <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
             </div>
         </div>
         <div class="col">
             <div class="form-group">
                 <label for="idNumber">No. de identificación</label>
-                <input type="number" class="form-control" id="idNumber" value="{{ request.user.id }}" disabled>
+                <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.user.id }}" readonly>
             </div>
             <div class="form-group">
-                <label for="idNumber">Cargo</label>
-                <input type="text" class="form-control" id="travelerName">
+                <label for="work">Cargo</label>
+                <input type="text" class="form-control" id="work" name="work">
             </div>
         </div>
     </div>
@@ -57,7 +68,7 @@
         <div class="col">
             <div class="form-group">
                 <label for="dependence">Dependencia</label>
-                <select class="form-control" id="dependence">
+                <select class="form-control" id="dependence" name="dependence">
                     <option value="">Selecciona una opción</option>
                     <option>Op1</option>
                     <option>Op2</option>
@@ -65,7 +76,7 @@
             </div>
             <div class="form-group">
                 <label for="cenco">Cenco</label>
-                <select class="form-control" id="cenco">
+                <select class="form-control" id="cenco" name="cenco">
                     <option value="">Selecciona una opción</option>
                     <option>Op1</option>
                     <option>Op2</option>
@@ -75,11 +86,11 @@
         <div class="col">
             <div class="form-group">
                 <label for="idValue">Valor</label>
-                <input type="number" class="form-control" id="idValue">
+                <input type="number" class="form-control" id="idValue" name="idValue">
             </div>
             <div class="form-group">
                 <label for="idConcept">Concepto</label>
-                <input type="text" class="form-control" id="travelerConcept" value="Reintegro" disabled>
+                <input type="text" class="form-control" id="idConcept" value="Reintegro" name="concept" disabled>
             </div>
         </div>
     </div>
@@ -89,11 +100,11 @@
     <!-- Description -->
 
     <div class="mb-2">
-        <label class="h5"><strong>Descripción</strong></label>
+        <label for="description" class="h5"><strong>Descripción</strong></label>
     </div>
 
     <div>
-        <textarea class="form-control" rows="5"></textarea>
+        <textarea class="form-control" id="description" name="description" rows="5"></textarea>
     </div>
 
     <!-- Authorization -->
@@ -111,11 +122,11 @@
     <!-- Observations -->
 
     <div class="mb-2 mt-3">
-        <label class="h5"><strong>Observaciones</strong></label>
+        <label for="observations" class="h5"><strong>Observaciones</strong></label>
     </div>
 
     <div>
-        <textarea class="form-control" rows="3"></textarea>
+        <textarea class="form-control" id="observations" name="observations" rows="3"></textarea>
     </div>
 
     <div class="d-flex justify-content-center">

@@ -2,9 +2,10 @@ from django.db import models
 import json
 
 class TravelAdvanceRequest(models.Model):
+    id = models.AutoField(primary_key=True)
     request_date = models.DateField()
     traveler_name = models.CharField(max_length=200)
-    id_number = models.CharField(max_length=200)
+    id_person = models.CharField(max_length=200, default="")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -26,9 +27,10 @@ class TravelAdvanceRequest(models.Model):
         return json.loads(self.expenses)
 
 class TravelExpenseLegalization(models.Model):
+    id = models.AutoField(primary_key=True)
     request_date = models.DateField()
     traveler_name = models.CharField(max_length=200)
-    id_number = models.CharField(max_length=200)
+    id_person = models.CharField(max_length=200, default="")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -75,9 +77,10 @@ class TravelExpenseLegalization_Table(models.Model):
         })
 
 class AdvanceLegalization(models.Model):
+    id = models.AutoField(primary_key=True)
     request_date = models.DateField()
     traveler_name = models.CharField(max_length=200)
-    id_number = models.CharField(max_length=200)
+    id_person = models.CharField(max_length=200, default="")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     purchase_reason = models.TextField()
@@ -97,3 +100,38 @@ class AdvanceLegalization_Table(models.Model):
     provider = models.CharField(max_length=200)
     pesos = models.DecimalField(max_digits=10, decimal_places=2)
     concept = models.TextField()
+
+class BillingAccount(models.Model):
+    id = models.AutoField(primary_key=True)
+    request_date = models.DateField()
+    full_name = models.CharField(max_length=200)
+    id_person = models.CharField(max_length=200, default="")
+    concept_reason = models.CharField(max_length=200)
+    retention = models.CharField(max_length=200)
+    tax_payer = models.CharField(max_length=200)
+    resident = models.CharField(max_length=200)
+    request_city = models.CharField(max_length=200)
+    address = models.CharField(max_length=200)
+    phone_number = models.CharField(max_length=200)
+    signature_status = models.CharField(max_length=200)
+    bank = models.CharField(max_length=200)
+    account_type = models.CharField(max_length=200)
+    account_number = models.CharField(max_length=200)
+    cex_number = models.CharField(max_length=200)
+
+class Requisition(models.Model):
+    id = models.AutoField(primary_key=True)
+    request_date = models.DateField()
+    requester_name = models.CharField(max_length=200)
+    id_person = models.CharField(max_length=200, default="")
+    work = models.CharField(max_length=200)
+    dependence = models.CharField(max_length=200)
+    cenco = models.CharField(max_length=200)
+    id_value = models.CharField(max_length=200)
+    description = models.TextField()
+    signature_status = models.BooleanField()
+    bank = models.CharField(max_length=200)
+    account_type = models.CharField(max_length=200)
+    account_number = models.CharField(max_length=200)
+    observations = models.TextField()
+    

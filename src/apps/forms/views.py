@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date
-from apps.forms.models import TravelAdvanceRequest, TravelExpenseLegalization, TravelExpenseLegalization_Table, AdvanceLegalization, AdvanceLegalization_Table
+from apps.forms.models import *;
 from django.contrib import messages
 
 @csrf_exempt
@@ -180,13 +180,36 @@ def billing_account(request):
     if request.method == "GET":
         return render(request, "userForms/billing_account.html", {"today": today, 'include_cex': True})
     else:
-        form_data = request.POST.dict()
+        form_data = request.POST
 
         if form_data.get('signatureStatus') != 'Yes':
             messages.error(request, 'Por favor, firme el formulario.')
             return render(request, "userForms/billing_account.html", {"today": today, "form_data": form_data, 'include_cex': True})
         else:
-            print(form_data)
+            # Create a new GeneralData object
+            billing_account = BillingAccount()
+
+            # Set the fields of the GeneralData object
+            billing_account.request_date = form_data['requestDate']
+            billing_account.requester_name = form_data['fullName']
+            billing_account.id_number = form_data['idNumber']
+            billing_account.id_value = form_data['idValue']
+            billing_account.concept_reason = form_data['conceptReason']
+            billing_account.retention = form_data['retention']
+            billing_account.tax_payer = form_data['taxPayer']
+            billing_account.resident = form_data['resident']
+            billing_account.request_city = form_data['requestCity']
+            billing_account.address = form_data['address']
+            billing_account.phone_number = form_data['phoneNumber']
+            billing_account.signature_status = form_data['signatureStatus'] == 'Yes'
+            billing_account.bank = form_data['bank']
+            billing_account.account_type = form_data['accountType']
+            billing_account.account_number = form_data['accountNumber']
+            billing_account.cex_number = form_data['cexNumber']
+
+            # Save the GeneralData object
+            billing_account.save()
+
             messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
             return render(request, "userForms/billing_account.html", {"today": today, 'include_cex': True})
 
@@ -195,4 +218,34 @@ def requisition(request):
     today = date.today().isoformat()
     if request.method == "GET":
         return render(request, "userForms/requisition.html", {"today": today})
+    else:
+        form_data = request.POST
+
+        if form_data.get('signatureStatus') != 'Yes':
+            messages.error(request, 'Por favor, firme el formulario.')
+            return render(request, "userForms/requisition.html", {"today": today, "form_data": form_data})
+        else:
+            # Create a new GeneralData object
+            requisition = Requisition()
+
+            # Set the fields of the GeneralData object
+            requisition.request_date = form_data['requestDate']
+            requisition.requester_name = form_data['fullName']
+            requisition.id_person = form_data['idNumber']
+            requisition.work = form_data['work']
+            requisition.dependence = form_data['dependence']
+            requisition.cenco = form_data['cenco']
+            requisition.id_value = form_data['idValue']
+            requisition.description = form_data['description']
+            requisition.signature_status = form_data['signatureStatus'] == 'Yes'
+            requisition.bank = form_data['bank']
+            requisition.account_type = form_data['accountType']
+            requisition.account_number = form_data['accountNumber']
+            requisition.observations = form_data['observations']
+
+            # Save the GeneralData object
+            requisition.save()
+
+            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
+            return render(request, "userForms/requisition.html", {"today": today})
 
