@@ -1,11 +1,7 @@
 body {
     font-family: "Inter", sans-serif;
 }
-  
-.background-image {
-    background-image: url('../../login/assets/icesi_background.jpeg');
-    background-size: cover;
-    background-position: center;
-    width: 100vw;
-    height: 100vh;
+
+.mi-elemento {
+    background-image: linear-gradient(to right, #0f4176, #0e9aef);
 }
