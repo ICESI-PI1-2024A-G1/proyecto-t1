@@ -37,7 +37,7 @@
                                     {% if request.user.is_superuser or request.user.is_leader%}
                                         {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
                                     {% endif %}
-                                        {% if request.user.is_superuser%}
+                                    {% if request.user.is_superuser%}
                                         {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions" %}
                                     {% endif %}
                                     {% include 'components/navigation_dropdown.html' with text="Formularios" icon_class="fas fa-file-alt" link="/forms" %}

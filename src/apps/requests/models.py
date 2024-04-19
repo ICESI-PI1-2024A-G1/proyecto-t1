@@ -27,7 +27,7 @@ class Requests(models.Model):
     Model representing requests.
 
     Attributes:
-        document (str): Document associated with the request.
+        document (str): Document type of the request (Cuentas de cobro, Legalizaciones, Anticipos, Viaticos, Facturas, Facturas CEX or Requisicion)
         applicant (str): Applicant of the request.
         manager (str): Manager handling the request.
         description (str): Description of the request.

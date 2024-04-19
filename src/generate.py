@@ -86,10 +86,11 @@ for _ in range(10):
 
 
 # Create teams, leaders and add members
+names = ["Contabilidad", "Lógistica", "Programacion académica","Contratación"]
 teams = []
 leaders = []
-for _ in range(5):
-    name = fake.company()
+for i in range(4):
+    name = names[i]
     description = fake.text(max_nb_chars=100)
     leader = random.choice(
         User.objects.exclude(id__in=[leader.id for leader in leaders])
@@ -237,6 +238,16 @@ for i in range(10):
         "Seguros del Sur ARL",
         "Protección ARL",
     ]
+
+    documents = [
+        "Cuenta de cobro", 
+        "Legalizacion", 
+        "Anticipo", 
+        "Viatico", 
+        "Factura", 
+        "Factura CEX", 
+        "Requisición"
+    ]
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
     final_date = initial_date + timedelta(days=random.randint(1, 30))
 
@@ -248,7 +259,7 @@ for i in range(10):
         "final_date": final_date.strftime("%d-%m-%Y"),
         "fullname": fake.name(),
         "faculty": random.choice(faculty),
-        "document": fake.random_number(digits=10),
+        "document": random.choice(documents),
         "phone_number": fake.phone_number(),
         "email": fake.email(),
         "CENCO": fake.random_number(digits=5),
