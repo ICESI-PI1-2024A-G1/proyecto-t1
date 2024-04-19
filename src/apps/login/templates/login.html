@@ -22,10 +22,10 @@
         <link rel="stylesheet" href="{% static 'general/css/utils.css' %}">
     </head>
     <body>
-        <div class="mi-elemento overflow-hidden">
-            <div class="row justify-content-center align-items-center"
+        <div class="login-gradient overflow-hidden">
+            <div class="row justify-content-center align-items-center d-flex"
                  style="height: 100vh">
-                <div class="col-md-8 col-lg-6 col-xl-4 h-100">
+                <div class="col-md-8 col-lg-6 col-xl-4">
                     <!-- Define el ancho del formulario -->
                     {% if messages %}
                         {% for message in messages %}
@@ -47,7 +47,8 @@
                                     aria-label="close"></button>
                         </div>
                     {% endif %}
-                    <div class="card border-0 mt-5 px-2">
+                    <div class="card border-0 px-2 mx-auto mt-3 mb-3"
+                         style="background-color: #f6f7f8">
                         <div class="mx-auto mb-3">
                             <img src="{% static 'login/assets/logo.png' %}"
                                  alt="logo"
@@ -55,21 +56,23 @@
                                  width="350px"
                                  height="50px">
                         </div>
-                        <div class="container-blank">
+                        <span class="container mb-2 mt-3">
+                            <h3>¡Bienvenido! 👋</h3>
+                            Este es el sistema de monitorización para la gestión contable de la Universidad Icesi.
+                        </span>
+                        <span class="container mb-4">Inicia sesión para continuar.</span>
+                        <div class="container">
                             <form action="/" method="POST">
                                 {% csrf_token %}
                                 <div class="form-group">
-                                    <div class="input-group flex-nowrap my-2">
+                                    <span style="color: #888; font-weight: bold; font-size:small">DOCUMENTO DE IDENTIFICACIÓN</span>
+                                    <div class="input-group flex-nowrap mb-3">
                                         <div class="input-group-text">
                                             <i class="fa fa-user icon"></i>
                                         </div>
-                                        <input type="text"
-                                               class="form-control"
-                                               id="usuario"
-                                               name="usuario"
-                                               placeholder="Ingresa tu usuario"
-                                               required>
+                                        <input type="text" class="form-control" id="usuario" name="usuario" required>
                                     </div>
+                                    <span style="color: #888; font-weight: bold; font-size:small">INGRESA TU CONTRASEÑA</span>
                                     <div class="input-group flex-nowrap">
                                         <div class="input-group-text">
                                             <i class="fa fa-lock icon"></i>
@@ -78,12 +81,11 @@
                                                class="form-control"
                                                id="contrasena"
                                                name="contrasena"
-                                               placeholder="Ingresa tu contraseña"
                                                required>
                                     </div>
                                 </div>
                                 <div class="card-body text-center">
-                                    <button type="submit" class="btn btn-primary mt-2">INICIAR SESIÓN</button>
+                                    <button type="submit" class="btn btn-primary mt-4">INICIAR SESIÓN</button>
                                 </div>
                             </form>
                         </div>
@@ -91,7 +93,7 @@
                             <a href="{% url 'registration:register_view' %}"
                                class="btn btn-link text-primary text-decoration-underline">Registrarse</a>
                             <a href="{% url 'login:reset_password_view' %}"
-                               class="btn btn-link text-primary text-decoration-underline mb-2">¿Olvidaste tu contraseña?</a>
+                               class="btn btn-link text-primary text-decoration-underline mb-4">¿Olvidaste tu contraseña?</a>
                         </div>
                     </div>
                 </div>

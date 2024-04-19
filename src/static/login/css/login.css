@@ -2,6 +2,6 @@ body {
     font-family: "Inter", sans-serif;
 }
 
-.mi-elemento {
-    background-image: linear-gradient(to right, #0f4176, #0e9aef);
+.login-gradient {
+    background-image: radial-gradient(circle, #0f4176, #0e9aef);
 }
