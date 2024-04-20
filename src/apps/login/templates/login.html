@@ -22,91 +22,88 @@
         <link rel="stylesheet" href="{% static 'general/css/utils.css' %}">
     </head>
     <body>
-        <div class="login-gradient overflow-hidden">
-            <div class="row justify-content-center align-items-center d-flex"
-                 style="height: 100vh;
-                        z-index: 1">
-                <div class="col-md-8 col-lg-6 col-xl-4">
-                    <!-- Define el ancho del formulario -->
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
-                                 role="alert">
+        <div class="login-gradient">
+            <div class="overflow-hidden">
+                <div class="row justify-content-center align-items-center d-flex"
+                     style="height: 100vh;
+                            z-index: 0">
+                    <div class="col-md-8 col-lg-6 col-xl-4">
+                        <!-- Define el ancho del formulario -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                                     role="alert">
+                                    {{ message }}
+                                    <button type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="alert"
+                                            aria-label="close"></button>
+                                </div>
+                            {% endfor %}
+                        {% elif message %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 {{ message }}
                                 <button type="button"
                                         class="btn-close"
                                         data-bs-dismiss="alert"
                                         aria-label="close"></button>
                             </div>
-                        {% endfor %}
-                    {% elif message %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="alert"
-                                    aria-label="close"></button>
-                        </div>
-                    {% endif %}
-                    <div class="card border-0 px-2 mx-auto mt-3 mb-3 shadow"
-                         style="background-color: #f6f7f8">
-                        <div class="mx-auto mb-3">
-                            <img src="{% static 'login/assets/logo.png' %}"
-                                 alt="logo"
-                                 class="img-fluid"
-                                 width="350px"
-                                 height="50px">
-                        </div>
-                        <span class="container mb-2 mt-3">
-                            <h3>¡Bienvenido! 👋</h3>
-                            Este es el sistema de monitorización para la gestión contable de la Universidad Icesi.
-                        </span>
-                        <span class="container mb-4">Inicia sesión para continuar.</span>
-                        <div class="container">
-                            <form action="/" method="POST">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <span style="color: #888; font-weight: bold; font-size:small">DOCUMENTO DE IDENTIFICACIÓN</span>
-                                    <div class="input-group flex-nowrap mb-3">
-                                        <div class="input-group-text">
-                                            <i class="fa fa-user icon"></i>
+                        {% endif %}
+                        <div class="card border-0 px-2 mx-auto mt-3 mb-3 shadow"
+                             style="background-color: #f6f7f8">
+                            <div class="mx-auto mb-3">
+                                <img src="{% static 'login/assets/logo.png' %}"
+                                     alt="logo"
+                                     class="img-fluid"
+                                     width="350px"
+                                     height="50px">
+                            </div>
+                            <span class="container mb-2 mt-3">
+                                <h3>¡Bienvenido! 👋</h3>
+                                Este es el sistema de monitorización para la gestión contable de la Universidad Icesi.
+                            </span>
+                            <span class="container mb-4">Inicia sesión para continuar.</span>
+                            <div class="container">
+                                <form action="/" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <span style="color: #888; font-weight: bold; font-size:small">DOCUMENTO DE IDENTIFICACIÓN</span>
+                                        <div class="input-group flex-nowrap mb-3">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-user icon"></i>
+                                            </div>
+                                            <input type="text" class="form-control" id="usuario" name="usuario" required>
                                         </div>
-                                        <input type="text" class="form-control" id="usuario" name="usuario" required>
-                                    </div>
-                                    <span style="color: #888; font-weight: bold; font-size:small">INGRESA TU CONTRASEÑA</span>
-                                    <div class="input-group flex-nowrap">
-                                        <div class="input-group-text">
-                                            <i class="fa fa-lock icon"></i>
+                                        <span style="color: #888; font-weight: bold; font-size:small">INGRESA TU CONTRASEÑA</span>
+                                        <div class="input-group flex-nowrap">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-lock icon"></i>
+                                            </div>
+                                            <input type="password"
+                                                   class="form-control"
+                                                   id="contrasena"
+                                                   name="contrasena"
+                                                   required>
                                         </div>
-                                        <input type="password"
-                                               class="form-control"
-                                               id="contrasena"
-                                               name="contrasena"
-                                               required>
                                     </div>
-                                </div>
-                                <div class="card-body text-center">
-                                    <button type="submit" class="btn btn-primary mt-4">INICIAR SESIÓN</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="d-flex flex-column align-items-center">
-                            <a href="{% url 'registration:register_view' %}"
-                               class="btn btn-link text-primary text-decoration-underline">Registrarse</a>
-                            <a href="{% url 'login:reset_password_view' %}"
-                               class="btn btn-link text-primary text-decoration-underline mb-4">¿Olvidaste tu contraseña?</a>
+                                    <div class="card-body text-center">
+                                        <button type="submit" class="btn btn-primary mt-4">INICIAR SESIÓN</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="d-flex flex-column align-items-center">
+                                <a href="{% url 'registration:register_view' %}"
+                                   class="btn btn-link text-primary text-decoration-underline">Registrarse</a>
+                                <a href="{% url 'login:reset_password_view' %}"
+                                   class="btn btn-link text-primary text-decoration-underline mb-4">¿Olvidaste tu contraseña?</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg"
                  viewBox="0 0 1440 320"
-                 style="position: fixed;
-                        z-index: -1;
-                        bottom: 0;
-                        left: 0;
-                        width: 100%;
-                        height: auto">
+                 class="background-waves">
                 <path fill="#0f4176" fill-opacity="1" d="M0,64L60,80C120,96,240,128,360,144C480,160,600,160,720,144C840,128,960,96,1080,96C1200,96,1320,128,1380,144L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
                 </path>
                 <path fill="#0e9aef" fill-opacity="1" d="M0,256L60,224C120,192,240,128,360,112C480,96,600,128,720,144C840,160,960,160,1080,144C1200,128,1320,96,1380,80L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,60,320L0,320Z">
