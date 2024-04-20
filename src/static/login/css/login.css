@@ -22,3 +22,11 @@ body {
     font-weight: bold;
     font-size: small;
 }
+
+.main-centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    z-index: 0;
+}
