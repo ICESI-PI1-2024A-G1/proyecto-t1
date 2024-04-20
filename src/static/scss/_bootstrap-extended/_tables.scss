@@ -104,3 +104,11 @@
     border-color: $border-inner-color;
   }
 }
+
+.table {
+  color:$border-inner-color;
+}
+.table th {
+  padding-top:1rem;
+  padding-bottom:1rem;
+}

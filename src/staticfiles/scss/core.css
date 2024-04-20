@@ -5792,6 +5792,13 @@ a.invert-bg-dark:hover, a.invert-bg-dark:focus {
 .nav-align-left .table:not(.table-dark) td {
   border-color: #d9dee3; }
 
+.table {
+  color: #d9dee3; }
+
+.table th {
+  padding-top: 1rem;
+  padding-bottom: 1rem; }
+
 .btn {
   cursor: pointer;
   display: inline-flex;
