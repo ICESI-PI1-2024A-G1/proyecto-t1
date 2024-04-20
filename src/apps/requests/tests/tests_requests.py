@@ -44,7 +44,7 @@ class RequestViewTest(TestCase):
             email="test@example.com",
             first_name="admin",
             password="password",
-            is_staff=True,
+            is_leader=True,
         )
         self.client.login(id="admin", password="password")
         self.requests = []
@@ -111,7 +111,7 @@ class RequestViewTest(TestCase):
         """
         Test case for displaying requests by a non-admin user.
         """
-        self.user.is_staff = False
+        self.user.is_superuser = False
         self.user.save()
         response = self.client.get(reverse("requests:show_requests"))
         user_requests = [

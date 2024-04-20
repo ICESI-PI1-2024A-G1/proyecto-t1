@@ -34,13 +34,13 @@
                                 <p class="font-weight small p-1 mb-1 mx-2">General</p>
                                 <ul class="nav flex-column text-center">
                                     {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
-                                    {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
-                                    {% if request.user.is_superuser %}
-                                        {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-cog" link="/admin/utils/customuser" %}
+                                    {% if request.user.is_superuser or request.user.is_leader%}
+                                        {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
                                     {% endif %}
-                                    {% if request.user.is_staff and not request.user.is_superuser%}
-                                        {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions/" %}
+                                    {% if request.user.is_superuser%}
+                                        {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions" %}
                                     {% endif %}
+                                    {% include 'components/navigation_dropdown.html' with text="Formularios" icon_class="fas fa-file-alt" link="/forms" %}
                                     {% include 'components/navigation_item.html' with text="Contacto" icon_class="fas fa-envelope" link="/emailContact" %}
                                     <div class="my-2 mx-2 border-bottom border-3"></div>
                                     {% include 'components/navigation_item.html' with text="Cerrar Sesión" icon_class="fas fa-sign-out-alt" link="/logout?logout=true" %}
@@ -83,10 +83,12 @@
             }
         </script>
         
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
         <script src="https://cdn.datatables.net/v/bs5/dt-2.0.3/b-3.0.1/b-html5-3.0.1/datatables.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
     </body>
 
 </html>

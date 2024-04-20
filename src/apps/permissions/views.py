@@ -91,10 +91,12 @@ def update_user_permissions(request):
         data = json.loads(request.body)
         for item in data:
             user = User.objects.get(id=item['id'])
-            if 'is_staff' in item:
-                user.is_staff = item['is_staff']
-            if 'is_leader' in item:
-                user.is_leader = item['is_leader']
+            permission = item.get('permission')
+            if permission:
+                user.is_leader = permission == 'is_leader'
+                user.is_member = permission == 'is_member'
+                user.is_applicant = permission == 'is_applicant'
+                user.is_none = permission == 'is_none'
             user.save()
         return JsonResponse({'status': 'success', 'message': 'Permisos actualizados correctamente.'})
     else:

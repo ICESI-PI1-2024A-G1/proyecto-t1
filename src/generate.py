@@ -58,9 +58,7 @@ if not User.objects.filter(id=0).exists():
         password=os.getenv("ADMIN_PASSWORD"),
         first_name="Accounting",
         last_name="Admin",
-        is_staff=True,
         is_superuser=True,
-        is_leader=True,
     )
     admin.save()
     print(admin)
@@ -107,6 +105,12 @@ for i in range(4):
     team_members = random.sample(
         [user for user in users if user != leader], random.randint(3, 5)
     )
+
+    # Asignar el permiso de "is_member" a los miembros del equipo
+    for member in team_members:
+        member.is_member = True
+        member.save()
+
     team.members.add(*team_members)
 
     teams.append(team)
