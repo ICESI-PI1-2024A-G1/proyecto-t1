@@ -16,3 +16,9 @@ body {
     background-image: radial-gradient(circle, #0e9aef, #00599c,#0f4176);
     z-index: 0;
 }
+
+.input-identifier {
+    color: #888;
+    font-weight: bold;
+    font-size: small;
+}

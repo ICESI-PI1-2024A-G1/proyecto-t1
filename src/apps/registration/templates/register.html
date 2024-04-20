@@ -17,97 +17,117 @@
               href="https://use.fontawesome.com/releases/v5.12.1/css/all.css"
               crossorigin="anonymous">
         <!--CSS-->
-        <link rel="stylesheet" href="{% static 'registration/css/register.css' %}" />
+        <link rel="stylesheet" href="{% static 'login/css/login.css' %}" />
     </head>
-    <body style="background-color: #F6F7F8">
-        <div class="container mt-5">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    {% if message %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                        </div>
-                    {% endif %}
-                    <div class="card">
-                        <img src="{% static 'login/assets/logo.png' %}"
-                             alt="Logo"
-                             class="img-fluid">
-                        <h3 class="mt-2 text-center">Registro</h3>
-                        <div class="card-body">
-                            <form action="/registration/" method="POST">
-                                {% csrf_token %}
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <label for="nombre" class="form-label">Nombre</label>
+    <body>
+        <div class="login-gradient">
+            <div class="overflow-hidden">
+                <div class="row justify-content-center align-items-center d-flex"
+                     style="height: 100vh;
+                            z-index: 0">
+                    <div class="col-md-10 col-lg-8 col-xl-6">
+                        {% if message %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+                        <div class="card border-0 px-2 mx-auto mt-3 mb-3 shadow"
+                             style="background-color: #f6f7f8">
+                            <div class="mx-auto mb-3">
+                                <img src="{% static 'login/assets/logo.png' %}"
+                                     alt="Logo"
+                                     class="img-fluid"
+                                     width="350px"
+                                     height="50px">
+                            </div>
+                            <span class="container mb-3 mt-3 text-center">
+                                <h4 class="mt-2">Registro 📋</h4>
+                                Completa todos los campos para continuar.
+                            </span>
+                            <div class="container">
+                                <form action="/registration/" method="POST">
+                                    {% csrf_token %}
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <span class="input-identifier">NOMBRE</span>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="nombre"
+                                                   name="nombre"
+                                                   value="{{ user_data.nombre }}"
+                                                   required>
+                                        </div>
+                                        <div class="col">
+                                            <span class="input-identifier">APELLIDO</span>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="apellido"
+                                                   name="apellido"
+                                                   value="{{ user_data.apellido }}"
+                                                   required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="input-identifier">CÉDULA</span>
                                         <input type="text"
                                                class="form-control"
-                                               id="nombre"
-                                               name="nombre"
-                                               value="{{ user_data.nombre }}"
+                                               id="cedula"
+                                               name="cedula"
+                                               value="{{ user_data.cedula }}"
                                                required>
                                     </div>
-                                    <div class="col">
-                                        <label for="apellido" class="form-label">Apellido</label>
+                                    <div class="mb-2">
+                                        <span class="input-identifier">CORREO</span>
                                         <input type="text"
                                                class="form-control"
-                                               id="apellido"
-                                               name="apellido"
-                                               value="{{ user_data.apellido }}"
+                                               id="correo"
+                                               name="correo"
+                                               value="{{ user_data.correo }}"
                                                required>
                                     </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label for="cedula" class="form-label">Cédula</label>
-                                    <input type="text"
-                                           class="form-control"
-                                           id="cedula"
-                                           name="cedula"
-                                           value="{{ user_data.cedula }}"
-                                           required>
-                                </div>
-                                <div class="mb-2">
-                                    <label for="correo" class="form-label">Correo</label>
-                                    <input type="text"
-                                           class="form-control"
-                                           id="correo"
-                                           name="correo"
-                                           value="{{ user_data.correo }}"
-                                           required>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <label for="contrasena" class="form-label">Contraseña</label>
-                                        <input type="password"
-                                               class="form-control"
-                                               id="contrasena"
-                                               name="contrasena"
-                                               required>
+                                    <div class="row">
+                                        <div class="col">
+                                            <span class="input-identifier">CONTRASEÑA</span>
+                                            <input type="password"
+                                                   class="form-control"
+                                                   id="contrasena"
+                                                   name="contrasena"
+                                                   required>
+                                        </div>
+                                        <div class="col">
+                                            <span class="input-identifier">CONFIRMAR CONTRASEÑA</span>
+                                            <input type="password"
+                                                   class="form-control"
+                                                   id="confirmar_contrasena"
+                                                   name="confirmar_contrasena"
+                                                   required>
+                                        </div>
                                     </div>
-                                    <div class="col">
-                                        <label for="confirmar_contrasena" class="form-label">Repetir contraseña</label>
-                                        <input type="password"
-                                               class="form-control"
-                                               id="confirmar_contrasena"
-                                               name="confirmar_contrasena"
-                                               required>
+                                    <div class="d-flex justify-content-center mt-4">
+                                        <button type="submit" class="btn btn-primary">Registrarse</button>
                                     </div>
+                                </form>
+                                <div class="text-center mb-3">
+                                    <a href="{% url 'login:login_view' %}"
+                                       class="btn btn-link text-primary text-decoration-underline mt-2">¿Ya tienes una cuenta? Inicia sesión</a>
                                 </div>
-                                <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary mt-4">Registrarse</button>
-                                </div>
-                            </form>
-                            <div class="text-center">
-                                <a href="{% url 'login:login_view' %}"
-                                   class="btn btn-link text-primary text-decoration-underline mt-3">¿Ya tienes una cuenta? Inicia sesión</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 1440 320"
+                 class="background-waves">
+                <path fill="#0f4176" fill-opacity="1" d="M0,64L60,80C120,96,240,128,360,144C480,160,600,160,720,144C840,128,960,96,1080,96C1200,96,1320,128,1380,144L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
+                </path>
+                <path fill="#0e9aef" fill-opacity="1" d="M0,256L60,224C120,192,240,128,360,112C480,96,600,128,720,144C840,160,960,160,1080,144C1200,128,1320,96,1380,80L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,60,320L0,320Z">
+                </path>
+            </svg>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
