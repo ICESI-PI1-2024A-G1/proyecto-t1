@@ -45,7 +45,7 @@ def login_view(request):
             )
 
             if user is not None:
-                if not user.is_superuser and not user.is_leader and not user.is_member and not user.is_applicant:
+                if user.is_none:
                     return render(
                         request,
                         "login.html",

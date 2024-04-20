@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from datetime import date
 from apps.forms.models import *;
 from django.contrib import messages
 
+
+@login_required
 @csrf_exempt
 def travel_advance_request(request):
     today = date.today().isoformat()
@@ -55,6 +58,8 @@ def travel_advance_request(request):
             messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
             return render(request, "userForms/travel_advance_request.html", {"today": today})
 
+
+@login_required
 @csrf_exempt
 def travel_expense_legalization(request):
     today = date.today().isoformat()
@@ -117,6 +122,7 @@ def travel_expense_legalization(request):
             return render(request, "userForms/travel_expense_legalization.html", {"today": today})
 
 
+@login_required
 @csrf_exempt
 def advance_legalization(request):
     today = date.today().isoformat()
@@ -174,6 +180,7 @@ def advance_legalization(request):
             return render(request, "userForms/advance_legalization.html", {"today": today})
         
 
+@login_required
 @csrf_exempt
 def billing_account(request):
     today = date.today().isoformat()
@@ -213,6 +220,7 @@ def billing_account(request):
             messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
             return render(request, "userForms/billing_account.html", {"today": today, 'include_cex': True})
 
+@login_required
 @csrf_exempt
 def requisition(request):
     today = date.today().isoformat()
