@@ -193,7 +193,7 @@ def verify_email_reset_view(request):
             else:
                 return redirect("login:login_view")
     else:
-        if request.POST["verificationCode"] == request.session.get("random_code"):
+        if request.POST.get("verificationCode") == request.session.get("random_code"):
             return redirect("login:change_password_view")
         else:
             messages.error(request, "Código de verificación incorrecto.")
