@@ -24,6 +24,11 @@ const changeStatus = id => {
         },
         success: function (response) {
             $('#status_' + id).text(newStatus);
+            if (response.message) {
+                alert(response.message);
+            } else if (response.error) {
+                alert(response.error);
+            }
         },
         error: function () {
             alert('Error al cambiar el estado de la solicitud.');

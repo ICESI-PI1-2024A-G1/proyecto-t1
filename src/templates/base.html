@@ -78,10 +78,15 @@
                     $(this).removeClass("btn-light text-dark").addClass("btn-primary text-white");
                 });
             });
-            const showModal = (title, url) => {
+            const showModal = (title, url, size = null) => {
                 $.get(url, function (data) {
                     $('#detailsContent').html(data);
-                    $('#detailsModal .modal-dialog').addClass('modal-lg');
+                    $('#detailsModal .modal-dialog').removeClass('modal-lg modal-sm');
+                    if (size) {
+                        $('#detailsModal .modal-dialog').addClass(`modal-${size}`);
+                    } else {
+                        $('#detailsModal .modal-dialog').addClass('modal-lg');
+                    }
                     $('#detailsModal').modal('show');
                     $('#detailsModalLabel').text(title);
                 });

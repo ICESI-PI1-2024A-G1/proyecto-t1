@@ -30,7 +30,10 @@ def login_view(request):
         request.session["has_logged"] = False
         request.session["has_requested_password"] = False
         if request.user.is_authenticated and request.GET.get("logout") != "true":
-            return redirect("/sharepoint")
+            if request.user.is_superuser or request.user.is_leader:
+                return redirect("/sharepoint")
+            else:
+                return redirect("/requests")
         else:
             if request.GET.get("logout") == "true":
                 logout(request)
@@ -105,7 +108,13 @@ def verify_email_view(request):
             return render(request, "verifyEmailLog.html", context)
         else:
             if request.user.is_authenticated:
-                return redirect("/sharepoint/")
+                if request.user.is_superuser or request.user.is_leader:
+                    if request.user.is_superuser or request.user.is_leader:
+                        return redirect("/sharepoint")
+                    else:
+                        return redirect("/requests")
+                else:
+                    return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:
@@ -115,7 +124,10 @@ def verify_email_view(request):
             backend = "django.contrib.auth.backends.ModelBackend"
             user.backend = backend
             login(request, user)
-            return redirect("/sharepoint/")
+            if request.user.is_superuser or request.user.is_leader:
+                return redirect("/sharepoint")
+            else:
+                return redirect("/requests")
         else:
             messages.error(request, "Código de verificación incorrecto.")
             return render(request, "verifyEmailLog.html", context)
@@ -194,7 +206,10 @@ def verify_email_reset_view(request):
             return render(request, "verifyEmailLog.html", context)
         else:
             if request.user.is_authenticated:
-                return redirect("/sharepoint")
+                if request.user.is_superuser or request.user.is_leader:
+                    return redirect("/sharepoint")
+                else:
+                    return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:
@@ -224,7 +239,10 @@ def change_password_view(request):
             return render(request, "change_password.html")
         else:
             if request.user.is_authenticated:
-                return redirect("/sharepoint")
+                if request.user.is_superuser or request.user.is_leader:
+                    return redirect("/sharepoint")
+                else:
+                    return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:

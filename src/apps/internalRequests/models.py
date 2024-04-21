@@ -22,5 +22,6 @@ class Traceability(models.Model):
     )
     request = models.CharField(max_length=10)
     date = models.DateField()
+    reason = models.CharField(max_length=70, null=True)
     prev_state = models.CharField(max_length=50, null=True)
     new_state = models.CharField(max_length=50, default=None)

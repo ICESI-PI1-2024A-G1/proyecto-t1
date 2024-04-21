@@ -22,6 +22,7 @@ class TravelAdvanceRequest(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
+    team_id = models.IntegerField(default=0)
 
     def set_expenses(self, expenses_dict):
         self.expenses = json.dumps(expenses_dict)
@@ -60,6 +61,7 @@ class TravelExpenseLegalization(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
+    team_id = models.IntegerField(default=0)
 
 class TravelExpenseLegalization_Table(models.Model):
     travel_info = models.ForeignKey(TravelExpenseLegalization, on_delete=models.CASCADE)
@@ -102,6 +104,7 @@ class AdvanceLegalization(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
+    team_id = models.IntegerField(default=0)
 
 class AdvanceLegalization_Table(models.Model):
     general_data = models.ForeignKey(AdvanceLegalization, on_delete=models.CASCADE)
@@ -131,6 +134,7 @@ class BillingAccount(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     cex_number = models.CharField(max_length=200)
+    team_id = models.IntegerField(default=0)
 
 class Requisition(models.Model):
     id = models.AutoField(primary_key=True)
@@ -150,4 +154,5 @@ class Requisition(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
+    team_id = models.IntegerField(default=0)
     
