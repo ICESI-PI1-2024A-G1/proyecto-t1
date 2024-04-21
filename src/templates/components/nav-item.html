@@ -1,0 +1,9 @@
+<li class="menu-item {%if request.path == link %}active{%endif%}">
+    <a
+      href="{{link}}"
+      class="menu-link">
+      {%if icon_class %}<i class="menu-icon {{icon_class}}"></i>{% endif %}
+      <div data-i18n="Chat">{{text}}</div>
+      <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto">{{info_msg}}</div>
+    </a>
+  </li>

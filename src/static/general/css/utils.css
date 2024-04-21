@@ -1,0 +1,44 @@
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.max-width-s {
+    flex: 0 0 20%;
+}
+
+/* Obscure blue*/
+.obs-blue {
+    background-color: #0f284c !important;
+}
+
+/* deep blue */
+.dp-blue {
+    background-color: #0f4176;
+}
+
+/* Mid blue */
+.md-blue {
+    background-color: #00599c;
+}
+
+/* Slightly Blue */
+.sl-blue {
+background-color: #347ab6;
+}
+
+/* Bright blue */
+.br-blue {
+    background-color: #0e9aef;
+}
+
+.md-gray {
+    background-color: #b3b3b3;
+}
+
+.dp-gray {
+    background-color: #333333;
+}
+
+.br-green {
+    background-color: #0fb066;
+}

@@ -3,15 +3,15 @@
     "lengthMenu": "Mostrar _MENU_ registros",
     "zeroRecords": "No se encontraron resultados",
     "emptyTable": "Ningún dato disponible en esta tabla",
-    "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-    "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+    "infoFiltered": "(de _MAX_ registros en total)",
     "search": "Buscar:",
     "loadingRecords": "Cargando...",
     "paginate": {
         "first": "Primero",
         "last": "Último",
-        "next": "Siguiente",
-        "previous": "Anterior"
+        "next": ">",
+        "previous": "<"
     },
     "aria": {
         "sortAscending": ": Activar para ordenar la columna de manera ascendente",
