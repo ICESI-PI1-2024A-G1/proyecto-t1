@@ -3,7 +3,11 @@
 {% block content %}
 
 <div class="container">
-    <h2>Solicitudes</h2>
+    {% if user.is_superuser or user.is_leader %}
+        <h2>Solicitudes Internas</h2>
+    {% else %}
+        <h2>Solicitudes pendientes</h2>
+    {% endif %}
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">

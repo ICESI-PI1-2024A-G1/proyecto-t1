@@ -4,7 +4,7 @@
 
 
 <div class="container">
-    <h4 class="py-2 mb-4"><span class="text-muted fw-light">Solicitudes /</span> Solicitudes Internas</h4>
+    <h4 class="py-2 mb-4"><span class="text-muted fw-light">Solicitudes /</span> Solicitudes de Sharepoint</h4>
     <div class="card">
         <div class="card-header pb-0">
             <!-- <h2>Solicitudes</h2> -->
@@ -63,7 +63,7 @@
                                       <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        {% if user.is_superuser or user.is_leader or user.is_staff %}
+                                        {% if user.is_superuser or user.is_leader %}
                                         <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
                                                 class="details-btn  dropdown-item" data-request-id="{{ request.id }}">
                                             <i class="mx-2 fa fa-user-plus"></i>

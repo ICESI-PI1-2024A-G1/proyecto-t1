@@ -111,7 +111,27 @@
                     <span class="menu-header-text">General</span>
                 </li>
 
+                {% if user.is_superuser or user.is_leader %}
+                  <li class="menu-item {% if "requests" in request.path %}active open{% endif %}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                      <i class='menu-icon bx bxs-wallet'></i>
+                      <div data-i18n="Layouts">Solicitudes</div>
+                    </a>
+                    <ul class="menu-sub">
+                      {% include 'components/nav-item.html' with text="Solicitudes SharePoint" link="/sharepoint/" %}
+                      {% include 'components/nav-item.html' with text="Solicitudes Internas" link="/requests/" %}
+                    </ul>
+                  </li>
+                {% else %}
+                  <li class="menu-item {% if "requests" in request.path %}active open{% endif %}">
+                    <a href="/requests/" class="menu-link">
+                      <i class='menu-icon bx bxs-wallet'></i>
+                      <div data-i18n="Layouts">Solicitudes</div>
+                    </a>
+                  </li>
+                {% endif %}
                 
+                {%if user.is_superuser or user.is_leader %}
                 <li class="menu-item {% if "teams" in request.path %}active open{% endif %}">
                   <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon fa fa-users"></i>
@@ -123,17 +143,7 @@
                     {% include 'components/nav-item.html' with text="Añadir equipo" link="/teams/add-team-form/" %}
                   </ul>
                 </li>
-
-                <li class="menu-item {% if "requests" in request.path %}active open{% endif %}">
-                  <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class='menu-icon bx bxs-wallet'></i>
-                    <div data-i18n="Layouts">Solicitudes</div>
-                  </a>
-                  <ul class="menu-sub">
-                    {% include 'components/nav-item.html' with text="Solicitudes Internas" link="/requests/" %}
-                    {% include 'components/nav-item.html' with text="Solicitudes SharePoint" link="#" %}
-                  </ul>
-                </li>
+                {% endif %}
 
                 <li class="menu-item {% if "forms" in request.path %}active open{% endif %}">
                   <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -153,9 +163,6 @@
                   <span class="menu-header-text">Contacto &amp; Soporte</span>
                 </li>
                 
-                {% if request.user.is_leader and not request.user.is_superuser %}
-                    {% include 'components/nav-item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions/" %}
-                {% endif %}
                 {% include 'components/nav-item.html' with text="Contacto" icon_class="fas fa-envelope" link="/emailContact/" %}
                 
                 <li class="menu-header small text-uppercase">
@@ -163,7 +170,7 @@
                 </li>
 
                 {% if request.user.is_superuser %}
-                    {% include 'components/nav-item.html' with text="Usuarios" icon_class="fas fa-cog"  link="/admin/utils/customuser/" %}
+                    {% include 'components/nav-item.html' with text="Usuarios" icon_class="fas fa-cog"  link="/permissions/" %}
                 {% endif %}
 
               </ul>

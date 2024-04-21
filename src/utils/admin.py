@@ -5,7 +5,6 @@ field would be able to edit, search, add, and display.
 Also changes the ui for usability purposes """
 
 from django.contrib import admin
-from django.contrib.auth.forms import UserChangeForm
 from .forms import CustomUserChangeForm
 from .models import CustomUser
 
