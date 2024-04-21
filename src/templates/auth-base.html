@@ -26,6 +26,7 @@
         
         <!-- stylesheets -->
         <link rel="stylesheet" href="{% static 'general/css/demo.css' %}">
+        <link rel="stylesheet" href="{% static 'general/css/core.css' %}">
         
         <!--CSS-->
         <link rel="stylesheet" href="{% static 'login/css/login.css' %}" />
@@ -57,6 +58,22 @@
                 </path>
             </svg>
         </div>
+
+        
+        <div
+          class="bs-toast toast toast-placement-ex m-2"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          data-bs-delay="5000">
+          <div class="toast-header">
+            <i class="bx bx-bell me-2" style="margin-right:10px"></i>
+            <div id="toast-title" class="me-auto fw-medium">Bootstrap</div>
+            <small id="toast-date" style="margin-left: auto;" >Ahora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div id="toast-body" class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>
+        </div>
     
         <!-- libs -->
         <!-- <script src="{% static 'general/js/lib/jquery.js' %}"></script>
@@ -71,12 +88,26 @@
         <!-- <script src="{% static 'general/js/vendor/ui-modals.js' %}"></script> -->
         <script src="{% static 'general/js/vendor/ui-popover.js' %}"></script>
         <script src="{% static 'general/js/vendor/ui-toasts.js' %}"></script>
-        <script src="{% static 'general/js/vendor/ui-toasts.js' %}"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
         <!-- datatables -->
         <script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
         <script src="https://cdn.datatables.net/v/bs5/dt-2.0.3/b-3.0.1/b-html5-3.0.1/datatables.min.js"></script>
-      </body>
+        {% if messages %}
+            {% for message in messages %}
+            <script>
+            $(document).ready(function () {
+                showToast("{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}", "bottom-right", "{% if message.tags == 'error' %}Error{% else %}Éxito{% endif %}", "{{message}}")
+            })
+            </script>
+            {% endfor %}
+       {% elif message %}
+         <script>
+           $(document).ready(function () {
+             showToast("danger", "bottom-right", "Error", "{{message}}")
+           })
+         </script>
+       {% endif %}  
+    </body>
 </html>

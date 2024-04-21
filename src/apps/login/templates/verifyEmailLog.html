@@ -3,18 +3,6 @@
 {% block title %}Verificación de Email{% endblock %}
 
 {% block content %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
-                role="alert">
-                {{ message }}
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
     {% with title="Verificación de email" description="Ingrese el código de verificación que enviamos al email asociado a su cuenta." action_url=form_action input_id="verificationCode" input_label="Código de verificación" input_name="verificationCode" %}
         {% include 'components/email_verification_component.html' %}
     {% endwith %}
