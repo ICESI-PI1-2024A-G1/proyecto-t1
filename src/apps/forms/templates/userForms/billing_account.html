@@ -34,37 +34,37 @@
 
     <!-- User data -->
 
-    <form action="/forms/billing_account" method="POST">
-        {{ form.csrf_token }}
-        <div class="mb-2">
-            <label class="h5"><strong>Datos del solicitante</strong></label>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label for="requestDate">Fecha de solicitud</label>
-                    <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ today }}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="travelerName">Nombre completo</label>
-                    <input type="text" class="form-control" id="travelerName" name="travelerName" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
-                </div>
+<form action="/forms/billing_account" method="POST">
+    {{ form.csrf_token }}
+    <div class="mb-2">
+        <label class="h5"><strong>Datos del solicitante</strong></label>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="requestDate">Fecha de solicitud</label>
+                <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ today }}" readonly>
             </div>
-            <div class="col">
-                <div class="form-group">
-                    <label for="idNumber">No. de identificación</label>
-                    <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.user.id }}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="idValue">Valor (en pesos colombianos $)</label>
-                    <input type="number" class="form-control" id="idValue" name="idValue">
-                </div>
+            <div class="form-group">
+                <label for="fullName">Nombre completo</label>
+                <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
             </div>
         </div>
-        <div class="form-group">
-            <label for="conceptReason">Concepto</label>
-            <textarea class="form-control" id="conceptReason" name="conceptReason" rows="3"></textarea>
+        <div class="col">
+            <div class="form-group">
+                <label for="idNumber">No. de identificación</label>
+                <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.user.id }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="value">Valor (en pesos colombianos $)</label>
+                <input type="number" class="form-control" id="value" name="value">
+            </div>
         </div>
+    </div>
+    <div class="form-group">
+        <label for="conceptReason">Concepto</label>
+        <textarea class="form-control" id="conceptReason" name="conceptReason" rows="3"></textarea>
+    </div>
 
         <div class="my-2 mx-2 border-bottom border-3"></div>
 
