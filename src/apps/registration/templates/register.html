@@ -1,114 +1,88 @@
-<!DOCTYPE html>
+{% extends "auth-base.html" %}
+{% block title %}Registro{% endblock %}
 {% load static %}
-<html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!--Bootstrap-->
-        <title>Registration</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-              rel="stylesheet">
-        <!--Fonts-->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
-              rel="stylesheet">
-        <link rel="stylesheet"
-              href="https://use.fontawesome.com/releases/v5.12.1/css/all.css"
-              crossorigin="anonymous">
-        <!--CSS-->
-        <link rel="stylesheet" href="{% static 'registration/css/register.css' %}" />
-    </head>
-    <body style="background-color: #F6F7F8">
-        <div class="container mt-5">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    {% if message %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                        </div>
-                    {% endif %}
-                    <div class="card">
-                        <img src="{% static 'login/assets/logo.png' %}"
-                             alt="Logo"
-                             class="img-fluid">
-                        <h3 class="mt-2 text-center">Registro</h3>
-                        <div class="card-body">
-                            <form action="/registration/" method="POST">
-                                {% csrf_token %}
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <label for="nombre" class="form-label">Nombre</label>
-                                        <input type="text"
-                                               class="form-control"
-                                               id="nombre"
-                                               name="nombre"
-                                               value="{{ user_data.nombre }}"
-                                               required>
-                                    </div>
-                                    <div class="col">
-                                        <label for="apellido" class="form-label">Apellido</label>
-                                        <input type="text"
-                                               class="form-control"
-                                               id="apellido"
-                                               name="apellido"
-                                               value="{{ user_data.apellido }}"
-                                               required>
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label for="cedula" class="form-label">Cédula</label>
-                                    <input type="text"
-                                           class="form-control"
-                                           id="cedula"
-                                           name="cedula"
-                                           value="{{ user_data.cedula }}"
-                                           required>
-                                </div>
-                                <div class="mb-2">
-                                    <label for="correo" class="form-label">Correo</label>
-                                    <input type="text"
-                                           class="form-control"
-                                           id="correo"
-                                           name="correo"
-                                           value="{{ user_data.correo }}"
-                                           required>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <label for="contrasena" class="form-label">Contraseña</label>
-                                        <input type="password"
-                                               class="form-control"
-                                               id="contrasena"
-                                               name="contrasena"
-                                               required>
-                                    </div>
-                                    <div class="col">
-                                        <label for="confirmar_contrasena" class="form-label">Repetir contraseña</label>
-                                        <input type="password"
-                                               class="form-control"
-                                               id="confirmar_contrasena"
-                                               name="confirmar_contrasena"
-                                               required>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary mt-4">Registrarse</button>
-                                </div>
-                            </form>
-                            <div class="text-center">
-                                <a href="{% url 'login:login_view' %}"
-                                   class="btn btn-link text-primary text-decoration-underline mt-3">¿Ya tienes una cuenta? Inicia sesión</a>
-                            </div>
-                        </div>
+
+{% block content %}
+    <div class="card border-0 px-2 mx-auto mt-3 mb-3 shadow"
+        style="background-color: #f6f7f8">
+        <div class="mx-auto mb-3">
+            <img src="{% static 'login/assets/logo.png' %}"
+                alt="Logo"
+                class="img-fluid"
+                width="350px"
+                height="50px">
+        </div>
+        <span class="container mb-3 mt-3 text-center">
+            <h4 class="mt-2">Registro 📋</h4>
+            Completa todos los campos para continuar.
+        </span>
+        <div class="container">
+            <form action="/registration/" method="POST">
+                {% csrf_token %}
+                <div class="row mb-2">
+                    <div class="col">
+                        <span class="input-identifier">NOMBRE</span>
+                        <input type="text"
+                            class="form-control"
+                            id="nombre"
+                            name="nombre"
+                            value="{{ user_data.nombre }}"
+                            required>
+                    </div>
+                    <div class="col">
+                        <span class="input-identifier">APELLIDO</span>
+                        <input type="text"
+                            class="form-control"
+                            id="apellido"
+                            name="apellido"
+                            value="{{ user_data.apellido }}"
+                            required>
                     </div>
                 </div>
+                <div class="mb-2">
+                    <span class="input-identifier">CÉDULA</span>
+                    <input type="text"
+                        class="form-control"
+                        id="cedula"
+                        name="cedula"
+                        value="{{ user_data.cedula }}"
+                        required>
+                </div>
+                <div class="mb-2">
+                    <span class="input-identifier">CORREO</span>
+                    <input type="text"
+                        class="form-control"
+                        id="correo"
+                        name="correo"
+                        value="{{ user_data.correo }}"
+                        required>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <span class="input-identifier">CONTRASEÑA</span>
+                        <input type="password"
+                            class="form-control"
+                            id="contrasena"
+                            name="contrasena"
+                            required>
+                    </div>
+                    <div class="col">
+                        <span class="input-identifier">CONFIRMAR CONTRASEÑA</span>
+                        <input type="password"
+                            class="form-control"
+                            id="confirmar_contrasena"
+                            name="confirmar_contrasena"
+                            required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center mt-4">
+                    <button type="submit" class="btn btn-primary">Registrarse</button>
+                </div>
+            </form>
+            <div class="text-center py-4 d-flex justify-content-center">
+                <a href="{% url 'login:login_view' %}"
+                class="mx-auto text-primary text-decoration-underline mt-2">¿Ya tienes una cuenta? Inicia sesión</a>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-</html>
+    </div>
+{% endblock %}

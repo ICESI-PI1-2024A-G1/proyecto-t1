@@ -27,6 +27,16 @@ sharepoint_api = SharePointAPI(settings.EXCEL_FILE_PATH)
 
 User = get_user_model()
 
+status_colors = {
+    "EN PROCESO": "primary",
+    "APROBADO - CENCO": "success",
+    "RECHAZADO - CENCO": "danger",
+    "APROBADO - DECANO": "success",
+    "RECHAZADO - DECANO": "danger",
+    "PAGADO - CONTABILIDAD": "info",
+    "RECHAZADO - CONTABILIDAD": "danger",
+    "CERRADO": "secondary",
+}
 
 @csrf_exempt
 @login_required
@@ -165,17 +175,18 @@ def show_requests(request):
         if response.status_code == 200:
             requests_data = json.loads(response.content)
             user_str = request.user.__str__()
-            if not request.user.is_staff and not request.user.is_leader:
+            if not request.user.is_superuser:
                 requests_data = [ r for r in requests_data if r["manager"] == user_str ]
             for r in requests_data:
                 r["team"] = "" if math.isnan(r["team"]) else int(r["team"])
+                r["status_color"] = status_colors[r["status"]]
+
             return render(request, "show-requests.html", {"requests": requests_data})
         else:
             raise Http404("No se pudieron cargar las solicitudes.")
     except Http404 as e:
         return JsonResponse({"error": str(e)}, status=404)
     except Exception as e:
-        print(e)
         return JsonResponse(
             {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
         )

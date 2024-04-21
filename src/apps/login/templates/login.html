@@ -1,108 +1,55 @@
-<!DOCTYPE html>
+{% extends "auth-base.html" %}
 {% load static %}
-<html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!--Bootstrap-->
-        <title>Login</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-              rel="stylesheet">
-        <!--Fonts-->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
-              rel="stylesheet">
-        <link rel="stylesheet"
-              href="https://use.fontawesome.com/releases/v5.12.1/css/all.css"
-              crossorigin="anonymous">
-        <!--CSS-->
-        <link rel="stylesheet" href="{% static 'login/css/login.css' %}" />
-        <link rel="stylesheet" href="{% static 'general/css/blur.css' %}" />
-        <link rel="stylesheet" href="{% static 'general/css/utils.css' %}">
-    </head>
-    <body>
-        <div class="background-image content overflow-hidden">
-            <div class="content">
-                <div class="blur-overlay">
-                    <div class="row justify-content-center">
-                        <div class="d-flex align-items-center justify-content-center"
-                             style="height: 100vh">
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
-                                         role="alert">
-                                        {{ message }}
-                                        <button type="button"
-                                                class="btn-close"
-                                                data-bs-dismiss="alert"
-                                                aria-label="close"></button>
-                                    </div>
-                                {% endfor %}
-                            {% elif message %}
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button"
-                                            class="btn-close"
-                                            data-bs-dismiss="alert"
-                                            aria-label="close"></button>
-                                </div>
-                            {% endif %}
-                            <div class="card border-0 mt-5">
-                                <div class="card-header text-center">
-                                    <div class="mx-auto mb-3">
-                                        <img src="{% static 'login/assets/logo.png' %}"
-                                             alt="logo"
-                                             class="img-fluid"
-                                             style="max-width: 350px">
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <form action="/" method="POST">
-                                        {% csrf_token %}
-                                        <div class="form-group">
-                                            <div class="input-group flex-nowrap my-2">
-                                                <div class="input-group-text">
-                                                    <i class="fa fa-user icon"></i>
-                                                </div>
-                                                <input type="text"
-                                                       class="form-control"
-                                                       id="usuario"
-                                                       name="usuario"
-                                                       placeholder="Ingresa tu usuario"
-                                                       required>
-                                            </div>
-                                            <div class="input-group flex-nowrap">
-                                                <div class="input-group-text">
-                                                    <i class="fa fa-lock icon"></i>
-                                                </div>
-                                                <input type="password"
-                                                       class="form-control"
-                                                       id="contrasena"
-                                                       name="contrasena"
-                                                       placeholder="Ingresa tu contraseña"
-                                                       required>
-                                            </div>
-                                        </div>
-                                        <div class="card-body text-center">
-                                            <form>
-                                                <button type="submit" class="btn btn-primary mt-2">INICIAR SESIÓN</button>
-                                            </form>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="d-flex flex-column align-items-center">
-                                    <a href="{% url 'registration:register_view' %}"
-                                       class="btn btn-link text-primary text-decoration-underline">Registrarse</a>
-                                    <a href="{% url 'login:reset_password_view' %}"
-                                       class="btn btn-link text-primary text-decoration-underline mb-2">¿Olvidaste tu contraseña?</a>
-                                </div>
-                            </div>
-                        </div>
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="card col-md-8 border-0 px-2 mx-auto mt-3 mb-3 shadow"
+ style="background-color: #f6f7f8">
+    <div class="mx-auto mb-3">
+        <img src="{% static 'login/assets/logo.png' %}"
+            alt="logo"
+            class="img-fluid"
+            width="350px"
+            height="50px">
+    </div>
+    <span class="container mb-2 mt-3">
+        <h3>¡Bienvenido! 👋</h3>
+        Este es el sistema de monitorización para la gestión contable de la Universidad Icesi.
+    </span>
+    <span class="container mb-4">Inicia sesión para continuar.</span>
+    <div class="container">
+        <form action="/" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <span class="input-identifier">DOCUMENTO DE IDENTIFICACIÓN</span>
+                <div class="input-group flex-nowrap mb-3">
+                    <div class="input-group-text">
+                        <i class="fa fa-user icon"></i>
                     </div>
+                    <input type="text" class="form-control" id="usuario" name="usuario" required>
+                </div>
+                <span class="input-identifier">INGRESA TU CONTRASEÑA</span>
+                <div class="input-group flex-nowrap">
+                    <div class="input-group-text">
+                        <i class="fa fa-lock icon"></i>
+                    </div>
+                    <input type="password"
+                        class="form-control"
+                        id="contrasena"
+                        name="contrasena"
+                        required>
                 </div>
             </div>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-</html>
+            <div class="d-flex mb-3 justify-content-center">
+                <button type="submit" class="btn btn-primary mt-4">INICIAR SESIÓN</button>
+            </div>
+        </form>
+    </div>
+    <div class="d-flex flex-column align-items-center">
+        <a href="{% url 'registration:register_view' %}"
+        class="btn btn-link text-primary text-decoration-underline">Registrarse</a>
+        <a href="{% url 'login:reset_password_view' %}"
+        class="btn btn-link text-primary text-decoration-underline mb-4">¿Olvidaste tu contraseña?</a>
+    </div>
+</div>
+{% endblock %}

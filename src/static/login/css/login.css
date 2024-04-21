@@ -1,11 +1,32 @@
 body {
     font-family: "Inter", sans-serif;
 }
-  
-.background-image {
-    background-image: url('../../general/media/icesi_quality_background.jpg');
-    background-size: cover;
-    background-position: center;
-    width: 100vw;
+
+.background-waves {
+    position: fixed;
+    z-index: -1;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto
+}
+
+.login-gradient {
+    position: relative;
+    background-image: radial-gradient(circle, #0e9aef, #00599c,#0f4176);
+    z-index: 0;
+}
+
+.input-identifier {
+    color: #888;
+    font-weight: bold;
+    font-size: small;
+}
+
+.main-centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
+    z-index: 0;
 }

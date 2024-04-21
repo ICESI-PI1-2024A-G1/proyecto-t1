@@ -45,12 +45,18 @@ def login_view(request):
             )
 
             if user is not None:
+                if not user.is_superuser and not user.is_leader and not user.is_member and not user.is_applicant:
+                    return render(
+                        request,
+                        "login.html",
+                        {"message": "Usuario no autorizado. Comuníquese con el administrador."},
+                    )
                 request.session["user_id"] = user.id
 
                 # Generate random code
                 random_code = utils.generate_random_code()
                 request.session["random_code"] = random_code
-                # print("Code: " + random_code)
+                print("Code: " + random_code)
 
                 # Send verification email
                 utils.send_verification_email(
@@ -193,7 +199,7 @@ def verify_email_reset_view(request):
             else:
                 return redirect("login:login_view")
     else:
-        if request.POST["verificationCode"] == request.session.get("random_code"):
+        if request.POST.get("verificationCode") == request.session.get("random_code"):
             return redirect("login:change_password_view")
         else:
             messages.error(request, "Código de verificación incorrecto.")

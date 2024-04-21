@@ -43,7 +43,7 @@ class TeamTestCase(TestCase):
             email="test@example.com",
             first_name="admin",
             password="password",
-            is_staff=True,
+            is_leader=True,
         )
 
         for i in range(30):
@@ -133,7 +133,7 @@ class TeamTestCase(TestCase):
         """
         Test displaying teams for a user who is a leader.
         """
-        self.user.is_staff = False
+        self.user.is_superuser = False
         self.user.save()
         teams = [team.id for team in Team.objects.filter(leader=self.user)]
         response = self.client.get(reverse("teams:show_teams"))

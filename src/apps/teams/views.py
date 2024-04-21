@@ -43,7 +43,7 @@ def show_teams(request):
         - If the user is staff, all teams are displayed.
         - If the user is not staff, only teams led by the user are displayed.
     """
-    if request.user.is_staff:
+    if request.user.is_superuser:
         teams = Team.objects.all()
     else:
         teams = Team.objects.filter(leader_id=request.user.id)

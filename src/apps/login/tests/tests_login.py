@@ -29,7 +29,7 @@ class LoginTest(TestCase):
         """
         self.client = Client()
         self.user = get_user_model().objects.create_user(
-            id="12345", password="12345", email="testuser@example.com", is_staff=True
+            id="12345", password="12345", email="testuser@example.com", is_leader=True
         )
 
     def test_authenticate_valid_user(self):
