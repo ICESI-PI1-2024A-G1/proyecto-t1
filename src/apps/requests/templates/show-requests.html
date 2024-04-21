@@ -33,11 +33,11 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Estado</th>
                             <th>Fechas</th>
                             <th>Solicitante</th>
                             <th class="col-4">Motivo</th>
                             <th>Gestor</th>
-                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -45,6 +45,11 @@
                         {% for request in requests %}
                         <tr id="request_{{ request.id }}">
                             <td class="text-center">{{ request.id }}</td>
+                            <td>
+                                <div class="badge bg-label-{{request.status_color}} ">
+                                    <p id="status_{{ request.id }}" class="text-wrap mb-0 lh-sm">{{ request.status }}</p>
+                                </div>
+                            </td>
                             <td class="col-2 text-sm">
                                 <div class="text-nowrap"><span class="fw-medium">Inicio:</span> {{ request.initial_date }}</div>
                                 <div class="text-nowrap"><span class="fw-medium">Final: </span>{{ request.final_date }}</div>
@@ -56,9 +61,6 @@
                                 {% if request.team %}
                                 (Equipo {{ request.team }})
                                 {% endif %}
-                            </td>
-                            <td>
-                                <p id="status_{{ request.id }}" class="badge bg-label-{{request.status_color}}">{{ request.status }}</p>
                             </td>
                             <td>
                                 <div class="dropdown">

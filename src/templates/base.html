@@ -35,7 +35,7 @@
         
         <!-- scripts -->
                 <!-- base -->
-                <script src="{% static 'general/js/base.js' %}"></script>
+        <script src="{% static 'general/js/base.js' %}"></script>
         <script src="{% static 'general/js/vendor/helpers.js' %}"></script>
         <script src="{% static 'general/js/vendor/config.js' %}"></script>
 
@@ -115,24 +115,27 @@
                     <span class="menu-header-text">General</span>
                 </li>
 
-                <!-- Layouts -->
-                <li class="menu-item active open">
+                
+                <li class="menu-item {% if "teams" in request.path %}active open{% endif %}">
                   <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-layout"></i>
-                    <div data-i18n="Layouts">Layouts</div>
+                    <i class="menu-icon fa fa-users"></i>
+                    <div data-i18n="Layouts">Equipos</div>
                   </a>
     
                   <ul class="menu-sub">
-                    <li class="menu-item active">
-                      <a href="layouts-without-menu.html" class="menu-link">
-                        <div data-i18n="Without menu">Without menu</div>
-                      </a>
-                    </li>
-                    <li class="menu-item">
-                      <a href="layouts-without-navbar.html" class="menu-link">
-                        <div data-i18n="Without navbar">Without navbar</div>
-                      </a>
-                    </li>
+                    {% include 'components/nav-item.html' with text="Ver equipos" link="/teams/" %}
+                    {% include 'components/nav-item.html' with text="Añadir equipo" link="/teams/add-team-form/" %}
+                  </ul>
+                </li>
+
+                <li class="menu-item {% if "requests" in request.path %}active open{% endif %}">
+                  <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon bx bxs-spreadsheet'></i>
+                    <div data-i18n="Layouts">Solicitudes</div>
+                  </a>
+                  <ul class="menu-sub">
+                    {% include 'components/nav-item.html' with text="Solicitudes Internas" link="/requests/" %}
+                    {% include 'components/nav-item.html' with text="Solicitudes SharePoint" link="/sharepoint/" %}
 
                   </ul>
                 </li>
@@ -140,18 +143,20 @@
                 <li class="menu-header small text-uppercase">
                   <span class="menu-header-text">Contacto &amp; Soporte</span>
                 </li>
-                <!-- Apps -->
-
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-chat.html"
-                    target="_blank"
-                    class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-chat"></i>
-                    <div data-i18n="Chat">Chat</div>
-                    <div class="badge bg-label-primary fs-tiny rounded-pill ms-auto">Nuevo</div>
-                  </a>
+                
+                {% if request.user.is_leader and not request.user.is_superuser %}
+                    {% include 'components/nav-item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions/" %}
+                {% endif %}
+                {% include 'components/nav-item.html' with text="Contacto" icon_class="fas fa-envelope" link="/emailContact/" %}
+                
+                <li class="menu-header small text-uppercase">
+                  <span class="menu-header-text">Administrador de Django</span>
                 </li>
+
+                {% if request.user.is_superuser %}
+                    {% include 'components/nav-item.html' with text="Usuarios" icon_class="fas fa-cog"  link="/admin/utils/customuser/" %}
+                {% endif %}
+
               </ul>
             </aside>
             <!-- / Menu -->
@@ -203,26 +208,24 @@
                       <script>
                         document.write(new Date().getFullYear());
                       </script>
-                      , made with ❤️ by
-                      <a href="https://themeselection.com" target="_blank" class="footer-link fw-medium">ThemeSelection</a>
+                      , hecho con ❤️ por
+                      <a href="https://github.com/ICESI-PI1-2024A-G1/proyecto-t1" target="_blank" class="footer-link fw-medium">Grupo 1</a>
                     </div>
                     <div class="d-none d-lg-inline-block">
-                      <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-                      <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
     
-                      <a
-                        href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/"
+                      <!-- <a
+                        href="https://github.com/ICESI-PI1-2024A-G1/proyecto-t1/tree/main/doc"
                         target="_blank"
                         class="footer-link me-4"
                         >Documentation</a
-                      >
+                      > -->
     
-                      <a
+                      <!-- <a
                         href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
                         target="_blank"
                         class="footer-link"
                         >Support</a
-                      >
+                      > -->
                     </div>
                   </div>
                 </footer>
