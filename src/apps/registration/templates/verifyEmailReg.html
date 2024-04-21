@@ -1,36 +1,21 @@
 {% extends "auth-base.html" %}
-{% block title %}Registro{% endblock %}
 {% load static %}
+{% block title %}Verificación de Email{% endblock %}
 
 {% block content %}
-
 {% if messages %}
-{% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+         role="alert">
         {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"></button>
     </div>
-{% endfor %}
+    {% endfor %}
 {% endif %}
-
-<div class="card">
-    <h3 class="titulo-inicio text-center fw-bold fs-2 text-white "> Verificación de email</h3>
-    <div class="card-body">
-        <form action="{% url 'registration:verifyEmail_view' %}" method="POST">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="verificationCode" class="form-label text-white">Ingrese el código de verificación que enviamos a su email.</label>
-                <div class="input-container mb-3 mt-4">
-                    <input type="text" class="form-control" placeholder="Código de verificación" id="verificationCode" name="verificationCode" required>
-                    <i class="fa fa-key icon"></i>
-                </div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary mt-4">Verificar</button>
-            </div>
-        </form>
-    </div>
-</div>
-
+{% with title="Verificación de email" description="Ingrese el código de verificación que enviamos al email asociado a su cuenta." action_url="registration:verifyEmail_view" input_id="verificationCode" input_label="Código de verificación" input_name="verificationCode" %}
+    {% include 'components/email_verification_component.html' %}
+{% endwith %}
 {% endblock %}
-
