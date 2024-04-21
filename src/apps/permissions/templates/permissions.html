@@ -1,49 +1,62 @@
 {% extends "base.html" %}
 {% block title %}Permisos{% endblock %}
 {% block content %}
-    <div class="container">
-        <h2>Permisos</h2>
-        <div id="messageContainer"></div>
-        <div class="container overflow-auto-container">
-            <table id="usersTable" class="table table-bordered">
-                <style>
-                    .fixed-width {
-                        width: 100px;
-                    }
-                </style>
 
-                <thead>
-                    <tr>
-                        <th>Documento</th> 
-                        <th>Apellido</th>
-                        <th>Nombre</th>
-                        <th>Correo electrónico</th>
-                        <th class="fixed-width">Líder</th>
-                        <th class="fixed-width">Miembro</th>
-                        <th class="fixed-width">Solicitante</th>
-                        <th class="fixed-width">Ninguno</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                        <tr id="user_{{ user.id }}">
-                            <td>{{ user.id }}{% if user.is_superuser %} (SU) {% endif %}</td>
-                            <td>{{ user.last_name }}</td>
-                            <td>{{ user.first_name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_leader" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_leader|yesno:"checked," }}></td>
-                            <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_member" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_member|yesno:"checked," }}></td>
-                            <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_applicant" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_applicant|yesno:"checked," }}></td>
-                            <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_none" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_none|yesno:"checked," }}></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="container d-flex justify-content-center">
-                <button id="saveButton" type="button" class="btn btn-primary my-4">Guardar cambios <i class="fa fa-save"></i></button>
+
+<div class="container">
+    <h4 class="py-2 mb-4"><span class="text-muted fw-light">Permisos /</span> Usuarios</h4>
+    <div class="card">
+        <div class="card-header pb-0">
+            <!-- <h2>Solicitudes</h2> -->
+            <div class="input-group mb-3">
+                <input type="text" id="usersTableSearch" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
+                <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
             </div>
         </div>
+        <div class="container">
+            <div class="table-responsive">
+                <table id="usersTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Documento</th> 
+                            <th>Apellido</th>
+                            <th>Nombre</th>
+                            <th>Correo electrónico</th>
+                            <th class="fixed-width">Líder</th>
+                            <th class="fixed-width">Miembro</th>
+                            <th class="fixed-width">Solicitante</th>
+                            <th class="fixed-width">Ninguno</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr id="user_{{ user.id }}">
+                                <td>{{ user.id }}{% if user.is_superuser %} (SU) {% endif %}</td>
+                                <td>{{ user.last_name }}</td>
+                                <td>{{ user.first_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_leader" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_leader|yesno:"checked," }}></td>
+                                <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_member" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_member|yesno:"checked," }}></td>
+                                <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_applicant" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_applicant|yesno:"checked," }}></td>
+                                <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_none" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_none|yesno:"checked," }}></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+        </div>
+
+        </div>
+
+        <div class="card-footer pb-2">
+            <div id="usersTablePagination" class="row">
+            
+            </div>
+        </div>
+    </div>
+</div>
     
-    {% load static %}
-    <script src="{% static 'permissions/js/users.js' %}"></script>
+{% load static %}
+<script src="{% static 'permissions/js/users.js' %}"></script>
 {% endblock %}

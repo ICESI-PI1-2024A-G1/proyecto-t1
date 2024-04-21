@@ -4,7 +4,7 @@
  * @param {string} tableId - The ID of the table to initialize DataTable on.
  */
 $(document).ready(function () {
-    DataTableInit("usersTable")
+    DataTableInit("usersTable", 10)
      /**
      * Handles click event on the search button.
      *
