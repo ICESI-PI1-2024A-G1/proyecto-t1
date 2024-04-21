@@ -23,12 +23,11 @@ class UserAdmin(admin.ModelAdmin):
             request, object_id, form_url, extra_context=extra_context
         )
 
-    list_display = ("first_name", "last_name", "is_superuser", "is_leader")
+    list_display = ("first_name", "last_name", "is_superuser", "is_leader", "is_member", "is_applicant", "is_none")
     search_fields = ("first_name", "last_name")
-    list_editable = ("is_superuser", "is_leader")
-    list_filter = ("is_superuser", "is_leader")
+    list_editable = ("is_superuser", "is_leader", "is_member", "is_applicant", "is_none")
+    list_filter = ("is_superuser", "is_leader", "is_member", "is_applicant", "is_none")
     list_per_page = 10
-    exclude = ("last_login", "groups", "user_permissions", "is_staff")
     form = CustomUserChangeForm
 
 
