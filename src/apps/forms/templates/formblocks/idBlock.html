@@ -1,8 +1,8 @@
 <div class="mb-2">
     <label class="h5"><strong>Identificación</strong></label>
 </div>
-<div class="row">
-    <div class="col">
+<div class="row mb-4">
+    <div class="col-md-6 col-sm-12">
         <div class="form-group">
             <label for="requestDate">Fecha de solicitud</label>
             <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ today }}" readonly>
@@ -16,7 +16,7 @@
             <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.user.id }}" readonly>
         </div>
     </div>
-    <div class="col">
+    <div class="col-md-6 col-sm-12">
         <div class="form-group">
             <label for="dependence">Dependencia</label>
             <select class="form-control" id="dependence" name="dependence" required>

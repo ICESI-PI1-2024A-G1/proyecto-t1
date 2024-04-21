@@ -2,7 +2,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-    <head>
+    <head class="dark-style">
         <meta charset="UTF-8"
               name="viewport"
               content="width=device-width,initial-scale=1.0">
@@ -28,6 +28,7 @@
         
         <!-- stylesheets -->
         <link rel="stylesheet" href="{% static 'general/css/demo.css' %}">
+        <link rel="stylesheet" href="{% static 'general/css/core.css' %}">
         
         <!-- scripts -->
         <script src="{% static 'general/js/base.js' %}"></script>
@@ -73,20 +74,20 @@
                               <mask id="mask-2" fill="white">
                                 <use xlink:href="#path-1"></use>
                               </mask>
-                              <use fill="#696cff" xlink:href="#path-1"></use>
+                              <use fill="#00599c" xlink:href="#path-1"></use>
                               <g id="Path-3" mask="url(#mask-2)">
-                                <use fill="#696cff" xlink:href="#path-3"></use>
+                                <use fill="#00599c" xlink:href="#path-3"></use>
                                 <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-3"></use>
                               </g>
                               <g id="Path-4" mask="url(#mask-2)">
-                                <use fill="#696cff" xlink:href="#path-4"></use>
+                                <use fill="#00599c" xlink:href="#path-4"></use>
                                 <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-4"></use>
                               </g>
                             </g>
                             <g
                               id="Triangle"
                               transform="translate(19.000000, 11.000000) rotate(-300.000000) translate(-19.000000, -11.000000) ">
-                              <use fill="#696cff" xlink:href="#path-5"></use>
+                              <use fill="#00599c" xlink:href="#path-5"></use>
                               <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-5"></use>
                             </g>
                           </g>
@@ -125,13 +126,26 @@
 
                 <li class="menu-item {% if "requests" in request.path %}active open{% endif %}">
                   <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class='menu-icon bx bxs-spreadsheet'></i>
+                    <i class='menu-icon bx bxs-wallet'></i>
                     <div data-i18n="Layouts">Solicitudes</div>
                   </a>
                   <ul class="menu-sub">
                     {% include 'components/nav-item.html' with text="Solicitudes Internas" link="/requests/" %}
                     {% include 'components/nav-item.html' with text="Solicitudes SharePoint" link="#" %}
+                  </ul>
+                </li>
 
+                <li class="menu-item {% if "forms" in request.path %}active open{% endif %}">
+                  <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon bx bxs-spreadsheet'></i>
+                    <div data-i18n="Layouts">Formularios</div>
+                  </a>
+                  <ul class="menu-sub">
+                    {% include 'components/nav-item.html' with text="Solicitud viaje" link="/forms/travel_advance_request" %}
+                    {% include 'components/nav-item.html' with text="Legalización viaje" link="/forms/travel_expense_legalization" %}
+                    {% include 'components/nav-item.html' with text="Solicitud anticipo" link="/forms/advance_legalization" %}
+                    {% include 'components/nav-item.html' with text="Cuenta de cobro" link="/forms/billing_account" %}
+                    {% include 'components/nav-item.html' with text="Requisición" link="/forms/requisition" %}
                   </ul>
                 </li>
     
@@ -227,6 +241,22 @@
         </div>
         <!-- / Layout wrapper -->
     
+
+        <div
+          class="bs-toast toast toast-placement-ex m-2"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          data-bs-delay="5000">
+          <div class="toast-header">
+            <i class="bx bx-bell me-2" style="margin-right:10px"></i>
+            <div id="toast-title" class="me-auto fw-medium">Bootstrap</div>
+            <small id="toast-date" style="margin-left: auto;" >Ahora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div id="toast-body" class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>
+        </div>
+
         <!-- libs -->
         <!-- <script src="{% static 'general/js/lib/jquery.js' %}"></script>
         <script src="{% static 'general/js/lib/popper.js' %}"></script> -->
@@ -239,13 +269,12 @@
         <!-- <script src="{% static 'general/js/vendor/forms-basic-inputs.js' %}"></script> -->
         <!-- <script src="{% static 'general/js/vendor/ui-modals.js' %}"></script> -->
         <script src="{% static 'general/js/vendor/ui-popover.js' %}"></script>
-        <script src="{% static 'general/js/vendor/ui-toasts.js' %}"></script>
-        <script src="{% static 'general/js/vendor/ui-toasts.js' %}"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
         <!-- datatables -->
         <script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
         <script src="https://cdn.datatables.net/v/bs5/dt-2.0.3/b-3.0.1/b-html5-3.0.1/datatables.min.js"></script>
+          
       </body>
 </html>

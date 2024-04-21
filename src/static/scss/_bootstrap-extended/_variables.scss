@@ -51,10 +51,10 @@ $cyan: #03c3ec !default;
 // scss-docs-start theme-color-variables
 $primary: #00599c !default;
 $secondary: #8592a3 !default;
-$success: $green !default;
+$success: #0fb066 !default;
 $info: $cyan !default;
-$warning: $yellow !default;
-$danger: $red !default;
+$warning: #f1b035 !default;
+$danger: #e83247 !default;
 $light: #fcfdfd !default;
 $dark: #233446 !default;
 $gray: $gray-100 !default; // (C)
@@ -926,7 +926,7 @@ $overflows: auto, hidden, scroll, visible !default;
 
 // Config
 $rtl-support: false !default;
-$dark-style: false !default;
+$dark-style: true !default;
 
 // * Chevron Icons
 // ********************************************************************************
