@@ -1,0 +1,13 @@
+/*This comes first*/
+.blur-overlay {
+    /* Adjust opacity as needed */
+    backdrop-filter: blur(5px);
+    /* Adjust blur radius as needed */
+    z-index: 1;
+    /* Ensure the overlay is below content */
+}
+
+/*This goes after placing the overlay*/
+.content {
+    z-index: 2;
+}

@@ -25,6 +25,16 @@ sharepoint_api = SharePointAPI(settings.EXCEL_FILE_PATH)
 
 User = get_user_model()
 
+status_colors = {
+    "EN PROCESO": "primary",
+    "APROBADO - CENCO": "success",
+    "RECHAZADO - CENCO": "danger",
+    "APROBADO - DECANO": "success",
+    "RECHAZADO - DECANO": "danger",
+    "PAGADO - CONTABILIDAD": "info",
+    "RECHAZADO - CONTABILIDAD": "danger",
+    "CERRADO": "secondary",
+}
 
 def search(request, query):
     """
@@ -86,6 +96,8 @@ def show_requests(request):
                 requests_data = [ r for r in requests_data if r["manager"] == user_str ]
             for r in requests_data:
                 r["team"] = "" if math.isnan(r["team"]) else int(r["team"])
+                r["status_color"] = status_colors[r["status"]]
+
             return render(request, "show-requests.html", {"requests": requests_data})
         else:
             raise Http404("No se pudieron cargar las solicitudes.")
