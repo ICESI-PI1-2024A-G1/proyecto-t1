@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-from apps.requests.models import Requests
 from .models import Team
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404

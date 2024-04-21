@@ -1,9 +1,21 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
+from django.db import transaction
 from datetime import date
 from apps.forms.models import *;
 from django.contrib import messages
+
+
+# Calculate the next ID for the forms
+def get_next_id():
+    max_id1 = TravelAdvanceRequest.objects.all().aggregate(Max('id'))['id__max'] or 0
+    max_id2 = AdvanceLegalization.objects.all().aggregate(Max('id'))['id__max'] or 0
+    max_id3 = BillingAccount.objects.all().aggregate(Max('id'))['id__max'] or 0
+    max_id4 = Requisition.objects.all().aggregate(Max('id'))['id__max'] or 0
+    max_id5 = TravelExpenseLegalization.objects.all().aggregate(Max('id'))['id__max'] or 0
+    return max(max_id1, max_id2, max_id3, max_id4, max_id5) + 1
 
 
 @login_required
@@ -25,7 +37,7 @@ def travel_advance_request(request):
             # Set the fields from the form data
             travel_request.request_date = form_data['requestDate']
             travel_request.traveler_name = form_data['travelerName']
-            travel_request.id_number = form_data['idNumber']
+            travel_request.id_person = form_data['idNumber']
             travel_request.dependence = form_data['dependence']
             travel_request.cost_center = form_data['costCenter']
             travel_request.destination_city = form_data['destinationCity']
@@ -51,6 +63,10 @@ def travel_advance_request(request):
             travel_request.account_type = form_data['accountType']
             travel_request.account_number = form_data['accountNumber']
             travel_request.observations = form_data['observations']
+            
+            # Set the id to the next available id
+            with transaction.atomic():
+                travel_request.id = get_next_id()
 
             # Save the TravelRequest instance to the database
             travel_request.save()
@@ -78,7 +94,7 @@ def travel_expense_legalization(request):
             # Set the fields of the GeneralData object
             travel_legalization.request_date = form_data['requestDate']
             travel_legalization.traveler_name = form_data['travelerName']
-            travel_legalization.id_number = form_data['idNumber']
+            travel_legalization.id_person = form_data['idNumber']
             travel_legalization.dependence = form_data['dependence']
             travel_legalization.cost_center = form_data['costCenter']
             travel_legalization.destination_city = form_data['destinationCity']
@@ -102,6 +118,10 @@ def travel_expense_legalization(request):
             travel_legalization.account_type = form_data['accountType']
             travel_legalization.account_number = form_data['accountNumber']
             travel_legalization.observations = form_data['observations']
+            
+            # Set the id to the next available id
+            with transaction.atomic():
+                travel_legalization.id = get_next_id()
             
             # Save the GeneralData object
             travel_legalization.save()
@@ -141,7 +161,7 @@ def advance_legalization(request):
             # Set the fields of the GeneralData object
             advance_legalization.request_date = form_data['requestDate']
             advance_legalization.traveler_name = form_data['travelerName']
-            advance_legalization.id_number = form_data['idNumber']
+            advance_legalization.id_person = form_data['idNumber']
             advance_legalization.dependence = form_data['dependence']
             advance_legalization.cost_center = form_data['costCenter']
             advance_legalization.purchase_reason = form_data['purchaseReason']
@@ -154,6 +174,10 @@ def advance_legalization(request):
             advance_legalization.account_type = form_data['accountType']
             advance_legalization.account_number = form_data['accountNumber']
             advance_legalization.observations = form_data['observations']
+            
+            # Set the id to the next available id
+            with transaction.atomic():
+                advance_legalization.id = get_next_id()
 
             # Save the GeneralData object
             advance_legalization.save()
@@ -198,9 +222,9 @@ def billing_account(request):
 
             # Set the fields of the GeneralData object
             billing_account.request_date = form_data['requestDate']
-            billing_account.requester_name = form_data['fullName']
-            billing_account.id_number = form_data['idNumber']
-            billing_account.id_value = form_data['idValue']
+            billing_account.full_name = form_data['fullName']
+            billing_account.id_person = form_data['idNumber']
+            billing_account.value = form_data['value']
             billing_account.concept_reason = form_data['conceptReason']
             billing_account.retention = form_data['retention']
             billing_account.tax_payer = form_data['taxPayer']
@@ -213,6 +237,10 @@ def billing_account(request):
             billing_account.account_type = form_data['accountType']
             billing_account.account_number = form_data['accountNumber']
             billing_account.cex_number = form_data['cexNumber']
+            
+            # Set the id to the next available id
+            with transaction.atomic():
+                billing_account.id = get_next_id()
 
             # Save the GeneralData object
             billing_account.save()
@@ -250,6 +278,10 @@ def requisition(request):
             requisition.account_type = form_data['accountType']
             requisition.account_number = form_data['accountNumber']
             requisition.observations = form_data['observations']
+            
+            # Set the id to the next available id
+            with transaction.atomic():
+                requisition.id = get_next_id()
 
             # Save the GeneralData object
             requisition.save()

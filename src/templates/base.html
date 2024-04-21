@@ -33,7 +33,10 @@
                             <div class="d-flex flex-column">
                                 <p class="font-weight small p-1 mb-1 mx-2">General</p>
                                 <ul class="nav flex-column text-center">
-                                    {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-wallet" link="/requests" %}
+                                    {% if request.user.is_superuser %}
+                                        {% include 'components/navigation_item.html' with text="Ventanilla Única" icon_class="fas fa-wallet" link="/sharepoint" %}
+                                    {% endif %}
+                                    {% include 'components/navigation_item.html' with text="Solicitudes" icon_class="fas fa-clipboard" link="/requests" %}
                                     {% if request.user.is_superuser or request.user.is_leader%}
                                         {% include 'components/navigation_item.html' with text="Equipos" icon_class="fas fa-users" link="/teams" %}
                                     {% endif %}
@@ -41,7 +44,7 @@
                                         {% include 'components/navigation_item.html' with text="Usuarios" icon_class="fas fa-user-cog" link="/permissions" %}
                                     {% endif %}
                                     {% if request.user.is_superuser or request.user.is_applicant %}
-                                        {% include 'components/navigation_dropdown.html' with text="Formularios" icon_class="fas fa-file-alt" link="/forms" %}
+                                        {% include 'components/navigation_dropdown_forms.html' with text="Formularios" icon_class="fas fa-file-alt" link="/forms" %}
                                     {% endif %}
                                     {% include 'components/navigation_item.html' with text="Contacto" icon_class="fas fa-envelope" link="/emailContact" %}
                                     <div class="my-2 mx-2 border-bottom border-3"></div>

@@ -12,7 +12,7 @@ fake = Faker()
 
 import random
 from django.contrib.auth import get_user_model
-from apps.requests.models import Involved, Traceability
+from apps.internalRequests.models import Traceability
 from apps.teams.models import Team
 from datetime import datetime, timedelta
 from api.sharepoint_api import SharePointAPI
@@ -46,7 +46,6 @@ sharepoint_api.clear_db()
 Traceability.objects.all().delete()
 Team.objects.all().delete()
 User.objects.all().delete()
-Involved.objects.all().delete()
 
 # Create superuser
 
@@ -115,14 +114,6 @@ for i in range(4):
 
     teams.append(team)
 
-
-# Create Involved
-involved = []
-for _ in range(1):
-    email = fake.email()
-    name = fake.name()
-    inv = Involved.objects.create(email=email, name=name)
-    involved.append(inv)
 
 # Create Requests and Traceability
 
@@ -263,7 +254,6 @@ for i in range(10):
         "phone_number": fake.phone_number(),
         "email": fake.email(),
         "CENCO": fake.random_number(digits=5),
-        "reason": fake.text(max_nb_chars=100),
         "bank": random.choice(banks),
         "account_type": random.choice(["Ahorros", "Corriente"]),
         "health_provider": random.choice(eps),
@@ -285,7 +275,6 @@ for i in range(len(t_request)):
         modified_by=user,
         request=new_id,
         date=fake.date_time_between(start_date="-30d", end_date="+3d"),
-        reason=fake.text(max_nb_chars=100),
         prev_state=temp_r["status"],
         new_state=random.choice(status_options),
     )

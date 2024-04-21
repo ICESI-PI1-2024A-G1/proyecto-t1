@@ -36,7 +36,6 @@ class SharePointAPI:
             "phone_number",
             "email",
             "CENCO",
-            "reason",
             "bank",
             "account_type",
             "health_provider",
