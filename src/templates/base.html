@@ -16,9 +16,6 @@
         <title>
             {% block title %}{% endblock %}
         </title>
-        {% load bootstrap5 %}
-        {% bootstrap_css %}
-        {% bootstrap_javascript %}
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link href="{% sass_src 'scss/core.scss' %}" rel="stylesheet" type="text/css" />
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css"
@@ -30,11 +27,9 @@
         <link rel="stylesheet" href="{% static 'general/css/utils.css' %}">
         
         <!-- stylesheets -->
-        <link rel="stylesheet" href="{% static 'general/css/utils.css' %}">
         <link rel="stylesheet" href="{% static 'general/css/demo.css' %}">
         
         <!-- scripts -->
-                <!-- base -->
         <script src="{% static 'general/js/base.js' %}"></script>
         <script src="{% static 'general/js/vendor/helpers.js' %}"></script>
         <script src="{% static 'general/js/vendor/config.js' %}"></script>
@@ -135,7 +130,7 @@
                   </a>
                   <ul class="menu-sub">
                     {% include 'components/nav-item.html' with text="Solicitudes Internas" link="/requests/" %}
-                    {% include 'components/nav-item.html' with text="Solicitudes SharePoint" link="/sharepoint/" %}
+                    {% include 'components/nav-item.html' with text="Solicitudes SharePoint" link="#" %}
 
                   </ul>
                 </li>
@@ -175,13 +170,16 @@
                 </div>
     
                 <div class="navbar-nav-right d-flex align-items-center text-center" id="navbar-collapse">
-                    <div class="nav-item d-flex align-items-center fs-5">
+                    <div class="mx-auto nav-item d-flex align-items-center fs-5">
                       ¡Bienvenido, {{user.username}}!
                     </div>
                 </div>
-                <div class="navbar-nav align-items-xr-center me-3 me-xr-0 ">
-                    <a class="text-secondary nav-item px-0 me-xl-1" href="/logout">
-                        <div class="d-flex align-items-center text-nowrap fw-medium"><i class='rotate-180 bx bx-log-out-circle fs-3 me-xl-2 text-secondary'></i><span class="d-none d-md-block d-lg-block">Cerrar Sesión</span></div>
+                <div class="navbar-nav align-items-xr-center ">
+                    <a class="text-secondary nav-item px-0" href="/logout">
+                        <div class="d-flex align-items-center text-nowrap fw-medium">
+                          <i class='rotate-180 bx bx-log-out fs-3 mx-2 text-secondary'></i>
+                          <div class="d-none d-md-block d-lg-block">Cerrar Sesión</div>
+                        </div>
                     </a>
                   </div>
               </nav>
@@ -212,20 +210,6 @@
                       <a href="https://github.com/ICESI-PI1-2024A-G1/proyecto-t1" target="_blank" class="footer-link fw-medium">Grupo 1</a>
                     </div>
                     <div class="d-none d-lg-inline-block">
-    
-                      <!-- <a
-                        href="https://github.com/ICESI-PI1-2024A-G1/proyecto-t1/tree/main/doc"
-                        target="_blank"
-                        class="footer-link me-4"
-                        >Documentation</a
-                      > -->
-    
-                      <!-- <a
-                        href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                        target="_blank"
-                        class="footer-link"
-                        >Support</a
-                      > -->
                     </div>
                   </div>
                 </footer>

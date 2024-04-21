@@ -23,7 +23,7 @@ const changeStatus = id => {
             csrfmiddlewaretoken: csrftoken
         },
         success: function (response) {
-            $('#status_' + id).text(newStatus);
+            location.reload();
         },
         error: function () {
             alert('Error al cambiar el estado de la solicitud.');
