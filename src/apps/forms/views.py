@@ -127,12 +127,10 @@ def travel_expense_legalization(request):
             travel_legalization.save()
 
             i = 0
-            while True:
-                category_key = 'category_' + str(i)
-                if category_key not in form_data:
-                    break
-            
+            while f'category_{i}' in form_data:
+                # Create a new ExpenseDetail object
                 expense_detail = TravelExpenseLegalization_Table()
+                
                 expense_detail.travel_info = travel_legalization
                 expense_detail.category = form_data['category_' + str(i)]
                 expense_detail.provider = form_data['provider_' + str(i)]

@@ -9,18 +9,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         var currentRowCount = table.querySelectorAll('tr:not(#totals):not(#advance):not(#employeeBalance):not(#icesiBalance)').length;
 
         for (var i = 0; i < 7; i++) {
-            var newCell = document.createElement('td');
-            var input = document.createElement('input');
-            input.type = i < 4 ? 'text' : 'number';
-            input.className = 'form-control';
-            if (i >= 4) {
-                input.placeholder = '0';
-                input.id = ['total', 'advance', 'employeeBalance', 'icesiBalance'][i - 4] + (currentRowCount + 1);
-                input.name = input.id;
-            }
-            newCell.appendChild(input);
-            newRow.appendChild(newCell);
+        var newCell = document.createElement('td');
+        var input = document.createElement('input');
+        input.type = i < 4 ? 'text' : 'number';
+        input.className = 'form-control';
+        if (i >= 4) {
+            input.placeholder = '0';
         }
+        input.id = ['category_', 'provider_', 'nit_', 'concept_', 'pesos_', 'dollars_', 'euros_'][i] + currentRowCount;
+        input.name = input.id;
+        newCell.appendChild(input);
+        newRow.appendChild(newCell);
+}
 
         var totalsRow = document.getElementById('totals');
         table.insertBefore(newRow, totalsRow);
