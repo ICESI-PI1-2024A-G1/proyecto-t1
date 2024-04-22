@@ -1,0 +1,160 @@
+{% block title %}Formularios{% endblock %}
+{% block content %}
+
+<!--Icons-->
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<!--Title-->
+
+<div class="d-flex justify-content-between">
+    <div>
+        <h2 class="mb-4">Legalización de gastos de viaje</h2>
+    </div>
+</div>
+
+<!-- Messages -->
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Announcement -->
+
+<p class="font-italic"><strong>Por favor tenga en cuenta lo siguiente:</strong></p>
+<ol>
+    <li>Este formato se debe tramitar por ventanilla única, adjuntando los soportes</li>
+    <li>Este formato debe radicarse en ventanilla única por el total de los gastos incurridos en el viaje. El formato automáticamente registra si hay saldo a favor del colaborador o saldo a favor de Icesi</li>
+    <li>Todos los soportes de legalización deben venir a nombre de la Universidad Icesi Nit. 890.316.745-5. Documento sin este requisito, será rechazado en la legalización.</li>
+    <li>Si hay saldo es a favor de la Universidad ICESI, se debe regresar el dinero en la caja de la Universidad o autorizar en este formato el descuento por nómina</li>
+    <li>Si hay saldo a favor del colaborador, se procede a reintegrar a la cuenta de nómina</li>
+    <li>Si el soporte de pago es una factura Pos, debe solicitar a la empresa la factura electrónica.</li>
+    <li>Se debe legalizar en la moneda que se recibió en el anticipo (Pesos colombianos, Euros, Dólares) Si el colaborador gastó en una moneda diferente, debe pasar los gastos a la moneda original del anticipo y dejar registro del cambio de moneda.</li>
+    <li>Solo utilizar la columna correspondiente a la moneda que va a legalizar</li>
+    <li>Puede incluir más casillas para ítems diferentes, colocando el nombre que corresponda, reemplazando las celdas A39 en adelante; Ejemplo: Medicamentos, Ingresos a lugares de interés, sobrepeso de maleta en aerolínea, etc.</li>
+    <li>Utilice este formato para legalizar el anticipo de viajes; en caso de no haber solicitado anticipo</li>
+    <li>Formato de uso interno</li>
+    <li>En transacciones con personas naturales debe adjuntar el Rut con fecha del año en curso</li>
+</ol>
+
+<div class="my-2 mx-2 border-bottom border-3"></div>
+
+<!-- User data -->
+
+<form action="/forms/travel_expense_legalization" method="POST">
+    {{ form.csrf_token }}
+    
+    {% include 'internalFormBlocks/idblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Travel data -->
+
+    {% include 'internalFormBlocks/travelblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!--Spend data-->
+
+    <div class="mb-2 mt-3">
+        <label class="h5"><strong>Relación de gastos</strong></label>
+    </div>
+
+    <style>
+        th {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th class="col-2" rowspan="2">Rubro</th>
+                <th class="col-2" rowspan="2">Tercero proveedor</th>
+                <th class="col-2" rowspan="2">Nit</th>
+                <th class="col-2" rowspan="2">Concepto</th>
+                <th class="col-3" colspan="3">Si su anticipo fue en:</th>
+            </tr>
+            <tr>
+                <th class="col-1">Pesos colombianos ($)</th>
+                <th class="col-1">Dólares ($)</th>
+                <th class="col-1">Euros (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+                <tr>
+                    <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" id="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled></td>
+                    <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" id="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled></td>
+                    <td><input type="text" class="form-control" name="nit_{{ forloop.counter0 }}" id="nit_{{ forloop.counter0 }}" value="{{ expense.nit }}" disabled></td>
+                    <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" id="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled></td>
+                    <td><input type="text" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" id="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled></td>
+                    <td><input type="text" class="form-control" placeholder="0" name="dollars_{{ forloop.counter0 }}" id="dollars_{{ forloop.counter0 }}" value="{{ expense.dollars|floatformat:"-0" }}" disabled></td>
+                    <td><input type="text" class="form-control" placeholder="0" name="euros_{{ forloop.counter0 }}" id="euros_{{ forloop.counter0 }}" value="{{ expense.euros|floatformat:"-0" }}" disabled></td>
+                </tr>
+            {% endfor %}
+            <tr id="totals">
+                <td colspan="4" class="text-end">Total expenses:</td>
+                <td><input id="total1" name="total1" type="text" class="form-control" placeholder="0" value="{{ request.total1|floatformat:"-0" }}" readonly></td>
+                <td><input id="total2" name="total2" type="text" class="form-control" placeholder="0" value="{{ request.total2|floatformat:"-0" }}" readonly></td>
+                <td><input id="total3" name="total3" type="text" class="form-control" placeholder="0" value="{{ request.total3|floatformat:"-0" }}" readonly></td>
+            </tr>
+            <tr id="advance">
+                <td colspan="4" class="text-end">Advance value:</td>
+                <td><input id="advanceTotal1" name="advanceTotal1" type="text" class="form-control" placeholder="0" value="{{ request.advance_total1|floatformat:"-0" }}" readonly></td>
+                <td><input id="advanceTotal2" name="advanceTotal2" type="text" class="form-control" placeholder="0" value="{{ request.advance_total2|floatformat:"-0" }}" readonly></td>
+                <td><input id="advanceTotal3" name="advanceTotal3" type="text" class="form-control" placeholder="0" value="{{ request.advance_total3|floatformat:"-0" }}" readonly></td>
+            </tr>
+            <tr id="employeeBalance">
+                <td colspan="4" class="text-end">Balance in favor of the employee:</td>
+                <td><input id="employeeBalance1" name="employeeBalance1" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance1|floatformat:"-0" }}" readonly></td>
+                <td><input id="employeeBalance2" name="employeeBalance2" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance2|floatformat:"-0" }}" readonly></td>
+                <td><input id="employeeBalance3" name="employeeBalance3" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance3|floatformat:"-0" }}" readonly></td>
+            </tr>
+            <tr id="icesiBalance">
+                <td colspan="4" class="text-end">Balance in favor of ICESI:</td>
+                <td><input id="icesiBalance1" name="icesiBalance1" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance1|floatformat:"-0" }}" readonly></td>
+                <td><input id="icesiBalance2" name="icesiBalance2" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance2|floatformat:"-0" }}" readonly></td>
+                <td><input id="icesiBalance3" name="icesiBalance3" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance3|floatformat:"-0" }}" readonly></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Authorization -->
+
+    <p class="text-center">
+        <i>Autorizo que el saldo a favor de la Universidad Icesi, sea descontado en una sola cuota en el siguiente pago de nómina: <strong>Sí</strong></i>
+    </p>
+
+    {% include 'internalFormBlocks/signblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Bank data -->
+
+    {% include 'internalFormBlocks/bankblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Observations -->
+
+    <div class="mb-2 mt-3">
+        <label for="observations" class="h5"><strong>Observaciones</strong></label>
+    </div>
+
+    <div>
+        <textarea class="form-control" id="observations" name="observations" rows="3" readonly>{{ request.observations }}</textarea>
+    </div>
+</form>
+
+<script src="../../static/forms/js/travel_expense_legalization.js"></script>
+
+{% endblock %}

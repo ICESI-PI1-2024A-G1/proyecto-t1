@@ -1,37 +1,3 @@
-/**
- * Changes the status of a request.
- *
- * @param {number} id - The ID of the request to change status for.
- */
-const changeStatus = id => {
-    var csrftoken = $('[name=csrfmiddlewaretoken]').val();
-    var newStatus = $('#newStatusSelect').val();
-    var reason = $('#reasonTextarea').val();
-    if (reason === '') {
-        alert('Debe ingresar un motivo para cambiar el estado de la solicitud.');
-        return;
-    } else if (reason.length > 70) {
-        alert('El motivo no debe superar los 70 caracteres.');
-        return;
-    }
-    $.ajax({
-        url: '/requests/change-status/' + id,
-        method: 'POST',
-        data: {
-            newStatus: newStatus,
-            reason: reason,
-            csrfmiddlewaretoken: csrftoken
-        },
-        success: function (response) {
-            location.reload();
-        },
-        error: function () {
-            alert('Error al cambiar el estado de la solicitud.');
-        }
-    });
-    $('#detailsModal').modal('hide');
-}
-
 $(document).ready(function () {   
     /**
      * Initializes DataTable with the given table ID and handles search functionality.

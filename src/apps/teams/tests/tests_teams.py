@@ -146,7 +146,6 @@ class TeamTestCase(TestCase):
         """
         Test displaying teams and assert that default names are set.
         """
-        self.user.is_staff = True
         self.user.is_superuser = True
         self.user.save()
         response = self.client.get(reverse("teams:show_teams"))
