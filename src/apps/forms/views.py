@@ -126,8 +126,11 @@ def travel_expense_legalization(request):
             # Save the GeneralData object
             travel_legalization.save()
 
-            for i in range(4):
+            i = 0
+            while f'category_{i}' in form_data:
+                # Create a new ExpenseDetail object
                 expense_detail = TravelExpenseLegalization_Table()
+                
                 expense_detail.travel_info = travel_legalization
                 expense_detail.category = form_data['category_' + str(i)]
                 expense_detail.provider = form_data['provider_' + str(i)]
@@ -137,6 +140,8 @@ def travel_expense_legalization(request):
                 expense_detail.dollars = form_data['dollars_' + str(i)]
                 expense_detail.euros = form_data['euros_' + str(i)]
                 expense_detail.save()
+            
+                i += 1
 
             messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
             return render(request, "userForms/travel_expense_legalization.html", {"today": today})

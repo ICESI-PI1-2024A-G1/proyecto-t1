@@ -74,6 +74,7 @@ Requisition.objects.all().delete()
 
 # Create superuser
 
+admin = None
 if not User.objects.filter(id=0).exists():
     admin = User.objects.create_user(
         id=os.getenv("ADMIN_PASSWORD"),
@@ -89,8 +90,9 @@ if not User.objects.filter(id=0).exists():
 
 
 # Create users
+users_amount = 15
 users = []
-for _ in range(10):
+for _ in range(users_amount):
     id = str(random.randint(1000000, 99999999))
     first_name = fake.first_name()
     last_name = fake.last_name()
@@ -105,16 +107,22 @@ for _ in range(10):
         first_name=first_name,
         last_name=last_name,
     )
-    print(f"User created: {user.username}")
     users.append(user)
+print(f"Generated {users_amount} users")
 
 
 # Create teams, leaders and add members
-names = ["Contabilidad", "Lógistica", "Programacion académica", "Contratación"]
 teams = []
 leaders = []
-for i in range(4):
-    name = names[i]
+formTypes = [
+    "Legalización de Anticipos",
+    "Cuenta de Cobro",
+    "Requisición",
+    "Solicitud de Viaje",
+    "Legalización de Gastos de Viaje",
+]
+for i in range(5):
+    name = formTypes[i]
     description = fake.text(max_nb_chars=100)
     leader = random.choice(
         User.objects.exclude(id__in=[leader.id for leader in leaders])
@@ -123,7 +131,10 @@ for i in range(4):
     leader.is_leader = True
     leader.save()
     leaders.append(leader)
-    team = Team.objects.create(name=name, description=description, leader=leader)
+    formType = formTypes[i]
+    team = Team.objects.create(
+        name=name, description=description, leader=leader, typeForm=formType
+    )
 
     # Seleccionar miembros para el equipo (excluyendo al líder)
     team_members = random.sample(
@@ -139,7 +150,6 @@ for i in range(4):
 
     teams.append(team)
 
-    # Create Requests and Traceability
 
 faculty = [
     "Ciencias Administrativas y económicas",
@@ -263,6 +273,9 @@ documents = [
     "Requisición",
 ]
 
+
+requestStatus = ["PENDIENTE", "EN REVISIÓN", "DEVUELTO", "RECHAZADO"]
+
 for i in range(10):
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
     final_date = initial_date + timedelta(days=random.randint(1, 30))
@@ -292,27 +305,41 @@ for i in range(10):
 
 t_request = sharepoint_api.get_all_requests()
 t_request = json.loads(t_request.content)
+
 for i in range(len(t_request)):
     user = User.objects.first()
     temp_r = t_request[random.randint(0, len(t_request) - 1)]
     new_id = temp_r["id"]
-    traceability = Traceability.objects.create(
-        modified_by=user,
-        request=new_id,
-        date=fake.date_time_between(start_date="-30d", end_date="+3d"),
-        prev_state=temp_r["status"],
-        new_state=random.choice(status_options),
-    )
+    # traceability = Traceability.objects.create(
+    #     modified_by=user,
+    #     request=new_id,
+    #     date=fake.date_time_between(start_date="-30d", end_date="+3d"),
+    #     prev_state=temp_r["status"],
+    #     new_state=random.choice(requestStatus),
+    # )
 
-requestStatus = ["PENDIENTE", "EN REVISIÓN", "DEVUELTO", "RECHAZADO"]
+
+def generate_traceability(id):
+    for _ in range(fake.random_int(min=3, max=10)):
+        Traceability.objects.create(
+            modified_by=random.choice(User.objects.all()),
+            request=id,
+            date=fake.date_time_between(start_date="-30d", end_date="+3d"),
+            prev_state=random.choice(requestStatus),
+            new_state=random.choice(requestStatus),
+            reason=fake.text(),
+        )
 
 
 def create_fake_travel_request():
     expenses_dict = {
-        "transportation": fake.random_int(min=50, max=500),
-        "accommodation": fake.random_int(min=100, max=1000),
-        "meals": fake.random_int(min=20, max=200),
-        "other": fake.random_int(min=0, max=300),
+        "airportTransport": fake.random_int(min=50, max=500),
+        "localTransport": fake.random_int(min=100, max=1000),
+        "food": fake.random_int(min=20, max=200),
+        "accomodation": fake.random_int(min=0, max=300),
+        "exitTaxes": fake.random_int(min=0, max=300),
+        "others": fake.random_int(min=0, max=300),
+        "total": fake.random_int(min=0, max=300),
     }
 
     request = TravelAdvanceRequest(
@@ -327,13 +354,13 @@ def create_fake_travel_request():
         departure_date=fake.date_between(start_date="+1d", end_date="+60d"),
         return_date=fake.date_between(start_date="+61d", end_date="+120d"),
         travel_reason=fake.sentence(nb_words=6),
-        currency=fake.currency_code(),
+        currency=fake.random.choice(["dollars", "euros", "No"]),
         signature_status=fake.random_element(
             elements=("Pendiente", "Aprobada", "Rechazada")
         ),
         bank=random.choice(banks),
         account_type=fake.random_element(elements=("Savings", "Checking")),
-        account_number=fake.iban(),
+        account_number=fake.random_int(min=100000000, max=999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
     )
@@ -341,6 +368,7 @@ def create_fake_travel_request():
     with transaction.atomic():
         request.id = get_next_id()
     request.save()
+    generate_traceability(request.id)
 
 
 def create_fake_travel_expense_legalization():
@@ -371,13 +399,14 @@ def create_fake_travel_expense_legalization():
         signature_status=fake.boolean(),
         bank=random.choice(banks),
         account_type=fake.random_element(elements=("Savings", "Checking")),
-        account_number=fake.iban(),
+        account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
     )
     with transaction.atomic():
         travel_expense.id = get_next_id()
     travel_expense.save()
+    generate_traceability(travel_expense.id)
 
     # Crear varias entradas de ejemplo para TravelExpenseLegalization_Table asociadas
     for _ in range(
@@ -394,6 +423,7 @@ def create_fake_travel_expense_legalization():
             euros=fake.random_int(min=50, max=500),
         )
         travel_info.save()
+        generate_traceability(travel_info.id)
 
 
 def create_fake_advance_legalization():
@@ -413,13 +443,14 @@ def create_fake_advance_legalization():
         signature_status=fake.boolean(),
         bank=random.choice(banks),
         account_type=fake.random_element(elements=("Savings", "Checking")),
-        account_number=fake.iban(),
+        account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
     )
     with transaction.atomic():
         advance_legalization.id = get_next_id()
     advance_legalization.save()
+    generate_traceability(advance_legalization.id)
 
     # Crear varias entradas de ejemplo para AdvanceLegalization_Table asociadas
     for _ in range(
@@ -445,9 +476,9 @@ def create_fake_billing_account():
         status=fake.random.choice(requestStatus),
         value=fake.random_int(min=100, max=1000),
         concept_reason=fake.sentence(),
-        retention=fake.word(),
-        tax_payer=fake.word(),
-        resident=fake.word(),
+        retention=fake.random.choice(["yes", "no"]),
+        tax_payer=fake.random.choice(["yes", "no"]),
+        resident=fake.random.choice(["yes", "no"]),
         request_city=fake.city(),
         address=fake.address(),
         phone_number=fake.phone_number(),
@@ -456,13 +487,14 @@ def create_fake_billing_account():
         ),
         bank=random.choice(banks),
         account_type=fake.random_element(elements=("Savings", "Checking")),
-        account_number=fake.iban(),
+        account_number=fake.random_int(min=100000000, max=9999999999),
         cex_number=fake.random_number(digits=8),
         team_id=fake.random_int(min=1, max=10),
     )
     with transaction.atomic():
         billing_account.id = get_next_id()
     billing_account.save()
+    generate_traceability(billing_account.id)
 
 
 def create_fake_requisition():
@@ -481,13 +513,14 @@ def create_fake_requisition():
         signature_status=fake.boolean(),
         bank=random.choice(banks),
         account_type=fake.random_element(elements=("Savings", "Checking")),
-        account_number=fake.iban(),
+        account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
     )
     with transaction.atomic():
         requisition.id = get_next_id()
     requisition.save()
+    generate_traceability(requisition.id)
 
 
 form_amount = 10

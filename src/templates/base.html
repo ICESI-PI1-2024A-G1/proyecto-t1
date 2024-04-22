@@ -145,7 +145,7 @@
     
                 <div class="navbar-nav-right d-flex align-items-center text-center" id="navbar-collapse">
                     <div class="mx-auto nav-item d-flex align-items-center fs-5">
-                      ¡Bienvenido, {{user.username}}!
+                      ¡Bienvenid@, {{user.first_name}} {{user.last_name}}!
                     </div>
                 </div>
                 <div class="navbar-nav align-items-xr-center ">
@@ -228,6 +228,7 @@
         <!-- <script src="{% static 'general/js/vendor/datatables.js' %}"></script> -->
         <!-- <script src="{% static 'general/js/vendor/forms-basic-inputs.js' %}"></script> -->
         <!-- <script src="{% static 'general/js/vendor/ui-modals.js' %}"></script> -->
+        <script src="{% static 'general/js/vendor/ui-toasts.js' %}"></script> 
         <script src="{% static 'general/js/vendor/ui-popover.js' %}"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
         <!-- datatables -->
@@ -236,5 +237,21 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
         <script src="https://cdn.datatables.net/v/bs5/dt-2.0.3/b-3.0.1/b-html5-3.0.1/datatables.min.js"></script>
           
+        {% if messages %}
+            {% for message in messages %}
+            <script>
+            $(document).ready(function () {
+                showToast("{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}", "bottom-right", "{% if message.tags == 'error' %}Error{% else %}Éxito{% endif %}", "{{message}}")
+            })
+            </script>
+            {% endfor %}
+          {% elif message %}
+            <script>
+              $(document).ready(function () {
+                showToast("danger", "bottom-right", "Error", "{{message}}")
+              })
+            </script>
+          {% endif %}  
+
       </body>
 </html>

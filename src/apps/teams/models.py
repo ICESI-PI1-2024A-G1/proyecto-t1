@@ -31,6 +31,7 @@ class Team(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="leading_team"
     )
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
+    typeForm = models.CharField(max_length=100, default="")
 
     def __str__(self):
         return self.name

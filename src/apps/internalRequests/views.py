@@ -2,8 +2,9 @@ from itertools import chain
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
-from django.shortcuts import render
-from django.http import Http404, JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import Http404, JsonResponse
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 from apps.forms.models import *
 from apps.internalRequests.models import Traceability
@@ -18,6 +19,8 @@ statusMap = {
     "DEVUELTO": "warning",
     "RECHAZADO": "danger",
 }
+
+User = get_user_model()
 
 
 # This function is used to get the request by its id
@@ -373,10 +376,13 @@ def show_traceability(request, request_id):
     - render: Renders the HTML template with traceability information.
     """
     traceability = Traceability.objects.filter(request=request_id)
+    for t in traceability:
+        t.prev_color = statusMap[t.prev_state]
+        t.new_color = statusMap[t.new_state]
+    traceability = traceability[::-1]
     return render(request, "show-traceability.html", {"traceability": traceability})
 
 
-'''
 @csrf_exempt
 @login_required
 def assign_request(request, request_id):
@@ -399,12 +405,29 @@ def assign_request(request, request_id):
     - redirect: Redirects to the requests page after assignment.
     """
     curr_request = get_request_by_id(request_id)
+    if isinstance(curr_request, AdvanceLegalization):
+        form_type = "Legalización de Anticipos"
+    elif isinstance(curr_request, BillingAccount):
+        form_type = "Cuenta de Cobro"
+    elif isinstance(curr_request, Requisition):
+        form_type = "Requisición"
+    elif isinstance(curr_request, TravelAdvanceRequest):
+        form_type = "Solicitud de Viaje"
+    elif isinstance(curr_request, TravelExpenseLegalization):
+        form_type = "Legalización de Gastos de Viaje"
+    else:
+        form_type = None
+
     if request.method == "GET":
-        teams = Team.objects.filter(leader=request.user)
-        if len(teams):
-            users = teams[0].members.all()
+        if form_type is not None:
+            teams = Team.objects.filter(typeForm=form_type)
+            if len(teams):
+                users = teams[0].members.all()
+            else:
+                users = []
         else:
             users = []
+
         return render(
             request, "assign-request.html", {"users": users, "request": curr_request}
         )
@@ -412,11 +435,9 @@ def assign_request(request, request_id):
         try:
             user_id = request.POST["user_id"]
             manager = get_object_or_404(User, pk=user_id)
-            curr_request["manager"] = manager
-            teams = Team.objects.filter(leader=request.user)
-            team = teams[0].id if teams.exists() else ""
-            curr_request["team"] = team
-            sharepoint_api.update_data(request_id, curr_request)
+            curr_request.member_name = manager.first_name + " " + manager.last_name
+            curr_request.save()
+            teams = Team.objects.filter(typeForm=form_type)
             try:
                 utils.send_verification_email(
                     request,
@@ -426,8 +447,8 @@ def assign_request(request, request_id):
                     f"Hola, como miembro del equipo {teams[0].name}, el líder {manager.first_name} {manager.last_name} le ha asignado una nueva solicitud en el Sistema de Contabilidad",
                 )
             except:
-                print("El destino no se encontró")                
+                print("El destino no se encontró")
         except Exception as e:
             print(e)
+        messages.success(request, "La solicitud ha sido asignada exitosamente.")
         return redirect("/requests/")
-'''

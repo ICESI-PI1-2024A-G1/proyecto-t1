@@ -20,10 +20,14 @@
                     {{ trace.reason }}
                 </td>
                 <td>
-                    {{ trace.prev_state }}        
+                    <div class="badge bg-label-{{trace.prev_color}} ">
+                        <p id="prev_{{ trace.id }}" class="text-wrap mb-0 lh-sm">{{ trace.prev_state }}</p>
+                    </div>    
                 </td>
                 <td>
-                    {{ trace.new_state }}        
+                    <div class="badge bg-label-{{trace.new_color}} ">
+                        <p id="new_{{ trace.id }}" class="text-wrap mb-0 lh-sm">{{ trace.new_state }}</p>
+                    </div>      
                 </td>
             </tr>
             {% endfor %}

@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 class Traceability(models.Model):
     """
     Class: Traceability
