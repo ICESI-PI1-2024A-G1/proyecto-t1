@@ -4,7 +4,7 @@ $(document).ready(function () {
      *
      * @param {string} tableId - The ID of the table to initialize DataTable on.
      */ 
-    DataTableInit("requestsTable")
+    DataTableInit("requestsTable", 6)
     $("#performSearchButton").on('click', function () {
         var query = $("#searchBar").val() || '';
         $.ajax({

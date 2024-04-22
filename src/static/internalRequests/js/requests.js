@@ -23,16 +23,8 @@ const changeStatus = id => {
             csrfmiddlewaretoken: csrftoken
         },
         success: function (response) {
-            $('#status_' + id).text(newStatus);
-            if (response.message) {
-                alert(response.message);
-            } else if (response.error) {
-                alert(response.error);
-            }
+            location.reload()
         },
-        error: function () {
-            alert('Error al cambiar el estado de la solicitud.');
-        }
     });
     $('#detailsModal').modal('hide');
 }
@@ -43,7 +35,7 @@ $(document).ready(function () {
      *
      * @param {string} tableId - The ID of the table to initialize DataTable on.
      */ 
-    DataTableInit("requestsTable")
+    DataTableInit("requestsTable", 6)
     $("#performSearchButton").on('click', function () {
         var query = $("#searchBar").val() || '';
         $.ajax({

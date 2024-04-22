@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from api.sharepoint_api import SharePointAPI
 import os
+from django.contrib import messages
 from django.conf import settings
 
 EXCEL_FILE_PATH = os.path.join(
@@ -73,8 +74,16 @@ def add_team(request):
         form = TeamForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Equipo agregado con éxito")
             return redirect("/teams/")
         else:
+            error_messages = "\n".join(
+                [
+                    f"{field}: {', '.join(errors)}"
+                    for field, errors in form.errors.items()
+                ]
+            )
+            messages.error(request, error_messages)
             return render(request, "add-team.html", {"form": form})
 
 
@@ -104,8 +113,16 @@ def edit_team(request, team_id):
         form = TeamForm(request.POST, instance=team)
         if form.is_valid():
             form.save()
+            messages.success(request, "Equipo editado con éxito")
             return redirect("/teams/")
         else:
+            error_messages = "\n".join(
+                [
+                    f"{field}: {', '.join(errors)}"
+                    for field, errors in form.errors.items()
+                ]
+            )
+            messages.error(request, error_messages)
             return render(request, "edit-team.html", {"form": form})
 
 
@@ -131,6 +148,7 @@ def delete_team(request, team_id):
         team = get_object_or_404(Team, id=team_id)
         team.delete()
         sharepoint_api.remove_team(team_id)
+        messages.success(request, "Equipo eliminado con éxito")
         return JsonResponse(
             {"message": f"El equipo {team_id} ha sido eliminado correctamente"}
         )

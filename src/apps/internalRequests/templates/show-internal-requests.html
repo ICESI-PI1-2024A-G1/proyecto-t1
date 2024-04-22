@@ -7,20 +7,6 @@
     <div class="card">
         <div class="card-header pb-0">
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% elif message %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{message}}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endif %}
-            
             {% if not no_permission %}
             <div class="input-group mb-3">
                 <input type="text" id="requestsTableSearch" class="form-control" aria-label="Sizing example input"
@@ -46,10 +32,7 @@
                                 <th>Solicitante</th>
                                 <th>Gestor</th>
                                 <th>Estado</th>
-                                <th>Detalles</th>
-                                {% if user.is_superuser or user.is_leader %}
                                 <th>Acciones</th>
-                                {% endif %}
                             </tr>
                         </thead>
                         <tbody>
@@ -67,36 +50,43 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <p id="status_{{ request.id }}">{{ request.status }}</p>
+                                    <div class="badge bg-label-{{request.status_color}} ">
+                                        <p id="status_{{ request.id }}" class="text-wrap mb-0 lh-sm">{{ request.status }}</p>
+                                    </div>
                                 </td>
                                 <td>
-                                <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}', 'xl')"
-                                    class="btn details-btn" data-request-id="{{ request.id }}">
-                                    Revisar
-                                    <i class="mx-2 fa fa-info"></i>
-                                </button>
-                                <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
-                                    class="btn details-btn text-primary">
-                                    Cambios
-                                    <i class="mx-2 fa fa-eye"></i>
-                                </button>
-                            </td>
-                                {% if user.is_superuser or user.is_leader %}
-                                <td>
-                                    {% if user.is_superuser or user.is_leader or user.is_member %}
-                                        <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
-                                                class="btn details-btn " data-request-id="{{ request.id }}">
-                                            Asignar
-                                            <i class="mx-2 fa fa-user-plus"></i>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                          <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
-                                    {% endif %}
-                                    <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
-                                        class="btn text-success" data-request-id="{{ request.id }}">
-                                        Cambiar Estado
-                                        <i class="mx-2 fa fa-edit"></i>
-                                    </button>
+                                        <div class="dropdown-menu">
+                                            <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}', 'xl')"
+                                                class="dropdown-item details-btn" data-request-id="{{ request.id }}">
+                                                <i class="mr-2 fa fa-info"></i>
+                                                Revisar
+                                            </button>
+                                            <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
+                                                class="dropdown-item details-btn">
+                                                <i class="mr-2 fa fa-eye"></i>
+                                                Cambios
+                                            </button>
+                                            {% if user.is_superuser or user.is_leader %}
+                                                {% if user.is_superuser or user.is_leader or user.is_member %}
+                                                <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
+                                                        class="dropdown-item details-btn " data-request-id="{{ request.id }}">
+                                                        <i class="mr-2 fa fa-user-plus"></i>
+                                                        Asignar
+                                                    </button>
+                                                {% endif %}
+                                                <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
+                                                    class="dropdown-item" data-request-id="{{ request.id }}">
+                                                    <i class="mr-2 fa fa-edit"></i>
+                                                    Cambiar Estado
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </td>
-                                {% endif %}
                             </tr>
                             {% endfor %}
                         </tbody>
