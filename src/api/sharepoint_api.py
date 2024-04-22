@@ -1,8 +1,15 @@
+from datetime import datetime
+from io import BytesIO
 import os
 from openpyxl import Workbook
 import pandas as pd
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from openpyxl import load_workbook
+from django.conf import settings
+from openpyxl.styles import Alignment
+import xlwings as xw
+import tempfile
 
 
 class SharePointAPI:
@@ -29,7 +36,6 @@ class SharePointAPI:
             "phone_number",
             "email",
             "CENCO",
-            "reason",
             "bank",
             "account_type",
             "health_provider",
@@ -277,3 +283,89 @@ class SharePointAPI:
                 status=500,
                 safe=False,
             )
+
+    def get_form_render(self, form_name=None, excel_file=None):
+        try:
+            if excel_file:
+                content = excel_file.read()
+                wb = load_workbook(filename=BytesIO(content))
+            else:
+                excel_file_path = os.path.join(self.excel_path, form_name)
+                wb = load_workbook(excel_file_path)
+            sheet = wb.active
+            data = []
+
+            # Obtener información sobre celdas combinadas
+            merged_cells_ranges = sheet.merged_cells.ranges
+            merged_cells_map = {}  # Mapa para rastrear las celdas combinadas
+            spans_map = {}
+
+            for merged_range in merged_cells_ranges:
+                min_row, min_col, max_row, max_col = (
+                    merged_range.min_row,
+                    merged_range.min_col,
+                    merged_range.max_row,
+                    merged_range.max_col,
+                )
+                spans_map[(min_row, min_col)] = (
+                    max_row - min_row + 1,
+                    max_col - min_col + 1,
+                )
+                for row in range(min_row, max_row + 1):
+                    for col in range(min_col, max_col + 1):
+                        merged_cells_map[(row, col)] = (min_row, min_col)
+
+            for row in sheet.iter_rows(values_only=False):
+                row_data = []
+                for cell in row:
+                    row_idx, col_idx = cell.row, cell.column
+                    display = True
+                    row_span = col_span = 1
+                    if (row_idx, col_idx) in merged_cells_map:
+                        # Si la celda está combinada, usar el valor de la celda de origen
+                        origin_row, origin_col = merged_cells_map[(row_idx, col_idx)]
+                        is_origin = row_idx == origin_row and col_idx == origin_col
+                        row_idx = origin_row
+                        col_idx = origin_col
+                        if not is_origin:
+                            display = False
+                    if (row_idx, col_idx) in spans_map:
+                        row_span, col_span = spans_map[(row_idx, col_idx)]
+                    row_data.append(
+                        {
+                            "value": cell.value if cell.value is not None else "",
+                            "row_span": row_span,
+                            "col_span": col_span,
+                            "row_idx": row_idx,
+                            "col_idx": col_idx,
+                            "display": display,
+                        }
+                    )
+                data.append(row_data)
+            return JsonResponse(data, status=200, safe=False)
+        except FileNotFoundError:
+            raise Http404("El archivo no se encontró")
+
+    def fill_form(self, excel_file, form_fields):
+        wb = xw.Book(excel_file.path)
+        wb.app.visible = False
+        sheet = wb.sheets[0]
+
+        for field in form_fields:
+            row_idx = int(field["row_idx"])
+            col_idx = int(field["col_idx"])
+            cell_value = field["value"]
+            cell = sheet.cells(row_idx, col_idx)
+            cell.value = cell_value
+            cell.api.HorizontalAlignment = -4108
+            cell.api.VerticalAlignment = -4108
+
+        curr_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        output_path = os.path.join(settings.MEDIA_ROOT, "filled_forms")
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+        output_file_path = os.path.join(output_path, f"filled-{curr_date}.xlsx")
+        wb.save(output_file_path)
+        wb.close()
+
+        return output_file_path

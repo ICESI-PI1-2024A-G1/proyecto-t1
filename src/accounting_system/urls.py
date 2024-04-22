@@ -16,19 +16,21 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("", include("apps.login.urls")),
-    path("requests/", include("apps.requests.urls")),
+    path("sharepoint/", include("apps.requests.urls")),
+    path("requests/", include("apps.internalRequests.urls")),
     path("teams/", include("apps.teams.urls")),
     path("registration/", include("apps.registration.urls")),
     path("emailContact/", include("apps.emailContact.urls")),
     path("permissions/", include("apps.permissions.urls")),
+    path("forms/", include("apps.forms.urls")),
     path("error/", include("apps.errorHandler.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

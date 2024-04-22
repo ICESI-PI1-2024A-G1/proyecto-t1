@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-from apps.requests.models import Requests
 from .models import Team
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -43,7 +42,7 @@ def show_teams(request):
         - If the user is staff, all teams are displayed.
         - If the user is not staff, only teams led by the user are displayed.
     """
-    if request.user.is_staff:
+    if request.user.is_superuser:
         teams = Team.objects.all()
     else:
         teams = Team.objects.filter(leader_id=request.user.id)

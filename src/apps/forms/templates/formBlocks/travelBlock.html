@@ -1,0 +1,25 @@
+<div class="mb-2 mt-3">
+    <label class="h5"><strong>Viaje</strong></label>
+</div>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="destinationCity">Ciudad de destino</label>
+            <input type="text" class="form-control" id="destinationCity" name="destinationCity" value="{{ form_data.destinationCity }}" required>
+        </div>
+        <div class="form-group">
+            <label for="departureDate">Fecha de salida</label>
+            <input type="date" class="form-control" id="departureDate" name="departureDate" value="{{ form_data.departureDate }}" required>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="returnDate">Fecha de regreso</label>
+            <input type="date" class="form-control" id="returnDate" name="returnDate" value="{{ form_data.returnDate }}" required>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label for="travelReason">Motivo del viaje</label>
+    <textarea class="form-control" id="travelReason" name="travelReason" rows="3" required>{{ form_data.travelReason }}</textarea>
+</div>

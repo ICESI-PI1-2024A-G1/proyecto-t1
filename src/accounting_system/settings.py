@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_DIR = BASE_DIR / "static"
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -46,11 +47,14 @@ INSTALLED_APPS = [
     "apps.login",
     "apps.registration",
     "apps.requests",
+    "apps.internalRequests",
     "apps.teams",
     "apps.errorHandler",
     "apps.permissions",
     "apps.emailContact",
+    "apps.forms",
     "utils",
+    "sass_processor",
 ]
 
 MIDDLEWARE = [
@@ -102,7 +106,15 @@ EXCEL_FILE_PATH_TEST = os.path.join(
     "emulation",
     "requests_test_database.xlsx",
 )
+EXCEL_FORMS_PATH = os.path.join(
+    BASE_DIR,
+    "static",
+    "forms",
+    "templates",
+)
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -160,6 +172,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+SASS_PROCESSOR_ROOT = STATIC_ROOT
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -168,6 +181,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STATICFILES_DIRS = [
     STATIC_DIR,
+]
+
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "sass_processor.finders.CssFinder",
 ]
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

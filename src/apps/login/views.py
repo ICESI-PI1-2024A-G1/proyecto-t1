@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
-from apps.requests import views
 from django.contrib import messages
 import utils.utils as utils
 
@@ -31,7 +30,10 @@ def login_view(request):
         request.session["has_logged"] = False
         request.session["has_requested_password"] = False
         if request.user.is_authenticated and request.GET.get("logout") != "true":
-            return redirect("/requests")
+            if request.user.is_superuser or request.user.is_leader:
+                return redirect("/sharepoint")
+            else:
+                return redirect("/requests")
         else:
             if request.GET.get("logout") == "true":
                 logout(request)
@@ -45,12 +47,18 @@ def login_view(request):
             )
 
             if user is not None:
+                if user.is_none:
+                    return render(
+                        request,
+                        "login.html",
+                        {"message": "Usuario no autorizado. Comuníquese con el administrador."},
+                    )
                 request.session["user_id"] = user.id
 
                 # Generate random code
                 random_code = utils.generate_random_code()
                 request.session["random_code"] = random_code
-                # print("Code: " + random_code)
+                print("Code: " + random_code)
 
                 # Send verification email
                 utils.send_verification_email(
@@ -92,7 +100,7 @@ def verify_email_view(request):
 
     Returns:
         GET: Rendered verification page.
-        POST: Redirects to '/requests/' if verification is successful; else, renders the verification page with an error message.
+        POST: Redirects to '/sharepoint/' if verification is successful; else, renders the verification page with an error message.
     """
     context = {"form_action": "login:verifyEmail_view"}
     if request.method == "GET":
@@ -100,7 +108,13 @@ def verify_email_view(request):
             return render(request, "verifyEmailLog.html", context)
         else:
             if request.user.is_authenticated:
-                return redirect("/requests/")
+                if request.user.is_superuser or request.user.is_leader:
+                    if request.user.is_superuser or request.user.is_leader:
+                        return redirect("/sharepoint")
+                    else:
+                        return redirect("/requests")
+                else:
+                    return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:
@@ -110,7 +124,10 @@ def verify_email_view(request):
             backend = "django.contrib.auth.backends.ModelBackend"
             user.backend = backend
             login(request, user)
-            return redirect("/requests/")
+            if request.user.is_superuser or request.user.is_leader:
+                return redirect("/sharepoint")
+            else:
+                return redirect("/requests")
         else:
             messages.error(request, "Código de verificación incorrecto.")
             return render(request, "verifyEmailLog.html", context)
@@ -189,11 +206,14 @@ def verify_email_reset_view(request):
             return render(request, "verifyEmailLog.html", context)
         else:
             if request.user.is_authenticated:
-                return redirect("/requests")
+                if request.user.is_superuser or request.user.is_leader:
+                    return redirect("/sharepoint")
+                else:
+                    return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:
-        if request.POST["verificationCode"] == request.session.get("random_code"):
+        if request.POST.get("verificationCode") == request.session.get("random_code"):
             return redirect("login:change_password_view")
         else:
             messages.error(request, "Código de verificación incorrecto.")
@@ -219,7 +239,10 @@ def change_password_view(request):
             return render(request, "change_password.html")
         else:
             if request.user.is_authenticated:
-                return redirect("/requests")
+                if request.user.is_superuser or request.user.is_leader:
+                    return redirect("/sharepoint")
+                else:
+                    return redirect("/requests")
             else:
                 return redirect("login:login_view")
     else:

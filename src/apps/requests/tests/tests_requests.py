@@ -44,7 +44,7 @@ class RequestViewTest(TestCase):
             email="test@example.com",
             first_name="admin",
             password="password",
-            is_staff=True,
+            is_leader=True,
         )
         self.client.login(id="admin", password="password")
         self.requests = []
@@ -63,6 +63,15 @@ class RequestViewTest(TestCase):
             initial_date = fake.date_between(start_date="-30d", end_date="+4d")
             final_date = initial_date + timedelta(days=random.randint(1, 30))
 
+            documents = [
+            "Cuenta de cobro", 
+            "Legalizacion", 
+            "Anticipo", 
+            "Viatico", 
+            "Factura", 
+            "Factura CEX"
+            ]
+
             data = {
                 "status": random.choice(status_options),
                 "manager": self.user.__str__() if i < 5 else fake.first_name(),
@@ -71,7 +80,7 @@ class RequestViewTest(TestCase):
                 "final_date": final_date.strftime("%d-%m-%Y"),
                 "fullname": fake.name(),
                 "faculty": fake.company(),
-                "document": fake.random_number(digits=10),
+                "document": random.choice(documents),
                 "phone_number": fake.phone_number(),
                 "email": fake.email(),
                 "CENCO": fake.word(),
@@ -102,7 +111,7 @@ class RequestViewTest(TestCase):
         """
         Test case for displaying requests by a non-admin user.
         """
-        self.user.is_staff = False
+        self.user.is_superuser = False
         self.user.save()
         response = self.client.get(reverse("requests:show_requests"))
         user_requests = [
@@ -280,3 +289,35 @@ class RequestViewTest(TestCase):
             response, f"/logout/?next=/requests/show-traceability/{curr_request["id"]}", 302
         )
         self.assertTemplateUsed("login:login.html")
+
+    def test_correct_document_values(self):
+        """
+        Test case to verify that first request has a valid document value.
+        """
+        documents = [
+            "Cuenta de cobro", 
+            "Legalizacion", 
+            "Anticipo", 
+            "Viatico", 
+            "Factura", 
+            "Factura CEX"
+        ]
+        curr_request = self.requests[0]
+        result = any(curr_request["document"].lower() == elemento.lower() for elemento in documents)
+        self.assertTrue(result)
+
+    def test_correct_all_document_values(self):
+        """
+        Test case to verify that all requests have a valid document value.
+        """
+        documents = [
+            "Cuenta de cobro", 
+            "Legalizacion", 
+            "Anticipo", 
+            "Viatico", 
+            "Factura", 
+            "Factura CEX"
+        ]
+        for curr_request in self.requests:
+            result = any(curr_request["document"].lower() == elemento.lower() for elemento in documents)
+            self.assertTrue(result, f"Request '{curr_request}' does not have a valid document value.")

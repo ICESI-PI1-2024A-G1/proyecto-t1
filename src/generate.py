@@ -12,7 +12,7 @@ fake = Faker()
 
 import random
 from django.contrib.auth import get_user_model
-from apps.requests.models import Involved, Traceability
+from apps.internalRequests.models import Traceability
 from apps.teams.models import Team
 from datetime import datetime, timedelta
 from api.sharepoint_api import SharePointAPI
@@ -46,7 +46,6 @@ sharepoint_api.clear_db()
 Traceability.objects.all().delete()
 Team.objects.all().delete()
 User.objects.all().delete()
-Involved.objects.all().delete()
 
 # Create superuser
 
@@ -58,9 +57,7 @@ if not User.objects.filter(id=0).exists():
         password=os.getenv("ADMIN_PASSWORD"),
         first_name="Accounting",
         last_name="Admin",
-        is_staff=True,
         is_superuser=True,
-        is_leader=True,
     )
     admin.save()
     print(admin)
@@ -88,10 +85,11 @@ for _ in range(10):
 
 
 # Create teams, leaders and add members
+names = ["Contabilidad", "Lógistica", "Programacion académica","Contratación"]
 teams = []
 leaders = []
-for _ in range(5):
-    name = fake.company()
+for i in range(4):
+    name = names[i]
     description = fake.text(max_nb_chars=100)
     leader = random.choice(
         User.objects.exclude(id__in=[leader.id for leader in leaders])
@@ -106,18 +104,16 @@ for _ in range(5):
     team_members = random.sample(
         [user for user in users if user != leader], random.randint(3, 5)
     )
+
+    # Asignar el permiso de "is_member" a los miembros del equipo
+    for member in team_members:
+        member.is_member = True
+        member.save()
+
     team.members.add(*team_members)
 
     teams.append(team)
 
-
-# Create Involved
-involved = []
-for _ in range(1):
-    email = fake.email()
-    name = fake.name()
-    inv = Involved.objects.create(email=email, name=name)
-    involved.append(inv)
 
 # Create Requests and Traceability
 
@@ -233,6 +229,16 @@ for i in range(10):
         "Seguros del Sur ARL",
         "Protección ARL",
     ]
+
+    documents = [
+        "Cuenta de cobro", 
+        "Legalizacion", 
+        "Anticipo", 
+        "Viatico", 
+        "Factura", 
+        "Factura CEX", 
+        "Requisición"
+    ]
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
     final_date = initial_date + timedelta(days=random.randint(1, 30))
 
@@ -244,11 +250,10 @@ for i in range(10):
         "final_date": final_date.strftime("%d-%m-%Y"),
         "fullname": fake.name(),
         "faculty": random.choice(faculty),
-        "document": fake.random_number(digits=10),
+        "document": random.choice(documents),
         "phone_number": fake.phone_number(),
         "email": fake.email(),
         "CENCO": fake.random_number(digits=5),
-        "reason": fake.text(max_nb_chars=100),
         "bank": random.choice(banks),
         "account_type": random.choice(["Ahorros", "Corriente"]),
         "health_provider": random.choice(eps),
@@ -259,18 +264,3 @@ for i in range(10):
     }
 
     sharepoint_api.create_data(data)
-
-t_request = sharepoint_api.get_all_requests()
-t_request = json.loads(t_request.content)
-for i in range(len(t_request)):
-    user = User.objects.first()
-    temp_r = t_request[random.randint(0, len(t_request) - 1)]
-    new_id = temp_r["id"]
-    traceability = Traceability.objects.create(
-        modified_by=user,
-        request=new_id,
-        date=fake.date_time_between(start_date="-30d", end_date="+3d"),
-        reason=fake.text(max_nb_chars=100),
-        prev_state=temp_r["status"],
-        new_state=random.choice(status_options),
-    )

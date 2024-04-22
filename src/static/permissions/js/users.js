@@ -4,7 +4,7 @@
  * @param {string} tableId - The ID of the table to initialize DataTable on.
  */
 $(document).ready(function () {
-    DataTableInit("usersTable")
+    DataTableInit("usersTable", 6)
      /**
      * Handles click event on the search button.
      *
@@ -25,8 +25,10 @@ $(document).ready(function () {
                                 <td>${item.last_name || ''}</td>
                                 <td>${item.first_name || ''}</td>
                                 <td>${item.email || ''}</td>
-                                <td><input type="checkbox" ${item.is_superuser ? 'disabled' : ''} ${item.is_staff ? 'checked' : ''}></td>
-                                <td><input type="checkbox" ${item.is_superuser ? 'disabled' : ''} ${item.is_leader ? 'checked' : ''}></td>
+                                <td><input type="radio" name="permission_${item.id}" value="is_leader" ${item.is_superuser ? 'disabled' : ''} ${item.is_leader ? 'checked' : ''}></td>
+                                <td><input type="radio" name="permission_${item.id}" value="is_member" ${item.is_superuser ? 'disabled' : ''} ${item.is_member ? 'checked' : ''}></td>
+                                <td><input type="radio" name="permission_${item.id}" value="is_applicant" ${item.is_superuser ? 'disabled' : ''} ${item.is_applicant ? 'checked' : ''}></td>
+                                <td><input type="radio" name="permission_${item.id}" value="is_applicant" ${item.is_superuser ? 'disabled' : ''} ${item.is_none ? 'checked' : ''}></td>
                             </tr>
                         `;
                     tbody.append(fila);
@@ -37,34 +39,23 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-$(document).ready(function () {
     /**
      * Handles click event on the save button.
      *
      * @param {Event} event - The click event object.
      */
     $(document).on('click', '#saveButton', function() {
-        var checkboxes = $('#usersTable tbody input[type="checkbox"]');
+        var radios = $('#usersTable tbody input[type="radio"]:checked');
         var newValues = [];
 
-        checkboxes.each(function() {
-            var checkbox = $(this);
-            var id = checkbox.closest('tr').attr('id').split('_')[1];
-            var isChecked = checkbox.is(':checked');
-            var isDisabled = checkbox.is(':disabled');
-            var isStaff = checkbox.parent().index() === 4;
+        radios.each(function() {
+            var radio = $(this);
+            var id = radio.closest('tr').attr('id').split('_')[1];
+            var permission = radio.val();
 
-            if (!isDisabled) {
-                var newValue = { id: id };
-                if (isStaff) {
-                    newValue.is_staff = isChecked;
-                } else {
-                    newValue.is_leader = isChecked;
-                }
-                newValues.push(newValue);
-            }
+            var newValue = { id: id, permission: permission };
+            newValues.push(newValue);
         });
 
         $.ajax({
