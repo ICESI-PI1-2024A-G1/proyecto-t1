@@ -1,7 +1,7 @@
-const DataTableInit = id => {
+const DataTableInit = (id, pageLength=4) => {
     let dataTable = $(`#${id}`).DataTable({
         "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Todos"]],
-        "pageLength":4,
+        "pageLength":pageLength,
         "language": {
             "url": "/static/general/json/datatables-ES.json"
         },
