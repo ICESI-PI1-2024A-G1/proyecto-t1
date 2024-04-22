@@ -85,7 +85,7 @@
                   </li>
                 {% endif %}
                 
-                {%if user.is_superuser or user.is_leader %}
+                {% if user.is_superuser or user.is_leader %}
                 <li class="menu-item {% if "teams" in request.path %}active open{% endif %}">
                   <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon fa fa-users"></i>

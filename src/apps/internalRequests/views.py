@@ -32,8 +32,8 @@ def show_requests(request):
     """
     Show requests
     """
-    if request.user.is_superuser or request.user.is_leader:
-        if request.user.is_superuser or request.user.is_leader and Team.objects.filter(leader_id=request.user.id).exists():
+    if request.user.is_superuser or request.user.is_leader or request.user.is_member:
+        if request.user.is_superuser or request.user.is_leader or request.user.is_member:
             advance_legalization = [obj.__dict__.update({'document': 'Legalización de Anticipos',
                                                         'initial_date': obj.request_date,
                                                         'fullname': obj.traveler_name,
@@ -59,6 +59,27 @@ def show_requests(request):
                                                         'fullname': obj.traveler_name,
                                                         'final_date': obj.final_date if obj.final_date else 'Por definir',
                                                         'manager': obj.member_name if obj.member_name else 'Por definir'}) or obj for obj in TravelExpenseLegalization.objects.all()]
+            
+            if request.user.is_superuser:
+                requests_data = list(chain(advance_legalization, billing_account, requisition, travel_advance_request, travel_expense_request))
+            elif request.user.is_leader and Team.objects.filter(leader_id=request.user.id).exists():
+                team = Team.objects.get(leader_id=request.user.id)
+                typeForm = team.typeForm if team else None
+                
+                if typeForm == "Legalización de Anticipos":
+                    requests_data = advance_legalization
+                elif typeForm == "Cuenta de Cobro":
+                    requests_data = billing_account
+                elif typeForm == "Requisición":
+                    requests_data = requisition
+                elif typeForm == "Solicitud de Viaje":
+                    requests_data = travel_advance_request
+                elif typeForm == "Legalización de Gastos de Viaje":
+                    requests_data = travel_expense_request
+                    
+            elif request.user.is_member and Team.objects.filter(members=request.user.id).exists():
+                full_name = f"{request.user.first_name} {request.user.last_name}"
+                requests_data = [obj for obj in list(chain(advance_legalization, billing_account, requisition, travel_advance_request, travel_expense_request)) if obj.member_name == full_name]
         else:
             return render(request, "show-internal-requests.html", {"no_permission": True})
     else:
@@ -88,7 +109,7 @@ def show_requests(request):
                                                        'final_date': obj.final_date if obj.final_date else 'Por definir',
                                                        'manager': obj.member_name if obj.member_name else 'Por definir'}) or obj for obj in TravelExpenseLegalization.objects.filter(id_person=request.user.id)]
 
-    requests_data = list(chain(advance_legalization, billing_account, requisition, travel_advance_request, travel_expense_request))
+        requests_data = list(chain(advance_legalization, billing_account, requisition, travel_advance_request, travel_expense_request))
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 

@@ -47,7 +47,7 @@
                                 <th>Gestor</th>
                                 <th>Estado</th>
                                 <th>Detalles</th>
-                                {% if user.is_superuser or user.is_leader %}
+                                {% if user.is_superuser or user.is_leader or user.is_member %}
                                 <th>Acciones</th>
                                 {% endif %}
                             </tr>
@@ -81,9 +81,9 @@
                                     <i class="mx-2 fa fa-eye"></i>
                                 </button>
                             </td>
-                                {% if user.is_superuser or user.is_leader %}
+                                {% if user.is_superuser or user.is_leader or user.is_member %}
                                 <td>
-                                    {% if user.is_superuser or user.is_leader or user.is_member %}
+                                    {% if user.is_superuser or user.is_leader %}
                                         <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
                                                 class="btn details-btn " data-request-id="{{ request.id }}">
                                             Asignar
