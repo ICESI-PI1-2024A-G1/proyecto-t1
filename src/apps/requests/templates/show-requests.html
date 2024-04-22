@@ -48,45 +48,11 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-
-                                    </div> 
-                                </div>
-                                
-
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                      <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        {% if user.is_superuser or user.is_leader %}
-                                        <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
-                                                class="details-btn  dropdown-item" data-request-id="{{ request.id }}">
-                                            <i class="mx-2 fa fa-user-plus"></i>
-                                            Asignar
-                                        </button>
-                                        {% endif %}
-                                        <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
-                                            class="dropdown-item" data-request-id="{{ request.id }}">
-                                            <i class="mx-2 fa fa-edit"></i>
-                                            Cambiar Estado
-                                        </button>
-                                        <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}')"
-                                            class="details-btn  dropdown-item" data-request-id="{{ request.id }}">
-                                            <i class="mx-2 fa fa-info"></i>
-                                            Detalles
-                                        </button>
-                                        <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
-                                            class="details-btn dropdown-item">
-                                            <i class="mx-2 fa fa-eye"></i>
-                                            Cambios
-                                        </button>
-                                    </div>
-                                </div>
+                                <button onclick="showModal('Detalles de la solicitud', '/sharepoint/{{request.id}}')"
+                                    class="btn details-btn" data-request-id="{{ request.id }}">
+                                    Detalles
+                                    <i class="mx-2 fa fa-info"></i>
+                                </button>
                             </td>
                         </tr>
                         {% endfor %}
