@@ -53,7 +53,9 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <p id="status_{{ request.id }}">{{ request.status }}</p>
+                                    <div class="badge bg-label-{{request.status_color}} ">
+                                        <p id="status_{{ request.id }}" class="text-wrap mb-0 lh-sm">{{ request.status }}</p>
+                                    </div>
                                 </td>
                                 <td>
                                 <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}', 'xl')"
