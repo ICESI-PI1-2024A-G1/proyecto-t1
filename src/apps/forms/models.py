@@ -24,6 +24,7 @@ class TravelAdvanceRequest(models.Model):
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
+    signatureInput = models.TextField(null=True, blank=True)
 
     def set_expenses(self, expenses_dict):
         self.expenses = json.dumps(expenses_dict)
@@ -64,6 +65,7 @@ class TravelExpenseLegalization(models.Model):
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
+    signatureInput = models.TextField(null=True, blank=True)
 
 
 class TravelExpenseLegalization_Table(models.Model):
@@ -111,6 +113,7 @@ class AdvanceLegalization(models.Model):
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
+    signatureInput = models.TextField(null=True, blank=True)
 
 
 class AdvanceLegalization_Table(models.Model):
@@ -143,6 +146,7 @@ class BillingAccount(models.Model):
     account_number = models.CharField(max_length=200)
     cex_number = models.CharField(max_length=200)
     team_id = models.IntegerField(default=0)
+    signatureInput = models.TextField(null=True, blank=True)
 
 
 class Requisition(models.Model):
@@ -164,3 +168,4 @@ class Requisition(models.Model):
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
+    signatureInput = models.TextField(null=True, blank=True)

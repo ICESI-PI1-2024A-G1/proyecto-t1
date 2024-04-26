@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -6,6 +7,7 @@ from django.db import transaction
 from datetime import date
 from apps.forms.models import *;
 from django.contrib import messages
+import json
 
 
 # Calculate the next ID for the forms
@@ -63,6 +65,7 @@ def travel_advance_request(request):
             travel_request.account_type = form_data['accountType']
             travel_request.account_number = form_data['accountNumber']
             travel_request.observations = form_data['observations']
+            travel_request.signatureInput= form_data['signatureInput']
             
             # Set the id to the next available id
             with transaction.atomic():
@@ -118,6 +121,7 @@ def travel_expense_legalization(request):
             travel_legalization.account_type = form_data['accountType']
             travel_legalization.account_number = form_data['accountNumber']
             travel_legalization.observations = form_data['observations']
+            travel_legalization.signatureInput= form_data['signatureInput']
             
             # Set the id to the next available id
             with transaction.atomic():
@@ -179,7 +183,8 @@ def advance_legalization(request):
             advance_legalization.account_type = form_data['accountType']
             advance_legalization.account_number = form_data['accountNumber']
             advance_legalization.observations = form_data['observations']
-            
+            advance_legalization.signatureInput= form_data['signatureInput']
+
             # Set the id to the next available id
             with transaction.atomic():
                 advance_legalization.id = get_next_id()
@@ -242,6 +247,7 @@ def billing_account(request):
             billing_account.account_type = form_data['accountType']
             billing_account.account_number = form_data['accountNumber']
             billing_account.cex_number = form_data['cexNumber']
+            billing_account.signatureInput= form_data['signatureInput']
             
             # Set the id to the next available id
             with transaction.atomic():
@@ -283,6 +289,7 @@ def requisition(request):
             requisition.account_type = form_data['accountType']
             requisition.account_number = form_data['accountNumber']
             requisition.observations = form_data['observations']
+            requisition.signatureInput = form_data['signatureInput']
             
             # Set the id to the next available id
             with transaction.atomic():
