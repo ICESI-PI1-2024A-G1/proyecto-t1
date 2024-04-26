@@ -42,7 +42,11 @@
 
     <div class="form-group">
         <label for="purchaseReason">Motivo de compra o servicio</label>
-        <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" readonly>{{ request.purchase_reason }}</textarea>
+        <div class="d-flex justify-content-between">
+            <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" disabled>{{ request.purchase_reason }}</textarea>
+            <input type="checkbox" class="btn-check" id="btncheckPurchaseReason">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPurchaseReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        </div>
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -80,22 +84,26 @@
             {% endfor %}
             <tr id="totals">
                 <td colspan="2" class="text-end">Total de gastos:</td>
-                <td><input id="total" name="total" type="text" class="form-control" placeholder="0" value="{{ request.total|floatformat:"-0" }}" readonly></td>
+                <td><input id="total" name="total" type="text" class="form-control" placeholder="0" value="{{ request.total|floatformat:"-0" }}" disabled></td>
             </tr>
             <tr id="advance">
                 <td colspan="2" class="text-end">Valor del anticipo:</td>
-                <td><input id="advanceTotal" name="advanceTotal" type="text" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" readonly></td>
+                <td><input id="advanceTotal" name="advanceTotal" type="text" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled></td>
             </tr>
             <tr id="employeeBalance">
                 <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
-                <td><input id="employeeBalanceValue" name="employeeBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance_value|floatformat:"-0" }}" readonly></td>
+                <td><input id="employeeBalanceValue" name="employeeBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance_value|floatformat:"-0" }}" disabled></td>
             </tr>
             <tr id="icesiBalance">
                 <td colspan="2" class="text-end">Saldo a favor de ICESI:</td>
-                <td><input id="icesiBalanceValue" name="icesiBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance_value|floatformat:"-0" }}" readonly></td>
+                <td><input id="icesiBalanceValue" name="icesiBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance_value|floatformat:"-0" }}" disabled></td>
             </tr>
         </tbody>
     </table>
+    <div class="d-flex justify-content-center mt-3">
+        <input type="checkbox" class="btn-check" id="btncheckTable">
+        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+    </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
@@ -117,9 +125,16 @@
         <label for="observations" class="h5"><strong>Observaciones</strong></label>
     </div>
 
-    <div>
-        <textarea class="form-control" id="observations" name="observations" rows="3" readonly>{{ request.observations }}</textarea>
+    <div class="d-flex justify-content-between">
+        <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
+        <input type="checkbox" class="btn-check" id="btncheckObservations">
+        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
     </div>
+
+    <!-- Confirm Review -->
+
+    {% include 'internalFormBlocks/reviewblock.html' %}
+
 </form>
 
 <script src="../../static/forms/js/advance_legalization.js"></script>

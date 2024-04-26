@@ -5,26 +5,42 @@
 <div class="row">
     <div class="col-md-6 mb-1">
         <label>Banco:</label>
-        <select class="form-control" name="bank" required disabled>
-            <option value="{{ request.bank }}" selected>{{ request.bank }}</option>
-        </select>
+        <div class="d-flex justify-content-between">
+            <select class="form-control" name="bank" required disabled>
+                <option value="{{ request.bank }}" selected>{{ request.bank }}</option>
+            </select>
+            <input type="checkbox" class="btn-check" id="btncheckBank">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckBank" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        </div>
     </div>
     <div class="col-md-6 mb-1">
         <label>Tipo de cuenta:</label>
-        <select class="form-control" name="accountType" required disabled>
-            <option value="{{ form_data.accountType }}" selected>{{ request.account_type }}</option>
-        </select>
+        <div class="d-flex justify-content-between">
+            <select class="form-control" name="accountType" required disabled>
+                <option value="{{ form_data.accountType }}" selected>{{ request.account_type }}</option>
+            </select>
+            <input type="checkbox" class="btn-check" id="btncheckAccountType">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAccountType" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        </div>
     </div>
 </div>
 <div class="row">
     <div class="col-md-6 mb-1">
         <label>N° de cuenta:</label>
-        <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ request.account_number }}" required readonly>
+        <div class="d-flex justify-content-between">
+            <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ request.account_number }}" required disabled>
+            <input type="checkbox" class="btn-check" id="btncheckAccountNumber">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAccountNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        </div>
     </div>
     {% if include_cex %}
     <div class="col-md-6 mb-1">
         <label>N° CEX:</label>
-        <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ request.cex_number }}" required readonly>
+        <div class="d-flex justify-content-between">
+            <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ request.cex_number }}" required disabled>
+            <input type="checkbox" class="btn-check" id="btncheckCexNumber">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckCexNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        </div>
     </div>
     {% endif %}
 </div>

@@ -8,9 +8,6 @@
     </div>
 </div>
 
-<!-- Messages -->
-
-
 <!-- Announcement -->
 
 <p class="font-italic"><strong>Por favor tenga en cuenta lo
@@ -67,44 +64,48 @@
             <label>Transporte Aeropuerto:</label>
         </div>
         <div class="col-md-6 mb-1">
-            <input type="number" class="form-control budget-input" name="airportTransport" placeholder="0" value="{{ expenses.airportTransport }}" readonly>
+            <input type="number" class="form-control budget-input" name="airportTransport" placeholder="0" value="{{ expenses.airportTransport }}" disabled>
         </div>
         <div class="col-md-6 mb-1">
             <label>Transporte Local:</label>
         </div>
         <div class="col-md-6 mb-1">
-            <input type="number" class="form-control budget-input" name="localTransport" placeholder="0" value="{{ expenses.localTransport }}" readonly>
+            <input type="number" class="form-control budget-input" name="localTransport" placeholder="0" value="{{ expenses.localTransport }}" disabled>
         </div>
         <div class="col-md-6 mb-1">
             <label>Alimentación:</label>
         </div>
         <div class="col-md-6 mb-1">
-            <input type="number" class="form-control budget-input" name="food" placeholder="0" value="{{ expenses.food }}" readonly>
+            <input type="number" class="form-control budget-input" name="food" placeholder="0" value="{{ expenses.food }}" disabled>
         </div>
         <div class="col-md-6 mb-1">
             <label>Alojamiento:</label>
         </div>
         <div class="col-md-6 mb-1">
-            <input type="number" class="form-control budget-input" name="accommodation" placeholder="0" value="{{ expenses.accommodation }}" readonly>
+            <input type="number" class="form-control budget-input" name="accommodation" placeholder="0" value="{{ expenses.accommodation }}" disabled>
         </div>
         <div class="col-md-6 mb-1">
             <label>Impuestos de Salida:</label>
         </div>
         <div class="col-md-6 mb-1">
-            <input type="number" class="form-control budget-input" name="exitTaxes" placeholder="0" value="{{ expenses.exitTaxes }}" readonly>
+            <input type="number" class="form-control budget-input" name="exitTaxes" placeholder="0" value="{{ expenses.exitTaxes }}" disabled>
         </div>
         <div class="col-md-6 mb-1">
             <label>Otros (detallar):</label>
         </div>
         <div class="col-md-6 mb-1">
-            <input type="number" class="form-control budget-input" name="others" placeholder="0" value="{{ expenses.others }}" readonly>
+            <input type="number" class="form-control budget-input" name="others" placeholder="0" value="{{ expenses.others }}" disabled>
         </div>
         <div class="col-md-6 mb-1">
             <label>TOTAL:</label>
         </div>
         <div class="col-md-6 mb-1">
-            <input type="number" id="total" class="form-control" name="total" placeholder="0" value="{{ expenses.total }}" readonly>
+            <input type="number" id="total" class="form-control" name="total" placeholder="0" value="{{ expenses.total }}" disabled>
         </div>
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+        <input type="checkbox" class="btn-check" id="btncheckTable">
+        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -135,9 +136,16 @@
         <label for="observations" class="h5"><strong>Observaciones</strong></label>
     </div>
 
-    <div>
-        <textarea class="form-control" id="observations" name="observations" rows="3" readonly>{{ request.observations }}</textarea>
+    <div class="d-flex justify-content-between">
+        <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
+        <input type="checkbox" class="btn-check" id="btncheckObservations">
+        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
     </div>
+
+    <!-- Confirm Review -->
+
+    {% include 'internalFormBlocks/reviewblock.html' %}
+
 </form>
 
 <script src="../../static/forms/js/travel_advance_request.js"></script>
