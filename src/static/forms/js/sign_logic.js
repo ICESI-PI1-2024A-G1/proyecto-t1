@@ -12,6 +12,48 @@ class SignatureLogic {
         });
     }
 
+    loadStyles(showSelect = false) {
+        // Agrega estilos Bootstrap al botón de confirmación
+        const confirmButton = Swal.getConfirmButton();
+        confirmButton.classList.add('btn', 'btn-primary', 'mx-2');
+        confirmButton.classList.remove('swal2-styled');
+        
+        // Agrega estilos Bootstrap al botón de cancelar
+        const cancelButton = Swal.getCancelButton();
+        cancelButton.classList.add('btn', 'btn-secondary', 'mx-2');
+        cancelButton.classList.remove('swal2-styled');
+        
+        // Agrega estilos Bootstrap al input
+        const selectInput = document.querySelector('#swal2-select');
+        
+        if(showSelect) {
+            selectInput.classList.add('form-select', 'mx-0');
+            selectInput.style = `
+                --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%2867, 89, 113, 0.6%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+                background-color: #fff;
+                background-image: var(--bs-form-select-bg-img),var(--bs-form-select-bg-icon, none);
+                background-repeat: no-repeat;
+                background-position: right .875rem center;
+                background-size: 17px 12px;
+                border: var(--bs-border-width) solid #d9dee3;
+                border-radius: var(--bs-border-radius);
+                transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+            `;
+        } else {
+            selectInput.style.display = "none"
+        }
+        const textInput = document.querySelector('.swal2-input');
+        textInput.classList.add('form-control', 'mx-0');
+        const fileInput = document.querySelector('.swal2-file');
+        fileInput.classList.add('form-control', 'mx-auto');
+        
+        const swalModal = document.querySelector('.swal2-modal');
+        swalModal.classList.add('px-4')
+        const swalCanvas = document.querySelector('#swal2-html-container');
+        swalCanvas.classList.add('border', 'rounded')
+
+    }
+
     handleSignButtonClick(event) {
         event.preventDefault();
         Swal.fire({
@@ -34,6 +76,9 @@ class SignatureLogic {
                     }
                 });
             },
+            didOpen: () => {
+                this.loadStyles(true);
+            }
         })
         .then((result) => {
             switch (result.value) {
@@ -56,6 +101,9 @@ class SignatureLogic {
             input: 'text',
             showCancelButton: true,
             cancelButtonText: 'Cancelar',
+            didOpen: () => {
+                this.loadStyles();
+            },
         })
         .then((result) => {
             if (result.value) {
@@ -80,6 +128,9 @@ class SignatureLogic {
                     document.getElementById('signatureStatus').value = "Yes";
                     return this.signaturePad.toDataURL();
                 }
+            },
+            didOpen: () => {
+                this.loadStyles();
             }
         })
         .then((result) => {
@@ -96,11 +147,16 @@ class SignatureLogic {
         Swal.fire({
             title: 'Subir imagen',
             input: 'file',
+            showCancelButton: true,
             cancelButtonText: 'Cancelar',
             inputAttributes: {
                 'accept': 'image/*',
                 'aria-label': 'Sube tu firma'
+            },
+            didOpen: () => {
+                this.loadStyles();
             }
+            
         }).then((result) => {
             if (result.value) {
                 var reader = new FileReader();

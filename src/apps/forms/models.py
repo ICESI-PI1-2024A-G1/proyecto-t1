@@ -1,6 +1,7 @@
 from django.db import models
 import json
 
+
 class TravelAdvanceRequest(models.Model):
     id = models.AutoField(primary_key=True)
     request_date = models.DateField()
@@ -29,6 +30,7 @@ class TravelAdvanceRequest(models.Model):
 
     def get_expenses(self):
         return json.loads(self.expenses)
+
 
 class TravelExpenseLegalization(models.Model):
     id = models.AutoField(primary_key=True)
@@ -63,6 +65,7 @@ class TravelExpenseLegalization(models.Model):
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
 
+
 class TravelExpenseLegalization_Table(models.Model):
     travel_info = models.ForeignKey(TravelExpenseLegalization, on_delete=models.CASCADE)
     category = models.CharField(max_length=200)
@@ -74,15 +77,18 @@ class TravelExpenseLegalization_Table(models.Model):
     euros = models.DecimalField(max_digits=10, decimal_places=2)
 
     def serialize(self):
-        return json.dumps({
-            'category': self.category,
-            'provider': self.provider,
-            'nit': self.nit,
-            'concept': self.concept,
-            'pesos': str(self.pesos),
-            'dollars': str(self.dollars),
-            'euros': str(self.euros),
-        })
+        return json.dumps(
+            {
+                "category": self.category,
+                "provider": self.provider,
+                "nit": self.nit,
+                "concept": self.concept,
+                "pesos": str(self.pesos),
+                "dollars": str(self.dollars),
+                "euros": str(self.euros),
+            }
+        )
+
 
 class AdvanceLegalization(models.Model):
     id = models.AutoField(primary_key=True)
@@ -106,12 +112,14 @@ class AdvanceLegalization(models.Model):
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
 
+
 class AdvanceLegalization_Table(models.Model):
     general_data = models.ForeignKey(AdvanceLegalization, on_delete=models.CASCADE)
     category = models.CharField(max_length=200)
     provider = models.CharField(max_length=200)
     pesos = models.DecimalField(max_digits=10, decimal_places=2)
     concept = models.TextField()
+
 
 class BillingAccount(models.Model):
     id = models.AutoField(primary_key=True)
@@ -136,6 +144,7 @@ class BillingAccount(models.Model):
     cex_number = models.CharField(max_length=200)
     team_id = models.IntegerField(default=0)
 
+
 class Requisition(models.Model):
     id = models.AutoField(primary_key=True)
     request_date = models.DateField()
@@ -155,4 +164,3 @@ class Requisition(models.Model):
     account_number = models.CharField(max_length=200)
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
-    
