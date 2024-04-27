@@ -9,8 +9,6 @@
     </style>
 </head>
 
-<div class="my-2 mx-2 border-bottom border-3"></div>
-
 <div class="row justify-content-center" style="margin-top: 20px;">
     <div class="col-md-6 mb-1 text-center">
         <div style="border-bottom: 1px solid black; position: relative; display: flex; justify-content: center; align-items: center;" id="signature">
@@ -29,8 +27,10 @@
         <canvas id="signatureCanvas" width="600" height="120" style="border:1px solid #000000; display: none;"></canvas>
         <h4 style="font-size: 1em; text-align: center;" class="mt-1">Firma del solicitante</h4>
         <div class="d-flex justify-content-center">
-            <input type="checkbox" class="btn-check" id="btncheckSignature">
-            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckSignature" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckSignature">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckSignature" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
         </div>
     </div>
 </div>

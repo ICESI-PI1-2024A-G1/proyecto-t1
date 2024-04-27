@@ -36,16 +36,20 @@
                 <label for="requestDate">Fecha</label>
                 <div class="d-flex justify-content-between">
                     <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ request.request_date|date:'Y-m-d' }}" disabled>
-                    <input type="checkbox" class="btn-check" id="btncheckRequestDate">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckRequestDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                        <input type="checkbox" class="btn-check" id="btncheckRequestDate">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckRequestDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
                 </div>
             </div>
             <div class="form-group">
                 <label for="fullName">A favor de</label>
                 <div class="d-flex justify-content-between">
                     <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.requester_name }}" disabled>
-                    <input type="checkbox" class="btn-check" id="btncheckFullName">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckFullName" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                        <input type="checkbox" class="btn-check" id="btncheckFullName">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckFullName" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -54,16 +58,20 @@
                 <label for="idNumber">No. de identificación</label>
                 <div class="d-flex justify-content-between">
                     <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.id_person }}" disabled>
-                    <input type="checkbox" class="btn-check" id="btncheckIdNumber">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckIdNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                        <input type="checkbox" class="btn-check" id="btncheckIdNumber">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckIdNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
                 </div>
             </div>
             <div class="form-group">
                 <label for="work">Cargo</label>
                 <div class="d-flex justify-content-between">
                     <input type="text" class="form-control" id="work" name="work" value="{{ request.work }}" disabled>
-                    <input type="checkbox" class="btn-check" id="btncheckWork">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckWork" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                        <input type="checkbox" class="btn-check" id="btncheckWork">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckWork" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -76,8 +84,10 @@
                     <select class="form-control" id="dependence" name="dependence" required disabled>
                         <option value="{{ request.dependence }}" selected>{{ request.dependence }}</option>
                     </select>
-                    <input type="checkbox" class="btn-check" id="btncheckDependence">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDependence" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                        <input type="checkbox" class="btn-check" id="btncheckDependence">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDependence" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
                 </div>
             </div>
             <div class="form-group">
@@ -86,8 +96,10 @@
                     <select class="form-control" id="cenco" name="cenco" required disabled>
                         <option value="{{ request.cenco }}" selected>{{ request.cenco }}</option>
                     </select>
-                    <input type="checkbox" class="btn-check" id="btncheckCenco">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckCenco" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                        <input type="checkbox" class="btn-check" id="btncheckCenco">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckCenco" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -96,16 +108,20 @@
                 <label for="idValue">Valor</label>
                 <div class="d-flex justify-content-between">
                     <input type="number" class="form-control" id="idValue" name="idValue" value="{{ request.id_value }}" disabled>
-                    <input type="checkbox" class="btn-check" id="btncheckIdValue">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckIdValue" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                        <input type="checkbox" class="btn-check" id="btncheckIdValue">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckIdValue" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
                 </div>
             </div>
             <div class="form-group">
                 <label for="idConcept">Concepto</label>
                 <div class="d-flex justify-content-between">
                     <input type="text" class="form-control" id="idConcept" value="Reintegro" name="concept" disabled>
-                    <input type="checkbox" class="btn-check" id="btncheckIdConcept">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckIdConcept" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                        <input type="checkbox" class="btn-check" id="btncheckIdConcept">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckIdConcept" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -123,10 +139,14 @@
         <label for="description">Descripción</label>
         <div class="d-flex justify-content-between">
             <textarea class="form-control" id="description" name="description" rows="5" disabled>{{ request.description }}</textarea>
-            <input type="checkbox" class="btn-check" id="btncheckDescription">
-            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDescription" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckDescription">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDescription" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
         </div>
     </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
 
     <!-- Authorization -->
 
@@ -148,13 +168,17 @@
 
     <div class="d-flex justify-content-between">
         <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
-        <input type="checkbox" class="btn-check" id="btncheckObservations">
-        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            <input type="checkbox" class="btn-check" id="btncheckObservations">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
     </div>
 
     <!-- Confirm Review -->
 
-    {% include 'internalFormBlocks/reviewblock.html' %}
+    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+        {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
     
 </form>
 

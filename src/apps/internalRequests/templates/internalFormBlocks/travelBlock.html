@@ -7,16 +7,20 @@
             <label for="destinationCity">Ciudad de destino</label>
             <div class="d-flex justify-content-between">
                 <input type="text" class="form-control" id="destinationCity" name="destinationCity" value="{{ request.destination_city }}" required disabled>
+                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
                 <input type="checkbox" class="btn-check" id="btncheckDestinationCity">
-                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDestinationCity" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDestinationCity" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
             </div>
         </div>
         <div class="form-group">
             <label for="departureDate">Fecha de salida</label>
             <div class="d-flex justify-content-between">
                 <input type="date" class="form-control" id="departureDate" name="departureDate" value="{{ request.departure_date|date:'Y-m-d' }}" required disabled>
+                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
                 <input type="checkbox" class="btn-check" id="btncheckDepartureDate">
-                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDepartureDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDepartureDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
             </div>
         </div>
     </div>
@@ -25,8 +29,10 @@
             <label for="returnDate">Fecha de regreso</label>
             <div class="d-flex justify-content-between">
                 <input type="date" class="form-control" id="returnDate" name="returnDate" value="{{ request.return_date|date:'Y-m-d' }}" required disabled>
+                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
                 <input type="checkbox" class="btn-check" id="btncheckReturnDate">
-                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckReturnDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckReturnDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
             </div>
         </div>
     </div>
@@ -35,7 +41,9 @@
     <label for="travelReason">Motivo del viaje</label>
     <div class="d-flex justify-content-between">
         <textarea class="form-control" id="travelReason" name="travelReason" rows="3" required disabled>{{ request.travel_reason }}</textarea>
-        <input type="checkbox" class="btn-check" id="btncheckTravelReason">
-        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTravelReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckTravelReason">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTravelReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
     </div>
 </div>

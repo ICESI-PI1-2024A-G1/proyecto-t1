@@ -16,8 +16,10 @@ import math
 statusMap = {
     "PENDIENTE": "secondary",
     "EN REVISIÓN": "info",
+    "POR APROBAR": "primary",
     "DEVUELTO": "warning",
     "RECHAZADO": "danger",
+    "RESUELTO": "success",
 }
 
 User = get_user_model()
@@ -46,6 +48,9 @@ def show_requests(request):
     """
     Show requests
     """
+    message = None
+    if 'changeStatusDenied' in request.GET:
+        messages.add_message(request, messages.ERROR, 'No puedes cambiar el estado de una solicitud sin revisar.')
     if request.user.is_superuser or request.user.is_leader:
         if (
             request.user.is_superuser
@@ -224,6 +229,7 @@ def show_requests(request):
         r.status_color = statusMap[r.status]
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
+        
 
 
 @csrf_exempt
@@ -250,7 +256,12 @@ def change_status(request, id):
     """
     if request.method == "GET":
         curr_request = get_request_by_id(id)
-        status_options = ["EN REVISIÓN", "PENDIENTE", "DEVUELTO", "RECHAZADO"]
+        if curr_request.status == "PENDIENTE":
+            status_options = ["EN REVISIÓN"]
+        elif curr_request.status == "EN REVISIÓN" and curr_request.is_reviewed:
+            status_options = ["DEVUELTO", "RECHAZADO", "POR APROBAR"]
+        elif curr_request.status == "POR APROBAR":
+            status_options = ["RESUELTO", "DEVUELTO", "RECHAZADO"]
         return render(
             request,
             "change-status.html",

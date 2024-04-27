@@ -90,7 +90,7 @@ if not User.objects.filter(id=0).exists():
 
 
 # Create users
-users_amount = 15
+users_amount = 35
 users = []
 for _ in range(users_amount):
     id = str(random.randint(1000000, 99999999))
@@ -114,6 +114,7 @@ print(f"Generated {users_amount} users")
 # Create teams, leaders and add members
 teams = []
 leaders = []
+applicants = []
 formTypes = [
     "Legalización de Anticipos",
     "Cuenta de Cobro",
@@ -138,7 +139,7 @@ for i in range(5):
 
     # Seleccionar miembros para el equipo (excluyendo al líder)
     team_members = random.sample(
-        [user for user in users if user != leader], random.randint(3, 5)
+        [user for user in users if user != leader], 5
     )
 
     # Asignar el permiso de "is_member" a los miembros del equipo
@@ -150,6 +151,10 @@ for i in range(5):
 
     teams.append(team)
 
+for user in users:
+    if user.is_member == False and user.is_leader == False:
+        user.is_applicant = True
+        applicants.append(user)
 
 faculty = [
     "Ciencias Administrativas y económicas",
@@ -274,7 +279,7 @@ documents = [
 ]
 
 
-requestStatus = ["PENDIENTE", "EN REVISIÓN", "DEVUELTO", "RECHAZADO"]
+requestStatus = ["PENDIENTE", "EN REVISIÓN", "POR APROBAR", "DEVUELTO", "RECHAZADO", "RESUELTO"]
 
 for i in range(10):
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
@@ -286,7 +291,7 @@ for i in range(10):
         "team": random.choice(teams).id,
         "initial_date": initial_date.strftime("%d-%m-%Y"),
         "final_date": final_date.strftime("%d-%m-%Y"),
-        "fullname": fake.name(),
+        "fullname": random.choice(applicants).get_full_name(),
         "faculty": random.choice(faculty),
         "document": random.choice(documents),
         "phone_number": fake.phone_number(),
@@ -310,13 +315,6 @@ for i in range(len(t_request)):
     user = User.objects.first()
     temp_r = t_request[random.randint(0, len(t_request) - 1)]
     new_id = temp_r["id"]
-    # traceability = Traceability.objects.create(
-    #     modified_by=user,
-    #     request=new_id,
-    #     date=fake.date_time_between(start_date="-30d", end_date="+3d"),
-    #     prev_state=temp_r["status"],
-    #     new_state=random.choice(requestStatus),
-    # )
 
 
 def generate_traceability(id):
@@ -341,14 +339,13 @@ def create_fake_travel_request():
         "others": fake.random_int(min=0, max=300),
         "total": fake.random_int(min=0, max=300),
     }
-
-    traveler_name = fake.name()
+    person = random.choice(applicants)
     request = TravelAdvanceRequest(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        traveler_name=traveler_name,
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
+        traveler_name=person.get_full_name(),
+        id_person=person.id,
+        member_name=random.choice(team_members).get_full_name(),
         dependence=fake.company(),
         cost_center=fake.random_int(min=1000, max=9999),
         destination_city=fake.city(),
@@ -362,7 +359,7 @@ def create_fake_travel_request():
         account_number=fake.random_int(min=100000000, max=999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+traveler_name,
+        signatureInput="1---"+person.get_full_name(),
     )
     request.set_expenses(expenses_dict)
     with transaction.atomic():
@@ -372,13 +369,13 @@ def create_fake_travel_request():
 
 
 def create_fake_travel_expense_legalization():
-    traveler_name = fake.name()
+    person = random.choice(applicants)
     travel_expense = TravelExpenseLegalization(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        traveler_name=traveler_name,
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
+        traveler_name=person.get_full_name(),
+        id_person=person.id,
+        member_name=random.choice(team_members).get_full_name(),
         dependence=fake.company(),
         cost_center=fake.random_int(min=1000, max=9999),
         destination_city=fake.city(),
@@ -403,7 +400,7 @@ def create_fake_travel_expense_legalization():
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+traveler_name,
+        signatureInput="1---"+person.get_full_name(),
     )
     with transaction.atomic():
         travel_expense.id = get_next_id()
@@ -429,13 +426,13 @@ def create_fake_travel_expense_legalization():
 
 
 def create_fake_advance_legalization():
-    traveler_name = fake.name()
+    person = random.choice(applicants)
     advance_legalization = AdvanceLegalization(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        traveler_name=traveler_name,
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
+        traveler_name=person.get_full_name(),
+        id_person=person.id,
+        member_name=random.choice(team_members).get_full_name(),
         dependence=fake.company(),
         cost_center=fake.random_int(min=1000, max=9999),
         purchase_reason=fake.text(),
@@ -449,7 +446,7 @@ def create_fake_advance_legalization():
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+traveler_name,
+        signatureInput="1---"+person.get_full_name(),
     )
     with transaction.atomic():
         advance_legalization.id = get_next_id()
@@ -471,13 +468,13 @@ def create_fake_advance_legalization():
 
 
 def create_fake_billing_account():
-    full_name = fake.name()
+    person = random.choice(applicants)
     billing_account = BillingAccount(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        full_name=full_name,
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
+        full_name=person.get_full_name(),
+        id_person=person.id,
+        member_name=random.choice(team_members).get_full_name(),
         status=fake.random.choice(requestStatus),
         value=fake.random_int(min=100, max=1000),
         concept_reason=fake.sentence(),
@@ -493,7 +490,7 @@ def create_fake_billing_account():
         account_number=fake.random_int(min=100000000, max=9999999999),
         cex_number=fake.random_number(digits=8),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+full_name,
+        signatureInput="1---"+person.get_full_name(),
     )
     with transaction.atomic():
         billing_account.id = get_next_id()
@@ -502,13 +499,13 @@ def create_fake_billing_account():
 
 
 def create_fake_requisition():
-    requester_name = fake.name()
+    person = random.choice(applicants)
     requisition = Requisition(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        requester_name=fake.name(),
-        id_person=fake.random_number(digits=8),
-        member_name=requester_name,
+        requester_name=person.get_full_name(),
+        id_person=person.id,
+        member_name=random.choice(team_members).get_full_name(),
         status=fake.random.choice(requestStatus),
         work=fake.job(),
         dependence=fake.company(),
@@ -521,7 +518,7 @@ def create_fake_requisition():
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+requester_name,
+        signatureInput="1---"+person.get_full_name(),
     )
     with transaction.atomic():
         requisition.id = get_next_id()
@@ -532,16 +529,13 @@ def create_fake_requisition():
 form_amount = 10
 for _ in range(form_amount):
     create_fake_billing_account()
-print(f"Generated {form_amount} billing accounts")
-for _ in range(form_amount):
     create_fake_requisition()
-print(f"Generated {form_amount} requisitions")
-for _ in range(form_amount):
     create_fake_advance_legalization()
-print(f"Generated {form_amount} advance legalizations")
-for _ in range(form_amount):
     create_fake_travel_expense_legalization()
-print(f"Generated {form_amount} travel expense legalizations")
-for _ in range(form_amount):
     create_fake_travel_request()
+
+print(f"Generated {form_amount} billing accounts")
+print(f"Generated {form_amount} requisitions")
+print(f"Generated {form_amount} advance legalizations")
+print(f"Generated {form_amount} travel expense legalizations")
 print(f"Generated {form_amount} travel requests")

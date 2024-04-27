@@ -44,8 +44,10 @@
         <label for="purchaseReason">Motivo de compra o servicio</label>
         <div class="d-flex justify-content-between">
             <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" disabled>{{ request.purchase_reason }}</textarea>
-            <input type="checkbox" class="btn-check" id="btncheckPurchaseReason">
-            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPurchaseReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckPurchaseReason">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPurchaseReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
         </div>
     </div>
 
@@ -101,8 +103,10 @@
         </tbody>
     </table>
     <div class="d-flex justify-content-center mt-3">
-        <input type="checkbox" class="btn-check" id="btncheckTable">
-        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            <input type="checkbox" class="btn-check" id="btncheckTable">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -127,16 +131,17 @@
 
     <div class="d-flex justify-content-between">
         <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
-        <input type="checkbox" class="btn-check" id="btncheckObservations">
-        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5) translateY(-1px);"></i></label>
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            <input type="checkbox" class="btn-check" id="btncheckObservations">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
     </div>
 
     <!-- Confirm Review -->
-
-    {% include 'internalFormBlocks/reviewblock.html' %}
+    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+        {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
 
 </form>
-
-<script src="../../static/forms/js/advance_legalization.js"></script>
 
 {% endblock %}

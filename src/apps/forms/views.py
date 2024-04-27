@@ -74,7 +74,7 @@ def travel_advance_request(request):
             # Save the TravelRequest instance to the database
             travel_request.save()
 
-            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
+            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.')
             return render(request, "userForms/travel_advance_request.html", {"today": today})
 
 
@@ -147,7 +147,7 @@ def travel_expense_legalization(request):
             
                 i += 1
 
-            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
+            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.')
             return render(request, "userForms/travel_expense_legalization.html", {"today": today})
 
 
@@ -210,7 +210,7 @@ def advance_legalization(request):
 
                 i += 1
 
-            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
+            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.')
             return render(request, "userForms/advance_legalization.html", {"today": today})
         
 
@@ -256,7 +256,7 @@ def billing_account(request):
             # Save the GeneralData object
             billing_account.save()
 
-            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
+            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.')
             return render(request, "userForms/billing_account.html", {"today": today, 'include_cex': True})
 
 @login_required
@@ -298,6 +298,6 @@ def requisition(request):
             # Save the GeneralData object
             requisition.save()
 
-            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".')
+            messages.success(request, 'Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.')
             return render(request, "userForms/requisition.html", {"today": today})
 
