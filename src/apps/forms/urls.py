@@ -15,8 +15,16 @@ urlpatterns = [
         name="travel_expense_legalization",
     ),
     path(
-        "advance_legalization", views.advance_legalization, name="advance_legalization"
+        "advance_legalization",
+        views.advance_legalization,
+        name="advance_legalization"
     ),
-    path("billing_account", views.billing_account, name="billing_account"),
-    path("requisition", views.requisition, name="requisition"),
+    path(
+        "billing_account",
+        views.billing_account,
+        name="billing_account"),
+    path(
+        "requisition",
+        views.requisition,
+        name="requisition"),
 ]

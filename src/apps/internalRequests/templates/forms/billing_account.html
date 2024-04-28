@@ -31,8 +31,11 @@
 
 <!-- User data -->
 
-<form action="/forms/billing_account" method="POST">
+<form action="/requests/billing_account_review" method="POST">
     {{ form.csrf_token }}
+
+    <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
+
     <div class="mb-2">
         <label class="h5"><strong>Datos del solicitante</strong></label>
     </div>
@@ -43,7 +46,7 @@
                 <div class="d-flex justify-content-between">
                     <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ request.request_date|date:'Y-m-d' }}" disabled>
                     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                        <input type="checkbox" class="btn-check" id="btncheck">
+                        <input type="checkbox" class="btn-check" id="btncheck" name="dateCheck" data-message="Fecha de solicitud">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                     {% endif %}
                 </div>
@@ -53,7 +56,7 @@
                 <div class="d-flex justify-content-between">
                     <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.full_name }}" disabled>
                     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                        <input type="checkbox" class="btn-check" id="btncheck2">
+                        <input type="checkbox" class="btn-check" id="btncheck2" name="nameCheck" data-message="Nombre">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck2" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                     {% endif %}
                 </div>
@@ -65,7 +68,7 @@
                 <div class="d-flex justify-content-between">
                     <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.id_person }}" disabled>
                     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                        <input type="checkbox" class="btn-check" id="btncheck3">
+                        <input type="checkbox" class="btn-check" id="btncheck3" name="idCheck" data-message="No. de identificación">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck3" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                     {% endif %}
                 </div>
@@ -75,7 +78,7 @@
                 <div class="d-flex justify-content-between">
                     <input type="text" class="form-control" id="value" name="value" value="{{ request.value|floatformat:0 }}" disabled>
                     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                        <input type="checkbox" class="btn-check" id="btncheck4">
+                        <input type="checkbox" class="btn-check" id="btncheck4" name="valueCheck" data-message="Valor">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck4" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                     {% endif %}
                 </div>
@@ -87,7 +90,7 @@
         <div class="d-flex justify-content-between">
             <textarea class="form-control" id="conceptReason" name="conceptReason" rows="3" disabled>{{ request.concept_reason }}</textarea>
             {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                <input type="checkbox" class="btn-check" id="btncheck5">
+                <input type="checkbox" class="btn-check" id="btncheck5" name="conceptCheck" data-message="Concepto">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck5" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
             {% endif %}
         </div>
@@ -120,7 +123,7 @@
             </div>
             <div>
                 {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                    <input type="checkbox" class="btn-check" id="btncheck8">
+                    <input type="checkbox" class="btn-check" id="btncheck8" name="retentionCheck" data-message="Retención en la fuente">
                     <label class="btn btn-outline-primary col-1 d-flex align-items-center justify-content-center" for="btncheck8"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                 {% endif %}
             </div>
@@ -142,7 +145,7 @@
         </div>
         <div>
             {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                <input type="checkbox" class="btn-check" id="btncheck11" style="margin-left: 5px;">
+                <input type="checkbox" class="btn-check" id="btncheck11" style="margin-left: 5px;" name="taxCheck" data-message="Declaración de impuestos">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center justify-content-center" for="btncheck11"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
             {% endif %}
         </div>
@@ -162,7 +165,7 @@
         </div>
         <div>
             {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                <input type="checkbox" class="btn-check" id="btncheck12" style="margin-left: 5px;">
+                <input type="checkbox" class="btn-check" id="btncheck12" style="margin-left: 5px;" name="residentCheck" data-message="Residencia">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center justify-content-center" for="btncheck12"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
             {% endif %}
         </div>
@@ -183,7 +186,7 @@
                 <div class="d-flex justify-content-between">
                     <input type="text" class="form-control" id="requestCity" name="requestCity" value="{{ request.request_city }}" disabled>
                     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                        <input type="checkbox" class="btn-check" id="btncheckRequestCity">
+                        <input type="checkbox" class="btn-check" id="btncheckRequestCity" name="cityCheck" data-message="Ciudad">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckRequestCity" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                     {% endif %}
                 </div>
@@ -193,7 +196,7 @@
                 <div class="d-flex justify-content-between">
                     <input type="text" class="form-control" id="address" name="address" value="{{ request.address }}" disabled>
                     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                        <input type="checkbox" class="btn-check" id="btncheckAddress">
+                        <input type="checkbox" class="btn-check" id="btncheckAddress" name="addressCheck" data-message="Dirección">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAddress" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                     {% endif %}
                 </div>
@@ -205,7 +208,7 @@
                 <div class="d-flex justify-content-between">
                     <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="{{ request.phone_number }}" disabled>
                     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                        <input type="checkbox" class="btn-check" id="btncheckPhoneNumber">
+                        <input type="checkbox" class="btn-check" id="btncheckPhoneNumber" name="cellphoneCheck" data-message="Teléfono">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPhoneNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                     {% endif %}
                 </div>
@@ -229,6 +232,24 @@
 
     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
         {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
+
+    {% if editable %}
+    <script>
+        const inputs = document.querySelectorAll('input, textarea, select');
+        const idsToSkip = ['requestDate', 'fullName', 'idNumber'];
+        const tableInputs = document.querySelector('#expensesTable').querySelectorAll('input, textarea, select');
+
+        inputs.forEach(input => {
+            if (idsToSkip.includes(input.id) || Array.from(tableInputs).includes(input)) {
+                input.setAttribute('disabled', true);
+            } else {
+                input.removeAttribute('disabled');
+                input.removeAttribute('readonly');
+            }
+        });
+    </script>
+    {% include 'internalFormBlocks/savereviewblock.html' %}
     {% endif %}
     
 </form>

@@ -34,8 +34,10 @@
 
 <!-- User data -->
 
-<form action="/forms/travel_expense_legalization" method="POST">
+<form action="/requests/travel_expense_legalization_review" method="POST">
     {{ form.csrf_token }}
+
+    <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
     
     {% include 'internalFormBlocks/idblock.html' %}
 
@@ -60,7 +62,7 @@
         }
     </style>
 
-    <table class="table table-bordered table-striped table-hover">
+    <table id="expensesTable" class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
                 <th class="col-2" rowspan="2">Rubro</th>
@@ -115,7 +117,7 @@
     </table>
     <div class="d-flex justify-content-center mt-3">
         {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-            <input type="checkbox" class="btn-check" id="btncheckTable">
+            <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
         {% endif %}
     </div>
@@ -147,7 +149,7 @@
     <div class="d-flex justify-content-between">
         <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
         {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-            <input type="checkbox" class="btn-check" id="btncheckObservations">
+            <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
         {% endif %}
     </div>
@@ -156,6 +158,24 @@
 
     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
         {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
+
+    {% if editable %}
+    <script>
+        const inputs = document.querySelectorAll('input, textarea, select');
+        const idsToSkip = ['requestDate', 'travelerName', 'idNumber', 'expensesTable'];
+        const tableInputs = document.querySelector('#expensesTable').querySelectorAll('input, textarea, select');
+
+        inputs.forEach(input => {
+            if (idsToSkip.includes(input.id) || Array.from(tableInputs).includes(input)) {
+                input.setAttribute('disabled', true);
+            } else {
+                input.removeAttribute('disabled');
+                input.removeAttribute('readonly');
+            }
+        });
+    </script>
+    {% include 'internalFormBlocks/savereviewblock.html' %}
     {% endif %}
     
 </form>

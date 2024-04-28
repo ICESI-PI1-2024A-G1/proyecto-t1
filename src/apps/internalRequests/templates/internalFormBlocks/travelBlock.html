@@ -8,9 +8,9 @@
             <div class="d-flex justify-content-between">
                 <input type="text" class="form-control" id="destinationCity" name="destinationCity" value="{{ request.destination_city }}" required disabled>
                 {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                <input type="checkbox" class="btn-check" id="btncheckDestinationCity">
+                    <input type="checkbox" class="btn-check" id="btncheckDestinationCity" name="destinationCheck" data-message="Ciudad de destino">
                     <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDestinationCity" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
-            {% endif %}
+                {% endif %}
             </div>
         </div>
         <div class="form-group">
@@ -18,9 +18,9 @@
             <div class="d-flex justify-content-between">
                 <input type="date" class="form-control" id="departureDate" name="departureDate" value="{{ request.departure_date|date:'Y-m-d' }}" required disabled>
                 {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                <input type="checkbox" class="btn-check" id="btncheckDepartureDate">
+                    <input type="checkbox" class="btn-check" id="btncheckDepartureDate" name="startTravelCheck" data-message="Fecha de salida">
                     <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDepartureDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
-            {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -30,9 +30,9 @@
             <div class="d-flex justify-content-between">
                 <input type="date" class="form-control" id="returnDate" name="returnDate" value="{{ request.return_date|date:'Y-m-d' }}" required disabled>
                 {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                <input type="checkbox" class="btn-check" id="btncheckReturnDate">
+                    <input type="checkbox" class="btn-check" id="btncheckReturnDate" name="endTravelCheck" data-message="Fecha de regreso">
                     <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckReturnDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
-            {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -42,8 +42,8 @@
     <div class="d-flex justify-content-between">
         <textarea class="form-control" id="travelReason" name="travelReason" rows="3" required disabled>{{ request.travel_reason }}</textarea>
         {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                <input type="checkbox" class="btn-check" id="btncheckTravelReason">
+            <input type="checkbox" class="btn-check" id="btncheckTravelReason" name="travelReasonCheck" data-message="Motivo del viaje">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTravelReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
-            {% endif %}
+        {% endif %}
     </div>
 </div>

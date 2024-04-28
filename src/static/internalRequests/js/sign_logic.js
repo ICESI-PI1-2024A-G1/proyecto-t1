@@ -1,6 +1,5 @@
 // Load signature on page load
 document.addEventListener('DOMContentLoaded', (event) => {
-    console.log("Hola")
     var signatureInput = document.getElementById('signatureInput').value;
     var signatureValue = signatureInput.substring(4);
     var signatureType = signatureInput.charAt(1);
