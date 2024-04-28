@@ -9,3 +9,4 @@ xlwings==0.31.1
 django-compressor==4.4
 django-sass-processor==1.4
 libsass==0.23.0
+locust==2.26.0
