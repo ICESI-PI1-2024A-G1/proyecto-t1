@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "utils",
     "sass_processor",
     "storages",
+    "compressor",
 ]
 
 MIDDLEWARE = [
@@ -198,7 +199,7 @@ STATICFILES_DIRS = [
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "sass_processor.finders.CssFinder",
+    "compressor.finders.CompressorFinder",
 ]
 
 EMAIL_BACKEND = env("EMAIL_BACKEND")
@@ -214,6 +215,10 @@ AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 AWS_S3_FILE_OVERWRITE = False
+
+COMPRESS_OFFLINE = True
+LIBSASS_OUTPUT_STYLE = "compressed"
+COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 STORAGES = {
     # Media file (image) management
