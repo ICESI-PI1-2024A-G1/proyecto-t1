@@ -12,9 +12,17 @@ import utils.utils as utils
 from apps.teams.models import Team
 from datetime import datetime
 from django.db import transaction
+from django.template.loader import render_to_string
+from django.http import FileResponse
+from xhtml2pdf import pisa
+from io import BytesIO
+from django.template.loader import get_template
+from bs4 import BeautifulSoup
 import math
 import ast
 import json
+import pdfkit
+import os
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -60,6 +68,8 @@ def show_requests(request):
         messages.add_message(request, messages.ERROR, 'No se pudo realizar la operación.')
     elif 'fixRequestDone' in request.GET:
         messages.add_message(request, messages.SUCCESS, 'El formulario ha sido enviado para revisión.')
+    elif 'reviewDone' in request.GET:
+        messages.add_message(request, messages.SUCCESS, 'El formulario ha sido revisado.')
     if request.user.is_superuser or request.user.is_leader:
         if (
             request.user.is_superuser
@@ -350,6 +360,66 @@ def change_status(request, id):
                             team[0].leader.email,
                             f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                         )
+            if curr_request.status == "POR APROBAR":
+                # Put info of curr_request in a PDF
+                if isinstance(curr_request, AdvanceLegalization):
+                    html_file_path = 'forms/advance_legalization.html'
+                elif isinstance(curr_request, BillingAccount):
+                    html_file_path = 'forms/billing_account.html'
+                elif isinstance(curr_request, Requisition):
+                    html_file_path = 'forms/requisition.html'
+                elif isinstance(curr_request, TravelAdvanceRequest):
+                    html_file_path = 'forms/travel_advance_request.html'
+                elif isinstance(curr_request, TravelExpenseLegalization):
+                    html_file_path = 'forms/travel_expense_legalization.html'
+                else:
+                    form_type = None
+
+                # Render the HTML file with curr_request as context
+                template = get_template(html_file_path)
+                html_string = template.render({'request': curr_request})
+
+                # Parse the HTML with BeautifulSoup
+                soup = BeautifulSoup(html_string, 'html.parser')
+
+                # Find all input, textarea, and select elements that are not inside a table
+                inputs = soup.select(':not(table) input, :not(table) textarea, :not(table) select')
+
+                # Replace each input, textarea, or select element with a p element containing the input's value
+                for input_elem in inputs:
+                    if input_elem.name == 'input':
+                        value = input_elem.get('value', '')
+                    elif input_elem.name == 'textarea':
+                        value = input_elem.string or ''
+                    else:  # select
+                        selected_option = input_elem.find('option', selected=True)
+                        value = selected_option.get('value', '') if selected_option else ''
+                    p_elem = soup.new_tag('p')
+                    p_elem.string = value
+                    input_elem.replace_with(p_elem)
+
+                # Convert the modified HTML to a string
+                html_string = str(soup)
+
+                try:
+                    # Convert the rendered HTML string to PDF
+                    pdf_io = BytesIO()
+                    pisa.CreatePDF(html_string, dest=pdf_io)
+                except Exception as e:
+                    print(f"Unexpected error: {e}")
+                else:
+                    # Send the email with the PDF as an attachment
+                    utils.send_verification_email(
+                        request,
+                        f"Archivo para revisión de la solicitud {curr_request.id}",
+                        "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                        "ccsa101010@gmail.com",
+                        f"Hola, el equipo de Contabilidad de la Universidad Icesi te envía el siguiente archivo para ser revisado. Este archivo contiene detalles de la solicitud {curr_request.id} que ha sido actualizada recientemente. Por favor, revisa el archivo adjunto y haznos saber si tienes alguna pregunta o necesitas más información. Gracias por tu atención a este asunto.",
+                        pdf_io.getvalue(),
+                    )
+
+                    print(f'Email sent to {team[0].leader.email}')
+
             curr_request.save()
             return redirect("/requests/?changeStatusDone")
             return JsonResponse(
@@ -359,6 +429,7 @@ def change_status(request, id):
             )
 
         except Exception as e:
+            print("Error:", e)
             return redirect("/requests/?changeStatusFailed")
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
@@ -550,7 +621,7 @@ def travel_advance_request(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    return redirect("/requests/")
+    return redirect("/requests/?reviewDone")
 
 
 @csrf_exempt
@@ -589,7 +660,7 @@ def travel_expense_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    return redirect("/requests/")
+    return redirect("/requests/?reviewDone")
 
 
 @csrf_exempt
@@ -627,7 +698,7 @@ def advance_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    return redirect("/requests/")
+    return redirect("/requests/?reviewDone")
 
 @csrf_exempt
 @login_required
@@ -666,7 +737,7 @@ def billing_account(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    return redirect("/requests/")
+    return redirect("/requests/?reviewDone")
 
 @csrf_exempt
 @login_required
@@ -704,7 +775,7 @@ def requisition(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    return redirect("/requests/")
+    return redirect("/requests/?reviewDone")
 
 
 @csrf_exempt
@@ -712,20 +783,6 @@ def requisition(request):
 def update_request(request, request_id):
     # Get the request object
     curr_request = get_request_by_id(request_id)
-
-    # Check the type of the request
-    if isinstance(curr_request, AdvanceLegalization):
-        form_type = "Legalización de Anticipos"
-    elif isinstance(curr_request, BillingAccount):
-        form_type = "Cuenta de Cobro"
-    elif isinstance(curr_request, Requisition):
-        form_type = "Requisición"
-    elif isinstance(curr_request, TravelAdvanceRequest):
-        form_type = "Solicitud de Viaje"
-    elif isinstance(curr_request, TravelExpenseLegalization):
-        form_type = "Legalización de Gastos de Viaje"
-    else:
-        form_type = None
 
     # Update the status and is_reviewed fields
     with transaction.atomic():
