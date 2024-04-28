@@ -55,6 +55,7 @@ class SignatureLogic {
     }
 
     handleSignButtonClick(event) {
+        this.serverRoute = window.location.pathname;
         event.preventDefault();
         Swal.fire({
             title: "Por favor, elige una opción:",
@@ -107,8 +108,10 @@ class SignatureLogic {
         })
         .then((result) => {
             if (result.value) {
-                document.getElementById('signature').innerHTML = '<p style="font-family: Cathylise Janetson; font-size: 60px;">' + result.value + '</p>';
+                let signature = '<p style="font-family: Cathylise Janetson; font-size: 60px;">' + result.value + '</p>';
+                document.getElementById('signature').innerHTML = signature;
                 document.getElementById('signatureStatus').value = "Yes";
+                document.getElementById('signatureInput').value = 1 + "---" + result.value;
             }
         });
     }
@@ -135,7 +138,9 @@ class SignatureLogic {
         })
         .then((result) => {
             if (result.value) {
-                document.getElementById('signature').innerHTML = '<img src="' + result.value + '">';
+                let signature = '<img src="' + result.value + '">';
+                document.getElementById('signature').innerHTML = signature;
+                document.getElementById('signatureInput').value = 2 + "---" + result.value;
             }
         });
 
@@ -161,11 +166,11 @@ class SignatureLogic {
             if (result.value) {
                 var reader = new FileReader();
                 reader.onload = (e) => {
-                    document.getElementById('signature').innerHTML = '<img src="' + e.target.result + '" style="max-width: 100%; height: auto;">';
+                    let signature = '<img src="' + e.target.result + '" style="max-width: 100%; height: auto;">';
+                    document.getElementById('signature').innerHTML = signature;
                     document.getElementById('signatureStatus').value = "Yes";
+                    document.getElementById('signatureInput').value = 3 + "---" + e.target.result;
                 };
-                console.log(document.getElementById('signatureStatus').value);
-                console.log("Yes")
                 reader.readAsDataURL(result.value);
             }
         });

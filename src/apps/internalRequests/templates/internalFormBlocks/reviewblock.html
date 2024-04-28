@@ -1,0 +1,61 @@
+<div class="my-2 mx-2 border-bottom border-3"></div>
+
+<h3>Resultados de revisión</h3>
+<p id="uncheckedMessages" style="display: none;"></p>
+<textarea id="reason" class="form-control mt-3" rows="3" style="display: none;" name="reasonData" placeholder="Por favor, ingrese el motivo por el cual no marcó todas las casillas."></textarea>
+
+<script>
+    $(document).ready(function() {
+        var allChecked = false;
+        var textbox;
+
+        function checkCheckboxes() {
+            var unchecked = $('input[type="checkbox"]:not(:checked)');
+            var messages = unchecked.map(function() {
+                return "- " + $(this).attr('data-message');
+            }).get().join('<br>');
+
+            if (unchecked.length > 0) {
+                $('#uncheckedMessages').html('Por favor, marque todos los campos que considere válidos. Los siguientes elementos no están marcados: <br><br>' + messages);
+                $('#reason').prop('required', true);
+                $('#uncheckedMessages').show();
+                $('#reason').show();
+            } else {
+                $('#uncheckedMessages').html('Todos los elementos han sido marcados correctamente.');
+                $('#reason').prop('required', false);
+                $('#uncheckedMessages').show();
+                $('#reason').hide();
+            }
+        }
+
+        $('#markAll').click(function() {
+            allChecked = !allChecked;
+            $('input:checkbox').prop('checked', allChecked);
+            if (allChecked) {
+                document.getElementById('markAll').innerHTML = 'Desmarcar todos';
+                if (textbox) {
+                    textbox.remove();
+                    textbox = null;
+                }
+            } else {
+                document.getElementById('markAll').innerHTML = 'Marcar todos';
+                if (!textbox) {
+                    textbox = document.createElement('textarea');
+                    textbox.placeholder = 'Por favor, marque todos los checkbox antes de completar la revisión.';
+                    document.body.appendChild(textbox);
+                }
+            }
+
+            checkCheckboxes();
+        });
+
+        checkCheckboxes();
+
+        $(document).on('change', 'input[type="checkbox"]', checkCheckboxes);
+    });
+</script>
+
+<div class="d-flex justify-content-center mt-3">
+    <button type="button" class="btn btn-primary mr-2" id="markAll">Marcar todo</button>
+    <button type="submit" class="btn btn-success" id="completeReview">Completar revisión</button>
+</div>
