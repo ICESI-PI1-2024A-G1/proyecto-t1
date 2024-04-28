@@ -1,33 +1,30 @@
 {% extends "base.html" %}
 {% block title %}Formularios{% endblock %}
-{% block content %}
+{%block main_route %}Formularios{% endblock %}
+{%block secondary_route %}Requisición{% endblock %}
 
-<div class="container col-md-10">
-    <!--Title-->
-    
-    <div class="d-flex justify-content-between">
-        <div>
-            <h2 class="mb-4">Requisición</h2>
-        </div>
+{% block content %}
+<form action="/forms/requisition" method="POST">
+    {{ form.csrf_token }}
+    <div class="card-header">
+        <h2 class="mb-4">Requisición</h2>
     </div>
-    
-    <!-- Announcement -->
-    
-    <p class="font-italic"><strong>Por favor tenga en cuenta lo
+    <div class="card-body card-fluid">
+        <!-- Announcement -->
+        
+        <p class="font-italic"><strong>Por favor tenga en cuenta lo
             siguiente:</strong></p>
-    <ol>
-        <li>En el caso de reintegro los soportes deben venir a nombre de la Universidad Icesi Nit. 890.316.745-5. Documento sin este requisito, será rechazado en la legalización.</li>
-        <li>Este formato lo podrá utilizar en diferentes solicitudes. Despliegue la pestaña de conceptos que está en el formato para conocer las opciones; si el concepto que va a utilizar no esta dentro de las opciones uso la opción otros</li>
-        <li>Este formato se debe pasar a PDF para él envió a la oficina de contabilidad</li>
-        <li>Formato de uso interno.</li>
-    </ol>
-    
-    <div class="my-2 mx-2 border-bottom border-3"></div>
-    
-    <!-- User data -->
-    
-    <form action="/forms/requisition" method="POST">
-        {{ form.csrf_token }}
+        <ol>
+            <li>En el caso de reintegro los soportes deben venir a nombre de la Universidad Icesi Nit. 890.316.745-5. Documento sin este requisito, será rechazado en la legalización.</li>
+            <li>Este formato lo podrá utilizar en diferentes solicitudes. Despliegue la pestaña de conceptos que está en el formato para conocer las opciones; si el concepto que va a utilizar no esta dentro de las opciones uso la opción otros</li>
+            <li>Este formato se debe pasar a PDF para él envió a la oficina de contabilidad</li>
+            <li>Formato de uso interno.</li>
+        </ol>
+
+        <div class="my-2 mx-2 border-bottom border-3"></div>
+
+        <!-- User data -->
+
         <div class="mb-2">
             <label class="h5"><strong>Datos</strong></label>
         </div>
@@ -84,47 +81,46 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="my-2 mx-2 border-bottom border-3"></div>
-    
+
         <!-- Description -->
-    
+
         <div class="mb-2">
             <label for="description" class="h5"><strong>Descripción</strong></label>
         </div>
-    
+
         <div>
             <textarea class="form-control" id="description" name="description" rows="5"></textarea>
         </div>
-    
+
         <!-- Authorization -->
-    
+
         {% include 'formBlocks/signblock.html' %}
-    
+
         <div class="my-2 mx-2 border-bottom border-3"></div>
-    
+
         <!-- Bank data -->
-    
+
         {% include 'formBlocks/bankblock.html' %}
-    
+
         <div class="my-2 mx-2 border-bottom border-3"></div>
-    
+
         <!-- Observations -->
-    
+
         <div class="mb-2 mt-3">
             <label for="observations" class="h5"><strong>Observaciones</strong></label>
         </div>
-    
+
         <div>
             <textarea class="form-control" id="observations" name="observations" rows="3"></textarea>
         </div>
-    
+    </div>
+    <div class="card-footer">
         <div class="d-flex justify-content-center">
             <button class="btn btn-primary mt-3" onclick="saveForm()"><i class="fa fa-save mr-2"></i> Guardar y enviar</button>
         </div>
-    </form>
-
-</div>
-
+    </div>
+</form>
 
 {% endblock %}

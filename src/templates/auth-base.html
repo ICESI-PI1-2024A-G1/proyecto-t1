@@ -98,14 +98,14 @@
             {% for message in messages %}
             <script>
             $(document).ready(function () {
-                showToast("{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}", "bottom-right", "{% if message.tags == 'error' %}Error{% else %}Éxito{% endif %}", "{{message}}")
+                showToast("{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}", "top-center", "{% if message.tags == 'error' %}Error{% else %}Éxito{% endif %}", "{{message}}")
             })
             </script>
             {% endfor %}
        {% elif message %}
          <script>
            $(document).ready(function () {
-             showToast("danger", "bottom-right", "Error", "{{message}}")
+             showToast("danger", "top-center", "Error", "{{message}}")
            })
          </script>
        {% endif %}  
