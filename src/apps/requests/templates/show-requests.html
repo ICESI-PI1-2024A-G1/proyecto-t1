@@ -1,76 +1,70 @@
 {% extends "base.html" %}
 {% block title %}Ventanilla Única{% endblock %}
+{%block main_route %}Solicitudes{% endblock %}
+{%block secondary_route %}Solicitudes de Sharepoint{% endblock %}
 {% block content %}
 
 
-<div class="container">
-    <h4 class="py-2 mb-4"><span class="text-muted fw-light">Solicitudes /</span> Solicitudes de Sharepoint</h4>
-    <div class="card">
-        <div class="card-header pb-0">
-            <!-- <h2>Solicitudes</h2> -->
-            <div class="input-group mb-3">
-                <input type="text" id="requestsTableSearch" class="form-control" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
-                <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
-            </div>
-        </div>
-        <div class="container">
-            <div class="table-responsive">
-                <table id="requestsTable" class="table border-top no-footer dtr-column ">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th class="col-1">Estado</th>
-                            <th>Fechas</th>
-                            <th>Solicitante</th>
-                            <th>Gestor</th>
-                            <th class="col-1">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for request in requests %}
-                        <tr id="request_{{ request.id }}">
-                            <td class="text-center">{{ request.id }}</td>
-                            <td>
-                                <div class="badge bg-label-{{request.status_color}} ">
-                                    <p id="status_{{ request.id }}" class="text-wrap mb-0 lh-sm">{{ request.status }}</p>
-                                </div>
-                            </td>
-                            <td class="col-2 text-sm">
-                                <div class="text-nowrap"><span class="fw-medium">Inicio:</span> {{ request.initial_date }}</div>
-                                <div class="text-nowrap"><span class="fw-medium">Final: </span>{{ request.final_date }}</div>
-                            </td>
-                            <td>{{ request.fullname }}</td>
-                            <td>
-                                {{ request.manager }}
-                                {% if request.team %}
-                                (Equipo {{ request.team }})
-                                {% endif %}
-                            </td>
-                            <td>
-                                <button onclick="showModal('Detalles de la solicitud', '/sharepoint/{{request.id}}')"
-                                    class="btn details-btn" data-request-id="{{ request.id }}">
-                                    Detalles
-                                    <i class="mx-2 fa fa-info"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-        </div>
-
-        </div>
-
-        <div class="card-footer pb-2">
-            <div id="requestsTablePagination" class="row">
-            
-            </div>
-        </div>
+<div class="card-header">
+    <!-- <h2>Solicitudes</h2> -->
+    <div class="input-group mb-3">
+        <input type="text" id="requestsTableSearch" class="form-control" aria-label="Sizing example input"
+        aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
+        <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
     </div>
 </div>
 
+<div id="requestsTableContainer" class="table-responsive card-fluid" style="height:55vh; overflow-y: scroll;">
+    <table id="requestsTable" class="table border-top no-footer dtr-column ">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th class="col-1">Estado</th>
+                <th>Fechas</th>
+                <th>Solicitante</th>
+                <th>Gestor</th>
+                <th class="col-1">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in requests %}
+            <tr id="request_{{ request.id }}">
+                <td class="text-center">{{ request.id }}</td>
+                <td>
+                    <div class="badge bg-label-{{request.status_color}} ">
+                        <p id="status_{{ request.id }}" class="text-wrap mb-0 lh-sm">{{ request.status }}</p>
+                    </div>
+                </td>
+                <td class="col-2 text-sm">
+                    <div class="text-nowrap"><span class="fw-medium">Inicio:</span> {{ request.initial_date }}</div>
+                    <div class="text-nowrap"><span class="fw-medium">Final: </span>{{ request.final_date }}</div>
+                </td>
+                <td>{{ request.fullname }}</td>
+                <td>
+                    {{ request.manager }}
+                    {% if request.team %}
+                    (Equipo {{ request.team }})
+                    {% endif %}
+                </td>
+                <td>
+                    <button onclick="showModal('Detalles de la solicitud', '/sharepoint/{{request.id}}')"
+                        class="btn details-btn" data-request-id="{{ request.id }}">
+                        Detalles
+                        <i class="mx-2 fa fa-info"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<div class="card-footer">
+    <div id="requestsTablePagination" class="row">
+    
+    </div>
+</div>
 
 {% load static %}
 <script src="{% static 'requests/js/requests.js' %}"></script>

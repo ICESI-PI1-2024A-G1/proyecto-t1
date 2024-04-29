@@ -1,5 +1,12 @@
-<div class="container">
-    <table class="table table-stripped">
+<div class="card-header">
+    <div class="input-group mb-3">
+        <input type="text" id="traceabilityTableSearch" class="form-control" aria-label="Sizing example input"
+        aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
+        <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
+    </div> 
+</div>
+<div id="traceabilityTableContainer" class="card-fluid container table-responsive">
+    <table id="traceabilityTable" class="table table-stripped">
         <thead>
             <th>Fecha</th>
             <th>Modificado por</th>
@@ -10,13 +17,13 @@
         <tbody>
             {% for trace in traceability %}
             <tr>
-                <td>
+                <td class="text-nowrap">
                     {{ trace.date }}        
                 </td>
                 <td>
                     {{ trace.modified_by }}        
                 </td>
-                <td>
+                <td style="min-width: 20rem;">
                     {{ trace.reason }}
                 </td>
                 <td>
@@ -34,3 +41,14 @@
         </tbody>
     </table>
 </div>
+<div class="card-footer">
+    <div id="traceabilityTablePagination" class="row my-2">
+    
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        DataTableInit("traceabilityTable", 8)
+    })
+</script>
