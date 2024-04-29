@@ -12,8 +12,6 @@
     </div>
 </div>
 
-<!-- Messages -->
-
 <!-- Announcement -->
 
 <p class="font-italic"><strong>Por favor tenga en cuenta lo
@@ -35,14 +33,22 @@
 
 <!-- User data -->
 
-<form action="/forms/advance_legalization" method="POST">
+<form action="/requests/advance_legalization_review" method="POST">
     {{ form.csrf_token }}
+
+    <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
     
     {% include 'internalFormBlocks/idblock.html' %}
 
     <div class="form-group">
         <label for="purchaseReason">Motivo de compra o servicio</label>
-        <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" readonly>{{ request.purchase_reason }}</textarea>
+        <div class="d-flex justify-content-between">
+            <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" disabled>{{ request.purchase_reason }}</textarea>
+            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckPurchaseReason" name="purchaseReasonCheck" data-message="Motivo de compra o servicio">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPurchaseReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -61,7 +67,7 @@
     </style>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover">
+        <table id="expensesTable" class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
                     <th class="col-2">Nombre del tercero de la factura</th>
@@ -81,22 +87,28 @@
                 {% endfor %}
                 <tr id="totals">
                     <td colspan="2" class="text-end">Total de gastos:</td>
-                    <td><input id="total" name="total" type="text" class="form-control" placeholder="0" value="{{ request.total|floatformat:"-0" }}" readonly></td>
+                    <td><input id="total" name="total" type="text" class="form-control" placeholder="0" value="{{ request.total|floatformat:"-0" }}" disabled></td>
                 </tr>
                 <tr id="advance">
                     <td colspan="2" class="text-end">Valor del anticipo:</td>
-                    <td><input id="advanceTotal" name="advanceTotal" type="text" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" readonly></td>
+                    <td><input id="advanceTotal" name="advanceTotal" type="text" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled></td>
                 </tr>
                 <tr id="employeeBalance">
                     <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
-                    <td><input id="employeeBalanceValue" name="employeeBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance_value|floatformat:"-0" }}" readonly></td>
+                    <td><input id="employeeBalanceValue" name="employeeBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance_value|floatformat:"-0" }}" disabled></td>
                 </tr>
                 <tr id="icesiBalance">
                     <td colspan="2" class="text-end">Saldo a favor de ICESI:</td>
-                    <td><input id="icesiBalanceValue" name="icesiBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance_value|floatformat:"-0" }}" readonly></td>
+                    <td><input id="icesiBalanceValue" name="icesiBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance_value|floatformat:"-0" }}" disabled></td>
                 </tr>
             </tbody>
         </table>
+    <div class="d-flex justify-content-center mt-3">
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
+    </div>
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -119,11 +131,37 @@
         <label for="observations" class="h5"><strong>Observaciones</strong></label>
     </div>
 
-    <div>
-        <textarea class="form-control" id="observations" name="observations" rows="3" readonly>{{ request.observations }}</textarea>
+    <div class="d-flex justify-content-between">
+        <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
     </div>
-</form>
 
-<script src="../../static/forms/js/advance_legalization.js"></script>
+    <!-- Confirm Review -->
+    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+        {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
+
+    {% if editable %}
+    <script>
+        const inputs = document.querySelectorAll('input, textarea, select');
+        const idsToSkip = ['requestDate', 'travelerName', 'idNumber', 'expensesTable'];
+        const tableInputs = document.querySelector('#expensesTable').querySelectorAll('input, textarea, select');
+
+        inputs.forEach(input => {
+            if (idsToSkip.includes(input.id) || Array.from(tableInputs).includes(input)) {
+                input.setAttribute('disabled', true);
+            } else {
+                input.removeAttribute('disabled');
+                input.removeAttribute('readonly');
+            }
+        });
+    </script>
+    {% include 'internalFormBlocks/savereviewblock.html' %}
+    {% endif %}
+
+</form>
 
 {% endblock %}

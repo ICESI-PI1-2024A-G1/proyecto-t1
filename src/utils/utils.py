@@ -5,7 +5,7 @@ import random
 import string
 
 
-def send_verification_email(request, subject, bigSubject, email, message):
+def send_verification_email(request, subject, bigSubject, email, message, attachment=None):
     """
     Sends a verification email using Django's EmailMessage.
 
@@ -15,6 +15,7 @@ def send_verification_email(request, subject, bigSubject, email, message):
         bigSubject (str): The "from" field of the email.
         email (str): The recipient's email address.
         message (str): The message body of the email.
+        attachment (bytes, optional): The file to attach to the email. Defaults to None.
 
     Returns:
         None
@@ -32,6 +33,9 @@ def send_verification_email(request, subject, bigSubject, email, message):
         bigSubject,
         [email],
     )
+
+    if attachment is not None:
+        email.attach('Solicitud.pdf', attachment, 'application/pdf')
 
     # Email sender
     email.fail_silently = False

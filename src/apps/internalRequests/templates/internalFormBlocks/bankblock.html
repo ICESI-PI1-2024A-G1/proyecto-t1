@@ -5,26 +5,92 @@
 <div class="row">
     <div class="col-md-6 mb-1">
         <label>Banco:</label>
-        <select class="form-control" name="bank" required disabled>
-            <option value="{{ request.bank }}" selected>{{ request.bank }}</option>
-        </select>
+        <div class="d-flex justify-content-between">
+            <select class="form-control" name="bank" required disabled>
+                <option value="{{ request.bank }}" selected>{{ request.bank }}</option>
+                <option {% if request.bank == 'BANCOLOMBIA' %}selected{% endif %}>BANCOLOMBIA</option>
+                <option {% if request.bank == 'BANCO AGRARIO' %}selected{% endif %}>BANCO AGRARIO</option>
+                <option {% if request.bank == 'BANCO AV VILLAS' %}selected{% endif %}>BANCO AV VILLAS</option>
+                <option {% if request.bank == 'BANCO CAJA SOCIAL' %}selected{% endif %}>BANCO CAJA SOCIAL</option>
+                <option {% if request.bank == 'BANCO COOPERATIVO COOPCENTRAL' %}selected{% endif %}>BANCO COOPERATIVO COOPCENTRAL</option>
+                <option {% if request.bank == 'BANCO CREDIFINANCIERA SA.' %}selected{% endif %}>BANCO CREDIFINANCIERA SA.</option>
+                <option {% if request.bank == 'BANCO DAVIVIENDA' %}selected{% endif %}>BANCO DAVIVIENDA</option>
+                <option {% if request.bank == 'BANCO DE BOGOTÁ' %}selected{% endif %}>BANCO DE BOGOTÁ</option>
+                <option {% if request.bank == 'BANCO DE LAS MICROFINANZAS BANCAMIA S.A.' %}selected{% endif %}>BANCO DE LAS MICROFINANZAS BANCAMIA S.A.</option>
+                <option {% if request.bank == 'BANCO DE OCCIDENTE' %}selected{% endif %}>BANCO DE OCCIDENTE</option>
+                <option {% if request.bank == 'BANCO FALABELLA S.A.' %}selected{% endif %}>BANCO FALABELLA S.A.</option>
+                <option {% if request.bank == 'BANCO FINANDINA S.A.' %}selected{% endif %}>BANCO FINANDINA S.A.</option>
+                <option {% if request.bank == 'BANCO GNB COLOMBIA S.A' %}selected{% endif %}>BANCO GNB COLOMBIA S.A</option>
+                <option {% if request.bank == 'BANCO GNB SUDAMERIS' %}selected{% endif %}>BANCO GNB SUDAMERIS</option>
+                <option {% if request.bank == 'BANCO MUNDO MUJER' %}selected{% endif %}>BANCO MUNDO MUJER</option>
+                <option {% if request.bank == 'BANCO PICHINCHA' %}selected{% endif %}>BANCO PICHINCHA</option>
+                <option {% if request.bank == 'BANCO POPULAR' %}selected{% endif %}>BANCO POPULAR</option>
+                <option {% if request.bank == 'BANCO PROCREDIT' %}selected{% endif %}>BANCO PROCREDIT</option>
+                <option {% if request.bank == 'BANCO SANTANDER DE NEGOCIOS' %}selected{% endif %}>BANCO SANTANDER DE NEGOCIOS</option>
+                <option {% if request.bank == 'BANCO SERFINANZA' %}selected{% endif %}>BANCO SERFINANZA</option>
+                <option {% if request.bank == 'BANCO W S.A' %}selected{% endif %}>BANCO W S.A</option>
+                <option {% if request.bank == 'BANCOOMEVA' %}selected{% endif %}>BANCOOMEVA</option>
+                <option {% if request.bank == 'BANCÓLDEX S.A.' %}selected{% endif %}>BANCÓLDEX S.A.</option>
+                <option {% if request.bank == 'BBVA' %}selected{% endif %}>BBVA</option>
+                <option {% if request.bank == 'BNP PARIBAS' %}selected{% endif %}>BNP PARIBAS</option>
+                <option {% if request.bank == 'CITIBANK' %}selected{% endif %}>CITIBANK</option>
+                <option {% if request.bank == 'COLTEFINANCIERA S.A.' %}selected{% endif %}>COLTEFINANCIERA S.A.</option>
+                <option {% if request.bank == 'CONFIAR' %}selected{% endif %}>CONFIAR</option>
+                <option {% if request.bank == 'COOFINEP COOPERATIVA FINANCIERA' %}selected{% endif %}>COOFINEP COOPERATIVA FINANCIERA</option>
+                <option {% if request.bank == 'COOPERATIVA FINANCIERA DE ANTIOQUIA' %}selected{% endif %}>COOPERATIVA FINANCIERA DE ANTIOQUIA</option>
+                <option {% if request.bank == 'COTRAFA COOPERATIVA FINANCIERA' %}selected{% endif %}>COTRAFA COOPERATIVA FINANCIERA</option>
+                <option {% if request.bank == 'Daviplata' %}selected{% endif %}>Daviplata</option>
+                <option {% if request.bank == 'FINANCIERA JURISCOOP S.A. COMPAÑÍA DE FINANCIAMIENTO' %}selected{% endif %}>FINANCIERA JURISCOOP S.A. COMPAÑÍA DE FINANCIAMIENTO</option>
+                <option {% if request.bank == 'GIROS Y FINANZAS COMPAÑÍA DE FINANCIAMIENTO S.A.' %}selected{% endif %}>GIROS Y FINANZAS COMPAÑÍA DE FINANCIAMIENTO S.A.</option>
+                <option {% if request.bank == 'ITAÚ' %}selected{% endif %}>ITAÚ</option>
+                <option {% if request.bank == 'ITAÚ antes CorpBanca' %}selected{% endif %}>ITAÚ antes CorpBanca</option>
+                <option {% if request.bank == 'MIBANCO S.A.' %}selected{% endif %}>MIBANCO S.A.</option>
+                <option {% if request.bank == 'NEQUI' %}selected{% endif %}>NEQUI</option>
+                <option {% if request.bank == 'Rappipay' %}selected{% endif %}>Rappipay</option>
+                <option {% if request.bank == 'Scotiabank Colpatria S.A' %}selected{% endif %}>Scotiabank Colpatria S.A</option>
+            </select>
+            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckBank" name="bankCheck" data-message="Banco">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckBank" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
     <div class="col-md-6 mb-1">
         <label>Tipo de cuenta:</label>
-        <select class="form-control" name="accountType" required disabled>
-            <option value="{{ form_data.accountType }}" selected>{{ request.account_type }}</option>
-        </select>
+        <div class="d-flex justify-content-between">
+            <select class="form-control" name="account_type" required disabled>
+                <option value="{{ request.accountType }}" selected>{{ request.account_type }}</option>
+                <option value="Ahorros" {% if request.accountType == 'Ahorros' %}selected{% endif %}>Ahorros</option>
+                <option value="Corriente" {% if request.accountType == 'Corriente' %}selected{% endif %}>Corriente</option>
+            </select>
+            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckAccountType" name="typeAccountCheck" data-message="Tipo de cuenta">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAccountType" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
 </div>
 <div class="row">
     <div class="col-md-6 mb-1">
         <label>N° de cuenta:</label>
-        <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ request.account_number }}" required readonly>
+        <div class="d-flex justify-content-between">
+            <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ request.account_number }}" required disabled>
+            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckAccountNumber" name="idBankCheck" data-message="N° de cuenta">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAccountNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
     {% if include_cex %}
     <div class="col-md-6 mb-1">
         <label>N° CEX:</label>
-        <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ request.cex_number }}" required readonly>
+        <div class="d-flex justify-content-between">
+            <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ request.cex_number }}" required disabled>
+            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                <input type="checkbox" class="btn-check" id="btncheckCexNumber" name="cexCheck" data-message="N° Cex">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckCexNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
     {% endif %}
 </div>

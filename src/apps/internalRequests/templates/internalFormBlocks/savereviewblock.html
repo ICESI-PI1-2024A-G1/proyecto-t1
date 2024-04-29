@@ -1,0 +1,31 @@
+<div class="d-flex justify-content-center mt-3">
+    <button type="submit" class="btn btn-success" id="completeReview" onclick="submitForm(event)">Guardar cambios y enviar</button>
+</div>
+
+<script>
+    function submitForm(event) {
+        // Prevent the form from submitting
+        event.preventDefault();
+
+        // Gather the form data
+        const formData = new FormData(document.querySelector('form'));
+
+        // Get the form ID
+        const formId = document.getElementById('request_id').value;
+
+        // Send the data to the server
+        fetch(`/requests/update-request/${formId}`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the server response
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors that occur
+            console.error('Error:', error);
+        });
+    }
+</script>

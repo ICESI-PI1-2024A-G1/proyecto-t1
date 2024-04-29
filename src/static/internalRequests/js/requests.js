@@ -8,25 +8,37 @@ const changeStatus = id => {
     var newStatus = $('#newStatusSelect').val();
     var reason = $('#reasonTextarea').val();
     if (reason === '') {
-        alert('Debe ingresar un motivo para cambiar el estado de la solicitud.');
-        return;
-    } else if (reason.length > 70) {
-        alert('El motivo no debe superar los 70 caracteres.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Debe ingresar un motivo para cambiar el estado de la solicitud.'
+        });
         return;
     }
-    $.ajax({
-        url: '/requests/change-status/' + id,
-        method: 'POST',
-        data: {
-            newStatus: newStatus,
-            reason: reason,
-            csrfmiddlewaretoken: csrftoken
-        },
-        success: function (response) {
-            location.reload()
-        },
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Quieres establecer la solicitud en "' + newStatus + '"? Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cambiar',
+        cancelButtonText: 'No, cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/requests/change-status/' + id,
+                method: 'POST',
+                data: {
+                    newStatus: newStatus,
+                    reason: reason,
+                    csrfmiddlewaretoken: csrftoken
+                },
+                success: function (response) {
+                    location.reload()
+                },
+            });
+            $('#detailsModal').modal('hide');
+        }
     });
-    $('#detailsModal').modal('hide');
 }
 
 $(document).ready(function () {   
