@@ -20,7 +20,8 @@
             <tr>
                 <th>ID</th>
                 <th class="col-1">Estado</th>
-                <th>Fechas</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Final</th>
                 <th>Solicitante</th>
                 <th>Gestor</th>
                 <th class="col-1">Acciones</th>
@@ -35,9 +36,11 @@
                         <p id="status_{{ request.id }}" class="text-wrap mb-0 lh-sm">{{ request.status }}</p>
                     </div>
                 </td>
-                <td class="col-2 text-sm">
-                    <div class="text-nowrap"><span class="fw-medium">Inicio:</span> {{ request.initial_date }}</div>
-                    <div class="text-nowrap"><span class="fw-medium">Final: </span>{{ request.final_date }}</div>
+                <td>
+                  {{ request.initial_date }}
+                </td>
+                <td>
+                    {{ request.final_date }}
                 </td>
                 <td>{{ request.fullname }}</td>
                 <td>
