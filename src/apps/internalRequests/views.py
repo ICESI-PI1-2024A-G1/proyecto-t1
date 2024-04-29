@@ -11,13 +11,26 @@ from apps.internalRequests.models import Traceability
 import utils.utils as utils
 from apps.teams.models import Team
 from datetime import datetime
+from django.db import transaction
+from django.template.loader import render_to_string
+from django.http import FileResponse
+from xhtml2pdf import pisa
+from io import BytesIO
+from django.template.loader import get_template
+from bs4 import BeautifulSoup
 import math
+import ast
+import json
+import pdfkit
+import os
 
 statusMap = {
     "PENDIENTE": "secondary",
     "EN REVISIÓN": "info",
+    "POR APROBAR": "primary",
     "DEVUELTO": "warning",
     "RECHAZADO": "danger",
+    "RESUELTO": "success",
 }
 
 User = get_user_model()
@@ -46,6 +59,17 @@ def show_requests(request):
     """
     Show requests
     """
+    message = None
+    if 'changeStatusDenied' in request.GET:
+        messages.add_message(request, messages.ERROR, 'No puedes cambiar el estado de una solicitud sin revisar.')
+    elif 'changeStatusDone' in request.GET:
+        messages.add_message(request, messages.SUCCESS, 'El estado de la solicitud ha sido actualizado correctamente.')
+    elif 'changeStatusFailed' in request.GET:
+        messages.add_message(request, messages.ERROR, 'No se pudo realizar la operación.')
+    elif 'fixRequestDone' in request.GET:
+        messages.add_message(request, messages.SUCCESS, 'El formulario ha sido enviado para revisión.')
+    elif 'reviewDone' in request.GET:
+        messages.add_message(request, messages.SUCCESS, 'El formulario ha sido revisado.')
     if request.user.is_superuser or request.user.is_leader:
         if (
             request.user.is_superuser
@@ -224,6 +248,7 @@ def show_requests(request):
         r.status_color = statusMap[r.status]
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
+        
 
 
 @csrf_exempt
@@ -250,12 +275,53 @@ def change_status(request, id):
     """
     if request.method == "GET":
         curr_request = get_request_by_id(id)
-        status_options = ["EN REVISIÓN", "PENDIENTE", "DEVUELTO", "RECHAZADO"]
-        return render(
-            request,
-            "change-status.html",
-            {"request": curr_request, "status_options": status_options},
-        )
+        if curr_request.status == "PENDIENTE":
+            status_options = ["EN REVISIÓN"]
+            return render(
+                request,
+                "change-status.html",
+                {"request": curr_request, "status_options": status_options},
+            )
+        elif curr_request.status == "EN REVISIÓN" and curr_request.is_reviewed:
+            review_data = ast.literal_eval(curr_request.review_data)
+            resultReviewShow = False
+            comments = None
+            reason_data = ''
+            for item in review_data:
+                if item['id'] == 'reasonData':
+                    reason_data = item['value']
+                    break
+
+            if reason_data == '':
+                status_options = ["POR APROBAR"]
+                comments_str = None
+            else:
+                status_options = ["DEVUELTO", "RECHAZADO"]
+                resultReviewShow = True
+                comments = ["Celdas afectadas:\n"]
+                for item in review_data:
+                    if item['id'] != 'reasonData':
+                        if item['value'] == 'off':
+                            comments.append("- " + item['message'])
+                            if item['id'] in ['tableCheck', 'signCheck']:
+                                status_options = ["RECHAZADO"]
+                    else:
+                        reason_data = item['value']
+
+                comments.append('\n' + "Motivos: " + reason_data)
+                comments_str = '\n'.join(comments)
+            return render(
+                request,
+                "change-status.html",
+                {"request": curr_request, "status_options": status_options, "resultReviewShow": resultReviewShow, "comments": comments_str},
+            )
+        elif curr_request.status == "POR APROBAR":
+            status_options = ["RESUELTO", "DEVUELTO", "RECHAZADO"]
+            return render(
+                request,
+                "change-status.html",
+                {"request": curr_request, "status_options": status_options},
+            )
 
     elif request.method == "POST":
         try:
@@ -294,7 +360,68 @@ def change_status(request, id):
                             team[0].leader.email,
                             f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                         )
+            if curr_request.status == "POR APROBAR":
+                # Put info of curr_request in a PDF
+                if isinstance(curr_request, AdvanceLegalization):
+                    html_file_path = 'forms/advance_legalization.html'
+                elif isinstance(curr_request, BillingAccount):
+                    html_file_path = 'forms/billing_account.html'
+                elif isinstance(curr_request, Requisition):
+                    html_file_path = 'forms/requisition.html'
+                elif isinstance(curr_request, TravelAdvanceRequest):
+                    html_file_path = 'forms/travel_advance_request.html'
+                elif isinstance(curr_request, TravelExpenseLegalization):
+                    html_file_path = 'forms/travel_expense_legalization.html'
+                else:
+                    form_type = None
+
+                # Render the HTML file with curr_request as context
+                template = get_template(html_file_path)
+                html_string = template.render({'request': curr_request})
+
+                # Parse the HTML with BeautifulSoup
+                soup = BeautifulSoup(html_string, 'html.parser')
+
+                # Find all input, textarea, and select elements that are not inside a table
+                inputs = soup.select(':not(table) input, :not(table) textarea, :not(table) select')
+
+                # Replace each input, textarea, or select element with a p element containing the input's value
+                for input_elem in inputs:
+                    if input_elem.name == 'input':
+                        value = input_elem.get('value', '')
+                    elif input_elem.name == 'textarea':
+                        value = input_elem.string or ''
+                    else:  # select
+                        selected_option = input_elem.find('option', selected=True)
+                        value = selected_option.get('value', '') if selected_option else ''
+                    p_elem = soup.new_tag('p')
+                    p_elem.string = value
+                    input_elem.replace_with(p_elem)
+
+                # Convert the modified HTML to a string
+                html_string = str(soup)
+
+                try:
+                    # Convert the rendered HTML string to PDF
+                    pdf_io = BytesIO()
+                    pisa.CreatePDF(html_string, dest=pdf_io)
+                except Exception as e:
+                    print(f"Unexpected error: {e}")
+                else:
+                    # Send the email with the PDF as an attachment
+                    utils.send_verification_email(
+                        request,
+                        f"Archivo para revisión de la solicitud {curr_request.id}",
+                        "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                        "ccsa101010@gmail.com",
+                        f"Hola, el equipo de Contabilidad de la Universidad Icesi te envía el siguiente archivo para ser revisado. Este archivo contiene detalles de la solicitud {curr_request.id} que ha sido actualizada recientemente. Por favor, revisa el archivo adjunto y haznos saber si tienes alguna pregunta o necesitas más información. Gracias por tu atención a este asunto.",
+                        pdf_io.getvalue(),
+                    )
+
+                    print(f'Email sent to {team[0].leader.email}')
+
             curr_request.save()
+            return redirect("/requests/?changeStatusDone")
             return JsonResponse(
                 {
                     "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
@@ -302,6 +429,8 @@ def change_status(request, id):
             )
 
         except Exception as e:
+            print("Error:", e)
+            return redirect("/requests/?changeStatusFailed")
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
             )
@@ -336,24 +465,29 @@ def detail_request(request, id):
             general_data_id=request_data.id
         )
         context["expenses"] = expenses
-        return render(request, "forms/advance_legalization.html", context)
+        template = "forms/advance_legalization.html"
     elif isinstance(request_data, BillingAccount):
         context["include_cex"] = True
-        return render(request, "forms/billing_account.html", context)
+        template = "forms/billing_account.html"
     elif isinstance(request_data, Requisition):
-        return render(request, "forms/requisition.html", context)
+        template = "forms/requisition.html"
     elif isinstance(request_data, TravelAdvanceRequest):
         expenses = json.loads(request_data.expenses)
         context["expenses"] = expenses
-        return render(request, "forms/travel_advance_request.html", context)
+        template = "forms/travel_advance_request.html"
     elif isinstance(request_data, TravelExpenseLegalization):
         expenses = TravelExpenseLegalization_Table.objects.filter(
             travel_info_id=request_data.id
         )
         context["expenses"] = expenses
-        return render(request, "forms/travel_expense_legalization.html", context)
+        template = "forms/travel_expense_legalization.html"
     else:
-        return render(request, "forms/default_form.html", context)
+        template = "forms/default_form.html"
+
+    if request_data.status == "DEVUELTO" and request.user.is_applicant:
+        context["editable"] = True
+
+    return render(request, template, context)
 
 
 @csrf_exempt
@@ -450,5 +584,225 @@ def assign_request(request, request_id):
                 print("El destino no se encontró")
         except Exception as e:
             print(e)
-        messages.success(request, "La solicitud ha sido asignada exitosamente.")
-        return redirect("/requests/")
+
+@csrf_exempt
+@login_required
+def travel_advance_request(request):
+    """
+    Review the travel advance request form.
+
+    HTTP Method:
+    - POST
+
+    Returns:
+    - render: Changes status of the request to reviewed.
+    """
+    request_id = request.POST.get('id')
+    review_data = request.POST.dict()
+    request = TravelAdvanceRequest.objects.get(id=request_id)
+
+    # Mapping of field names to data-message
+    field_to_message = {
+        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'dependenceCheck': 'Dependencia',
+        'costsCheck': 'Costos', 'destinationCheck': 'Destino', 'startTravelCheck': 'Inicio del viaje',
+        'endTravelCheck': 'Fin del viaje', 'travelReasonCheck': 'Razón del viaje', 'tableCheck': 'Tabla',
+        'signCheck': 'Firma', 'bankCheck': 'Banco', 'typeAccountCheck': 'Tipo de cuenta',
+        'idBankCheck': 'ID del banco', 'observationsCheck': 'Observaciones', 'reasonData': 'Razón'
+    }
+
+    # Initialize review_data_list with all checkboxes with a value of 'off'
+    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+
+    # Update the values of the checkboxes that are checked
+    for item in review_data_list:
+        if item['id'] in review_data:
+            item['value'] = review_data[item['id']]
+
+    request.review_data = review_data_list
+    request.is_reviewed = True
+    request.save()
+    return redirect("/requests/?reviewDone")
+
+
+@csrf_exempt
+@login_required
+def travel_expense_legalization(request):
+    """
+    Review the travel expense legalization form.
+
+    HTTP Method:
+    - POST
+
+    Returns:
+    - render: Changes status of the request to reviewed.
+    """
+    request_id = request.POST.get('id')
+    review_data = request.POST.dict()
+    request = TravelExpenseLegalization.objects.get(id=request_id)
+
+    # Mapping of field names to data-message
+    field_to_message = {
+        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'dependenceCheck': 'Dependencia',
+        'costsCheck': 'Costos', 'destinationCheck': 'Destino', 'startTravelCheck': 'Inicio de viaje',
+        'endTravelCheck': 'Fin de viaje', 'travelReasonCheck': 'Razón de viaje', 'tableCheck': 'Tabla',
+        'signCheck': 'Firma', 'bankCheck': 'Banco', 'typeAccountCheck': 'Tipo de cuenta',
+        'idBankCheck': 'ID del banco', 'observationsCheck': 'Observaciones', 'reasonData': 'Razón'
+    }
+
+    # Initialize review_data_list with all checkboxes with a value of 'off'
+    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+
+    # Update the values of the checkboxes that are checked
+    for item in review_data_list:
+        if item['id'] in review_data:
+            item['value'] = review_data[item['id']]
+
+    request.review_data = review_data_list
+    request.is_reviewed = True
+    request.save()
+    return redirect("/requests/?reviewDone")
+
+
+@csrf_exempt
+@login_required
+def advance_legalization(request):
+    """
+    Review the advance legalization form.
+
+    HTTP Method:
+    - POST
+
+    Returns:
+    - render: Changes status of the request to reviewed.
+    """
+    request_id = request.POST.get('id')
+    review_data = request.POST.dict()
+    request = AdvanceLegalization.objects.get(id=request_id)
+
+    # Mapping of field names to data-message
+    field_to_message = {
+        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'dependenceCheck': 'Dependencia',
+        'costsCheck': 'Costos', 'purchaseReasonCheck': 'Razón de compra', 'tableCheck': 'Tabla',
+        'signCheck': 'Firma', 'bankCheck': 'Banco', 'typeAccountCheck': 'Tipo de cuenta',
+        'idBankCheck': 'ID del banco', 'observationsCheck': 'Observaciones', 'reasonData': 'Razón'
+    }
+
+    # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
+    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+
+    # Actualizar los valores de los checkboxes que están marcados
+    for item in review_data_list:
+        if item['id'] in review_data:
+            item['value'] = review_data[item['id']]
+
+    request.review_data = review_data_list
+    request.is_reviewed = True
+    request.save()
+    return redirect("/requests/?reviewDone")
+
+@csrf_exempt
+@login_required
+def billing_account(request):
+    """
+    Review the billing account form.
+
+    HTTP Method:
+    - POST
+
+    Returns:
+    - render: Changes status of the request to reviewed.
+    """
+    request_id = request.POST.get('id')
+    review_data = request.POST.dict()
+    request = BillingAccount.objects.get(id=request_id)
+
+    # Mapping of field names to data-message
+    field_to_message = {
+        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'valueCheck': 'Valor',
+        'conceptCheck': 'Concepto', 'retentionCheck': 'Retención', 'taxCheck': 'Impuesto',
+        'residentCheck': 'Residente', 'cityCheck': 'Ciudad', 'addressCheck': 'Dirección',
+        'cellphoneCheck': 'Celular', 'signCheck': 'Firma', 'bankCheck': 'Banco',
+        'typeAccountCheck': 'Tipo de cuenta', 'idBankCheck': 'ID del banco', 'cexCheck': 'CEX',
+        'reasonData': 'Razón'
+    }
+
+    # Initialize review_data_list with all checkboxes with a value of 'off'
+    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+
+    # Update the values of the checkboxes that are checked
+    for item in review_data_list:
+        if item['id'] in review_data:
+            item['value'] = review_data[item['id']]
+
+    request.review_data = review_data_list
+    request.is_reviewed = True
+    request.save()
+    return redirect("/requests/?reviewDone")
+
+@csrf_exempt
+@login_required
+def requisition(request):
+    """
+    Review the requisition form.
+
+    HTTP Method:
+    - POST
+
+    Returns:
+    - render: Changes status of the request to reviewed.
+    """
+    request_id = request.POST.get('id')
+    review_data = request.POST.dict()
+    request = Requisition.objects.get(id=request_id)
+
+    # Mapeo de los nombres de los campos a los data-message
+    field_to_message = {
+        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'workCheck': 'Trabajo',
+        'dependenceCheck': 'Dependencia', 'cencoCheck': 'Cenco', 'valueCheck': 'Valor',
+        'conceptCheck': 'Concepto', 'descriptionCheck': 'Descripción', 'signCheck': 'Firma',
+        'bankCheck': 'Banco', 'typeAccountCheck': 'Tipo de cuenta', 'idBankCheck': 'ID del banco',
+        'observationsCheck': 'Observaciones', 'reasonData': 'Razón'
+    }
+
+    # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
+    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+
+    # Actualizar los valores de los checkboxes que están marcados
+    for item in review_data_list:
+        if item['id'] in review_data:
+            item['value'] = review_data[item['id']]
+
+    request.review_data = review_data_list
+    request.is_reviewed = True
+    request.save()
+    return redirect("/requests/?reviewDone")
+
+
+@csrf_exempt
+@login_required
+def update_request(request, request_id):
+    # Get the request object
+    curr_request = get_request_by_id(request_id)
+
+    # Update the status and is_reviewed fields
+    with transaction.atomic():
+        curr_request.status = "EN REVISIÓN"
+        curr_request.is_reviewed = False
+
+        # Update the request with the data from the method's request
+        for key, value in request.POST.items():
+            if hasattr(curr_request, key):
+                setattr(curr_request, key, value)
+
+        curr_request.save()
+
+    Traceability.objects.create(
+        modified_by=request.user,
+        prev_state="DEVUELTO",
+        new_state="EN REVISIÓN",
+        reason="Corrección de formulario.",
+        date=datetime.now(),
+        request=request_id,
+    )
+    
+    return redirect("/requests/?fixRequestDone")
