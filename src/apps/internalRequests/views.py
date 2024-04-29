@@ -58,7 +58,6 @@ def show_requests(request):
     """
     Show requests
     """
-    message = None
     if "changeStatusDenied" in request.GET:
         messages.add_message(
             request,
@@ -398,6 +397,7 @@ def change_status(request, id):
                             team[0].leader.email,
                             f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                         )
+            
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
@@ -461,9 +461,7 @@ def change_status(request, id):
                     )
 
                     print(f"Email sent to {team[0].leader.email}")
-
             curr_request.save()
-            return redirect("/requests/?changeStatusDone")
             return JsonResponse(
                 {
                     "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
@@ -471,8 +469,6 @@ def change_status(request, id):
             )
 
         except Exception as e:
-            print("Error:", e)
-            return redirect("/requests/?changeStatusFailed")
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
             )
@@ -680,6 +676,7 @@ def travel_advance_request(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+    
     return redirect("/requests/?reviewDone")
 
 
@@ -733,6 +730,7 @@ def travel_expense_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+    
     return redirect("/requests/?reviewDone")
 
 
@@ -783,6 +781,7 @@ def advance_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+    
     return redirect("/requests/?reviewDone")
 
 
@@ -837,6 +836,7 @@ def billing_account(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+    
     return redirect("/requests/?reviewDone")
 
 
@@ -889,6 +889,7 @@ def requisition(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+    
     return redirect("/requests/?reviewDone")
 
 
@@ -919,4 +920,8 @@ def update_request(request, request_id):
         request=request_id,
     )
 
-    return redirect("/requests/?fixRequestDone")
+    return JsonResponse(
+        {
+            "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
+        }
+    )

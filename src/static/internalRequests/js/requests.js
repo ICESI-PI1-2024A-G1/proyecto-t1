@@ -33,8 +33,11 @@ const changeStatus = id => {
                     csrfmiddlewaretoken: csrftoken
                 },
                 success: function (response) {
-                    location.reload()
+                    window.location.href = "/requests/?fixRequestDone";
                 },
+                error: function (xhr, status, error) {
+                    window.location.href = "/requests/?changeStatusFailed";
+                }
             });
             $('#detailsModal').modal('hide');
         }
