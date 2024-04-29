@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 import random
 import string
 
+verification_codes = {} 
 
 def send_verification_email(request, subject, bigSubject, email, message):
     """
