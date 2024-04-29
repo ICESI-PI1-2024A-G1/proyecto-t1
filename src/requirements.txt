@@ -9,5 +9,8 @@ xlwings==0.31.1
 django-compressor==4.4
 django-sass-processor==1.4
 libsass==0.23.0
+locust==2.26.0
+selenium==4.20.0
+pdfkit==0.6.1
 xhtml2pdf==0.2.5
 reportlab==4.0.9
