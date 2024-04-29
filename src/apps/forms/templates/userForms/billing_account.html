@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Formularios{% endblock %}
+{%block main_route %}Formularios{% endblock %}
+{%block secondary_route %}Cuenta de cobro{% endblock %}
+
 {% block content %}
-
-<div class="container col-md-10">
-    <!-- Title -->
-
-    <div class="d-flex justify-content-between">
-        <div>
-            <h2 class="mb-4">Cuenta de cobro para contratos de Gestión Humana</h2>
-        </div>
+<form action="/forms/billing_account" method="POST">
+    {{ form.csrf_token }}
+    <div class="card-header">
+        <h2 class="mb-4">Cuenta de cobro para contratos de Gestión Humana</h2>
     </div>
-
-    <!-- Announcement -->
+    <div class="card-body card-fluid">
+            <!-- Announcement -->
 
     <p class="font-italic"><strong>Por favor, lea la siguiente información:</strong></p>
 
@@ -34,8 +33,7 @@
 
     <!-- User data -->
 
-<form action="/forms/billing_account" method="POST">
-    {{ form.csrf_token }}
+
     <div class="mb-2">
         <label class="h5"><strong>Datos del solicitante</strong></label>
     </div>
@@ -159,11 +157,13 @@
         <!-- Bank data -->
 
         {% include 'formBlocks/bankblock.html' %}
-
+    </div>
+    <div class="card-footer">
         <div class="d-flex justify-content-center">
             <button class="btn btn-primary mt-3" type="submit"><i class="fa fa-save mr-2"></i> Guardar y enviar</button>
         </div>
-    </form>
-</div>
+    </div>
+</form>
+
 
 {% endblock %}

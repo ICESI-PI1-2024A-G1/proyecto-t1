@@ -21,7 +21,6 @@ from bs4 import BeautifulSoup
 import math
 import ast
 import json
-import pdfkit
 import os
 
 statusMap = {
@@ -60,21 +59,38 @@ def show_requests(request):
     Show requests
     """
     message = None
-    if 'changeStatusDenied' in request.GET:
-        messages.add_message(request, messages.ERROR, 'No puedes cambiar el estado de una solicitud sin revisar.')
-    elif 'changeStatusDone' in request.GET:
-        messages.add_message(request, messages.SUCCESS, 'El estado de la solicitud ha sido actualizado correctamente.')
-    elif 'changeStatusFailed' in request.GET:
-        messages.add_message(request, messages.ERROR, 'No se pudo realizar la operación.')
-    elif 'fixRequestDone' in request.GET:
-        messages.add_message(request, messages.SUCCESS, 'El formulario ha sido enviado para revisión.')
-    elif 'reviewDone' in request.GET:
-        messages.add_message(request, messages.SUCCESS, 'El formulario ha sido revisado.')
-    if request.user.is_superuser or request.user.is_leader:
+    if "changeStatusDenied" in request.GET:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "No puedes cambiar el estado de una solicitud sin revisar.",
+        )
+    elif "changeStatusDone" in request.GET:
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            "El estado de la solicitud ha sido actualizado correctamente.",
+        )
+    elif "changeStatusFailed" in request.GET:
+        messages.add_message(
+            request, messages.ERROR, "No se pudo realizar la operación."
+        )
+    elif "fixRequestDone" in request.GET:
+        messages.add_message(
+            request, messages.SUCCESS, "El formulario ha sido enviado para revisión."
+        )
+    elif "reviewDone" in request.GET:
+        messages.add_message(
+            request, messages.SUCCESS, "El formulario ha sido revisado."
+        )
+    if request.user.is_superuser or request.user.is_leader or request.user.is_member:
         if (
             request.user.is_superuser
-            or request.user.is_leader
-            and Team.objects.filter(leader_id=request.user.id).exists()
+            or request.user.is_member
+            or (
+                request.user.is_leader
+                and Team.objects.filter(leader_id=request.user.id).exists()
+            )
         ):
             advance_legalization = [
                 obj.__dict__.update(
@@ -247,8 +263,25 @@ def show_requests(request):
     for r in requests_data:
         r.status_color = statusMap[r.status]
 
+    if (
+        request.user.is_leader
+        and Team.objects.filter(leader_id=request.user.id).exists()
+    ):
+        team = Team.objects.get(leader_id=request.user.id)
+        requests_data = list(
+            filter(lambda x: x.document == team.typeForm, requests_data)
+        )
+    if request.user.is_member:
+        print(requests_data)
+        requests_data = list(
+            filter(
+                lambda x: x.member_name
+                == request.user.first_name + " " + request.user.last_name,
+                requests_data,
+            )
+        )
+
     return render(request, "show-internal-requests.html", {"requests": requests_data})
-        
 
 
 @csrf_exempt
@@ -286,13 +319,13 @@ def change_status(request, id):
             review_data = ast.literal_eval(curr_request.review_data)
             resultReviewShow = False
             comments = None
-            reason_data = ''
+            reason_data = ""
             for item in review_data:
-                if item['id'] == 'reasonData':
-                    reason_data = item['value']
+                if item["id"] == "reasonData":
+                    reason_data = item["value"]
                     break
 
-            if reason_data == '':
+            if reason_data == "":
                 status_options = ["POR APROBAR"]
                 comments_str = None
             else:
@@ -300,20 +333,25 @@ def change_status(request, id):
                 resultReviewShow = True
                 comments = ["Celdas afectadas:\n"]
                 for item in review_data:
-                    if item['id'] != 'reasonData':
-                        if item['value'] == 'off':
-                            comments.append("- " + item['message'])
-                            if item['id'] in ['tableCheck', 'signCheck']:
+                    if item["id"] != "reasonData":
+                        if item["value"] == "off":
+                            comments.append("- " + item["message"])
+                            if item["id"] in ["tableCheck", "signCheck"]:
                                 status_options = ["RECHAZADO"]
                     else:
-                        reason_data = item['value']
+                        reason_data = item["value"]
 
-                comments.append('\n' + "Motivos: " + reason_data)
-                comments_str = '\n'.join(comments)
+                comments.append("\n" + "Motivos: " + reason_data)
+                comments_str = "\n".join(comments)
             return render(
                 request,
                 "change-status.html",
-                {"request": curr_request, "status_options": status_options, "resultReviewShow": resultReviewShow, "comments": comments_str},
+                {
+                    "request": curr_request,
+                    "status_options": status_options,
+                    "resultReviewShow": resultReviewShow,
+                    "comments": comments_str,
+                },
             )
         elif curr_request.status == "POR APROBAR":
             status_options = ["RESUELTO", "DEVUELTO", "RECHAZADO"]
@@ -363,38 +401,42 @@ def change_status(request, id):
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
-                    html_file_path = 'forms/advance_legalization.html'
+                    html_file_path = "forms/advance_legalization.html"
                 elif isinstance(curr_request, BillingAccount):
-                    html_file_path = 'forms/billing_account.html'
+                    html_file_path = "forms/billing_account.html"
                 elif isinstance(curr_request, Requisition):
-                    html_file_path = 'forms/requisition.html'
+                    html_file_path = "forms/requisition.html"
                 elif isinstance(curr_request, TravelAdvanceRequest):
-                    html_file_path = 'forms/travel_advance_request.html'
+                    html_file_path = "forms/travel_advance_request.html"
                 elif isinstance(curr_request, TravelExpenseLegalization):
-                    html_file_path = 'forms/travel_expense_legalization.html'
+                    html_file_path = "forms/travel_expense_legalization.html"
                 else:
                     form_type = None
 
                 # Render the HTML file with curr_request as context
                 template = get_template(html_file_path)
-                html_string = template.render({'request': curr_request})
+                html_string = template.render({"request": curr_request})
 
                 # Parse the HTML with BeautifulSoup
-                soup = BeautifulSoup(html_string, 'html.parser')
+                soup = BeautifulSoup(html_string, "html.parser")
 
                 # Find all input, textarea, and select elements that are not inside a table
-                inputs = soup.select(':not(table) input, :not(table) textarea, :not(table) select')
+                inputs = soup.select(
+                    ":not(table) input, :not(table) textarea, :not(table) select"
+                )
 
                 # Replace each input, textarea, or select element with a p element containing the input's value
                 for input_elem in inputs:
-                    if input_elem.name == 'input':
-                        value = input_elem.get('value', '')
-                    elif input_elem.name == 'textarea':
-                        value = input_elem.string or ''
+                    if input_elem.name == "input":
+                        value = input_elem.get("value", "")
+                    elif input_elem.name == "textarea":
+                        value = input_elem.string or ""
                     else:  # select
-                        selected_option = input_elem.find('option', selected=True)
-                        value = selected_option.get('value', '') if selected_option else ''
-                    p_elem = soup.new_tag('p')
+                        selected_option = input_elem.find("option", selected=True)
+                        value = (
+                            selected_option.get("value", "") if selected_option else ""
+                        )
+                    p_elem = soup.new_tag("p")
                     p_elem.string = value
                     input_elem.replace_with(p_elem)
 
@@ -418,7 +460,7 @@ def change_status(request, id):
                         pdf_io.getvalue(),
                     )
 
-                    print(f'Email sent to {team[0].leader.email}')
+                    print(f"Email sent to {team[0].leader.email}")
 
             curr_request.save()
             return redirect("/requests/?changeStatusDone")
@@ -552,6 +594,7 @@ def assign_request(request, request_id):
     else:
         form_type = None
 
+    print(form_type)
     if request.method == "GET":
         if form_type is not None:
             teams = Team.objects.filter(typeForm=form_type)
@@ -582,8 +625,10 @@ def assign_request(request, request_id):
                 )
             except:
                 print("El destino no se encontró")
+            return redirect("/requests/?assignRequestDone")
         except Exception as e:
             print(e)
+
 
 @csrf_exempt
 @login_required
@@ -597,26 +642,40 @@ def travel_advance_request(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get('id')
+    request_id = request.POST.get("id")
     review_data = request.POST.dict()
     request = TravelAdvanceRequest.objects.get(id=request_id)
 
     # Mapping of field names to data-message
     field_to_message = {
-        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'dependenceCheck': 'Dependencia',
-        'costsCheck': 'Costos', 'destinationCheck': 'Destino', 'startTravelCheck': 'Inicio del viaje',
-        'endTravelCheck': 'Fin del viaje', 'travelReasonCheck': 'Razón del viaje', 'tableCheck': 'Tabla',
-        'signCheck': 'Firma', 'bankCheck': 'Banco', 'typeAccountCheck': 'Tipo de cuenta',
-        'idBankCheck': 'ID del banco', 'observationsCheck': 'Observaciones', 'reasonData': 'Razón'
+        "dateCheck": "Fecha",
+        "nameCheck": "Nombre",
+        "idCheck": "ID",
+        "dependenceCheck": "Dependencia",
+        "costsCheck": "Costos",
+        "destinationCheck": "Destino",
+        "startTravelCheck": "Inicio del viaje",
+        "endTravelCheck": "Fin del viaje",
+        "travelReasonCheck": "Razón del viaje",
+        "tableCheck": "Tabla",
+        "signCheck": "Firma",
+        "bankCheck": "Banco",
+        "typeAccountCheck": "Tipo de cuenta",
+        "idBankCheck": "ID del banco",
+        "observationsCheck": "Observaciones",
+        "reasonData": "Razón",
     }
 
     # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+    review_data_list = [
+        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+        for key in field_to_message.keys()
+    ]
 
     # Update the values of the checkboxes that are checked
     for item in review_data_list:
-        if item['id'] in review_data:
-            item['value'] = review_data[item['id']]
+        if item["id"] in review_data:
+            item["value"] = review_data[item["id"]]
 
     request.review_data = review_data_list
     request.is_reviewed = True
@@ -636,26 +695,40 @@ def travel_expense_legalization(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get('id')
+    request_id = request.POST.get("id")
     review_data = request.POST.dict()
     request = TravelExpenseLegalization.objects.get(id=request_id)
 
     # Mapping of field names to data-message
     field_to_message = {
-        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'dependenceCheck': 'Dependencia',
-        'costsCheck': 'Costos', 'destinationCheck': 'Destino', 'startTravelCheck': 'Inicio de viaje',
-        'endTravelCheck': 'Fin de viaje', 'travelReasonCheck': 'Razón de viaje', 'tableCheck': 'Tabla',
-        'signCheck': 'Firma', 'bankCheck': 'Banco', 'typeAccountCheck': 'Tipo de cuenta',
-        'idBankCheck': 'ID del banco', 'observationsCheck': 'Observaciones', 'reasonData': 'Razón'
+        "dateCheck": "Fecha",
+        "nameCheck": "Nombre",
+        "idCheck": "ID",
+        "dependenceCheck": "Dependencia",
+        "costsCheck": "Costos",
+        "destinationCheck": "Destino",
+        "startTravelCheck": "Inicio de viaje",
+        "endTravelCheck": "Fin de viaje",
+        "travelReasonCheck": "Razón de viaje",
+        "tableCheck": "Tabla",
+        "signCheck": "Firma",
+        "bankCheck": "Banco",
+        "typeAccountCheck": "Tipo de cuenta",
+        "idBankCheck": "ID del banco",
+        "observationsCheck": "Observaciones",
+        "reasonData": "Razón",
     }
 
     # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+    review_data_list = [
+        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+        for key in field_to_message.keys()
+    ]
 
     # Update the values of the checkboxes that are checked
     for item in review_data_list:
-        if item['id'] in review_data:
-            item['value'] = review_data[item['id']]
+        if item["id"] in review_data:
+            item["value"] = review_data[item["id"]]
 
     request.review_data = review_data_list
     request.is_reviewed = True
@@ -675,30 +748,43 @@ def advance_legalization(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get('id')
+    request_id = request.POST.get("id")
     review_data = request.POST.dict()
     request = AdvanceLegalization.objects.get(id=request_id)
 
     # Mapping of field names to data-message
     field_to_message = {
-        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'dependenceCheck': 'Dependencia',
-        'costsCheck': 'Costos', 'purchaseReasonCheck': 'Razón de compra', 'tableCheck': 'Tabla',
-        'signCheck': 'Firma', 'bankCheck': 'Banco', 'typeAccountCheck': 'Tipo de cuenta',
-        'idBankCheck': 'ID del banco', 'observationsCheck': 'Observaciones', 'reasonData': 'Razón'
+        "dateCheck": "Fecha",
+        "nameCheck": "Nombre",
+        "idCheck": "ID",
+        "dependenceCheck": "Dependencia",
+        "costsCheck": "Costos",
+        "purchaseReasonCheck": "Razón de compra",
+        "tableCheck": "Tabla",
+        "signCheck": "Firma",
+        "bankCheck": "Banco",
+        "typeAccountCheck": "Tipo de cuenta",
+        "idBankCheck": "ID del banco",
+        "observationsCheck": "Observaciones",
+        "reasonData": "Razón",
     }
 
     # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
-    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+    review_data_list = [
+        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+        for key in field_to_message.keys()
+    ]
 
     # Actualizar los valores de los checkboxes que están marcados
     for item in review_data_list:
-        if item['id'] in review_data:
-            item['value'] = review_data[item['id']]
+        if item["id"] in review_data:
+            item["value"] = review_data[item["id"]]
 
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
     return redirect("/requests/?reviewDone")
+
 
 @csrf_exempt
 @login_required
@@ -712,32 +798,47 @@ def billing_account(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get('id')
+    request_id = request.POST.get("id")
     review_data = request.POST.dict()
     request = BillingAccount.objects.get(id=request_id)
 
     # Mapping of field names to data-message
     field_to_message = {
-        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'valueCheck': 'Valor',
-        'conceptCheck': 'Concepto', 'retentionCheck': 'Retención', 'taxCheck': 'Impuesto',
-        'residentCheck': 'Residente', 'cityCheck': 'Ciudad', 'addressCheck': 'Dirección',
-        'cellphoneCheck': 'Celular', 'signCheck': 'Firma', 'bankCheck': 'Banco',
-        'typeAccountCheck': 'Tipo de cuenta', 'idBankCheck': 'ID del banco', 'cexCheck': 'CEX',
-        'reasonData': 'Razón'
+        "dateCheck": "Fecha",
+        "nameCheck": "Nombre",
+        "idCheck": "ID",
+        "valueCheck": "Valor",
+        "conceptCheck": "Concepto",
+        "retentionCheck": "Retención",
+        "taxCheck": "Impuesto",
+        "residentCheck": "Residente",
+        "cityCheck": "Ciudad",
+        "addressCheck": "Dirección",
+        "cellphoneCheck": "Celular",
+        "signCheck": "Firma",
+        "bankCheck": "Banco",
+        "typeAccountCheck": "Tipo de cuenta",
+        "idBankCheck": "ID del banco",
+        "cexCheck": "CEX",
+        "reasonData": "Razón",
     }
 
     # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+    review_data_list = [
+        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+        for key in field_to_message.keys()
+    ]
 
     # Update the values of the checkboxes that are checked
     for item in review_data_list:
-        if item['id'] in review_data:
-            item['value'] = review_data[item['id']]
+        if item["id"] in review_data:
+            item["value"] = review_data[item["id"]]
 
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
     return redirect("/requests/?reviewDone")
+
 
 @csrf_exempt
 @login_required
@@ -751,26 +852,39 @@ def requisition(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get('id')
+    request_id = request.POST.get("id")
     review_data = request.POST.dict()
     request = Requisition.objects.get(id=request_id)
 
     # Mapeo de los nombres de los campos a los data-message
     field_to_message = {
-        'dateCheck': 'Fecha', 'nameCheck': 'Nombre', 'idCheck': 'ID', 'workCheck': 'Trabajo',
-        'dependenceCheck': 'Dependencia', 'cencoCheck': 'Cenco', 'valueCheck': 'Valor',
-        'conceptCheck': 'Concepto', 'descriptionCheck': 'Descripción', 'signCheck': 'Firma',
-        'bankCheck': 'Banco', 'typeAccountCheck': 'Tipo de cuenta', 'idBankCheck': 'ID del banco',
-        'observationsCheck': 'Observaciones', 'reasonData': 'Razón'
+        "dateCheck": "Fecha",
+        "nameCheck": "Nombre",
+        "idCheck": "ID",
+        "workCheck": "Trabajo",
+        "dependenceCheck": "Dependencia",
+        "cencoCheck": "Cenco",
+        "valueCheck": "Valor",
+        "conceptCheck": "Concepto",
+        "descriptionCheck": "Descripción",
+        "signCheck": "Firma",
+        "bankCheck": "Banco",
+        "typeAccountCheck": "Tipo de cuenta",
+        "idBankCheck": "ID del banco",
+        "observationsCheck": "Observaciones",
+        "reasonData": "Razón",
     }
 
     # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
-    review_data_list = [{'id': key, 'message': field_to_message.get(key, ''), 'value': 'off'} for key in field_to_message.keys()]
+    review_data_list = [
+        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+        for key in field_to_message.keys()
+    ]
 
     # Actualizar los valores de los checkboxes que están marcados
     for item in review_data_list:
-        if item['id'] in review_data:
-            item['value'] = review_data[item['id']]
+        if item["id"] in review_data:
+            item["value"] = review_data[item["id"]]
 
     request.review_data = review_data_list
     request.is_reviewed = True
@@ -804,5 +918,5 @@ def update_request(request, request_id):
         date=datetime.now(),
         request=request_id,
     )
-    
+
     return redirect("/requests/?fixRequestDone")

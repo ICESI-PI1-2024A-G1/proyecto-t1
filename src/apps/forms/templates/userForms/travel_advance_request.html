@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 {% block title %}Formularios{% endblock %}
+
+{%block main_route %}Formularios{% endblock %}
+{%block secondary_route %}Solicitudes de viaje{% endblock %}
+
 {% block content %}
-    <div class="container col-md-10">
-        <!--Title-->
+<form action="/forms/travel_advance_request" method="POST">
+    <!--Title-->
+    <div class="card-header">
         <div class="d-flex justify-content-between">
             <div>
-                <h2 class="mb-4">Solicitud de anticipo para gastos de viajes</h2>
+                <h2>Solicitud de anticipo para gastos de viajes</h2>
             </div>
         </div>
+    </div>
+    <div class="px-8 card-body card-fluid">
         <!-- Announcement -->
         <p class="font-italic">
             <strong>Por favor tenga en cuenta lo
@@ -29,7 +36,6 @@
         </ol>
         <div class="my-2 mx-2 border-bottom border-3"></div>
         <!-- User data -->
-        <form action="/forms/travel_advance_request" method="POST">
             {{ form.csrf_token }}
             {% include 'formBlocks/idBlock.html' %}
             <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -39,32 +45,32 @@
                 <label class="d-block">Su anticipo es en moneda extranjera:</label>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input"
-                           type="radio"
-                           name="currency"
-                           id="dollars"
-                           value="dollars"
-                           required
-                           {% if form_data.currency == 'dollars' %}checked{% endif %}>
+                            type="radio"
+                            name="currency"
+                            id="dollars"
+                            value="dollars"
+                            required
+                            {% if form_data.currency == 'dollars' %}checked{% endif %}>
                     <label class="form-check-label" for="dollars">Dólares</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input"
-                           type="radio"
-                           name="currency"
-                           id="euros"
-                           value="euros"
-                           required
-                           {% if form_data.currency == 'euros' %}checked{% endif %}>
+                            type="radio"
+                            name="currency"
+                            id="euros"
+                            value="euros"
+                            required
+                            {% if form_data.currency == 'euros' %}checked{% endif %}>
                     <label class="form-check-label" for="euros">Euros</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input"
-                           type="radio"
-                           name="currency"
-                           id="colombianPeso"
-                           value="No"
-                           required
-                           {% if form_data.currency == 'No' %}checked{% endif %}>
+                            type="radio"
+                            name="currency"
+                            id="colombianPeso"
+                            value="No"
+                            required
+                            {% if form_data.currency == 'No' %}checked{% endif %}>
                     <label class="form-check-label" for="colombianPeso">Pesos colombianos</label>
                 </div>
             </div>
@@ -81,78 +87,78 @@
                 </div>
                 <div class="col-md-6 mb-1">
                     <input type="number"
-                           class="form-control budget-input"
-                           name="airportTransport"
-                           placeholder="0"
-                           value="{{ form_data.airportTransport }}"
-                           required>
+                            class="form-control budget-input"
+                            name="airportTransport"
+                            placeholder="0"
+                            value="{{ form_data.airportTransport }}"
+                            required>
                 </div>
                 <div class="col-md-6 mb-1">
                     <label>Transporte Local:</label>
                 </div>
                 <div class="col-md-6 mb-1">
                     <input type="number"
-                           class="form-control budget-input"
-                           name="localTransport"
-                           placeholder="0"
-                           value="{{ form_data.localTransport }}"
-                           required>
+                            class="form-control budget-input"
+                            name="localTransport"
+                            placeholder="0"
+                            value="{{ form_data.localTransport }}"
+                            required>
                 </div>
                 <div class="col-md-6 mb-1">
                     <label>Alimentación:</label>
                 </div>
                 <div class="col-md-6 mb-1">
                     <input type="number"
-                           class="form-control budget-input"
-                           name="food"
-                           placeholder="0"
-                           value="{{ form_data.food }}"
-                           required>
+                            class="form-control budget-input"
+                            name="food"
+                            placeholder="0"
+                            value="{{ form_data.food }}"
+                            required>
                 </div>
                 <div class="col-md-6 mb-1">
                     <label>Alojamiento:</label>
                 </div>
                 <div class="col-md-6 mb-1">
                     <input type="number"
-                           class="form-control budget-input"
-                           name="accommodation"
-                           placeholder="0"
-                           value="{{ form_data.accommodation }}"
-                           required>
+                            class="form-control budget-input"
+                            name="accommodation"
+                            placeholder="0"
+                            value="{{ form_data.accommodation }}"
+                            required>
                 </div>
                 <div class="col-md-6 mb-1">
                     <label>Impuestos de Salida:</label>
                 </div>
                 <div class="col-md-6 mb-1">
                     <input type="number"
-                           class="form-control budget-input"
-                           name="exitTaxes"
-                           placeholder="0"
-                           value="{{ form_data.exitTaxes }}"
-                           required>
+                            class="form-control budget-input"
+                            name="exitTaxes"
+                            placeholder="0"
+                            value="{{ form_data.exitTaxes }}"
+                            required>
                 </div>
                 <div class="col-md-6 mb-1">
                     <label>Otros (detallar):</label>
                 </div>
                 <div class="col-md-6 mb-1">
                     <input type="number"
-                           class="form-control budget-input"
-                           name="others"
-                           placeholder="0"
-                           value="{{ form_data.others }}"
-                           required>
+                            class="form-control budget-input"
+                            name="others"
+                            placeholder="0"
+                            value="{{ form_data.others }}"
+                            required>
                 </div>
                 <div class="col-md-6 mb-1">
                     <label>TOTAL:</label>
                 </div>
                 <div class="col-md-6 mb-1">
                     <input type="number"
-                           id="total"
-                           class="form-control"
-                           name="total"
-                           placeholder="0"
-                           value="{{ form_data.total }}"
-                           readonly>
+                            id="total"
+                            class="form-control"
+                            name="total"
+                            placeholder="0"
+                            value="{{ form_data.total }}"
+                            readonly>
                 </div>
             </div>
             <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -179,10 +185,12 @@
             <div>
                 <textarea class="form-control" id="observations" name="observations" rows="3">{{ form_data.observations }}</textarea>
             </div>
-            <div class="d-flex justify-content-center">
-                <button class="btn btn-primary mt-3" type="submit">Guardar y enviar</button>
-            </div>
-        </form>
     </div>
-    <script src="../../static/forms/js/travel_advance_request.js"></script>
+    <div class="card-footer">        
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary" type="submit">Guardar y enviar</button>
+        </div>
+    </div>
+</form>
+<script src="../../static/forms/js/travel_advance_request.js"></script>
 {% endblock %}
