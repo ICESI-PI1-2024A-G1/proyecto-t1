@@ -33,7 +33,7 @@ class Login(unittest.TestCase):
         pass_input.send_keys(self.psw)
         login_btn.click()
 
-        time.sleep(5)
+        time.sleep(7)
         verification_code = self.get_code_from_email()
         
         code_input = self.driver.find_element(By.ID,"verificationCode")
@@ -93,7 +93,7 @@ class Login(unittest.TestCase):
         id_field.send_keys("123456789")
         send_btn.click()
 
-        time.sleep(5)
+        time.sleep(7)
         verification_code = self.get_code_from_email()
 
         verf_code_field = self.driver.find_element(By.ID, "verificationCode")
@@ -148,7 +148,7 @@ class Login(unittest.TestCase):
 
 
 
-        time.sleep(5)
+        time.sleep(7)
         verification_code = self.get_code_from_email()
 
         verf_code_field = self.driver.find_element(By.ID, "verificationCode")
