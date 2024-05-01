@@ -1,10 +1,11 @@
-const DataTableInit = (id, pageLength=4) => {
+const DataTableInit = (id, pageLength=4, columnDefs=[]) => {
     let dataTable = $(`#${id}`).DataTable({
         "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Todos"]],
         "pageLength":pageLength,
         "language": {
             "url": "/static/general/json/datatables-ES.json"
         },
+        "columnDefs": columnDefs,
         // "searching": false,
         // dom: '<"table-wrapper"f>tip'
     });
@@ -13,7 +14,6 @@ const DataTableInit = (id, pageLength=4) => {
         var searchText = $(this).val();
         console.log(dataTable.search("") === dataTable.search(searchText))
         dataTable.search(searchText).draw();
-
     })
     dataTable.on('draw.dt', function(){
         $(`#${id}Pagination`).append($(`#${id}_wrapper .dt-paging`));
