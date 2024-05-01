@@ -14,7 +14,7 @@
                        name="requestDate"
                        value="{{ request.request_date|date:'Y-m-d' }}"
                        disabled>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
                     <input type="checkbox"
                            class="btn-check"
                            id="btncheckRequestDate"
@@ -37,7 +37,7 @@
                        name="travelerName"
                        value="{{ request.full_name|default:request.traveler_name }}"
                        disabled>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
                     <input type="checkbox"
                            class="btn-check"
                            id="btncheckTravelerName"
@@ -60,7 +60,7 @@
                        name="idNumber"
                        value="{{ request.id_person }}"
                        disabled>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
                     <input type="checkbox"
                            class="btn-check"
                            id="btncheckIdNumber"
@@ -90,7 +90,7 @@
                     <option {% if form_data.dependence == "Recursos humanos" %}selected{% endif %}>Recursos humanos</option>
                     <option {% if form_data.dependence == "Administración" %}selected{% endif %}>Administración</option>
                 </select>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
                     <input type="checkbox"
                            class="btn-check"
                            id="btncheckDependence"
@@ -118,7 +118,7 @@
                     <option {% if form_data.costCenter == "Semestre" %}selected{% endif %}>Semestre</option>
                     <option {% if form_data.costCenter == "Bienestar" %}selected{% endif %}>Bienestar</option>
                 </select>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
                     <input type="checkbox"
                            class="btn-check"
                            id="btncheckCostCenter"

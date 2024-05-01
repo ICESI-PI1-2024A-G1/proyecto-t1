@@ -55,13 +55,7 @@ def show_requests(request):
     """
     Show requests
     """
-    if "changeStatusDenied" in request.GET:
-        messages.add_message(
-            request,
-            messages.ERROR,
-            "No puedes cambiar el estado de una solicitud sin revisar.",
-        )
-    elif "changeStatusDone" in request.GET:
+    if "changeStatusDone" in request.GET:
         messages.add_message(
             request,
             messages.SUCCESS,
