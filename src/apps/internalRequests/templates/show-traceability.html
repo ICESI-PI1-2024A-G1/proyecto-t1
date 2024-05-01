@@ -24,7 +24,7 @@
                 <tr>
                     <td class="text-nowrap">{{ trace.date }}</td>
                     <td>{{ trace.modified_by }}</td>
-                    <td style="min-width: 20rem;">{{ trace.reason }}</td>
+                    <td style="min-width: 20rem;">{{ trace.reason|safe }}</td>
                     <td>
                         <div class="badge bg-label-{{ trace.prev_color }} ">
                             <p id="prev_{{ trace.id }}" class="text-wrap mb-0 lh-sm">{{ trace.prev_state }}</p>

@@ -55,13 +55,7 @@ def show_requests(request):
     """
     Show requests
     """
-    if "changeStatusDenied" in request.GET:
-        messages.add_message(
-            request,
-            messages.ERROR,
-            "No puedes cambiar el estado de una solicitud sin revisar.",
-        )
-    elif "changeStatusDone" in request.GET:
+    if "changeStatusDone" in request.GET:
         messages.add_message(
             request,
             messages.SUCCESS,
@@ -74,6 +68,10 @@ def show_requests(request):
     elif "fixRequestDone" in request.GET:
         messages.add_message(
             request, messages.SUCCESS, "El formulario ha sido enviado para revisión."
+        )
+    elif "fixRequestFailed" in request.GET:
+        messages.add_message(
+            request, messages.ERROR, "No se pudo enviar el formulario para revisión."
         )
     elif "reviewDone" in request.GET:
         messages.add_message(
@@ -458,6 +456,7 @@ def change_status(request, id):
                     )
 
                     print(f"Email sent to {team[0].leader.email}")
+            
             curr_request.save()
             return JsonResponse(
                 {

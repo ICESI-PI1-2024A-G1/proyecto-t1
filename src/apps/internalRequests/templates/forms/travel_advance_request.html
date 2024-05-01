@@ -106,7 +106,7 @@
         </div>
     </div>
     <div class="d-flex justify-content-center mt-3">
-        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
             <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
         {% endif %}
@@ -142,7 +142,7 @@
 
     <div class="d-flex justify-content-between">
         <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
-        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
             <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
         {% endif %}
@@ -150,7 +150,7 @@
 
     <!-- Confirm Review -->
 
-    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+    {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
         {% include 'internalFormBlocks/reviewblock.html' %}
     {% endif %}
 

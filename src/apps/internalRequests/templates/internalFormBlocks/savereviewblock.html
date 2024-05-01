@@ -20,10 +20,10 @@
         })
         .then(response => response.json())
         .then(data => {
-            window.location.href = "/requests/?changeStatusDone";
+            window.location.href = "/requests/?fixRequestDone";
         })
         .catch(error => {
-            window.location.href = "/requests/?changeStatusDone";
+            window.location.href = "/requests/?fixRequestFailed";
         });
     }
 </script>

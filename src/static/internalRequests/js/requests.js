@@ -33,7 +33,7 @@ const changeStatus = id => {
                     csrfmiddlewaretoken: csrftoken
                 },
                 success: function (response) {
-                    window.location.href = "/requests/?fixRequestDone";
+                    window.location.href = "/requests/?changeStatusDone";
                 },
                 error: function (xhr, status, error) {
                     window.location.href = "/requests/?changeStatusFailed";
