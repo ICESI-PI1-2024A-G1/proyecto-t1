@@ -862,11 +862,24 @@ def update_request(request, request_id):
     with transaction.atomic():
         curr_request.status = "EN REVISIÓN"
         curr_request.is_reviewed = False
+        print(request.POST.dict())
 
         # Update the request with the data from the method's request
         for key, value in request.POST.items():
             if hasattr(curr_request, key):
                 setattr(curr_request, key, value)
+        
+        if isinstance(curr_request, TravelAdvanceRequest):
+            expenses = {
+                'airportTransport': request.POST.get('airportTransport'),
+                'localTransport': request.POST.get('localTransport'),
+                'food': request.POST.get('food'),
+                'accommodation': request.POST.get('accommodation'),
+                'exitTaxes': request.POST.get('exitTaxes'),
+                'others': request.POST.get('others'),
+                'total': request.POST.get('total'),
+            }
+            curr_request.expenses = json.dumps(expenses)
 
         curr_request.save()
 
