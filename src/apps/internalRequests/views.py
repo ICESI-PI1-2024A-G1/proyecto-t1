@@ -78,6 +78,10 @@ def show_requests(request):
         messages.add_message(
             request, messages.SUCCESS, "El formulario ha sido enviado para revisión."
         )
+    elif "fixRequestFailed" in request.GET:
+        messages.add_message(
+            request, messages.ERROR, "No se pudo enviar el formulario para revisión."
+        )
     elif "reviewDone" in request.GET:
         messages.add_message(
             request, messages.SUCCESS, "El formulario ha sido revisado."
@@ -397,7 +401,7 @@ def change_status(request, id):
                             team[0].leader.email,
                             f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                         )
-            
+            """
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
@@ -461,6 +465,7 @@ def change_status(request, id):
                     )
 
                     print(f"Email sent to {team[0].leader.email}")
+            """
             curr_request.save()
             return JsonResponse(
                 {
@@ -551,7 +556,7 @@ def show_traceability(request, request_id):
     for t in traceability:
         t.prev_color = statusMap[t.prev_state]
         t.new_color = statusMap[t.new_state]
-    traceability = traceability[::-1]
+    traceability.reverse()
     return render(request, "show-traceability.html", {"traceability": traceability})
 
 
