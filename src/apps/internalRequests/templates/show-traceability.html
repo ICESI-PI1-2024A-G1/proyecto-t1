@@ -47,9 +47,9 @@
     $(document).ready(function() {
         DataTableInit("traceabilityTable", 8, [
             {
-                "targets": 0, // Aplica esta función de ordenación a la primera columna
+                "targets": 0, // This is only applied to the date column
                 "orderable": true,
-                "type": "date" // Usa ordenación numérica, no de texto
+                "type": "date" // Using ordering by date
             },
         ])
     })

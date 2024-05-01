@@ -12,8 +12,6 @@ import utils.utils as utils
 from apps.teams.models import Team
 from datetime import datetime
 from django.db import transaction
-from django.template.loader import render_to_string
-from django.http import FileResponse
 from xhtml2pdf import pisa
 from io import BytesIO
 from django.template.loader import get_template
@@ -21,7 +19,6 @@ from bs4 import BeautifulSoup
 import math
 import ast
 import json
-import os
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -401,7 +398,7 @@ def change_status(request, id):
                             team[0].leader.email,
                             f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                         )
-            """
+
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
@@ -465,7 +462,7 @@ def change_status(request, id):
                     )
 
                     print(f"Email sent to {team[0].leader.email}")
-            """
+            
             curr_request.save()
             return JsonResponse(
                 {
@@ -682,7 +679,7 @@ def travel_advance_request(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
@@ -736,7 +733,7 @@ def travel_expense_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
@@ -787,7 +784,7 @@ def advance_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
@@ -842,7 +839,7 @@ def billing_account(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
@@ -895,7 +892,7 @@ def requisition(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
