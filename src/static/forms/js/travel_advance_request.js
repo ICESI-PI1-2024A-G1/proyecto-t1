@@ -1,4 +1,5 @@
 window.onload = function() {
+    console.log('Travel Advance Request Form Loaded');
     var inputs = document.querySelectorAll('.budget-input');
     var totalInput = document.getElementById('total');
 
