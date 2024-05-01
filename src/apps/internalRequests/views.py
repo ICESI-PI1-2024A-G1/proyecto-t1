@@ -552,6 +552,7 @@ def show_traceability(request, request_id):
         t.prev_color = statusMap[t.prev_state]
         t.new_color = statusMap[t.new_state]
     traceability = traceability[::-1]
+    traceability = sorted(traceability, key=lambda x: x.date, reverse=True)
     return render(request, "show-traceability.html", {"traceability": traceability})
 
 
