@@ -1,30 +1,15 @@
 // adds a new row to the table
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.getElementById('addRow').addEventListener('click', function() {
-        var table = document.querySelector('tbody');
-        var newRow = document.createElement('tr');
-
-        var rowNumber = table.getElementsByTagName('tr').length - 4;
-
-        for (var i = 0; i < 4; i++) {
-            var newCell = document.createElement('td');
-            var input = document.createElement('input');
-            input.type = i < 4 ? 'text' : 'number';
-            input.className = 'form-control';
-            if (i == 2) {
-                input.placeholder = '0';
-            }
-            console.log(rowNumber);
-            input.name = ['category', 'provider', 'pesos', 'concept'][i] + '_' + rowNumber;
-            newCell.appendChild(input);
-            newRow.appendChild(newCell);
+    var rowCount = localStorage.getItem('rowCount');
+    if (rowCount !== null) {
+        obj = rowCount - 2;
+        for (var i = 0; i < obj; i++) {
+            addRow();
         }
+    }
 
-        var totalsRow = document.getElementById('totals');
-        table.insertBefore(newRow, totalsRow);
+    document.getElementById('addRow').addEventListener('click', addRow);
 
-        updateTotals();
-    });
     // removes the last row from the table
     document.getElementById('removeRow').addEventListener('click', function() {
         var table = document.querySelector('tbody');
@@ -38,6 +23,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
         updateTotals();
+        updateRowCount();
     });
 });
 
@@ -47,6 +33,34 @@ document.querySelector('tbody').addEventListener('input', function(event) {
         updateTotals();
     }
 });
+
+// adds a new row to the table
+function addRow() {
+    var table = document.querySelector('tbody');
+    var newRow = document.createElement('tr');
+
+    var rowNumber = table.getElementsByTagName('tr').length - 4;
+
+    for (var i = 0; i < 4; i++) {
+        var newCell = document.createElement('td');
+        var input = document.createElement('input');
+        input.type = i < 4 ? 'text' : 'number';
+        input.className = 'form-control';
+        if (i == 2) {
+            input.placeholder = '0';
+        }
+        input.name = ['category', 'provider', 'pesos', 'concept'][i] + '_' + rowNumber;
+        input.value = form_data[input.name] || '';
+        newCell.appendChild(input);
+        newRow.appendChild(newCell);
+    }
+
+    var totalsRow = document.getElementById('totals');
+    table.insertBefore(newRow, totalsRow);
+
+    updateTotals();
+    updateRowCount();
+};
 
 // updates the totals row
 function updateTotals() {
@@ -73,4 +87,9 @@ function updateTotals() {
     // update "Saldo a favor del empleado" and "Saldo a favor de ICESI" fields
     document.getElementById('employeeBalanceValue').value = employeeBalance;
     document.getElementById('icesiBalanceValue').value = icesiBalance;
+}
+
+function updateRowCount() {
+    var rowCount = document.getElementById('tableAdvanceLegalization').rows.length - 5;
+    localStorage.setItem('rowCount', rowCount);
 }
