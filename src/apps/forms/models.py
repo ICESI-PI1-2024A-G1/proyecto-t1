@@ -9,7 +9,7 @@ class TravelAdvanceRequest(models.Model):
     traveler_name = models.CharField(max_length=200)
     id_person = models.CharField(max_length=200, default="")
     member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="EN REVISIÓN")
+    status = models.CharField(max_length=200, default="PENDIENTE")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -25,7 +25,6 @@ class TravelAdvanceRequest(models.Model):
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    is_reviewed = models.BooleanField(default=False)
     review_data = models.TextField(null=True, blank=True)
 
     def set_expenses(self, expenses_dict):
@@ -42,7 +41,7 @@ class TravelExpenseLegalization(models.Model):
     traveler_name = models.CharField(max_length=200)
     id_person = models.CharField(max_length=200, default="")
     member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="EN REVISIÓN")
+    status = models.CharField(max_length=200, default="PENDIENTE")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -68,7 +67,6 @@ class TravelExpenseLegalization(models.Model):
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    is_reviewed = models.BooleanField(default=False)
     review_data = models.TextField(null=True, blank=True)
 
 
@@ -103,7 +101,7 @@ class AdvanceLegalization(models.Model):
     traveler_name = models.CharField(max_length=200)
     id_person = models.CharField(max_length=200, default="")
     member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="EN REVISIÓN")
+    status = models.CharField(max_length=200, default="PENDIENTE")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     purchase_reason = models.TextField()
@@ -118,7 +116,6 @@ class AdvanceLegalization(models.Model):
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    is_reviewed = models.BooleanField(default=False)
     review_data = models.TextField(null=True, blank=True)
 
 
@@ -137,7 +134,7 @@ class BillingAccount(models.Model):
     full_name = models.CharField(max_length=200)
     id_person = models.CharField(max_length=200, default="")
     member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="EN REVISIÓN")
+    status = models.CharField(max_length=200, default="PENDIENTE")
     value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     concept_reason = models.CharField(max_length=200)
     retention = models.CharField(max_length=200)
@@ -153,7 +150,6 @@ class BillingAccount(models.Model):
     cex_number = models.CharField(max_length=200)
     team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    is_reviewed = models.BooleanField(default=False)
     review_data = models.TextField(null=True, blank=True)
 
 
@@ -164,7 +160,7 @@ class Requisition(models.Model):
     requester_name = models.CharField(max_length=200)
     id_person = models.CharField(max_length=200, default="")
     member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="EN REVISIÓN")
+    status = models.CharField(max_length=200, default="PENDIENTE")
     work = models.CharField(max_length=200)
     dependence = models.CharField(max_length=200)
     cenco = models.CharField(max_length=200)
@@ -177,5 +173,4 @@ class Requisition(models.Model):
     observations = models.TextField()
     team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    is_reviewed = models.BooleanField(default=False)
     review_data = models.TextField(null=True, blank=True)

@@ -4,14 +4,20 @@
 <p id="uncheckedMessages" style="display: none;"></p>
 <textarea id="reason" class="form-control mt-3" rows="3" style="display: none;" name="reasonData" placeholder="Por favor, ingrese el motivo por el cual no marcó todas las casillas."></textarea>
 
+<style>
+    .swal-button--confirm {
+        background-color: #4CAF50 !important;
+    }
+</style>
+
 <script>
     $(document).ready(function() {
         var allChecked = false;
         var textbox;
-
+        var messages;
         function checkCheckboxes() {
             var unchecked = $('input[type="checkbox"]:not(:checked)');
-            var messages = unchecked.map(function() {
+            messages = unchecked.map(function() {
                 return "- " + $(this).attr('data-message');
             }).get().join('<br>');
 
@@ -20,11 +26,15 @@
                 $('#reason').prop('required', true);
                 $('#uncheckedMessages').show();
                 $('#reason').show();
+                $('#completeReview').hide();
+                $('#returnReview, #rejectReview').show();
             } else {
                 $('#uncheckedMessages').html('Todos los elementos han sido marcados correctamente.');
                 $('#reason').prop('required', false);
                 $('#uncheckedMessages').show();
                 $('#reason').hide();
+                $('#completeReview').show();
+                $('#returnReview, #rejectReview').hide();
             }
         }
 
@@ -52,10 +62,76 @@
         checkCheckboxes();
 
         $(document).on('change', 'input[type="checkbox"]', checkCheckboxes);
+        
+        function confirmAction(action) {
+            swal({
+                title: "¿Estás seguro?",
+                text: "¿Estás seguro de que quieres " + action + " esta solicitud?",
+                icon: "warning",
+                buttons: {
+                    cancel: "Cancelar",
+                    confirm: "Confirmar"
+                },
+                dangerMode: true,
+            })
+            .then((willConfirm) => {
+                if (willConfirm) {
+                    var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+                    var id = $('#request_id').val();
+                    var newStatus;
+                    if (action === 'enviar a Ventanilla Única') {
+                        newStatus = 'POR APROBAR';
+                    } else if (action === 'devolver') {
+                        newStatus = 'DEVUELTO';
+                    } else if (action === 'rechazar') {
+                        newStatus = 'RECHAZADO';
+                    }
+                    var reason = $('#reason').val();
+                    if (reason === '') {
+                        reason = 'Enviado a Ventanilla Única, en espera de aprobación.';
+                    } else {
+                        reason = '<strong>Celdas afectadas:</strong><br>' + messages + '<br><strong>Motivo:</strong> ' + reason;
+                    }
+                    $.ajax({
+                        url: '/requests/change-status/' + id,
+                        method: 'POST',
+                        data: {
+                            newStatus: newStatus,
+                            reason: reason,
+                            csrfmiddlewaretoken: csrftoken
+                        },
+                        success: function (response) {
+                            window.location.href = "/requests/?changeStatusDone";
+                        },
+                        error: function (xhr, status, error) {
+                            window.location.href = "/requests/?changeStatusFailed";
+                        }
+                    });
+                }
+            });
+        }
+
+        $('#completeReview').click(function() {
+            confirmAction('enviar a Ventanilla Única');
+        });
+
+        $('#returnReview').click(function() {
+            confirmAction('devolver');
+        });
+
+        $('#rejectReview').click(function() {
+            confirmAction('rechazar');
+        });
     });
 </script>
 
+<!-- Botones -->
 <div class="d-flex justify-content-center mt-3">
     <button type="button" class="btn btn-primary mr-2" id="markAll">Marcar todo</button>
-    <button type="submit" class="btn btn-success" id="completeReview">Completar revisión</button>
+    <button type="button" class="btn btn-success mr-2" id="completeReview">Enviar a aprobación</button>
+    <button type="button" class="btn btn-warning mr-2" id="returnReview">Devolver</button>
+    <button type="button" class="btn btn-danger" id="rejectReview">Rechazar</button>
 </div>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+

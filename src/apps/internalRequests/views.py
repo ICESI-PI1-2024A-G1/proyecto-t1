@@ -12,8 +12,6 @@ import utils.utils as utils
 from apps.teams.models import Team
 from datetime import datetime
 from django.db import transaction
-from django.template.loader import render_to_string
-from django.http import FileResponse
 from xhtml2pdf import pisa
 from io import BytesIO
 from django.template.loader import get_template
@@ -21,7 +19,7 @@ from bs4 import BeautifulSoup
 import math
 import ast
 import json
-import os
+import re
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -58,14 +56,7 @@ def show_requests(request):
     """
     Show requests
     """
-    message = None
-    if "changeStatusDenied" in request.GET:
-        messages.add_message(
-            request,
-            messages.ERROR,
-            "No puedes cambiar el estado de una solicitud sin revisar.",
-        )
-    elif "changeStatusDone" in request.GET:
+    if "changeStatusDone" in request.GET:
         messages.add_message(
             request,
             messages.SUCCESS,
@@ -78,6 +69,10 @@ def show_requests(request):
     elif "fixRequestDone" in request.GET:
         messages.add_message(
             request, messages.SUCCESS, "El formulario ha sido enviado para revisión."
+        )
+    elif "fixRequestFailed" in request.GET:
+        messages.add_message(
+            request, messages.ERROR, "No se pudo enviar el formulario para revisión."
         )
     elif "reviewDone" in request.GET:
         messages.add_message(
@@ -315,44 +310,6 @@ def change_status(request, id):
                 "change-status.html",
                 {"request": curr_request, "status_options": status_options},
             )
-        elif curr_request.status == "EN REVISIÓN" and curr_request.is_reviewed:
-            review_data = ast.literal_eval(curr_request.review_data)
-            resultReviewShow = False
-            comments = None
-            reason_data = ""
-            for item in review_data:
-                if item["id"] == "reasonData":
-                    reason_data = item["value"]
-                    break
-
-            if reason_data == "":
-                status_options = ["POR APROBAR"]
-                comments_str = None
-            else:
-                status_options = ["DEVUELTO", "RECHAZADO"]
-                resultReviewShow = True
-                comments = ["Celdas afectadas:\n"]
-                for item in review_data:
-                    if item["id"] != "reasonData":
-                        if item["value"] == "off":
-                            comments.append("- " + item["message"])
-                            if item["id"] in ["tableCheck", "signCheck"]:
-                                status_options = ["RECHAZADO"]
-                    else:
-                        reason_data = item["value"]
-
-                comments.append("\n" + "Motivos: " + reason_data)
-                comments_str = "\n".join(comments)
-            return render(
-                request,
-                "change-status.html",
-                {
-                    "request": curr_request,
-                    "status_options": status_options,
-                    "resultReviewShow": resultReviewShow,
-                    "comments": comments_str,
-                },
-            )
         elif curr_request.status == "POR APROBAR":
             status_options = ["RESUELTO", "DEVUELTO", "RECHAZADO"]
             return render(
@@ -398,6 +355,7 @@ def change_status(request, id):
                             team[0].leader.email,
                             f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                         )
+
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
@@ -461,9 +419,8 @@ def change_status(request, id):
                     )
 
                     print(f"Email sent to {team[0].leader.email}")
-
+            
             curr_request.save()
-            return redirect("/requests/?changeStatusDone")
             return JsonResponse(
                 {
                     "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
@@ -471,8 +428,6 @@ def change_status(request, id):
             )
 
         except Exception as e:
-            print("Error:", e)
-            return redirect("/requests/?changeStatusFailed")
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
             )
@@ -556,6 +511,7 @@ def show_traceability(request, request_id):
         t.prev_color = statusMap[t.prev_state]
         t.new_color = statusMap[t.new_state]
     traceability = traceability[::-1]
+    traceability = sorted(traceability, key=lambda x: x.date, reverse=True)
     return render(request, "show-traceability.html", {"traceability": traceability})
 
 
@@ -680,6 +636,7 @@ def travel_advance_request(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+
     return redirect("/requests/?reviewDone")
 
 
@@ -733,6 +690,7 @@ def travel_expense_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+
     return redirect("/requests/?reviewDone")
 
 
@@ -783,6 +741,7 @@ def advance_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+
     return redirect("/requests/?reviewDone")
 
 
@@ -837,6 +796,7 @@ def billing_account(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+
     return redirect("/requests/?reviewDone")
 
 
@@ -889,6 +849,7 @@ def requisition(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
+
     return redirect("/requests/?reviewDone")
 
 
@@ -902,11 +863,73 @@ def update_request(request, request_id):
     with transaction.atomic():
         curr_request.status = "EN REVISIÓN"
         curr_request.is_reviewed = False
+        print(request.POST.dict())
 
         # Update the request with the data from the method's request
         for key, value in request.POST.items():
             if hasattr(curr_request, key):
                 setattr(curr_request, key, value)
+        
+        if isinstance(curr_request, TravelAdvanceRequest):
+            expenses = {
+                'airportTransport': request.POST.get('airportTransport'),
+                'localTransport': request.POST.get('localTransport'),
+                'food': request.POST.get('food'),
+                'accommodation': request.POST.get('accommodation'),
+                'exitTaxes': request.POST.get('exitTaxes'),
+                'others': request.POST.get('others'),
+                'total': request.POST.get('total'),
+            }
+            curr_request.expenses = json.dumps(expenses)
+
+        elif isinstance(curr_request, AdvanceLegalization):
+            curr_request.total = request.POST.get('total')
+            curr_request.advance_total = request.POST.get('advanceTotal')
+            curr_request.employee_balance_value = request.POST.get('employeeBalanceValue')
+            curr_request.icesi_balance_value = request.POST.get('icesiBalanceValue')
+
+            expensesTable = AdvanceLegalization_Table.objects.filter(general_data_id=request_id)
+
+            for key, value in request.POST.items():
+                match = re.match(r'(\w+)_(\d+)', key)
+                if match:
+                    field_name, row_number = match.groups()
+                    row_number = int(row_number)
+                    if row_number < len(expensesTable):
+                        expense = expensesTable[row_number]
+                        if hasattr(expense, field_name):
+                            setattr(expense, field_name, value)
+                            expense.save()
+        
+        elif isinstance(curr_request, TravelExpenseLegalization):
+            """
+            'total1': '15568', 'total2': '2863', 'total3': '13425', 'advanceTotal1': '5562', 'advanceTotal2': '10000', 'advanceTotal3': '324', 'employeeBalance1': '10006', 'employeeBalance2': '0', 'employeeBalance3': '13101', 'icesiBalance1': '0', 'icesiBalance2': '-7137', 'icesiBalance3': '0'
+            """
+            curr_request.total1 = request.POST.get('total1')
+            curr_request.total2 = request.POST.get('total2')
+            curr_request.total3 = request.POST.get('total3')
+            curr_request.advance_total1 = request.POST.get('advanceTotal1')
+            curr_request.advance_total2 = request.POST.get('advanceTotal2')
+            curr_request.advance_total3 = request.POST.get('advanceTotal3')
+            curr_request.employee_balance1 = request.POST.get('employeeBalance1')
+            curr_request.employee_balance2 = request.POST.get('employeeBalance2')
+            curr_request.employee_balance3 = request.POST.get('employeeBalance3')
+            curr_request.icesi_balance1 = request.POST.get('icesiBalance1')
+            curr_request.icesi_balance2 = request.POST.get('icesiBalance2')
+            curr_request.icesi_balance3 = request.POST.get('icesiBalance3')
+
+            expensesTable = TravelExpenseLegalization_Table.objects.filter(travel_info_id=request_id)
+
+            for key, value in request.POST.items():
+                match = re.match(r'(\w+)_(\d+)', key)
+                if match:
+                    field_name, row_number = match.groups()
+                    row_number = int(row_number)
+                    if row_number < len(expensesTable):
+                        expense = expensesTable[row_number]
+                        if hasattr(expense, field_name):
+                            setattr(expense, field_name, value)
+                            expense.save()
 
         curr_request.save()
 
@@ -919,4 +942,8 @@ def update_request(request, request_id):
         request=request_id,
     )
 
-    return redirect("/requests/?fixRequestDone")
+    return JsonResponse(
+        {
+            "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
+        }
+    )
