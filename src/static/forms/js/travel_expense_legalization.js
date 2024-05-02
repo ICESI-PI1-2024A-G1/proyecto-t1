@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         input.className = 'form-control';
         if (i >= 4) {
             input.placeholder = '0';
+            input.min = 0; // To avoid negative values
+            input.addEventListener('input', function () {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
         }
         input.id = ['category_', 'provider_', 'nit_', 'concept_', 'pesos_', 'dollars_', 'euros_'][i] + currentRowCount;
         input.name = input.id;
@@ -87,3 +93,22 @@ function updateTotals() {
         document.getElementById('icesiBalance' + (i + 1)).value = balance;
     });
 }
+
+// document.querySelector('form').addEventListener('submit', function (event) {
+//     var inputs = document.querySelectorAll('input[required], textarea[required]');
+//     inputs.forEach(function (input) {
+//         if (!input.value) {
+//             input.classList.add('is-invalid');
+//         }
+//     });
+
+//     // Prevent form submission if any required field is empty
+//     var invalidInputs = document.querySelectorAll('.is-invalid');
+//     if (invalidInputs.length > 0) {
+//         event.preventDefault();
+//         event.stopPropagation(); // Stop propagation of the event
+//     }
+
+//     // Add 'was-validated' class to the form
+//     event.target.classList.add('was-validated');
+// });

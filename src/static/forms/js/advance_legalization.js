@@ -1,6 +1,6 @@
 // adds a new row to the table
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.getElementById('addRow').addEventListener('click', function() {
+    document.getElementById('addRow').addEventListener('click', function () {
         var table = document.querySelector('tbody');
         var newRow = document.createElement('tr');
 
@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             input.className = 'form-control';
             if (i == 2) {
                 input.placeholder = '0';
+                input.min = 0; // To avoid negative values
+                input.addEventListener('input', function () {
+                    if (this.value < 0) {
+                        this.value = 0;
+                    }
+                });
             }
             console.log(rowNumber);
             input.name = ['category', 'provider', 'pesos', 'concept'][i] + '_' + rowNumber;

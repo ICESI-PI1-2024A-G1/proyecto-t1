@@ -37,7 +37,7 @@
         </ol>
         <div class="my-2 mx-2 border-bottom border-3"></div>
         <!-- User data -->
-            {% include 'formBlocks/idBlock.html' %}
+            {% include 'formBlocks/idblock.html' %}
             <div class="form-group">
                 <label for="purchaseReason">Motivo de compra o servicio</label>
                 <textarea class="form-control"
@@ -66,13 +66,13 @@
                         <tr>
                             <td><input type="text" class="form-control" name="category_0"></td>
                             <td><input type="text" class="form-control" name="provider_0"></td>
-                            <td><input type="number" class="form-control" placeholder="0" name="pesos_0"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_0" min="0"></td>
                             <td><input type="text" class="form-control" name="concept_0"></td>
                         </tr>
                         <tr>
                             <td><input type="text" class="form-control" name="category_1"></td>
                             <td><input type="text" class="form-control" name="provider_1"></td>
-                            <td><input type="number" class="form-control" placeholder="0" name="pesos_1"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_1" min="0"></td>
                             <td><input type="text" class="form-control" name="concept_1"></td>
                         </tr>
                         <tr id="totals">
@@ -81,7 +81,7 @@
                         </tr>
                         <tr id="advance">
                             <td colspan="2" class="text-end">Valor del anticipo:</td>
-                            <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0"></td>
+                            <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" min="0"></td>
                         </tr>
                         <tr id="employeeBalance">
                             <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
