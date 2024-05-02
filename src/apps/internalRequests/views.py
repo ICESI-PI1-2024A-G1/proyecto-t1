@@ -505,10 +505,12 @@ def change_status(request, id):
 
                 if hasattr(curr_request, 'traveler_name'):
                     fullname = curr_request.traveler_name
-                elif hasattr(curr_request, 'fullname'):
-                    fullname = curr_request.fullname
+                elif hasattr(curr_request, 'full_name'):
+                    fullname = curr_request.full_name
+                elif hasattr(curr_request, 'requester_name'):
+                    fullname = curr_request.requester_name
                 else:
-                    fullname = "Default Name"
+                    fullname = "No aplica"
 
                 if hasattr(curr_request, 'cost_center'):
                     cenco = curr_request.cost_center

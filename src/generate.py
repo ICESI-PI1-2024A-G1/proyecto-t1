@@ -64,6 +64,7 @@ sharepoint_api.clear_db()
 Traceability.objects.all().delete()
 Team.objects.all().delete()
 User.objects.all().delete()
+SharePoint.objects.all().delete()
 # Forms
 TravelAdvanceRequest.objects.all().delete()
 TravelExpenseLegalization_Table.objects.all().delete()
@@ -163,6 +164,7 @@ faculty = [
     "Ciencias Humanas",
     "Ciencias de la Salud",
 ]
+
 banks = [
     "Banco de Bogotá",
     "Bancolombia",
@@ -201,6 +203,7 @@ banks = [
     "Banco Bilbao Vizcaya Argentaria (BBVA)",
     "The Bank of Tokyo-Mitsubishi UFJ",
 ]
+
 eps = [
     "Sura",
     "Sanitas",
@@ -223,6 +226,7 @@ eps = [
     "Comfandi",
     "Comfasucre",
 ]
+
 pension_fund = [
     "Porvenir",
     "Protección",
@@ -270,19 +274,16 @@ arls = [
 ]
 
 documents = [
-    "Cuenta de cobro",
-    "Legalizacion",
-    "Anticipo",
-    "Viatico",
-    "Factura",
-    "Factura CEX",
+    "Legalización de Anticipos",
+    "Cuenta de Cobro",
     "Requisición",
+    "Solicitud de Viaje",
+    "Legalización de Gastos de Viaje",
 ]
-
 
 requestStatus = ["PENDIENTE", "EN REVISIÓN", "POR APROBAR", "DEVUELTO", "RECHAZADO", "RESUELTO"]
 
-for i in range(10):
+for i in range(30):
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
     final_date = initial_date + timedelta(days=random.randint(1, 30))
 
@@ -309,6 +310,8 @@ for i in range(10):
 
     sharepoint_api.create_data(data)
     SharePoint.objects.create(**data)
+
+print(f"Generated 30 sharepoint requests")
 
 t_request = sharepoint_api.get_all_requests()
 t_request = json.loads(t_request.content)
