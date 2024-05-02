@@ -43,10 +43,13 @@ def show_teams(request):
         - If the user is staff, all teams are displayed.
         - If the user is not staff, only teams led by the user are displayed.
     """
+    teams = []
+    team = None
     if request.user.is_superuser:
         teams = Team.objects.all()
     else:
-        teams = Team.objects.filter(leader_id=request.user.id)
+        team = Team.objects.filter(leader_id=request.user.id)[0]
+        return render(request, "team-details.html", {"team": team})
     return render(request, "show-teams.html", {"teams": teams})
 
 
@@ -68,23 +71,49 @@ def add_team(request):
         - Redirects to the teams list on successful form submission.
     """
     if request.method == "GET":
-        form = TeamForm()
-        return render(request, "add-team.html", {"form": form})
+        members = []
+        leaders = []
+        form_types = settings.FORM_TYPES.copy()
+        for team in Team.objects.all():
+            form_type = team.typeForm
+            form_types.remove(form_type)
+        users = User.objects.all()
+        team_leaders = [t.leader_id for t in Team.objects.all()]
+
+        for user in users:
+            if user.is_leader and user.id not in team_leaders:
+                leaders.append(user)
+            elif user.is_member:
+                members.append(user)
+        return render(
+            request,
+            "add-team.html",
+            {"leaders": leaders, "members": members, "form_types": form_types},
+        )
     elif request.method == "POST":
-        form = TeamForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Equipo agregado con éxito")
-            return redirect("/teams/")
-        else:
-            error_messages = "\n".join(
-                [
-                    f"{field}: {', '.join(errors)}"
-                    for field, errors in form.errors.items()
-                ]
+
+        try:
+            items = request.POST.items()
+            members = []
+            for key, value in items:
+                if key.startswith("member-") and value == "on":
+                    member_id = key.split("-")[1]
+                    member = get_object_or_404(User, pk=member_id)
+                    members.append(member)
+
+            leader = get_object_or_404(User, pk=request.POST.get("leader"))
+            team = Team.objects.create(
+                name=request.POST.get("name"),
+                leader=leader,
+                description=request.POST.get("description"),
+                typeForm=request.POST.get("form_type"),
             )
-            messages.error(request, error_messages)
-            return render(request, "add-team.html", {"form": form})
+            team.members.set(members)
+            messages.success(request, "Equipo creado con éxito")
+            return redirect("/teams/")
+        except Exception as e:
+            messages.error(request, "Error al crear el equipo")
+            return redirect("/teams/add-team-form")
 
 
 @never_cache

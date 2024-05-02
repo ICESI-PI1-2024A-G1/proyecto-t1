@@ -115,13 +115,7 @@ print(f"Generated {users_amount} users")
 teams = []
 leaders = []
 applicants = []
-formTypes = [
-    "Legalización de Anticipos",
-    "Cuenta de Cobro",
-    "Requisición",
-    "Solicitud de Viaje",
-    "Legalización de Gastos de Viaje",
-]
+formTypes = settings.FORM_TYPES
 for i in range(5):
     name = formTypes[i]
     description = fake.text(max_nb_chars=100)
@@ -138,9 +132,7 @@ for i in range(5):
     )
 
     # Seleccionar miembros para el equipo (excluyendo al líder)
-    team_members = random.sample(
-        [user for user in users if user != leader], 5
-    )
+    team_members = random.sample([user for user in users if user != leader], 5)
 
     # Asignar el permiso de "is_member" a los miembros del equipo
     for member in team_members:
@@ -153,7 +145,7 @@ for i in range(5):
 
 for user in users:
     if user.is_member == False and user.is_leader == False:
-        user.is_applicant = True
+        user.is_member = True
         applicants.append(user)
 
 faculty = [
@@ -279,7 +271,14 @@ documents = [
 ]
 
 
-requestStatus = ["PENDIENTE", "EN REVISIÓN", "POR APROBAR", "DEVUELTO", "RECHAZADO", "RESUELTO"]
+requestStatus = [
+    "PENDIENTE",
+    "EN REVISIÓN",
+    "POR APROBAR",
+    "DEVUELTO",
+    "RECHAZADO",
+    "RESUELTO",
+]
 
 for i in range(10):
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
@@ -345,7 +344,7 @@ def create_fake_travel_request():
         final_date=fake.date_between(start_date="today", end_date="+30d"),
         traveler_name=person.get_full_name(),
         id_person=person.id,
-        member_name=random.choice(team_members).get_full_name(),
+        member_name=random.choice(team_members),
         dependence=fake.company(),
         cost_center=fake.random_int(min=1000, max=9999),
         destination_city=fake.city(),
@@ -359,7 +358,7 @@ def create_fake_travel_request():
         account_number=fake.random_int(min=100000000, max=999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+person.get_full_name(),
+        signatureInput="1---" + person.get_full_name(),
     )
     request.set_expenses(expenses_dict)
     with transaction.atomic():
@@ -375,7 +374,7 @@ def create_fake_travel_expense_legalization():
         final_date=fake.date_between(start_date="today", end_date="+30d"),
         traveler_name=person.get_full_name(),
         id_person=person.id,
-        member_name=random.choice(team_members).get_full_name(),
+        member_name=random.choice(team_members),
         dependence=fake.company(),
         cost_center=fake.random_int(min=1000, max=9999),
         destination_city=fake.city(),
@@ -400,7 +399,7 @@ def create_fake_travel_expense_legalization():
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+person.get_full_name(),
+        signatureInput="1---" + person.get_full_name(),
     )
     with transaction.atomic():
         travel_expense.id = get_next_id()
@@ -432,7 +431,7 @@ def create_fake_advance_legalization():
         final_date=fake.date_between(start_date="today", end_date="+30d"),
         traveler_name=person.get_full_name(),
         id_person=person.id,
-        member_name=random.choice(team_members).get_full_name(),
+        member_name=random.choice(team_members),
         dependence=fake.company(),
         cost_center=fake.random_int(min=1000, max=9999),
         purchase_reason=fake.text(),
@@ -446,7 +445,7 @@ def create_fake_advance_legalization():
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+person.get_full_name(),
+        signatureInput="1---" + person.get_full_name(),
     )
     with transaction.atomic():
         advance_legalization.id = get_next_id()
@@ -474,7 +473,7 @@ def create_fake_billing_account():
         final_date=fake.date_between(start_date="today", end_date="+30d"),
         full_name=person.get_full_name(),
         id_person=person.id,
-        member_name=random.choice(team_members).get_full_name(),
+        member_name=random.choice(team_members),
         status=fake.random.choice(requestStatus),
         value=fake.random_int(min=100, max=1000),
         concept_reason=fake.sentence(),
@@ -490,7 +489,7 @@ def create_fake_billing_account():
         account_number=fake.random_int(min=100000000, max=9999999999),
         cex_number=fake.random_number(digits=8),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+person.get_full_name(),
+        signatureInput="1---" + person.get_full_name(),
     )
     with transaction.atomic():
         billing_account.id = get_next_id()
@@ -505,7 +504,7 @@ def create_fake_requisition():
         final_date=fake.date_between(start_date="today", end_date="+30d"),
         requester_name=person.get_full_name(),
         id_person=person.id,
-        member_name=random.choice(team_members).get_full_name(),
+        member_name=random.choice(team_members),
         status=fake.random.choice(requestStatus),
         work=fake.job(),
         dependence=fake.company(),
@@ -518,7 +517,7 @@ def create_fake_requisition():
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=fake.random_int(min=1, max=10),
-        signatureInput="1---"+person.get_full_name(),
+        signatureInput="1---" + person.get_full_name(),
     )
     with transaction.atomic():
         requisition.id = get_next_id()

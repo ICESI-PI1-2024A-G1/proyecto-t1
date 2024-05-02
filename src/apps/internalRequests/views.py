@@ -52,6 +52,20 @@ def get_request_by_id(id):
     raise Http404(f"Request with id {id} not found in any of the tables")
 
 
+def get_all_requests():
+    models = [
+        TravelAdvanceRequest,
+        AdvanceLegalization,
+        BillingAccount,
+        Requisition,
+        TravelExpenseLegalization,
+    ]
+    instances = []
+    for model in models:
+        instances.append(model.objects.all())
+    return instances
+
+
 @login_required
 @csrf_exempt
 def show_requests(request):
@@ -274,8 +288,7 @@ def show_requests(request):
         print(requests_data)
         requests_data = list(
             filter(
-                lambda x: x.member_name
-                == request.user.first_name + " " + request.user.last_name,
+                lambda x: x.member_name.id == request.user.id,
                 requests_data,
             )
         )
@@ -397,7 +410,7 @@ def change_status(request, id):
                             team[0].leader.email,
                             f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                         )
-            
+
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
@@ -608,7 +621,7 @@ def assign_request(request, request_id):
         try:
             user_id = request.POST["user_id"]
             manager = get_object_or_404(User, pk=user_id)
-            curr_request.member_name = manager.first_name + " " + manager.last_name
+            curr_request.member_name = manager
             curr_request.save()
             teams = Team.objects.filter(typeForm=form_type)
             try:
@@ -676,7 +689,7 @@ def travel_advance_request(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
@@ -730,7 +743,7 @@ def travel_expense_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
@@ -781,7 +794,7 @@ def advance_legalization(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
@@ -836,7 +849,7 @@ def billing_account(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
@@ -889,7 +902,7 @@ def requisition(request):
     request.review_data = review_data_list
     request.is_reviewed = True
     request.save()
-    
+
     return redirect("/requests/?reviewDone")
 
 
