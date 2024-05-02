@@ -51,6 +51,7 @@ outcome==1.3.0.post0
 pandas==2.2.1
 pathspec==0.12.1
 pdfkit==0.6.1
+xhtml2pdf==0.2.15
 pillow==10.3.0
 psutil==5.9.8
 pycparser==2.22

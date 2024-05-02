@@ -37,10 +37,10 @@
         <div class="my-2 mx-2 border-bottom border-3"></div>
         <!-- User data -->
             {{ form.csrf_token }}
-            {% include 'formBlocks/idBlock.html' %}
+            {% include 'formBlocks/idblock.html' %}
             <div class="my-2 mx-2 border-bottom border-3"></div>
             <!-- Travel data -->
-            {% include 'formBlocks/travelBlock.html' %}
+            {% include 'formBlocks/travelblock.html' %}
             <div class="form-group text-center mt-3">
                 <label class="d-block">Su anticipo es en moneda extranjera:</label>
                 <div class="form-check form-check-inline">
@@ -91,6 +91,7 @@
                             name="airportTransport"
                             placeholder="0"
                             value="{{ form_data.airportTransport }}"
+                            min="0"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -102,6 +103,7 @@
                             name="localTransport"
                             placeholder="0"
                             value="{{ form_data.localTransport }}"
+                            min="0"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -113,6 +115,7 @@
                             name="food"
                             placeholder="0"
                             value="{{ form_data.food }}"
+                            min="0"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -124,6 +127,7 @@
                             name="accommodation"
                             placeholder="0"
                             value="{{ form_data.accommodation }}"
+                            min="0"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -135,6 +139,7 @@
                             name="exitTaxes"
                             placeholder="0"
                             value="{{ form_data.exitTaxes }}"
+                            min="0"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -146,6 +151,7 @@
                             name="others"
                             placeholder="0"
                             value="{{ form_data.others }}"
+                            min="0"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">

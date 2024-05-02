@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 import imaplib
 import email
 import time
+from django.test import TestCase
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -42,7 +43,7 @@ class Login(unittest.TestCase):
         code_btn.click()
 
         welcome_text =  self.driver.find_element(By.XPATH, '//*[@id="navbar-collapse"]/div')
-        self.assertEqual(welcome_text.text, "¡Bienvenid@, Accounting Admin!")
+        self.assertEqual(welcome_text.text, "¡Bienvenid@,\nAccounting Admin!")
 
     def test_login_wrong_credentials(self):
         self.driver.get("http://127.0.0.1:8000/")
@@ -81,8 +82,6 @@ class Login(unittest.TestCase):
         self.assertEqual(error_msg.text, "Código de verificación incorrecto.")
 
     def test_recover_password_happy_path(self):
-        newPass = "11111111"
-        self.psw = newPass
         self.driver.get("http://127.0.0.1:8000/")
         frg_pass_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/a[2]")
 
@@ -136,8 +135,6 @@ class Login(unittest.TestCase):
         self.assertEqual(error_msg.text, "Código de verificación incorrecto.")
 
     def test_recover_password_diff_pass(self):
-        newPass = "11111111"
-        self.psw = newPass
         self.driver.get("http://127.0.0.1:8000/")
         frg_pass_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/a[2]")
 

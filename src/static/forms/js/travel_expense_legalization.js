@@ -42,6 +42,12 @@ function addRow() {
         input.className = 'form-control';
         if (i >= 4) {
             input.placeholder = '0';
+            input.min = 0; // To avoid negative values
+            input.addEventListener('input', function () {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
         }
         input.id = ['category_', 'provider_', 'nit_', 'concept_', 'pesos_', 'dollars_', 'euros_'][i] + currentRowCount;
         input.name = input.id;

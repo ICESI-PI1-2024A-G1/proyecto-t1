@@ -22,6 +22,7 @@ import ast
 import json
 import random
 from datetime import datetime
+import re
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -1002,6 +1003,55 @@ def update_request(request, request_id):
                 'total': request.POST.get('total'),
             }
             curr_request.expenses = json.dumps(expenses)
+
+        elif isinstance(curr_request, AdvanceLegalization):
+            curr_request.total = request.POST.get('total')
+            curr_request.advance_total = request.POST.get('advanceTotal')
+            curr_request.employee_balance_value = request.POST.get('employeeBalanceValue')
+            curr_request.icesi_balance_value = request.POST.get('icesiBalanceValue')
+
+            expensesTable = AdvanceLegalization_Table.objects.filter(general_data_id=request_id)
+
+            for key, value in request.POST.items():
+                match = re.match(r'(\w+)_(\d+)', key)
+                if match:
+                    field_name, row_number = match.groups()
+                    row_number = int(row_number)
+                    if row_number < len(expensesTable):
+                        expense = expensesTable[row_number]
+                        if hasattr(expense, field_name):
+                            setattr(expense, field_name, value)
+                            expense.save()
+        
+        elif isinstance(curr_request, TravelExpenseLegalization):
+            """
+            'total1': '15568', 'total2': '2863', 'total3': '13425', 'advanceTotal1': '5562', 'advanceTotal2': '10000', 'advanceTotal3': '324', 'employeeBalance1': '10006', 'employeeBalance2': '0', 'employeeBalance3': '13101', 'icesiBalance1': '0', 'icesiBalance2': '-7137', 'icesiBalance3': '0'
+            """
+            curr_request.total1 = request.POST.get('total1')
+            curr_request.total2 = request.POST.get('total2')
+            curr_request.total3 = request.POST.get('total3')
+            curr_request.advance_total1 = request.POST.get('advanceTotal1')
+            curr_request.advance_total2 = request.POST.get('advanceTotal2')
+            curr_request.advance_total3 = request.POST.get('advanceTotal3')
+            curr_request.employee_balance1 = request.POST.get('employeeBalance1')
+            curr_request.employee_balance2 = request.POST.get('employeeBalance2')
+            curr_request.employee_balance3 = request.POST.get('employeeBalance3')
+            curr_request.icesi_balance1 = request.POST.get('icesiBalance1')
+            curr_request.icesi_balance2 = request.POST.get('icesiBalance2')
+            curr_request.icesi_balance3 = request.POST.get('icesiBalance3')
+
+            expensesTable = TravelExpenseLegalization_Table.objects.filter(travel_info_id=request_id)
+
+            for key, value in request.POST.items():
+                match = re.match(r'(\w+)_(\d+)', key)
+                if match:
+                    field_name, row_number = match.groups()
+                    row_number = int(row_number)
+                    if row_number < len(expensesTable):
+                        expense = expensesTable[row_number]
+                        if hasattr(expense, field_name):
+                            setattr(expense, field_name, value)
+                            expense.save()
 
         curr_request.save()
 
