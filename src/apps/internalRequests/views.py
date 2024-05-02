@@ -309,44 +309,6 @@ def change_status(request, id):
                 "change-status.html",
                 {"request": curr_request, "status_options": status_options},
             )
-        elif curr_request.status == "EN REVISIÓN" and curr_request.is_reviewed:
-            review_data = ast.literal_eval(curr_request.review_data)
-            resultReviewShow = False
-            comments = None
-            reason_data = ""
-            for item in review_data:
-                if item["id"] == "reasonData":
-                    reason_data = item["value"]
-                    break
-
-            if reason_data == "":
-                status_options = ["POR APROBAR"]
-                comments_str = None
-            else:
-                status_options = ["DEVUELTO", "RECHAZADO"]
-                resultReviewShow = True
-                comments = ["Celdas afectadas:\n"]
-                for item in review_data:
-                    if item["id"] != "reasonData":
-                        if item["value"] == "off":
-                            comments.append("- " + item["message"])
-                            if item["id"] in ["tableCheck", "signCheck"]:
-                                status_options = ["RECHAZADO"]
-                    else:
-                        reason_data = item["value"]
-
-                comments.append("\n" + "Motivos: " + reason_data)
-                comments_str = "\n".join(comments)
-            return render(
-                request,
-                "change-status.html",
-                {
-                    "request": curr_request,
-                    "status_options": status_options,
-                    "resultReviewShow": resultReviewShow,
-                    "comments": comments_str,
-                },
-            )
         elif curr_request.status == "POR APROBAR":
             status_options = ["RESUELTO", "DEVUELTO", "RECHAZADO"]
             return render(
@@ -900,11 +862,24 @@ def update_request(request, request_id):
     with transaction.atomic():
         curr_request.status = "EN REVISIÓN"
         curr_request.is_reviewed = False
+        print(request.POST.dict())
 
         # Update the request with the data from the method's request
         for key, value in request.POST.items():
             if hasattr(curr_request, key):
                 setattr(curr_request, key, value)
+        
+        if isinstance(curr_request, TravelAdvanceRequest):
+            expenses = {
+                'airportTransport': request.POST.get('airportTransport'),
+                'localTransport': request.POST.get('localTransport'),
+                'food': request.POST.get('food'),
+                'accommodation': request.POST.get('accommodation'),
+                'exitTaxes': request.POST.get('exitTaxes'),
+                'others': request.POST.get('others'),
+                'total': request.POST.get('total'),
+            }
+            curr_request.expenses = json.dumps(expenses)
 
         curr_request.save()
 
