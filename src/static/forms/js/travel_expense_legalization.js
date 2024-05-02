@@ -1,14 +1,41 @@
-// adds a new row to the table
+
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.getElementById('addRow').addEventListener('click', function() {
-        event.preventDefault();
-        var table = document.querySelector('tbody');
-        var newRow = document.createElement('tr');
+    var rowCount = localStorage.getItem('rowCount');
+    console.log(rowCount);
+    if (rowCount !== null) {
+        obj = rowCount - 4;
+        if (obj > 0) {
+            for (var i = 0; i < obj; i++) {
+                addRow();
+            }
+        } else if (rowCount < 4) {
+            for (var i = obj; i > 4 - obj; i--) {
+                removeRow();
+            }
+        }
+    }
 
-        // Get the current number of rows
-        var currentRowCount = table.querySelectorAll('tr:not(#totals):not(#advance):not(#employeeBalance):not(#icesiBalance)').length;
+    document.getElementById('addRow').addEventListener('click', addRow);
+    document.getElementById('removeRow').addEventListener('click', removeRow);
+});
 
-        for (var i = 0; i < 7; i++) {
+// detects changes in the input fields
+document.querySelector('tbody').addEventListener('input', function(event) {
+    if (event.target.tagName.toLowerCase() === 'input') {
+        updateTotals();
+    }
+});
+
+// adds a new row to the table
+function addRow() {
+    event.preventDefault();
+    var table = document.querySelector('tbody');
+    var newRow = document.createElement('tr');
+
+    // Get the current number of rows
+    var currentRowCount = table.querySelectorAll('tr:not(#totals):not(#advance):not(#employeeBalance):not(#icesiBalance)').length;
+
+    for (var i = 0; i < 7; i++) {
         var newCell = document.createElement('td');
         var input = document.createElement('input');
         input.type = i < 4 ? 'text' : 'number';
@@ -18,38 +45,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
         input.id = ['category_', 'provider_', 'nit_', 'concept_', 'pesos_', 'dollars_', 'euros_'][i] + currentRowCount;
         input.name = input.id;
+        input.value = form_data[input.name] || '';
         newCell.appendChild(input);
         newRow.appendChild(newCell);
-}
+    }  
 
-        var totalsRow = document.getElementById('totals');
-        table.insertBefore(newRow, totalsRow);
+    var totalsRow = document.getElementById('totals');
+    table.insertBefore(newRow, totalsRow);
 
-        updateTotals();
-    });
-    // removes the last row from the table
-    document.getElementById('removeRow').addEventListener('click', function() {
-        event.preventDefault();
-        var table = document.querySelector('tbody');
-        var rows = Array.from(table.children);
-        var totalsRowIndex = rows.findIndex(row => row.id === 'totals');
+    updateTotals();
+    updateRowCount();
+};
 
-        // Check if there is a row above the totals row
-        if (totalsRowIndex > 0) {
-            var rowToRemove = rows[totalsRowIndex - 1];
-            table.removeChild(rowToRemove);
-        }
+// removes the last row from the table
+function removeRow() {
+    event.preventDefault();
+    var table = document.querySelector('tbody');
+    var rows = Array.from(table.children);
+    var totalsRowIndex = rows.findIndex(row => row.id === 'totals');
 
-        updateTotals();
-    });
-});
-
-// detects changes in the input fields
-document.querySelector('tbody').addEventListener('input', function(event) {
-    if (event.target.tagName.toLowerCase() === 'input') {
-        updateTotals();
+    // Check if there is a row above the totals row
+    if (totalsRowIndex > 0) {
+        var rowToRemove = rows[totalsRowIndex - 1];
+        table.removeChild(rowToRemove);
     }
-});
+
+    updateTotals();
+    updateRowCount();
+};
 
 // updates the totals row
 function updateTotals() {
@@ -86,4 +109,10 @@ function updateTotals() {
     icesiBalance.forEach((balance, i) => {
         document.getElementById('icesiBalance' + (i + 1)).value = balance;
     });
+}
+
+function updateRowCount() {
+    var rowCount = document.getElementById('tableExpenseLegalization').rows.length - 6;
+    console.log(rowCount);
+    localStorage.setItem('rowCount', rowCount);
 }

@@ -49,6 +49,7 @@ def get_request_by_id(id):
     raise Http404(f"Request with id {id} not found in any of the tables")
 
 
+@never_cache
 @login_required
 @csrf_exempt
 def show_requests(request):

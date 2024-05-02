@@ -3,28 +3,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var rowCount = localStorage.getItem('rowCount');
     if (rowCount !== null) {
         obj = rowCount - 2;
-        for (var i = 0; i < obj; i++) {
-            addRow();
+        if (obj > 0) {
+            for (var i = 0; i < obj; i++) {
+                addRow();
+            }
+        } else if (rowCount == 1) {
+            removeRow();
         }
     }
 
     document.getElementById('addRow').addEventListener('click', addRow);
-
-    // removes the last row from the table
-    document.getElementById('removeRow').addEventListener('click', function() {
-        var table = document.querySelector('tbody');
-        var rows = Array.from(table.children);
-        var totalsRowIndex = rows.findIndex(row => row.id === 'totals');
-
-        // Check if there is a row above the totals row
-        if (totalsRowIndex > 0) {
-            var rowToRemove = rows[totalsRowIndex - 1];
-            table.removeChild(rowToRemove);
-        }
-
-        updateTotals();
-        updateRowCount();
-    });
+    document.getElementById('removeRow').addEventListener('click', removeRow);
 });
 
 // detects changes in the input fields
@@ -57,6 +46,22 @@ function addRow() {
 
     var totalsRow = document.getElementById('totals');
     table.insertBefore(newRow, totalsRow);
+
+    updateTotals();
+    updateRowCount();
+};
+
+// removes the last row from the table
+function removeRow() {
+    var table = document.querySelector('tbody');
+    var rows = Array.from(table.children);
+    var totalsRowIndex = rows.findIndex(row => row.id === 'totals');
+
+    // Check if there is a row above the totals row
+    if (totalsRowIndex > 0) {
+        var rowToRemove = rows[totalsRowIndex - 1];
+        table.removeChild(rowToRemove);
+    }
 
     updateTotals();
     updateRowCount();
