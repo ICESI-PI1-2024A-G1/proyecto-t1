@@ -17,11 +17,11 @@ from apps.teams.models import Team
 from datetime import datetime, timedelta
 from api.sharepoint_api import SharePointAPI
 from apps.forms.models import *
+from apps.requests.models import SharePoint
 from django.utils import timezone
 import json
 from django.db import transaction
 from django.db.models import Max
-import pycountry
 
 
 def get_next_id():
@@ -290,8 +290,8 @@ for i in range(10):
         "status": random.choice(status_options),
         "manager": random.choice(users),
         "team": random.choice(teams).id,
-        "initial_date": initial_date.strftime("%d-%m-%Y"),
-        "final_date": final_date.strftime("%d-%m-%Y"),
+        "initial_date": initial_date.strftime("%Y-%m-%d"),
+        "final_date": final_date.strftime("%Y-%m-%d"),
         "fullname": random.choice(applicants).get_full_name(),
         "faculty": random.choice(faculty),
         "document": random.choice(documents),
@@ -308,6 +308,7 @@ for i in range(10):
     }
 
     sharepoint_api.create_data(data)
+    SharePoint.objects.create(**data)
 
 t_request = sharepoint_api.get_all_requests()
 t_request = json.loads(t_request.content)
@@ -540,10 +541,3 @@ print(f"Generated {form_amount} requisitions")
 print(f"Generated {form_amount} advance legalizations")
 print(f"Generated {form_amount} travel expense legalizations")
 print(f"Generated {form_amount} travel requests")
-
-
-# Create countries and cities
-for country in pycountry.countries:
-    Country.objects.get_or_create(name=country.name)
-
-

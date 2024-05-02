@@ -97,4 +97,3 @@ xhtml2pdf==0.2.15
 xlwings==0.31.1
 zope.event==5.0
 zope.interface==6.3
-pycountry==20.7.3
