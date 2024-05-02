@@ -21,6 +21,7 @@ from django.utils import timezone
 import json
 from django.db import transaction
 from django.db.models import Max
+import pycountry
 
 
 def get_next_id():
@@ -539,3 +540,10 @@ print(f"Generated {form_amount} requisitions")
 print(f"Generated {form_amount} advance legalizations")
 print(f"Generated {form_amount} travel expense legalizations")
 print(f"Generated {form_amount} travel requests")
+
+
+# Create countries and cities
+for country in pycountry.countries:
+    Country.objects.get_or_create(name=country.name)
+
+

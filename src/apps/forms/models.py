@@ -174,3 +174,17 @@ class Requisition(models.Model):
     team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
     review_data = models.TextField(null=True, blank=True)
+
+
+class Country(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class City(models.Model):
+    name = models.CharField(max_length=100)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
