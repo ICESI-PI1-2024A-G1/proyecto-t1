@@ -118,7 +118,7 @@ def travel_expense_legalization(request):
             travel_legalization.icesi_balance3 = form_data['icesiBalance3']
             travel_legalization.signature_status = form_data['signatureStatus'] == 'Yes'
             travel_legalization.bank = form_data['bank']
-            travel_legalization.account_type = form_data['accountType']
+            travel_legalization.account_type = form_data['account_type']
             travel_legalization.account_number = form_data['accountNumber']
             travel_legalization.observations = form_data['observations']
             travel_legalization.signatureInput= form_data['signatureInput']
