@@ -93,3 +93,22 @@ function updateTotals() {
         document.getElementById('icesiBalance' + (i + 1)).value = balance;
     });
 }
+
+// document.querySelector('form').addEventListener('submit', function (event) {
+//     var inputs = document.querySelectorAll('input[required], textarea[required]');
+//     inputs.forEach(function (input) {
+//         if (!input.value) {
+//             input.classList.add('is-invalid');
+//         }
+//     });
+
+//     // Prevent form submission if any required field is empty
+//     var invalidInputs = document.querySelectorAll('.is-invalid');
+//     if (invalidInputs.length > 0) {
+//         event.preventDefault();
+//         event.stopPropagation(); // Stop propagation of the event
+//     }
+
+//     // Add 'was-validated' class to the form
+//     event.target.classList.add('was-validated');
+// });
