@@ -174,3 +174,6 @@ class Requisition(models.Model):
     team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
     review_data = models.TextField(null=True, blank=True)
+
+
+

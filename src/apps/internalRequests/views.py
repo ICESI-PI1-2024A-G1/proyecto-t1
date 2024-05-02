@@ -8,8 +8,9 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from apps.forms.models import *
 from apps.internalRequests.models import Traceability
-import utils.utils as utils
+from apps.requests.models import SharePoint
 from apps.teams.models import Team
+import utils.utils as utils
 from datetime import datetime
 from django.db import transaction
 from xhtml2pdf import pisa
@@ -19,6 +20,8 @@ from bs4 import BeautifulSoup
 import math
 import ast
 import json
+import random
+from datetime import datetime
 import re
 
 statusMap = {
@@ -50,6 +53,7 @@ def get_request_by_id(id):
     raise Http404(f"Request with id {id} not found in any of the tables")
 
 
+@never_cache
 @login_required
 @csrf_exempt
 def show_requests(request):
@@ -360,17 +364,23 @@ def change_status(request, id):
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
                     html_file_path = "forms/advance_legalization.html"
+                    document = "Legalización de Anticipos"
                 elif isinstance(curr_request, BillingAccount):
                     html_file_path = "forms/billing_account.html"
+                    document = "Cuenta de Cobro"
                 elif isinstance(curr_request, Requisition):
                     html_file_path = "forms/requisition.html"
+                    document = "Requisición"
                 elif isinstance(curr_request, TravelAdvanceRequest):
                     html_file_path = "forms/travel_advance_request.html"
+                    document = "Solicitud de Viaje"
                 elif isinstance(curr_request, TravelExpenseLegalization):
                     html_file_path = "forms/travel_expense_legalization.html"
+                    document = "Legalización de Gastos de Viaje"
                 else:
                     form_type = None
-
+                
+                """
                 # Render the HTML file with curr_request as context
                 template = get_template(html_file_path)
                 html_string = template.render({"request": curr_request})
@@ -419,6 +429,117 @@ def change_status(request, id):
                     )
 
                     print(f"Email sent to {team[0].leader.email}")
+                """
+                # Simulate SharePoint request
+                faculty = [
+                    "Ciencias Administrativas y económicas",
+                    "Ingeniería, Diseño y Ciencias Aplicadas",
+                    "Ciencias Humanas",
+                    "Ciencias de la Salud",
+                ]
+                eps = [
+                    "Sura",
+                    "Sanitas",
+                    "Famisanar",
+                    "Compensar",
+                    "Medimás",
+                    "Salud Total",
+                    "Coomeva",
+                    "Nueva EPS",
+                    "Aliansalud",
+                    "SOS",
+                    "Cafesalud",
+                    "Coosalud",
+                    "Savia Salud",
+                    "Mutual Ser",
+                    "Cruz Blanca",
+                    "Capital Salud",
+                    "Comfenalco",
+                    "Comfama",
+                    "Comfandi",
+                    "Comfasucre",
+                ]
+                pension_fund = [
+                    "Porvenir",
+                    "Protección",
+                    "Colfondos",
+                    "Skandia",
+                    "Old Mutual",
+                    "Colpensiones",
+                    "Habitat",
+                    "Horizonte",
+                    "Crecer",
+                    "Fiduprevisora",
+                    "Cafam",
+                    "Confuturo",
+                    "CFA",
+                    "Fondo Nacional del Ahorro",
+                ]
+
+                status_options = [
+                    "EN PROCESO",
+                    "APROBADO - CENCO",
+                    "RECHAZADO - CENCO",
+                    "APROBADO - DECANO",
+                    "RECHAZADO - DECANO",
+                    "PAGADO - CONTABILIDAD",
+                    "RECHAZADO - CONTABILIDAD",
+                ]
+
+                arls = [
+                    "Sura ARL",
+                    "Positiva ARL",
+                    "Colmena Seguros ARL",
+                    "Seguros Bolívar ARL",
+                    "Axa Colpatria ARL",
+                    "Liberty Seguros ARL",
+                    "Bolívar ARL",
+                    "Mapfre ARL",
+                    "Equidad Seguros ARL",
+                    "Seguros del Estado ARL",
+                    "Mundial de Seguros ARL",
+                    "La Previsora ARL",
+                    "Seguros Generales Suramericana ARL",
+                    "Seguros del Sur ARL",
+                    "Protección ARL",
+                ]
+
+                if hasattr(curr_request, 'traveler_name'):
+                    fullname = curr_request.traveler_name
+                elif hasattr(curr_request, 'full_name'):
+                    fullname = curr_request.full_name
+                elif hasattr(curr_request, 'requester_name'):
+                    fullname = curr_request.requester_name
+                else:
+                    fullname = "No aplica"
+
+                if hasattr(curr_request, 'cost_center'):
+                    cenco = curr_request.cost_center
+                elif hasattr(curr_request, 'CENCO'):
+                    cenco = curr_request.cenco
+                else:
+                    cenco = "No aplica"
+
+                SharePoint.objects.create(
+                    status=random.choice(status_options),
+                    manager=curr_request.member_name,
+                    team=curr_request.team_id,
+                    initial_date=datetime.now(),
+                    final_date=datetime.now(),
+                    fullname=fullname,
+                    faculty=random.choice(faculty),
+                    document=document,
+                    phone_number=random.randint(1000000, 9999999),
+                    email=User.objects.get(id=curr_request.id_person).email,
+                    CENCO=cenco,
+                    bank=curr_request.bank,
+                    account_type=curr_request.account_type,
+                    health_provider=random.choice(eps),
+                    pension_fund=random.choice(pension_fund),
+                    arl=random.choice(arls),
+                    contract_value=random.randint(100000, 10000000),  # Random value between 100,000 and 10,000,000
+                    is_one_time_payment=random.choice([True, False]),
+                )
             
             curr_request.save()
             return JsonResponse(
@@ -428,6 +549,7 @@ def change_status(request, id):
             )
 
         except Exception as e:
+            print(e)
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
             )
