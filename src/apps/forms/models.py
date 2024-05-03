@@ -2,6 +2,7 @@ from django.db import models
 import json
 from django.contrib.auth import get_user_model
 from django.apps import apps
+from apps.teams.models import Team
 
 User = get_user_model()
 
@@ -10,21 +11,22 @@ class Form(models.Model):
     id = models.AutoField(primary_key=True)
     request_date = models.DateField()
     final_date = models.DateField(null=True, default=None)
-    member_name = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, default=None
-    )
+    member = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
+
     status = models.CharField(max_length=200, default="EN REVISIÓN")
-    team_id = models.IntegerField(default=0)
+    team_id = models.ForeignKey(
+        Team, on_delete=models.SET_NULL, null=True, default=None
+    )
     is_reviewed = models.BooleanField(default=False)
     review_data = models.TextField(null=True, blank=True)
+    id_person = models.CharField(max_length=200, default="")
+    fullname = models.CharField(max_length=200, default="")
 
     class Meta:
         abstract = True
 
 
 class TravelAdvanceRequest(Form):
-    traveler_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -48,7 +50,6 @@ class TravelAdvanceRequest(Form):
 
 
 class TravelExpenseLegalization(Form):
-    id_person = models.CharField(max_length=200, default="")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -58,7 +59,6 @@ class TravelExpenseLegalization(Form):
     total1 = models.DecimalField(max_digits=10, decimal_places=2)
     total2 = models.DecimalField(max_digits=10, decimal_places=2)
     total3 = models.DecimalField(max_digits=10, decimal_places=2)
-    traveler_name = models.CharField(max_length=200)
     advance_total1 = models.DecimalField(max_digits=10, decimal_places=2)
     advance_total2 = models.DecimalField(max_digits=10, decimal_places=2)
     advance_total3 = models.DecimalField(max_digits=10, decimal_places=2)
@@ -104,8 +104,6 @@ class TravelExpenseLegalization_Table(models.Model):
 
 
 class AdvanceLegalization(Form):
-    traveler_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     purchase_reason = models.TextField()
@@ -133,8 +131,6 @@ class AdvanceLegalization_Table(models.Model):
 
 
 class BillingAccount(Form):
-    full_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
     value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     concept_reason = models.CharField(max_length=200)
     retention = models.CharField(max_length=200)
@@ -152,8 +148,6 @@ class BillingAccount(Form):
 
 
 class Requisition(Form):
-    requester_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
     work = models.CharField(max_length=200)
     dependence = models.CharField(max_length=200)
     cenco = models.CharField(max_length=200)

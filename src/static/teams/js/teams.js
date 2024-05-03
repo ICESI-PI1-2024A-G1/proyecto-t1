@@ -31,9 +31,7 @@ $(document).ready(function () {
                     location.reload();
                 },
                 error: function(xhr, status, error) {
-                    console.error(error);
-                    // Display an alert for error in deletion
-                    alert("Error deleting team");
+                    location.reload();
                 }
             });
         }

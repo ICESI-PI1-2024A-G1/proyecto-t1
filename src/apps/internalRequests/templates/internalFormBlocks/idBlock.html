@@ -14,12 +14,12 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="travelerName">Nombre completo</label>
+            <label for="fullName">Nombre completo</label>
             <div class="d-flex justify-content-between">
-                <input type="text" class="form-control" id="travelerName" name="travelerName" value="{{ request.full_name|default:request.traveler_name }}" disabled>
+                <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.fullname|default:request.fullName }}" disabled>
                 {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                    <input type="checkbox" class="btn-check" id="btncheckTravelerName" name="nameCheck" data-message="Nombre completo">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTravelerName" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    <input type="checkbox" class="btn-check" id="btncheckfullName" name="nameCheck" data-message="Nombre completo">
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckfullName" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                 {% endif %}
             </div>
         </div>

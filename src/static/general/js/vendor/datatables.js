@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
             }, {
                 data: "id"
             }, {
-                data: "full_name"
+                data: "fullname"
             }, {
                 data: "email"
             }, {
@@ -130,9 +130,9 @@ document.addEventListener("DOMContentLoaded", function(e) {
                 responsivePriority: 4,
                 render: function(e, t, a, s) {
                     var n = a.avatar,
-                        l = a.full_name,
+                        l = a.fullname,
                         r = a.post;
-                    return '<div class="d-flex justify-content-start align-items-center user-name"><div class="avatar-wrapper"><div class="avatar me-2">' + (n ? '<img src="' + assetsPath + "img/avatars/" + n + '" alt="Avatar" class="rounded-circle">' : '<span class="avatar-initial rounded-circle bg-label-' + ["success", "danger", "warning", "info", "dark", "primary", "secondary"][Math.floor(6 * Math.random())] + '">' + (n = (((n = (l = a.full_name).match(/\b\w/g) || []).shift() || "") + (n.pop() || "")).toUpperCase()) + "</span>") + '</div></div><div class="d-flex flex-column"><span class="emp_name text-truncate">' + l + '</span><small class="emp_post text-truncate text-muted">' + r + "</small></div></div>"
+                    return '<div class="d-flex justify-content-start align-items-center user-name"><div class="avatar-wrapper"><div class="avatar me-2">' + (n ? '<img src="' + assetsPath + "img/avatars/" + n + '" alt="Avatar" class="rounded-circle">' : '<span class="avatar-initial rounded-circle bg-label-' + ["success", "danger", "warning", "info", "dark", "primary", "secondary"][Math.floor(6 * Math.random())] + '">' + (n = (((n = (l = a.fullname).match(/\b\w/g) || []).shift() || "") + (n.pop() || "")).toUpperCase()) + "</span>") + '</div></div><div class="d-flex flex-column"><span class="emp_name text-truncate">' + l + '</span><small class="emp_post text-truncate text-muted">' + r + "</small></div></div>"
                 }
             }, {
                 responsivePriority: 1,
@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
                 details: {
                     display: $.fn.dataTable.Responsive.display.modal({
                         header: function(e) {
-                            return "Details of " + e.data().full_name
+                            return "Details of " + e.data().fullname
                         }
                     }),
                     type: "column",
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
             n = $(".add-new-record .dt-salary").val();
         "" != e && (l.row.add({
             id: r,
-            full_name: e,
+            fullname: e,
             post: t,
             email: a,
             start_date: s,
@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }), a.length && a.DataTable({
         ajax: assetsPath + "json/table-datatable.json",
         columns: [{
-            data: "full_name"
+            data: "fullname"
         }, {
             data: "email"
         }, {
@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
         columns: [{
             data: ""
         }, {
-            data: "full_name"
+            data: "fullname"
         }, {
             data: "post"
         }, {
@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
             details: {
                 display: $.fn.dataTable.Responsive.display.modal({
                     header: function(e) {
-                        return "Details of " + e.data().full_name
+                        return "Details of " + e.data().fullname
                     }
                 }),
                 type: "column",
@@ -469,7 +469,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
         columns: [{
             data: ""
         }, {
-            data: "full_name"
+            data: "fullname"
         }, {
             data: "post"
         }, {
@@ -538,7 +538,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
             details: {
                 display: $.fn.dataTable.Responsive.display.modal({
                     header: function(e) {
-                        return "Details of " + e.data().full_name
+                        return "Details of " + e.data().fullname
                     }
                 }),
                 type: "column",

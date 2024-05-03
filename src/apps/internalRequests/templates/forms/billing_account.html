@@ -54,7 +54,7 @@
             <div class="form-group">
                 <label for="fullName">Nombre completo</label>
                 <div class="d-flex justify-content-between">
-                    <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.full_name }}" disabled>
+                    <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.fullname }}" disabled>
                     {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
                         <input type="checkbox" class="btn-check" id="btncheck2" name="nameCheck" data-message="Nombre">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck2" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>

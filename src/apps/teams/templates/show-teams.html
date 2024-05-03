@@ -24,6 +24,7 @@ Equipos
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Formulario</th>
                     <th>Líder</th>
                     <th>Descripción</th>
                     <th>Fecha de Creación</th>
@@ -37,7 +38,15 @@ Equipos
                         {{ team.id }}
                     </td>
                     <td>
-                        {{ team.name }}
+                        <p>
+                            {{ team.name }}
+                        </p>
+                        <p class="text-nowrap">
+                            ({{ team.length }} miembros)
+                        </p>
+                    </td>
+                    <td>
+                        {{ team.typeForm }}
                     </td>
                     <td>
                         {{ team.leader }}
@@ -82,5 +91,6 @@ Equipos
 
 {% load static %}
 <script src="{% static '/teams/js/teams.js' %}"></script>
+
 
 {% endblock %}

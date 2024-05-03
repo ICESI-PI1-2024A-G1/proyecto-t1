@@ -165,7 +165,7 @@
     {% if editable %}
     <script>
         const inputs = document.querySelectorAll('input, textarea, select');
-        const idsToSkip = ['requestDate', 'travelerName', 'idNumber', 'expensesTable'];
+        const idsToSkip = ['requestDate', 'fullName', 'idNumber', 'expensesTable'];
         const tableInputs = document.querySelector('#expensesTable').querySelectorAll('input, textarea, select');
 
         inputs.forEach(input => {

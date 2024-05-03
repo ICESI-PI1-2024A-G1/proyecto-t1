@@ -22,6 +22,7 @@ import math
 import ast
 import json
 import os
+from django.conf import settings
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -52,7 +53,7 @@ def get_request_by_id(id):
     raise Http404(f"Request with id {id} not found in any of the tables")
 
 
-def get_all_requests():
+def get_all_requests(formType=None):
     models = [
         TravelAdvanceRequest,
         AdvanceLegalization,
@@ -60,9 +61,16 @@ def get_all_requests():
         Requisition,
         TravelExpenseLegalization,
     ]
+    if formType:
+        models = [
+            model for model in models if formType == settings.FORM_TYPES[model.__name__]
+        ]
     instances = []
     for model in models:
-        instances.append(model.objects.all())
+        for instance in model.objects.all():
+            instance.document = settings.FORM_TYPES[model.__name__]
+            instances.append(instance)
+    print(len(instances))
     return instances
 
 
@@ -96,202 +104,41 @@ def show_requests(request):
         messages.add_message(
             request, messages.SUCCESS, "El formulario ha sido revisado."
         )
-    if request.user.is_superuser or request.user.is_leader or request.user.is_member:
-        if (
-            request.user.is_superuser
-            or request.user.is_member
-            or (
-                request.user.is_leader
-                and Team.objects.filter(leader_id=request.user.id).exists()
+
+    requests_data = get_all_requests()
+    print(request.user.is_leader)
+    if request.user.is_leader:
+        if Team.objects.filter(leader_id=request.user.id).exists():
+            team = Team.objects.get(leader_id=request.user.id)
+
+            requests_data = list(
+                filter(
+                    lambda x: x.document and x.document == team.typeForm,
+                    requests_data,
+                )
             )
-        ):
-            advance_legalization = [
-                obj.__dict__.update(
-                    {
-                        "document": "Legalización de Anticipos",
-                        "initial_date": obj.request_date,
-                        "fullname": obj.traveler_name,
-                        "final_date": (
-                            obj.final_date if obj.final_date else "Por definir"
-                        ),
-                        "manager": (
-                            obj.member_name if obj.member_name else "Por definir"
-                        ),
-                    }
-                )
-                or obj
-                for obj in AdvanceLegalization.objects.all()
-            ]
-            billing_account = [
-                obj.__dict__.update(
-                    {
-                        "document": "Cuenta de Cobro",
-                        "initial_date": obj.request_date,
-                        "fullname": obj.full_name,
-                        "final_date": (
-                            obj.final_date if obj.final_date else "Por definir"
-                        ),
-                        "manager": (
-                            obj.member_name if obj.member_name else "Por definir"
-                        ),
-                    }
-                )
-                or obj
-                for obj in BillingAccount.objects.all()
-            ]
-            requisition = [
-                obj.__dict__.update(
-                    {
-                        "document": "Requisición",
-                        "initial_date": obj.request_date,
-                        "fullname": obj.requester_name,
-                        "final_date": (
-                            obj.final_date if obj.final_date else "Por definir"
-                        ),
-                        "manager": (
-                            obj.member_name if obj.member_name else "Por definir"
-                        ),
-                    }
-                )
-                or obj
-                for obj in Requisition.objects.all()
-            ]
-            travel_advance_request = [
-                obj.__dict__.update(
-                    {
-                        "document": "Solicitud de Viaje",
-                        "initial_date": obj.request_date,
-                        "fullname": obj.traveler_name,
-                        "final_date": (
-                            obj.final_date if obj.final_date else "Por definir"
-                        ),
-                        "manager": (
-                            obj.member_name if obj.member_name else "Por definir"
-                        ),
-                    }
-                )
-                or obj
-                for obj in TravelAdvanceRequest.objects.all()
-            ]
-            travel_expense_request = [
-                obj.__dict__.update(
-                    {
-                        "document": "Legalización de Gastos de Viaje",
-                        "initial_date": obj.request_date,
-                        "fullname": obj.traveler_name,
-                        "final_date": (
-                            obj.final_date if obj.final_date else "Por definir"
-                        ),
-                        "manager": (
-                            obj.member_name if obj.member_name else "Por definir"
-                        ),
-                    }
-                )
-                or obj
-                for obj in TravelExpenseLegalization.objects.all()
-            ]
         else:
             return render(
                 request, "show-internal-requests.html", {"no_permission": True}
             )
-    else:
-        advance_legalization = [
-            obj.__dict__.update(
-                {
-                    "document": "Legalización de Anticipos",
-                    "initial_date": obj.request_date,
-                    "fullname": obj.traveler_name,
-                    "final_date": obj.final_date if obj.final_date else "Por definir",
-                    "manager": obj.member_name if obj.member_name else "Por definir",
-                }
-            )
-            or obj
-            for obj in AdvanceLegalization.objects.filter(id_person=request.user.id)
-        ]
-        billing_account = [
-            obj.__dict__.update(
-                {
-                    "document": "Cuenta de Cobro",
-                    "initial_date": obj.request_date,
-                    "fullname": obj.full_name,
-                    "final_date": obj.final_date if obj.final_date else "Por definir",
-                    "manager": obj.member_name if obj.member_name else "Por definir",
-                }
-            )
-            or obj
-            for obj in BillingAccount.objects.filter(id_person=request.user.id)
-        ]
-        requisition = [
-            obj.__dict__.update(
-                {
-                    "document": "Requisición",
-                    "initial_date": obj.request_date,
-                    "fullname": obj.requester_name,
-                    "final_date": obj.final_date if obj.final_date else "Por definir",
-                    "manager": obj.member_name if obj.member_name else "Por definir",
-                }
-            )
-            or obj
-            for obj in Requisition.objects.filter(id_person=request.user.id)
-        ]
-        travel_advance_request = [
-            obj.__dict__.update(
-                {
-                    "document": "Solicitud de Viaje",
-                    "initial_date": obj.request_date,
-                    "fullname": obj.traveler_name,
-                    "final_date": obj.final_date if obj.final_date else "Por definir",
-                    "manager": obj.member_name if obj.member_name else "Por definir",
-                }
-            )
-            or obj
-            for obj in TravelAdvanceRequest.objects.filter(id_person=request.user.id)
-        ]
-        travel_expense_request = [
-            obj.__dict__.update(
-                {
-                    "document": "Legalización de Gastos de Viaje",
-                    "initial_date": obj.request_date,
-                    "fullname": obj.traveler_name,
-                    "final_date": obj.final_date if obj.final_date else "Por definir",
-                    "manager": obj.member_name if obj.member_name else "Por definir",
-                }
-            )
-            or obj
-            for obj in TravelExpenseLegalization.objects.filter(
-                id_person=request.user.id
-            )
-        ]
-
-    requests_data = list(
-        chain(
-            advance_legalization,
-            billing_account,
-            requisition,
-            travel_advance_request,
-            travel_expense_request,
-        )
-    )
-
-    for r in requests_data:
-        r.status_color = statusMap[r.status]
-
-    if (
-        request.user.is_leader
-        and Team.objects.filter(leader_id=request.user.id).exists()
-    ):
-        team = Team.objects.get(leader_id=request.user.id)
-        requests_data = list(
-            filter(lambda x: x.document == team.typeForm, requests_data)
-        )
     if request.user.is_member:
-        print(requests_data)
         requests_data = list(
             filter(
-                lambda x: x.member_name.id == request.user.id,
+                lambda x: x.member and x.member.id == request.user.id,
                 requests_data,
             )
         )
+    if request.user.is_applicant:
+        requests_data = list(
+            filter(
+                lambda x: x.id_person and x.id_person == request.user.id,
+                requests_data,
+            )
+        )
+
+    for r in requests_data:
+        print(r)
+        r.status_color = statusMap[r.status]
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 
@@ -474,6 +321,8 @@ def change_status(request, id):
                     )
 
                     print(f"Email sent to {team[0].leader.email}")
+            if curr_request.status in ["DEVUELTO", "RECHAZADO", "RESUELTO"]:
+                curr_request.member = None
             curr_request.save()
             return JsonResponse(
                 {
@@ -620,8 +469,17 @@ def assign_request(request, request_id):
     elif request.method == "POST":
         try:
             user_id = request.POST["user_id"]
+            if user_id == "unassigned":
+                curr_request.member = None
+                curr_request.team_id = None
+                curr_request.save()
+                messages.success(
+                    request, "La solicitud ha sido desasignada correctamente."
+                )
+                return redirect("/requests/?assignRequestDone")
             manager = get_object_or_404(User, pk=user_id)
-            curr_request.member_name = manager
+            curr_request.member = manager
+            curr_request.team_id = Team.objects.get(leader=request.user)
             curr_request.save()
             teams = Team.objects.filter(typeForm=form_type)
             try:

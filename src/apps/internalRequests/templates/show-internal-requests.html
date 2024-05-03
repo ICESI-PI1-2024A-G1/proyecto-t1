@@ -39,14 +39,18 @@
                 {% for request in requests %}
                 <tr id="request_{{ request.id }}">
                     <td>{{ request.id }}</td>
-                    <td>{{ request.initial_date }}</div></td>
+                    <td>{{ request.request_date }}</div></td>
                     <td>{{ request.final_date }}</td>
                     <td>{{ request.document }}</td>
                     <td>{{ request.fullname }}</td>
                     <td>
-                        {{ request.manager }}
-                        {% if request.team %}
-                        (Equipo {{ request.team }})
+                        {%if request.member %}
+                            {{ request.member }}
+                        {% else %}
+                        <strong>Sin asignar</strong>
+                        {% endif %}
+                        {% if request.team_id %}
+                        (Equipo {{ request.team_id }})
                         {% endif %}
                     </td>
                     <td>

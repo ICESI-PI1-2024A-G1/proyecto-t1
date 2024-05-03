@@ -10,6 +10,7 @@ from api.sharepoint_api import SharePointAPI
 import os
 from django.contrib import messages
 from django.conf import settings
+from apps.internalRequests.views import get_all_requests
 
 EXCEL_FILE_PATH = os.path.join(
     settings.BASE_DIR,
@@ -47,6 +48,8 @@ def show_teams(request):
     team = None
     if request.user.is_superuser:
         teams = Team.objects.all()
+        for team in teams:
+            team.length = team.members.count()
     else:
         team = Team.objects.filter(leader_id=request.user.id)[0]
         return render(request, "team-details.html", {"team": team})
@@ -73,7 +76,7 @@ def add_team(request):
     if request.method == "GET":
         members = []
         leaders = []
-        form_types = settings.FORM_TYPES.copy()
+        form_types = list(settings.FORM_TYPES.copy().values())
         for team in Team.objects.all():
             form_type = team.typeForm
             form_types.remove(form_type)
@@ -135,24 +138,74 @@ def edit_team(request, team_id):
         - Redirects to the teams list on successful form submission.
     """
     team = get_object_or_404(Team, pk=team_id)
-    form = TeamForm(instance=team)
     if request.method == "GET":
-        return render(request, "edit-team.html", {"form": form})
+        members = []
+        leaders = []
+        form_types = list(settings.FORM_TYPES.copy().values())
+        team = get_object_or_404(Team, pk=team_id)
+        for curr_team in Team.objects.all():
+            form_type = curr_team.typeForm
+            if form_type != team.typeForm:
+                form_types.remove(form_type)
+        users = User.objects.all()
+        team_leaders = [t.leader_id for t in Team.objects.all()]
+        for user in users:
+            if user.id == team.leader.id:
+                leaders.append(user)
+                pass
+            if user.is_leader and user.id not in team_leaders:
+                leaders.append(user)
+            elif user.is_member:
+                members.append(user)
+        return render(
+            request,
+            "edit-team.html",
+            {
+                "team": team,
+                "leaders": leaders,
+                "members": members,
+                "form_types": form_types,
+            },
+        )
     elif request.method == "POST":
-        form = TeamForm(request.POST, instance=team)
-        if form.is_valid():
-            form.save()
+
+        try:
+            items = request.POST.items()
+            members = []
+            for key, value in items:
+                print(key, value)
+                if key.startswith("member-") and value == "on":
+                    member_id = key.split("-")[1]
+                    member = get_object_or_404(User, pk=member_id)
+                    members.append(member)
+
+            leader = get_object_or_404(User, pk=request.POST.get("leader"))
+            team.leader = leader
+            team.name = request.POST.get("name")
+            team.description = request.POST.get("description")
+            team.typeForm = request.POST.get("form_type")
+            prev_members = team.members.all()
+            requests = get_all_requests(team.typeForm)
+            assigned_members = [r.member for r in requests]
+            assigned_members_list = []
+            for member in prev_members:
+                if member not in members and member in assigned_members:
+                    assigned_members_list.append(member)
+            if len(assigned_members_list):
+                messages.error(
+                    request,
+                    "Hay solicitudes pendientes de este equipo para los miembros: "
+                    + ", ".join([m.__str__() for m in assigned_members_list]),
+                )
+                return redirect(f"/teams/edit-team/{team_id}")
+            team.members.set(members)
+            team.save()
             messages.success(request, "Equipo editado con éxito")
             return redirect("/teams/")
-        else:
-            error_messages = "\n".join(
-                [
-                    f"{field}: {', '.join(errors)}"
-                    for field, errors in form.errors.items()
-                ]
-            )
-            messages.error(request, error_messages)
-            return render(request, "edit-team.html", {"form": form})
+        except Exception as e:
+            print(e)
+            messages.error(request, "Error al crear el equipo")
+            return redirect(f"/teams/edit-team/{team_id}/")
 
 
 @never_cache
@@ -175,6 +228,24 @@ def delete_team(request, team_id):
     """
     if request.method == "DELETE":
         team = get_object_or_404(Team, id=team_id)
+        requests = get_all_requests(team.typeForm)
+        assigned_members = [r.member for r in requests]
+        assigned_members_list = []
+        print(team.members.all())
+        print(assigned_members)
+        for member in team.members.all():
+            if member in assigned_members:
+                assigned_members_list.append(member)
+
+        if len(assigned_members_list):
+            messages.error(
+                request,
+                "Error al editar el equipo: Hay solicitudes pendientes para los miembros: "
+                + ", ".join([m.__str__() for m in assigned_members_list]),
+            )
+            print("aa")
+            return JsonResponse({"error": "Error al editar el equipo"}, status=400)
+
         team.delete()
         sharepoint_api.remove_team(team_id)
         messages.success(request, "Equipo eliminado con éxito")
