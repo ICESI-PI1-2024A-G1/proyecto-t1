@@ -82,28 +82,24 @@ def show_requests(request):
     """
     Show requests
     """
+    message = None
+    message_type = None
+
     if "changeStatusDone" in request.GET:
-        messages.add_message(
-            request,
-            messages.SUCCESS,
-            "El estado de la solicitud ha sido actualizado correctamente.",
-        )
+        message = "El estado de la solicitud ha sido actualizado correctamente."
+        message_type = messages.SUCCESS
     elif "changeStatusFailed" in request.GET:
-        messages.add_message(
-            request, messages.ERROR, "No se pudo realizar la operación."
-        )
+        message = "No se pudo realizar la operación."
+        message_type = messages.ERROR
     elif "fixRequestDone" in request.GET:
-        messages.add_message(
-            request, messages.SUCCESS, "El formulario ha sido enviado para revisión."
-        )
+        message = "El formulario ha sido enviado para revisión."
+        message_type = messages.SUCCESS
     elif "fixRequestFailed" in request.GET:
-        messages.add_message(
-            request, messages.ERROR, "No se pudo enviar el formulario para revisión."
-        )
+        message = "No se pudo enviar el formulario para revisión."
+        message_type = messages.ERROR
     elif "reviewDone" in request.GET:
-        messages.add_message(
-            request, messages.SUCCESS, "El formulario ha sido revisado."
-        )
+        message = "El formulario ha sido revisado."
+        message_type = messages.SUCCESS
 
     requests_data = get_all_requests()
     print(request.user.is_leader)
@@ -138,6 +134,10 @@ def show_requests(request):
 
     for r in requests_data:
         r.status_color = statusMap[r.status]
+
+    if message and message_type:
+        messages.add_message(request, message_type, message)
+        return redirect('/requests')
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 
