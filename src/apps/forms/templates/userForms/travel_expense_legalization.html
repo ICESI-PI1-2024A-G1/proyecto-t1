@@ -44,10 +44,10 @@
         <div class="my-2 mx-2 border-bottom border-3"></div>
         <!-- User data -->
             
-            {% include 'formBlocks/idBlock.html' %}
+            {% include 'formBlocks/idblock.html' %}
             <div class="my-2 mx-2 border-bottom border-3"></div>
             <!-- Travel data -->
-            {% include 'formBlocks/travelBlock.html' %}
+            {% include 'formBlocks/travelblock.html' %}
             <div class="my-2 mx-2 border-bottom border-3"></div>
             <!--Spend data-->
             <div class="mb-2 mt-3">
@@ -62,7 +62,7 @@
             }
             </style>
             <div class="container table-responsive">
-                <table class="table table-bordered table-striped table-hover">
+                <table id="tableExpenseLegalization" class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
                             <th class="col-2" rowspan="2">Rubro</th>
@@ -79,265 +79,64 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
-                                <input type="text"
-                                        class="form-control"
-                                        name="category_0"
-                                        id="category_0"
-                                        value="Transporte">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="provider_0" id="provider_0">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="nit_0" id="nit_0">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="concept_0" id="concept_0">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="pesos_0"
-                                        id="pesos_0">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="dollars_0"
-                                        id="dollars_0">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="euros_0"
-                                        id="euros_0">
-                            </td>
+                            <td><input type="text" class="form-control" name="category_0" id="category_0" value="{{ form_data.category_0|default:'Transporte' }}"></td>
+                            <td><input type="text" class="form-control" name="provider_0" id="provider_0" value="{{ form_data.provider_0|default:'' }}"></td>
+                            <td><input type="text" class="form-control" name="nit_0" id="nit_0" value="{{ form_data.nit_0|default:'' }}"></td>
+                            <td><input type="text" class="form-control" name="concept_0" id="concept_0" value="{{ form_data.concept_0|default:'' }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_0" id="pesos_0" min="0" value="{{ form_data.pesos_0|default:'' }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="dollars_0" id="dollars_0" min="0" value="{{ form_data.dollars_0|default:'' }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="euros_0" id="euros_0" min="0" value="{{ form_data.euros_0|default:'' }}"></td>
                         </tr>
                         <tr>
-                            <td>
-                                <input type="text"
-                                        class="form-control"
-                                        name="category_1"
-                                        id="category_1"
-                                        value="Alimentación">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="provider_1" id="provider_1">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="nit_1" id="nit_1">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="concept_1" id="concept_1">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="pesos_1"
-                                        id="pesos_1">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="dollars_1"
-                                        id="dollars_1">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="euros_1"
-                                        id="euros_1">
-                            </td>
+                            <td><input type="text" class="form-control" name="category_1" id="category_1" value="{{ form_data.category_1|default:'Alimentación' }}"></td>
+                            <td><input type="text" class="form-control" name="provider_1" id="provider_1" value="{{ form_data.provider_1|default:'' }}"></td>
+                            <td><input type="text" class="form-control" name="nit_1" id="nit_1" value="{{ form_data.nit_1|default:'' }}"></td>
+                            <td><input type="text" class="form-control" name="concept_1" id="concept_1" value="{{ form_data.concept_1|default:'' }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_1" id="pesos_1" value="{{ form_data.pesos_1|default:'' }}" min="0"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="dollars_1" id="dollars_1" value="{{ form_data.dollars_1|default:'' }}" min="0"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="euros_1" id="euros_1" value="{{ form_data.euros_1|default:'' }}" min="0"></td>
                         </tr>
                         <tr>
-                            <td>
-                                <input type="text"
-                                        class="form-control"
-                                        name="category_2"
-                                        id="category_2"
-                                        value="Alojamiento (aprobado por compras)">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="provider_2" id="provider_2">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="nit_2" id="nit_2">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="concept_2" id="concept_2">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="pesos_2"
-                                        id="pesos_2">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="dollars_2"
-                                        id="dollars_2">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="euros_2"
-                                        id="euros_2">
-                            </td>
+                            <td><input type="text" class="form-control" name="category_2" id="category_2" value="{{ form_data.category_2|default:'Alojamiento (aprobado por compras)' }}"></td>
+                            <td><input type="text" class="form-control" name="provider_2" id="provider_2" value="{{ form_data.provider_2|default:'' }}"></td>
+                            <td><input type="text" class="form-control" name="nit_2" id="nit_2" value="{{ form_data.nit_2|default:'' }}"></td>
+                            <td><input type="text" class="form-control" name="concept_2" id="concept_2" value="{{ form_data.concept_2|default:'' }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_2" id="pesos_2" value="{{ form_data.pesos_2|default:'' }}" min="0"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="dollars_2" id="dollars_2" value="{{ form_data.dollars_2|default:'' }}" min="0"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="euros_2" id="euros_2" value="{{ form_data.euros_2|default:'' }}" min="0"></td>
                         </tr>
                         <tr>
-                            <td>
-                                <input type="text"
-                                        class="form-control"
-                                        name="category_3"
-                                        id="category_3"
-                                        value="Otros (detallar)">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="provider_3" id="provider_3">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="nit_3" id="nit_3">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="concept_3" id="concept_3">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="pesos_3"
-                                        id="pesos_3">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="dollars_3"
-                                        id="dollars_3">
-                            </td>
-                            <td>
-                                <input type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        name="euros_3"
-                                        id="euros_3">
-                            </td>
+                            <td><input type="text" class="form-control" name="category_3" id="category_3" value="{{ form_data.category_3|default:'Otros (detallar)' }}"></td>
+                            <td><input type="text" class="form-control" name="provider_3" id="provider_3" value="{{ form_data.provider_3|default:'' }}"></td>
+                            <td><input type="text" class="form-control" name="nit_3" id="nit_3" value="{{ form_data.nit_3|default:'' }}"></td>
+                            <td><input type="text" class="form-control" name="concept_3" id="concept_3" value="{{ form_data.concept_3|default:'' }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_3" id="pesos_3" value="{{ form_data.pesos_3|default:'' }}" min="0"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="dollars_3" id="dollars_3" value="{{ form_data.dollars_3|default:'' }}" min="0"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="euros_3" id="euros_3" value="{{ form_data.euros_3|default:'' }}" min="0"></td>
                         </tr>
                         <tr id="totals">
-                            <td colspan="4" class="text-end">Total expenses:</td>
-                            <td>
-                                <input id="total1"
-                                        name="total1"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
-                            <td>
-                                <input id="total2"
-                                        name="total2"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
-                            <td>
-                                <input id="total3"
-                                        name="total3"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
+                            <td colspan="4" class="text-end">Total de gastos:</td>
+                            <td><input id="total1" name="total1" type="number" class="form-control" placeholder="0" value="{{ form_data.total1 }}" readonly></td>
+                            <td><input id="total2" name="total2" type="number" class="form-control" placeholder="0" value="{{ form_data.total2 }}" readonly></td>
+                            <td><input id="total3" name="total3" type="number" class="form-control" placeholder="0" value="{{ form_data.total3 }}" readonly></td>
                         </tr>
                         <tr id="advance">
-                            <td colspan="4" class="text-end">Advance value:</td>
-                            <td>
-                                <input id="advanceTotal1"
-                                        name="advanceTotal1"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0">
-                            </td>
-                            <td>
-                                <input id="advanceTotal2"
-                                        name="advanceTotal2"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0">
-                            </td>
-                            <td>
-                                <input id="advanceTotal3"
-                                        name="advanceTotal3"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0">
-                            </td>
+                            <td colspan="4" class="text-end">Valor del avance:</td>
+                            <td><input id="advanceTotal1" name="advanceTotal1" type="number" class="form-control" value="{{ form_data.advanceTotal1 }}" placeholder="0"></td>
+                            <td><input id="advanceTotal2" name="advanceTotal2" type="number" class="form-control" value="{{ form_data.advanceTotal2 }}" placeholder="0"></td>
+                            <td><input id="advanceTotal3" name="advanceTotal3" type="number" class="form-control" value="{{ form_data.advanceTotal3 }}" placeholder="0"></td>
                         </tr>
                         <tr id="employeeBalance">
-                            <td colspan="4" class="text-end">Balance in favor of the employee:</td>
-                            <td>
-                                <input id="employeeBalance1"
-                                        name="employeeBalance1"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
-                            <td>
-                                <input id="employeeBalance2"
-                                        name="employeeBalance2"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
-                            <td>
-                                <input id="employeeBalance3"
-                                        name="employeeBalance3"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
+                            <td colspan="4" class="text-end">Balance a favor del empleador:</td>
+                            <td><input id="employeeBalance1" name="employeeBalance1" type="number" class="form-control" placeholder="0" value="{{ form_data.employeeBalance1 }}" readonly></td>
+                            <td><input id="employeeBalance2" name="employeeBalance2" type="number" class="form-control" placeholder="0" value="{{ form_data.employeeBalance2 }}" readonly></td>
+                            <td><input id="employeeBalance3" name="employeeBalance3" type="number" class="form-control" placeholder="0" value="{{ form_data.employeeBalance3 }}" readonly></td>
                         </tr>
                         <tr id="icesiBalance">
-                            <td colspan="4" class="text-end">Balance in favor of ICESI:</td>
-                            <td>
-                                <input id="icesiBalance1"
-                                        name="icesiBalance1"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
-                            <td>
-                                <input id="icesiBalance2"
-                                        name="icesiBalance2"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
-                            <td>
-                                <input id="icesiBalance3"
-                                        name="icesiBalance3"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
+                            <td colspan="4" class="text-end">Balance a favor de ICESI:</td>
+                            <td><input id="icesiBalance1" name="icesiBalance1" type="number" class="form-control" placeholder="0" value="{{ form_data.icesiBalance1 }}" readonly></td>
+                            <td><input id="icesiBalance2" name="icesiBalance2" type="number" class="form-control" placeholder="0" value="{{ form_data.icesiBalance2 }}" readonly></td>
+                            <td><input id="icesiBalance3" name="icesiBalance3" type="number" class="form-control" placeholder="0" value="{{ form_data.icesiBalance3 }}" readonly></td>
                         </tr>
                     </tbody>
                 </table>
@@ -378,6 +177,10 @@
             </button>
         </div>
     </div>
-    
+
+{{ form_data|json_script:"form_data" }}
+<script type="text/javascript">
+    var form_data = JSON.parse(document.getElementById('form_data').textContent);
+</script>
 <script src="../../static/forms/js/travel_expense_legalization.js"></script>
 {% endblock %}

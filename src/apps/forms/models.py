@@ -13,7 +13,7 @@ class Form(models.Model):
     final_date = models.DateField(null=True, default=None)
     member = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
 
-    status = models.CharField(max_length=200, default="EN REVISIÓN")
+    status = models.CharField(max_length=200, default="PENDIENTE")
     team_id = models.ForeignKey(
         Team, on_delete=models.SET_NULL, null=True, default=None
     )
@@ -39,7 +39,7 @@ class TravelAdvanceRequest(Form):
     bank = models.CharField(max_length=200)
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
-    observations = models.TextField()
+    observations = models.TextField(default="Ninguna")
     signatureInput = models.TextField(null=True, blank=True)
 
     def set_expenses(self, expenses_dict):
@@ -72,7 +72,7 @@ class TravelExpenseLegalization(Form):
     bank = models.CharField(max_length=200)
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
-    observations = models.TextField()
+    observations = models.TextField(default="Ninguna")
     signatureInput = models.TextField(null=True, blank=True)
 
 
@@ -115,7 +115,7 @@ class AdvanceLegalization(Form):
     bank = models.CharField(max_length=200)
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
-    observations = models.TextField()
+    observations = models.TextField(default="Ninguna")
     signatureInput = models.TextField(null=True, blank=True)
 
 
@@ -157,5 +157,5 @@ class Requisition(Form):
     bank = models.CharField(max_length=200)
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
-    observations = models.TextField()
+    observations = models.TextField(default="Ninguna")
     signatureInput = models.TextField(null=True, blank=True)

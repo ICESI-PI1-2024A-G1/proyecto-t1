@@ -125,7 +125,7 @@ class SignatureLogic {
             cancelButtonText: 'Cancelar',
             preConfirm: () => {
                 if (this.signaturePad.isEmpty()) {
-                    return Promise.reject("Por favor, dibuja tu firma.");
+                    Swal.showValidationMessage('Debes dibujar tu firma'); 
                 } else {
                     document.getElementById('signature').value = "Yes";
                     document.getElementById('signatureStatus').value = "Yes";

@@ -61,7 +61,7 @@
     <div class="mb-2 mt-3">
         <label class="h5"><strong>Presupuesto de gasto</strong></label>
     </div>
-    <div id="expensesTable" class="row">
+    <div class="row">
         <div class="col-md-6 mb-1">
             <label>Transporte Aeropuerto:</label>
         </div>
@@ -106,7 +106,7 @@
         </div>
     </div>
     <div class="d-flex justify-content-center mt-3">
-        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
             <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
         {% endif %}
@@ -142,7 +142,7 @@
 
     <div class="d-flex justify-content-between">
         <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
-        {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+        {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
             <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
         {% endif %}
@@ -150,23 +150,44 @@
 
     <!-- Confirm Review -->
 
-    {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+    {% if not user.is_applicant and request.status == "EN REVISIÓN" %}
         {% include 'internalFormBlocks/reviewblock.html' %}
     {% endif %}
 
     {% if editable %}
+    <!-- Input unlocker -->
     <script>
-        const inputs = document.querySelectorAll('input, textarea, select');
-        const idsToSkip = ['requestDate', 'fullName', 'idNumber', 'expensesTable'];
-        const tableInputs = document.querySelector('#expensesTable').querySelectorAll('input, textarea, select');
+        var inputs = document.querySelectorAll('input, textarea, select');
+        var idsToSkip = ['requestDate', 'fullName', 'idNumber', 'total'];
 
         inputs.forEach(input => {
-            if (idsToSkip.includes(input.id) || Array.from(tableInputs).includes(input)) {
-                input.setAttribute('disabled', true);
-            } else {
-                input.removeAttribute('disabled');
+            if (!idsToSkip.includes(input.id)) {
                 input.removeAttribute('readonly');
+                input.removeAttribute('disabled');
+            } else if (input.id == 'total') {
+                input.setAttribute('readonly', 'true');
+                input.removeAttribute('disabled');
             }
+        });
+    </script>
+    <!-- Budget total calculation -->
+    <script>
+        var inputs = document.querySelectorAll('.budget-input');
+        var totalInput = document.getElementById('total');
+
+        inputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                var sum = 0;
+                inputs.forEach(function(input) {
+                    if (input.value) {
+                        var value = parseFloat(input.value);
+                        if (!isNaN(value)) {
+                            sum += value;
+                        }
+                    }
+                });
+                totalInput.value = sum;
+            });
         });
     </script>
     {% include 'internalFormBlocks/savereviewblock.html' %}

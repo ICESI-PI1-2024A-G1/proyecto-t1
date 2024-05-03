@@ -40,6 +40,17 @@ def travel_advance_request(request):
                 "userForms/travel_advance_request.html",
                 {"today": today, "form_data": form_data},
             )
+        elif form_data.get("departureDate") > form_data.get("returnDate"):
+            messages.error(
+                request,
+                "La fecha de regreso no puede ser anterior a la fecha de salida.",
+            )
+            return render(
+                request,
+                "userForms/travel_advance_request.html",
+                {"today": today, "form_data": form_data},
+            )
+
         else:
             # Create a new TravelRequest instance
             travel_request = TravelAdvanceRequest()
@@ -104,6 +115,16 @@ def travel_expense_legalization(request):
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
+            return render(
+                request,
+                "userForms/travel_expense_legalization.html",
+                {"today": today, "form_data": form_data},
+            )
+        elif form_data.get("departureDate") > form_data.get("returnDate"):
+            messages.error(
+                request,
+                "La fecha de regreso no puede ser anterior a la fecha de salida.",
+            )
             return render(
                 request,
                 "userForms/travel_expense_legalization.html",

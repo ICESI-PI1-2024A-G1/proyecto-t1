@@ -40,17 +40,17 @@
                 <tr id="request_{{ request.id }}">
                     <td>{{ request.id }}</td>
                     <td>{{ request.request_date }}</div></td>
-                    <td>{{ request.final_date }}</td>
+                    <td>{%if request.final_date %} {{request.final_date}} {%else %}Sin asignar{%endif%}</td>
                     <td>{{ request.document }}</td>
                     <td>{{ request.fullname }}</td>
                     <td>
                         {%if request.member %}
                             {{ request.member }}
+                            {% if request.team_id %}
+                            (Equipo {{ request.team_id }})
+                            {% endif %}
                         {% else %}
-                        <strong>Sin asignar</strong>
-                        {% endif %}
-                        {% if request.team_id %}
-                        (Equipo {{ request.team_id }})
+                            Sin asignar
                         {% endif %}
                     </td>
                     <td>
@@ -64,18 +64,20 @@
                               <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
+                                {% if request.status != "PENDIENTE" %}
                                 <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}', 'xl')"
                                     class="dropdown-item details-btn show-details" data-request-id="{{ request.id }}">
                                     <i class="mr-2 fa fa-info"></i>
                                     Revisar
                                 </button>
+                                {% endif %}
                                 <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}', 'xl')"
                                     class="dropdown-item details-btn">
                                     <i class="mr-2 fa fa-eye"></i>
                                     Cambios
                                 </button>
                                 {% if request.status != "RECHAZADO" and request.status != "RESUELTO" and request.status != "DEVUELTO" %}
-                                    {% if user.is_superuser or user.is_leader %}
+                                    {% if user.is_leader %}
                                     <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
                                         class="dropdown-item details-btn " data-request-id="{{ request.id }}">
                                         <i class="mr-2 fa fa-user-plus"></i>
@@ -83,17 +85,7 @@
                                     </button>
                                     {% endif %}
                                     {% if user.is_superuser or user.is_leader or user.is_member %}
-                                        {% if request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                                            <button onclick="reloadWithMessage('{{request.id}}')" class="dropdown-item" data-request-id="{{ request.id }}">
-                                                <i class="mr-2 fa fa-edit"></i>
-                                                Cambiar Estado
-                                            </button>
-                                            <script>
-                                                function reloadWithMessage(requestId) {
-                                                    location.href = '/requests/?changeStatusDenied';
-                                                }
-                                            </script>
-                                        {% else %}
+                                        {% if request.status != "EN REVISIÓN" %}
                                             <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
                                                 class="dropdown-item" data-request-id="{{ request.id }}">
                                                 <i class="mr-2 fa fa-edit"></i>

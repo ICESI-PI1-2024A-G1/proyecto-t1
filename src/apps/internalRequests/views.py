@@ -8,12 +8,11 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from apps.forms.models import *
 from apps.internalRequests.models import Traceability
-import utils.utils as utils
+from apps.requests.models import SharePoint
 from apps.teams.models import Team
+import utils.utils as utils
 from datetime import datetime
 from django.db import transaction
-from django.template.loader import render_to_string
-from django.http import FileResponse
 from xhtml2pdf import pisa
 from io import BytesIO
 from django.template.loader import get_template
@@ -23,6 +22,9 @@ import ast
 import json
 import os
 from django.conf import settings
+import random
+from datetime import datetime
+import re
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -70,23 +72,17 @@ def get_all_requests(formType=None):
         for instance in model.objects.all():
             instance.document = settings.FORM_TYPES[model.__name__]
             instances.append(instance)
-    print(len(instances))
     return instances
 
 
+@never_cache
 @login_required
 @csrf_exempt
 def show_requests(request):
     """
     Show requests
     """
-    if "changeStatusDenied" in request.GET:
-        messages.add_message(
-            request,
-            messages.ERROR,
-            "No puedes cambiar el estado de una solicitud sin revisar.",
-        )
-    elif "changeStatusDone" in request.GET:
+    if "changeStatusDone" in request.GET:
         messages.add_message(
             request,
             messages.SUCCESS,
@@ -99,6 +95,10 @@ def show_requests(request):
     elif "fixRequestDone" in request.GET:
         messages.add_message(
             request, messages.SUCCESS, "El formulario ha sido enviado para revisión."
+        )
+    elif "fixRequestFailed" in request.GET:
+        messages.add_message(
+            request, messages.ERROR, "No se pudo enviar el formulario para revisión."
         )
     elif "reviewDone" in request.GET:
         messages.add_message(
@@ -137,7 +137,6 @@ def show_requests(request):
         )
 
     for r in requests_data:
-        print(r)
         r.status_color = statusMap[r.status]
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
@@ -174,44 +173,6 @@ def change_status(request, id):
                 "change-status.html",
                 {"request": curr_request, "status_options": status_options},
             )
-        elif curr_request.status == "EN REVISIÓN" and curr_request.is_reviewed:
-            review_data = ast.literal_eval(curr_request.review_data)
-            resultReviewShow = False
-            comments = None
-            reason_data = ""
-            for item in review_data:
-                if item["id"] == "reasonData":
-                    reason_data = item["value"]
-                    break
-
-            if reason_data == "":
-                status_options = ["POR APROBAR"]
-                comments_str = None
-            else:
-                status_options = ["DEVUELTO", "RECHAZADO"]
-                resultReviewShow = True
-                comments = ["Celdas afectadas:\n"]
-                for item in review_data:
-                    if item["id"] != "reasonData":
-                        if item["value"] == "off":
-                            comments.append("- " + item["message"])
-                            if item["id"] in ["tableCheck", "signCheck"]:
-                                status_options = ["RECHAZADO"]
-                    else:
-                        reason_data = item["value"]
-
-                comments.append("\n" + "Motivos: " + reason_data)
-                comments_str = "\n".join(comments)
-            return render(
-                request,
-                "change-status.html",
-                {
-                    "request": curr_request,
-                    "status_options": status_options,
-                    "resultReviewShow": resultReviewShow,
-                    "comments": comments_str,
-                },
-            )
         elif curr_request.status == "POR APROBAR":
             status_options = ["RESUELTO", "DEVUELTO", "RECHAZADO"]
             return render(
@@ -227,7 +188,7 @@ def change_status(request, id):
             new_reason = request.POST.get("reason")
             prev_status = curr_request.status
             curr_request.status = new_status
-            team_id = curr_request.team_id
+            team_id = curr_request.team_id.id
 
             Traceability.objects.create(
                 modified_by=request.user,
@@ -262,17 +223,23 @@ def change_status(request, id):
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
                     html_file_path = "forms/advance_legalization.html"
+                    document = "Legalización de Anticipos"
                 elif isinstance(curr_request, BillingAccount):
                     html_file_path = "forms/billing_account.html"
+                    document = "Cuenta de Cobro"
                 elif isinstance(curr_request, Requisition):
                     html_file_path = "forms/requisition.html"
+                    document = "Requisición"
                 elif isinstance(curr_request, TravelAdvanceRequest):
                     html_file_path = "forms/travel_advance_request.html"
+                    document = "Solicitud de Viaje"
                 elif isinstance(curr_request, TravelExpenseLegalization):
                     html_file_path = "forms/travel_expense_legalization.html"
+                    document = "Legalización de Gastos de Viaje"
                 else:
                     form_type = None
 
+                """
                 # Render the HTML file with curr_request as context
                 template = get_template(html_file_path)
                 html_string = template.render({"request": curr_request})
@@ -321,8 +288,117 @@ def change_status(request, id):
                     )
 
                     print(f"Email sent to {team[0].leader.email}")
-            if curr_request.status in ["DEVUELTO", "RECHAZADO", "RESUELTO"]:
-                curr_request.member = None
+                """
+                # Simulate SharePoint request
+                faculty = [
+                    "Ciencias Administrativas y económicas",
+                    "Ingeniería, Diseño y Ciencias Aplicadas",
+                    "Ciencias Humanas",
+                    "Ciencias de la Salud",
+                ]
+                eps = [
+                    "Sura",
+                    "Sanitas",
+                    "Famisanar",
+                    "Compensar",
+                    "Medimás",
+                    "Salud Total",
+                    "Coomeva",
+                    "Nueva EPS",
+                    "Aliansalud",
+                    "SOS",
+                    "Cafesalud",
+                    "Coosalud",
+                    "Savia Salud",
+                    "Mutual Ser",
+                    "Cruz Blanca",
+                    "Capital Salud",
+                    "Comfenalco",
+                    "Comfama",
+                    "Comfandi",
+                    "Comfasucre",
+                ]
+                pension_fund = [
+                    "Porvenir",
+                    "Protección",
+                    "Colfondos",
+                    "Skandia",
+                    "Old Mutual",
+                    "Colpensiones",
+                    "Habitat",
+                    "Horizonte",
+                    "Crecer",
+                    "Fiduprevisora",
+                    "Cafam",
+                    "Confuturo",
+                    "CFA",
+                    "Fondo Nacional del Ahorro",
+                ]
+
+                status_options = [
+                    "EN PROCESO",
+                    "APROBADO - CENCO",
+                    "RECHAZADO - CENCO",
+                    "APROBADO - DECANO",
+                    "RECHAZADO - DECANO",
+                    "PAGADO - CONTABILIDAD",
+                    "RECHAZADO - CONTABILIDAD",
+                ]
+
+                arls = [
+                    "Sura ARL",
+                    "Positiva ARL",
+                    "Colmena Seguros ARL",
+                    "Seguros Bolívar ARL",
+                    "Axa Colpatria ARL",
+                    "Liberty Seguros ARL",
+                    "Bolívar ARL",
+                    "Mapfre ARL",
+                    "Equidad Seguros ARL",
+                    "Seguros del Estado ARL",
+                    "Mundial de Seguros ARL",
+                    "La Previsora ARL",
+                    "Seguros Generales Suramericana ARL",
+                    "Seguros del Sur ARL",
+                    "Protección ARL",
+                ]
+
+                if hasattr(curr_request, "fullname"):
+                    fullname = curr_request.fullname
+                else:
+                    fullname = "No aplica"
+
+                if hasattr(curr_request, "cost_center"):
+                    cenco = curr_request.cost_center
+                elif hasattr(curr_request, "CENCO"):
+                    cenco = curr_request.cenco
+                else:
+                    cenco = "No aplica"
+
+                SharePoint.objects.create(
+                    status=random.choice(status_options),
+                    manager=curr_request.member,
+                    team=curr_request.team_id.id,
+                    initial_date=datetime.now(),
+                    final_date=datetime.now(),
+                    fullname=fullname,
+                    faculty=random.choice(faculty),
+                    document=document,
+                    phone_number=random.randint(1000000, 9999999),
+                    email=User.objects.get(id=curr_request.id_person).email,
+                    CENCO=cenco,
+                    bank=curr_request.bank,
+                    account_type=curr_request.account_type,
+                    health_provider=random.choice(eps),
+                    pension_fund=random.choice(pension_fund),
+                    arl=random.choice(arls),
+                    contract_value=random.randint(
+                        100000, 10000000
+                    ),  # Random value between 100,000 and 10,000,000
+                    is_one_time_payment=random.choice([True, False]),
+                )
+            # if curr_request.status in ["DEVUELTO", "RECHAZADO", "RESUELTO"]:
+            #     curr_request.member = None
             curr_request.save()
             return JsonResponse(
                 {
@@ -331,6 +407,7 @@ def change_status(request, id):
             )
 
         except Exception as e:
+            print(e)
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
             )
@@ -414,6 +491,7 @@ def show_traceability(request, request_id):
         t.prev_color = statusMap[t.prev_state]
         t.new_color = statusMap[t.new_state]
     traceability = traceability[::-1]
+    traceability = sorted(traceability, key=lambda x: x.date, reverse=True)
     return render(request, "show-traceability.html", {"traceability": traceability})
 
 
@@ -455,7 +533,7 @@ def assign_request(request, request_id):
     print(form_type)
     if request.method == "GET":
         if form_type is not None:
-            teams = Team.objects.filter(typeForm=form_type)
+            teams = Team.objects.filter(leader=request.user)
             if len(teams):
                 users = teams[0].members.all()
             else:
@@ -471,7 +549,6 @@ def assign_request(request, request_id):
             user_id = request.POST["user_id"]
             if user_id == "unassigned":
                 curr_request.member = None
-                curr_request.team_id = None
                 curr_request.save()
                 messages.success(
                     request, "La solicitud ha sido desasignada correctamente."
@@ -774,11 +851,79 @@ def update_request(request, request_id):
     with transaction.atomic():
         curr_request.status = "EN REVISIÓN"
         curr_request.is_reviewed = False
+        print(request.POST.dict())
 
         # Update the request with the data from the method's request
         for key, value in request.POST.items():
             if hasattr(curr_request, key):
                 setattr(curr_request, key, value)
+
+        if isinstance(curr_request, TravelAdvanceRequest):
+            expenses = {
+                "airportTransport": request.POST.get("airportTransport"),
+                "localTransport": request.POST.get("localTransport"),
+                "food": request.POST.get("food"),
+                "accommodation": request.POST.get("accommodation"),
+                "exitTaxes": request.POST.get("exitTaxes"),
+                "others": request.POST.get("others"),
+                "total": request.POST.get("total"),
+            }
+            curr_request.expenses = json.dumps(expenses)
+
+        elif isinstance(curr_request, AdvanceLegalization):
+            curr_request.total = request.POST.get("total")
+            curr_request.advance_total = request.POST.get("advanceTotal")
+            curr_request.employee_balance_value = request.POST.get(
+                "employeeBalanceValue"
+            )
+            curr_request.icesi_balance_value = request.POST.get("icesiBalanceValue")
+
+            expensesTable = AdvanceLegalization_Table.objects.filter(
+                general_data_id=request_id
+            )
+
+            for key, value in request.POST.items():
+                match = re.match(r"(\w+)_(\d+)", key)
+                if match:
+                    field_name, row_number = match.groups()
+                    row_number = int(row_number)
+                    if row_number < len(expensesTable):
+                        expense = expensesTable[row_number]
+                        if hasattr(expense, field_name):
+                            setattr(expense, field_name, value)
+                            expense.save()
+
+        elif isinstance(curr_request, TravelExpenseLegalization):
+            """
+            'total1': '15568', 'total2': '2863', 'total3': '13425', 'advanceTotal1': '5562', 'advanceTotal2': '10000', 'advanceTotal3': '324', 'employeeBalance1': '10006', 'employeeBalance2': '0', 'employeeBalance3': '13101', 'icesiBalance1': '0', 'icesiBalance2': '-7137', 'icesiBalance3': '0'
+            """
+            curr_request.total1 = request.POST.get("total1")
+            curr_request.total2 = request.POST.get("total2")
+            curr_request.total3 = request.POST.get("total3")
+            curr_request.advance_total1 = request.POST.get("advanceTotal1")
+            curr_request.advance_total2 = request.POST.get("advanceTotal2")
+            curr_request.advance_total3 = request.POST.get("advanceTotal3")
+            curr_request.employee_balance1 = request.POST.get("employeeBalance1")
+            curr_request.employee_balance2 = request.POST.get("employeeBalance2")
+            curr_request.employee_balance3 = request.POST.get("employeeBalance3")
+            curr_request.icesi_balance1 = request.POST.get("icesiBalance1")
+            curr_request.icesi_balance2 = request.POST.get("icesiBalance2")
+            curr_request.icesi_balance3 = request.POST.get("icesiBalance3")
+
+            expensesTable = TravelExpenseLegalization_Table.objects.filter(
+                travel_info_id=request_id
+            )
+
+            for key, value in request.POST.items():
+                match = re.match(r"(\w+)_(\d+)", key)
+                if match:
+                    field_name, row_number = match.groups()
+                    row_number = int(row_number)
+                    if row_number < len(expensesTable):
+                        expense = expensesTable[row_number]
+                        if hasattr(expense, field_name):
+                            setattr(expense, field_name, value)
+                            expense.save()
 
         curr_request.save()
 

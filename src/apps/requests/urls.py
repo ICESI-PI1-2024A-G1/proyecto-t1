@@ -11,6 +11,5 @@ app_name = "requests"
 
 urlpatterns = [
     path("", views.show_requests, name="show_requests"),
-    path("search/<str:query>", views.search, name="search"),
     path("<int:id>/", views.detail_request, name="request_detail"),
 ]
