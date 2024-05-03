@@ -463,6 +463,10 @@ def detail_request(request, id):
 
     if request_data.status == "DEVUELTO" and request.user.is_applicant:
         context["editable"] = True
+    if (
+        request.user.is_member and request.user.is_leader
+    ) and request_data.status == "EN REVISIÓN":
+        context["canReview"] = True
 
     return render(request, template, context)
 
