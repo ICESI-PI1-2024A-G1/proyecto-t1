@@ -5,7 +5,6 @@ $(document).ready(function () {
      * @param {string} tableId - The ID of the table to initialize DataTable on.
      */
     DataTableInit("teamsTable", 10)
-
     // Fetch CSRF token from meta tag
     const csrfTokenMeta = document.querySelector('meta[name="csrf_token"]');
     const csrftoken = csrfTokenMeta.getAttribute('content');
@@ -32,9 +31,7 @@ $(document).ready(function () {
                     location.reload();
                 },
                 error: function(xhr, status, error) {
-                    console.error(error);
-                    // Display an alert for error in deletion
-                    alert("Error deleting team");
+                    location.reload();
                 }
             });
         }

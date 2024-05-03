@@ -1,15 +1,32 @@
 from django.db import models
 import json
+from django.contrib.auth import get_user_model
+from django.apps import apps
+from apps.teams.models import Team
+
+User = get_user_model()
 
 
-class TravelAdvanceRequest(models.Model):
+class Form(models.Model):
     id = models.AutoField(primary_key=True)
     request_date = models.DateField()
     final_date = models.DateField(null=True, default=None)
-    traveler_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
-    member_name = models.CharField(max_length=200, null=True, default=None)
+    member = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
+
     status = models.CharField(max_length=200, default="PENDIENTE")
+    team_id = models.ForeignKey(
+        Team, on_delete=models.SET_NULL, null=True, default=None
+    )
+    is_reviewed = models.BooleanField(default=False)
+    review_data = models.TextField(null=True, blank=True)
+    id_person = models.CharField(max_length=200, default="")
+    fullname = models.CharField(max_length=200, default="")
+
+    class Meta:
+        abstract = True
+
+
+class TravelAdvanceRequest(Form):
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -23,9 +40,7 @@ class TravelAdvanceRequest(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
-    team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    review_data = models.TextField(null=True, blank=True)
 
     def set_expenses(self, expenses_dict):
         self.expenses = json.dumps(expenses_dict)
@@ -34,14 +49,7 @@ class TravelAdvanceRequest(models.Model):
         return json.loads(self.expenses)
 
 
-class TravelExpenseLegalization(models.Model):
-    id = models.AutoField(primary_key=True)
-    request_date = models.DateField()
-    final_date = models.DateField(null=True, default=None)
-    traveler_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
-    member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="PENDIENTE")
+class TravelExpenseLegalization(Form):
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -65,13 +73,14 @@ class TravelExpenseLegalization(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
-    team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    review_data = models.TextField(null=True, blank=True)
 
 
 class TravelExpenseLegalization_Table(models.Model):
-    travel_info = models.ForeignKey(TravelExpenseLegalization, on_delete=models.CASCADE)
+    travel_info = models.ForeignKey(
+        TravelExpenseLegalization,
+        on_delete=models.CASCADE,
+    )
     category = models.CharField(max_length=200)
     provider = models.CharField(max_length=200)
     nit = models.CharField(max_length=200)
@@ -94,14 +103,7 @@ class TravelExpenseLegalization_Table(models.Model):
         )
 
 
-class AdvanceLegalization(models.Model):
-    id = models.AutoField(primary_key=True)
-    request_date = models.DateField()
-    final_date = models.DateField(null=True, default=None)
-    traveler_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
-    member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="PENDIENTE")
+class AdvanceLegalization(Form):
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     purchase_reason = models.TextField()
@@ -114,27 +116,21 @@ class AdvanceLegalization(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
-    team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    review_data = models.TextField(null=True, blank=True)
 
 
 class AdvanceLegalization_Table(models.Model):
-    general_data = models.ForeignKey(AdvanceLegalization, on_delete=models.CASCADE)
+    general_data = models.ForeignKey(
+        AdvanceLegalization,
+        on_delete=models.CASCADE,
+    )
     category = models.CharField(max_length=200)
     provider = models.CharField(max_length=200)
     pesos = models.DecimalField(max_digits=10, decimal_places=2)
     concept = models.TextField()
 
 
-class BillingAccount(models.Model):
-    id = models.AutoField(primary_key=True)
-    request_date = models.DateField()
-    final_date = models.DateField(null=True, default=None)
-    full_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
-    member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="PENDIENTE")
+class BillingAccount(Form):
     value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     concept_reason = models.CharField(max_length=200)
     retention = models.CharField(max_length=200)
@@ -148,19 +144,10 @@ class BillingAccount(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     cex_number = models.CharField(max_length=200)
-    team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    review_data = models.TextField(null=True, blank=True)
 
 
-class Requisition(models.Model):
-    id = models.AutoField(primary_key=True)
-    request_date = models.DateField()
-    final_date = models.DateField(null=True, default=None)
-    requester_name = models.CharField(max_length=200)
-    id_person = models.CharField(max_length=200, default="")
-    member_name = models.CharField(max_length=200, null=True, default=None)
-    status = models.CharField(max_length=200, default="PENDIENTE")
+class Requisition(Form):
     work = models.CharField(max_length=200)
     dependence = models.CharField(max_length=200)
     cenco = models.CharField(max_length=200)
@@ -171,9 +158,4 @@ class Requisition(models.Model):
     account_type = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
-    team_id = models.IntegerField(default=0)
     signatureInput = models.TextField(null=True, blank=True)
-    review_data = models.TextField(null=True, blank=True)
-
-
-

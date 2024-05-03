@@ -12,7 +12,6 @@ const DataTableInit = (id, pageLength=4, columnDefs=[]) => {
 
     $(`#${id}Search`).on('input', function(){
         var searchText = $(this).val();
-        console.log(dataTable.search("") === dataTable.search(searchText))
         dataTable.search(searchText).draw();
     })
     dataTable.on('draw.dt', function(){

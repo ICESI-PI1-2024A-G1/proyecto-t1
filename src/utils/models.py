@@ -84,7 +84,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "Usuarios"
         db_table = "auth_user_mod"
 
-    def get_full_name(self):
+    def get_fullname(self):
         """
         Returns the user's full name.
 

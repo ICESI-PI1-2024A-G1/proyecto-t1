@@ -148,7 +148,7 @@
     <!-- Input unlocker -->
     <script>
         var inputs = document.querySelectorAll('input, textarea, select');
-        var idsToSkip = ['requestDate', 'travelerName', 'idNumber', 'total', 'employeeBalanceValue', 'icesiBalanceValue'];
+        var idsToSkip = ['requestDate', 'fullName', 'idNumber', 'total', 'employeeBalanceValue', 'icesiBalanceValue'];
 
         inputs.forEach(input => {
                 if (!idsToSkip.includes(input.id)) {
