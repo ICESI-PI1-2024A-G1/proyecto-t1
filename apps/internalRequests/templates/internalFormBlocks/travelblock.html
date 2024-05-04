@@ -1,0 +1,55 @@
+<div class="mb-2 mt-3">
+    <label class="h5"><strong>Viaje</strong></label>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="destinationCity">Ciudad de destino</label>
+            <div class="d-flex justify-content-between">
+                <select class="form-control" id="destinationCity" name="destinationCity" required disabled>
+                    {% for city in cities %}
+                        {% with city_name_and_country=city.city_name|add:" ("|add:city.country_name|add:") "|add:city.country_code %}
+                            <option value="{{ city_name_and_country }}" {% if request.destination_city == city_name_and_country %}selected{% endif %}>{{ city_name_and_country }}</option>
+                        {% endwith %}
+                    {% endfor %}
+                </select>
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                    <input type="checkbox" class="btn-check" id="btncheckDestinationCity" name="destinationCheck" data-message="Ciudad de destino">
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDestinationCity" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="departureDate">Fecha de salida</label>
+            <div class="d-flex justify-content-between">
+                <input type="date" class="form-control" id="departureDate" name="departureDate" value="{{ request.departure_date|date:'Y-m-d' }}" required disabled>
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                    <input type="checkbox" class="btn-check" id="btncheckDepartureDate" name="startTravelCheck" data-message="Fecha de salida">
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDepartureDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="returnDate">Fecha de regreso</label>
+            <div class="d-flex justify-content-between">
+                <input type="date" class="form-control" id="returnDate" name="returnDate" value="{{ request.return_date|date:'Y-m-d' }}" required disabled>
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                    <input type="checkbox" class="btn-check" id="btncheckReturnDate" name="endTravelCheck" data-message="Fecha de regreso">
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckReturnDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label for="travelReason">Motivo del viaje</label>
+    <div class="d-flex justify-content-between">
+        <textarea class="form-control" id="travelReason" name="travelReason" rows="3" required disabled>{{ request.travel_reason }}</textarea>
+        {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+            <input type="checkbox" class="btn-check" id="btncheckTravelReason" name="travelReasonCheck" data-message="Motivo del viaje">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTravelReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
+    </div>
+</div>

@@ -12,8 +12,6 @@
     </div>
 </div>
 
-<!-- Messages -->
-
 <!-- Announcement -->
 
 <p class="font-italic"><strong>Por favor tenga en cuenta lo
@@ -35,14 +33,22 @@
 
 <!-- User data -->
 
-<form action="/forms/advance_legalization" method="POST">
+<form id="myForm" action="/requests/advance_legalization_review" method="POST">
     {{ form.csrf_token }}
+
+    <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
     
     {% include 'internalFormBlocks/idblock.html' %}
 
     <div class="form-group">
         <label for="purchaseReason">Motivo de compra o servicio</label>
-        <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" readonly>{{ request.purchase_reason }}</textarea>
+        <div class="d-flex justify-content-between">
+            <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" disabled>{{ request.purchase_reason }}</textarea>
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                <input type="checkbox" class="btn-check" id="btncheckPurchaseReason" name="purchaseReasonCheck" data-message="Motivo de compra o servicio">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPurchaseReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -60,42 +66,50 @@
         }
     </style>
 
-    <table class="table table-bordered table-striped table-hover">
-        <thead>
-            <tr>
-                <th class="col-2">Nombre del tercero de la factura</th>
-                <th class="col-2">Identificación del tercero de la factura</th>
-                <th class="col-2">Valor ($)</th>
-                <th class="col-6">Concepto de la compra</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for expense in expenses %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
                 <tr>
-                    <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled></td>
-                    <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled></td>
-                    <td><input type="text" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled></td>
-                    <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled></td>
+                    <th class="col-2">Nombre del tercero de la factura</th>
+                    <th class="col-2">Identificación del tercero de la factura</th>
+                    <th class="col-2">Valor ($)</th>
+                    <th class="col-6">Concepto de la compra</th>
                 </tr>
-            {% endfor %}
-            <tr id="totals">
-                <td colspan="2" class="text-end">Total de gastos:</td>
-                <td><input id="total" name="total" type="text" class="form-control" placeholder="0" value="{{ request.total|floatformat:"-0" }}" readonly></td>
-            </tr>
-            <tr id="advance">
-                <td colspan="2" class="text-end">Valor del anticipo:</td>
-                <td><input id="advanceTotal" name="advanceTotal" type="text" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" readonly></td>
-            </tr>
-            <tr id="employeeBalance">
-                <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
-                <td><input id="employeeBalanceValue" name="employeeBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance_value|floatformat:"-0" }}" readonly></td>
-            </tr>
-            <tr id="icesiBalance">
-                <td colspan="2" class="text-end">Saldo a favor de ICESI:</td>
-                <td><input id="icesiBalanceValue" name="icesiBalanceValue" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance_value|floatformat:"-0" }}" readonly></td>
-            </tr>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                    <tr>
+                        <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled></td>
+                        <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled></td>
+                        <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled></td>
+                        <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled></td>
+                    </tr>
+                {% endfor %}
+                <tr id="totals">
+                    <td colspan="2" class="text-end">Total de gastos:</td>
+                    <td><input id="total" name="total" type="number" class="form-control" placeholder="0" value="{{ request.total|floatformat:"-0" }}" disabled></td>
+                </tr>
+                <tr id="advance">
+                    <td colspan="2" class="text-end">Valor del anticipo:</td>
+                    <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled></td>
+                </tr>
+                <tr id="employeeBalance">
+                    <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
+                    <td><input id="employeeBalanceValue" name="employeeBalanceValue" type="number" class="form-control" placeholder="0" value="{{ request.employee_balance_value|floatformat:"-0" }}" disabled></td>
+                </tr>
+                <tr id="icesiBalance">
+                    <td colspan="2" class="text-end">Saldo a favor de ICESI:</td>
+                    <td><input id="icesiBalanceValue" name="icesiBalanceValue" type="number" class="form-control" placeholder="0" value="{{ request.icesi_balance_value|floatformat:"-0" }}" disabled></td>
+                </tr>
+            </tbody>
+        </table>
+    <div class="d-flex justify-content-center mt-3">
+        {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+            <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
+    </div>
+    </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
@@ -117,11 +131,75 @@
         <label for="observations" class="h5"><strong>Observaciones</strong></label>
     </div>
 
-    <div>
-        <textarea class="form-control" id="observations" name="observations" rows="3" readonly>{{ request.observations }}</textarea>
+    <div class="d-flex justify-content-between">
+        <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
+        {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+            <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
     </div>
-</form>
 
-<script src="../../static/forms/js/advance_legalization.js"></script>
+    <!-- Confirm Review -->
+    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+        {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
+
+    {% if editable %}
+    <!-- Input unlocker -->
+    <script>
+        var inputs = document.querySelectorAll('input, textarea, select');
+        var idsToSkip = ['requestDate', 'fullName', 'idNumber', 'total', 'employeeBalanceValue', 'icesiBalanceValue'];
+
+        inputs.forEach(input => {
+                if (!idsToSkip.includes(input.id)) {
+                    input.removeAttribute('readonly');
+                    input.removeAttribute('disabled');
+                } else if (input.id == 'total' || input.id == 'employeeBalanceValue' || input.id == 'icesiBalanceValue') {
+                    input.setAttribute('readonly', 'true');
+                    input.removeAttribute('disabled');
+                }
+            });
+    </script>
+    <!-- Budget total calculation -->
+    <script>
+        // detects changes in the input fields
+        inputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                updateTotals();
+            }
+        )});
+
+        // updates the totals row
+        function updateTotals() {
+            var total = 0;
+
+            // get all the rows except the totals, advance, employeeBalance, and icesiBalance rows
+            var form = document.querySelector('#myForm');
+            var rows = Array.from(form.querySelector('tbody').children);
+            rows = rows.filter(row => !['totals', 'advance', 'employeeBalance', 'icesiBalance'].includes(row.id));
+
+            // sum all the input fields for each row
+            rows.forEach(function(row) {
+                var input = row.children[2].firstChild;
+                total += Number(input.value);
+            });
+
+            // update the total field in the totals row
+            document.getElementById('total').value = total;
+
+            // calculate "Saldo a favor del empleado" and "Saldo a favor de ICESI"
+            var totalAdvance = Number(document.getElementById('advanceTotal').value);
+            var employeeBalance = total > totalAdvance ? total - totalAdvance : 0;
+            var icesiBalance = totalAdvance > total ? totalAdvance - total : 0;
+
+            // update "Saldo a favor del empleado" and "Saldo a favor de ICESI" fields
+            document.getElementById('employeeBalanceValue').value = employeeBalance;
+            document.getElementById('icesiBalanceValue').value = icesiBalance;
+        }
+    </script>
+    {% include 'internalFormBlocks/savereviewblock.html' %}
+    {% endif %}
+
+</form>
 
 {% endblock %}

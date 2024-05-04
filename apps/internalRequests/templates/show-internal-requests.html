@@ -1,107 +1,112 @@
 {% extends "base.html" %}
 {% block title %}Solicitudes{% endblock %}
+{%block main_route %}Solicitudes{% endblock %}
+{%block secondary_route %}Solicitudes Internas{% endblock %}
+
 {% block content %}
+<div class="card-header pb-0">
 
+    {% if not no_permission %}
+    <div class="input-group mb-3">
+        <input type="text" id="requestsTableSearch" class="form-control" aria-label="Sizing example input"
+        aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
+        <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
+    </div>
+    {% endif %}
+</div>
+{% if no_permission %}
 <div class="container">
-    <h4 class="py-2 mb-4"><span class="text-muted fw-light">Solicitudes /</span> {% if user.is_superuser or user.is_leader %} Solicitudes Internas {% else %} Solicitudes pendientes {% endif %}</h4>
-    <div class="card">
-        <div class="card-header pb-0">
-
-            {% if not no_permission %}
-            <div class="input-group mb-3">
-                <input type="text" id="requestsTableSearch" class="form-control" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
-                <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
-            </div>
-            {% endif %}
-        </div>
-        <div class="container">
-        {% if no_permission %}
-            <div class="alert alert-warning" role="alert">
-                Como líder, actualmente no perteneces a ningún equipo. Por favor, comunícate con el administrador del sistema.
-            </div>
-        {% else %}
-                <div class="table-responsive">
-                    <table id="requestsTable" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Fecha Inicio</th>
-                                <th>Fecha Final</th>
-                                <th>Documento</th>
-                                <th>Solicitante</th>
-                                <th>Gestor</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for request in requests %}
-                            <tr id="request_{{ request.id }}">
-                                <td>{{ request.id }}</td>
-                                <td>{{ request.initial_date }}</div></td>
-                                <td>{{ request.final_date }}</td>
-                                <td>{{ request.document }}</td>
-                                <td>{{ request.fullname }}</td>
-                                <td>
-                                    {{ request.manager }}
-                                    {% if request.team %}
-                                    (Equipo {{ request.team }})
+    <div class="alert alert-warning" role="alert">
+        Como líder, actualmente no perteneces a ningún equipo. Por favor, comunícate con el administrador del sistema.
+    </div>
+</div>
+{% else %}
+    <div class="table-responsive card-fluid">
+        <table id="requestsTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Final</th>
+                    <th>Documento</th>
+                    <th>Solicitante</th>
+                    <th>Gestor</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr id="request_{{ request.id }}">
+                    <td>{{ request.id }}</td>
+                    <td>{{ request.request_date|date:'Y-m-d' }}</div></td>
+                    <td>{%if request.final_date %} {{request.final_date|date:'Y-m-d'}} {%else %}Sin asignar{%endif%}</td>
+                    <td>{{ request.document }}</td>
+                    <td>{{ request.fullname }}</td>
+                    <td>
+                        {%if request.member %}
+                            {{ request.member }}
+                            {% if request.team_id %}
+                            (Equipo {{ request.team_id }})
+                            {% endif %}
+                        {% else %}
+                            Sin asignar
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="badge bg-label-{{request.status_color}} ">
+                            <p id="status_{{ request.id }}" class="text-wrap mb-0 lh-sm">{{ request.status }}</p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                              <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                {% if request.status != "PENDIENTE" %}
+                                <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}', 'xl')"
+                                    class="dropdown-item details-btn show-details" data-request-id="{{ request.id }}">
+                                    <i class="mr-2 fa fa-info"></i>
+                                    Revisar
+                                </button>
+                                {% endif %}
+                                <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}', 'xl')"
+                                    class="dropdown-item details-btn">
+                                    <i class="mr-2 fa fa-eye"></i>
+                                    Cambios
+                                </button>
+                                {% if request.status != "RECHAZADO" and request.status != "RESUELTO" and request.status != "DEVUELTO" %}
+                                    {% if user.is_leader %}
+                                    <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
+                                        class="dropdown-item details-btn " data-request-id="{{ request.id }}">
+                                        <i class="mr-2 fa fa-user-plus"></i>
+                                        Asignar
+                                    </button>
                                     {% endif %}
-                                </td>
-                                <td>
-                                    <div class="badge bg-label-{{request.status_color}} ">
-                                        <p id="status_{{ request.id }}" class="text-wrap mb-0 lh-sm">{{ request.status }}</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                          <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}', 'xl')"
-                                                class="dropdown-item details-btn" data-request-id="{{ request.id }}">
-                                                <i class="mr-2 fa fa-info"></i>
-                                                Revisar
+                                    {% if user.is_superuser or user.is_leader or user.is_member %}
+                                        {% if request.status != "EN REVISIÓN" %}
+                                            <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
+                                                class="dropdown-item" data-request-id="{{ request.id }}">
+                                                <i class="mr-2 fa fa-edit"></i>
+                                                Cambiar Estado
                                             </button>
-                                            <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}')"
-                                                class="dropdown-item details-btn">
-                                                <i class="mr-2 fa fa-eye"></i>
-                                                Cambios
-                                            </button>
-                                            {% if user.is_superuser or user.is_leader %}
-                                                {% if user.is_superuser or user.is_leader or user.is_member %}
-                                                <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
-                                                        class="dropdown-item details-btn " data-request-id="{{ request.id }}">
-                                                        <i class="mr-2 fa fa-user-plus"></i>
-                                                        Asignar
-                                                    </button>
-                                                {% endif %}
-                                                <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
-                                                    class="dropdown-item" data-request-id="{{ request.id }}">
-                                                    <i class="mr-2 fa fa-edit"></i>
-                                                    Cambiar Estado
-                                                </button>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
 
-            {% endif %}
-        </div>
-
-        </div>
-
-        <div class="card-footer pb-2">
-            <div id="requestsTablePagination" class="row">
-            
-            </div>
-        </div>
+<div class="card-footer pb-2">
+    <div id="requestsTablePagination" class="row">
+    
     </div>
 </div>
 

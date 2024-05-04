@@ -11,6 +11,7 @@ import traceback
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from api.sharepoint_api import SharePointAPI
+from apps.requests.models import SharePoint
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.conf import settings
@@ -36,8 +37,8 @@ status_colors = {
     "CERRADO": "secondary",
 }
 
+"""
 def search(request, query):
-    """
     Performs a search for requests based on a query string.
 
     HTTP Method:
@@ -52,7 +53,6 @@ def search(request, query):
 
     Returns:
     - JsonResponse: JSON response containing search results or error message.
-    """
     try:
         results = sharepoint_api.search_data(query=query)
 
@@ -66,12 +66,13 @@ def search(request, query):
         return JsonResponse(
             {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
         )
+"""
 
 
+"""
 @never_cache
 @login_required
 def show_requests(request):
-    """
     Renders a page displaying all requests.
 
     HTTP Method:
@@ -86,7 +87,6 @@ def show_requests(request):
 
     Returns:
     - render: Renders the HTML template with request data.
-    """
     try:
         response = sharepoint_api.get_all_requests()
         if response.status_code == 200:
@@ -107,12 +107,37 @@ def show_requests(request):
         return JsonResponse(
             {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
         )
+"""
 
 
 @never_cache
 @login_required
+def show_requests(request):
+    try:
+        if request.method == "GET":
+            requests_data = SharePoint.objects.all()
+            user_str = request.user.__str__()
+            if not request.user.is_superuser:
+                requests_data = [r for r in requests_data if r.manager == user_str]
+            for r in requests_data:
+                r.team = "" if math.isnan(r.team) else int(r.team)
+                r.status_color = status_colors[r.status]
+
+            return render(request, "show-requests.html", {"requests": requests_data})
+        else:
+            raise Http404("No se pudieron cargar las solicitudes.")
+    except Http404 as e:
+        return JsonResponse({"error": str(e)}, status=404)
+    except Exception as e:
+        return JsonResponse(
+            {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
+        )
+
+
+"""
+@never_cache
+@login_required
 def detail_request(request, id):
-    """
     Renders a page displaying details of a specific request.
 
     HTTP Method:
@@ -127,7 +152,6 @@ def detail_request(request, id):
 
     Returns:
     - render: Renders the HTML template with request details.
-    """
     try:
         api_response = sharepoint_api.get_request_by_id(id)
         detail = json.loads(api_response.content)
@@ -137,6 +161,24 @@ def detail_request(request, id):
                 "request-detail.html",
                 {"request": detail},
             )
+        else:
+            raise Http404(f"No se encontró la solicitud con ID {id} en SharePointAPI.")
+    except Http404 as e:
+        return JsonResponse({"error": str(e)}, status=404)
+    except Exception as e:
+        return JsonResponse(
+            {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
+        )
+"""
+
+
+@never_cache
+@login_required
+def detail_request(request, id):
+    try:
+        if request.method == "GET":
+            request_data = SharePoint.objects.get(id=id)
+            return render(request, "request-detail.html", {"request": request_data})
         else:
             raise Http404(f"No se encontró la solicitud con ID {id} en SharePointAPI.")
     except Http404 as e:
