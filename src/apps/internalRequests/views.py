@@ -1,9 +1,11 @@
 from itertools import chain
 from django.contrib.auth.decorators import login_required
+from django.test import Client
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from apps.forms.models import *
@@ -25,6 +27,16 @@ from django.conf import settings
 import random
 from datetime import datetime
 import re
+import pdfcrowd
+
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from selenium.webdriver.edge.service import Service
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -37,9 +49,12 @@ statusMap = {
 
 User = get_user_model()
 
+
 # Get cities with countries
 def get_cities_with_countries():
-    cities_with_countries = City.objects.select_related('country').order_by('country_id').all()
+    cities_with_countries = (
+        City.objects.select_related("country").order_by("country_id").all()
+    )
 
     cities_data = [
         {
@@ -234,7 +249,7 @@ def show_requests(request):
 
     if message and message_type:
         messages.add_message(request, message_type, message)
-        return redirect('/requests')
+        return redirect("/requests")
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 
@@ -336,6 +351,34 @@ def change_status(request, id):
                 else:
                     form_type = None
 
+                try:
+                    edge_options = Options()
+                    edge_options.add_argument("--headless")
+                    edge_options.add_argument("--print-to-pdf")
+                    # Inicializa el driver de Edge con las opciones configuradas
+                    driver = webdriver.Edge(
+                        executable_path=EdgeChromiumDriverManager().install()
+                    )
+
+                    # Abre la URL en el navegador
+                    driver.get(
+                        request.build_absolute_uri(f"/requests/zhk/{curr_request.id}")
+                    )
+
+                    # Toma una captura de pantalla de la página y la guarda como un archivo PDF
+                    pdf_file = driver.get_screenshot_as_png()
+
+                    # Cierra el navegador
+                    driver.quit()
+
+                    # Guarda el archivo PDF en Django
+                    path = default_storage.save("my_pdf.pdf", ContentFile(pdf_file))
+
+                    # Redirige a "/requests/"
+                    print(path)
+                except Exception as e:
+                    print(e)
+                return redirect("/requests/")
                 """
                 # Render the HTML file with curr_request as context
                 template = get_template(html_file_path)
@@ -475,7 +518,7 @@ def change_status(request, id):
                 SharePoint.objects.create(
                     status=random.choice(status_options),
                     manager=curr_request.member,
-                    team=curr_request.team_id.id,
+                    team=curr_request.team_id.id if curr_request.team_id else None,
                     initial_date=datetime.now(),
                     final_date=datetime.now(),
                     fullname=fullname,
@@ -513,7 +556,7 @@ def change_status(request, id):
 @never_cache
 @csrf_exempt
 @login_required
-def detail_request(request, id):
+def detail_request(request, id, pdf=None):
     """
     Renders a page displaying details of a specific request.
 
@@ -568,7 +611,8 @@ def detail_request(request, id):
     ) and request_data.status == "EN REVISIÓN":
         context["canReview"] = True
 
-    return render(request, template, context)
+    from django_weasyprint import WeasyTemplateResponse
+    return WeasyTemplateResponse('my_template.html', context) if pdf else render(request, template, context)
 
 
 @csrf_exempt
@@ -1045,3 +1089,31 @@ def update_request(request, request_id):
             "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
         }
     )
+
+
+from django.contrib.auth import authenticate, login, logout
+
+
+def show_zhk(request, id):
+    # Autentica al usuario
+    user = authenticate(
+        request,
+        username=os.getenv("ADMIN_PASSWORD"),
+        password=os.getenv("ADMIN_PASSWORD"),
+    )
+
+    if user is not None:
+        # Inicia la sesión del usuario
+        login(request, user)
+
+        # Llama a detail_request con la solicitud autenticada
+        response = detail_request(request, id)
+
+        # Desloguea al usuario
+        logout(request)
+
+        # Retorna la respuesta
+        return response
+    else:
+        # Si la autenticación falla, puedes manejarlo aquí
+        return HttpResponse("Error: no se pudo autenticar al usuario")

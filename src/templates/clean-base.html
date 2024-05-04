@@ -9,9 +9,35 @@
         <title>
             {% block title %}{% endblock %}
         </title>
+
+        <link rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.12.1/css/all.css"
+        crossorigin="anonymous">
+        <link rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link href="{% sass_src 'scss/core.scss' %}" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="{% static 'general/css/utils.css' %}">
+        
+        <!-- stylesheets -->
+        <link rel="stylesheet" href="{% static 'general/css/demo.css' %}">
+        <link rel="stylesheet" href="{% static 'general/css/core.css' %}">
+        
+        <!-- scripts -->
+        <script src="{% static 'general/js/base.js' %}"></script>
+        <script src="{% static 'general/js/vendor/helpers.js' %}"></script>
+        <script src="{% static 'general/js/vendor/config.js' %}"></script>
+
+        <link rel="shortcut icon" href="{% static 'general/img/logo.svg' %}">
+
     </head>
 
     <body>
-        {% block content %}{% endblock %}
+        <div class="container">
+            <div class="my-8">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
       </body>
 </html>
