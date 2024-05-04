@@ -5,7 +5,14 @@
     <div class="col-md-6">
         <div class="form-group">
             <label for="destinationCity">Ciudad de destino</label>
-            <input type="text" class="form-control" id="destinationCity" name="destinationCity" value="{{ form_data.destinationCity }}" required>
+            <select class="form-control" id="destinationCity" name="destinationCity" required>
+                <option value="">Selecciona una opción</option>
+                {% for city in cities %}
+                    {% with city_name_and_country=city.city_name|add:" ("|add:city.country_name|add:") "|add:city.country_code %}
+                        <option value="{{ city_name_and_country }}" {% if form_data.destinationCity == city_name_and_country %}selected{% endif %}>{{ city_name_and_country }}</option>
+                    {% endwith %}
+                {% endfor %}
+            </select>
         </div>
         <div class="form-group">
             <label for="departureDate">Fecha de salida</label>
