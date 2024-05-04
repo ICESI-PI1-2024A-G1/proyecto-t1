@@ -37,6 +37,101 @@ statusMap = {
 
 User = get_user_model()
 
+# Get cities with countries
+def get_cities_with_countries():
+    cities_with_countries = City.objects.select_related('country').order_by('country_id').all()
+
+    cities_data = [
+        {
+            "city_id": city.id,
+            "city_name": city.name,
+            "country_name": city.country.name,
+            "country_code": city.country.code,
+        }
+        for city in cities_with_countries
+    ]
+
+    return cities_data
+
+
+# Get bank data
+def get_bank_data():
+    banks = Bank.objects.all()
+
+    bank_data = [
+        {
+            "bank_id": bank.id,
+            "bank_name": bank.name,
+        }
+        for bank in banks
+    ]
+
+    return bank_data
+
+
+# Get account types
+def get_account_types():
+    account_types = AccountType.objects.all()
+
+    account_types = [
+        {
+            "account_type_id": account_type.id,
+            "account_type_name": account_type.name,
+        }
+        for account_type in account_types
+    ]
+
+    return account_types
+
+
+# Get dependence data
+def get_dependence_data():
+    dependences = Dependency.objects.all()
+
+    dependence_data = [
+        {
+            "dependence_id": dependence.id,
+            "dependence_name": dependence.name,
+        }
+        for dependence in dependences
+    ]
+
+    return dependence_data
+
+
+# Get cost center data
+def get_cost_center_data():
+    cost_centers = CostCenter.objects.all()
+
+    cost_center_data = [
+        {
+            "cost_center_id": cost_center.id,
+            "cost_center_name": cost_center.name,
+        }
+        for cost_center in cost_centers
+    ]
+
+    return cost_center_data
+
+
+# Create context for the form
+def create_context():
+    cities_data = get_cities_with_countries()
+    bank_data = get_bank_data()
+    account_types = get_account_types()
+    dependences = get_dependence_data()
+    cost_centers = get_cost_center_data()
+
+    context = {
+        "cities": cities_data,
+        "banks": bank_data,
+        "account_types": account_types,
+        "dependences": dependences,
+        "cost_centers": cost_centers,
+    }
+
+    return context
+
 
 # This function is used to get the request by its id
 def get_request_by_id(id):
@@ -437,6 +532,9 @@ def detail_request(request, id):
     """
     request_data = get_request_by_id(id)
     context = {"request": request_data}
+
+    # Obtain bank, account type, city, dependence, and cost center data
+    context.update(create_context())
 
     # Use the request type to determine which template to render
     if isinstance(request_data, AdvanceLegalization):

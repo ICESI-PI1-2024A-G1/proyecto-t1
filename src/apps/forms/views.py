@@ -100,20 +100,35 @@ def get_cost_center_data():
     return cost_center_data
 
 
-@login_required
-@csrf_exempt
-def travel_advance_request(request):
+# Create context for the form
+def create_context():
     today = date.today().isoformat()
-
     cities_data = get_cities_with_countries()
     bank_data = get_bank_data()
     account_types = get_account_types()
     dependences = get_dependence_data()
     cost_centers = get_cost_center_data()
 
+    context = {
+        "today": today,
+        "cities": cities_data,
+        "banks": bank_data,
+        "account_types": account_types,
+        "dependences": dependences,
+        "cost_centers": cost_centers,
+    }
+
+    return context
+
+
+@login_required
+@csrf_exempt
+def travel_advance_request(request):
+    context = create_context()
+
     if request.method == "GET":
         return render(
-            request, "userForms/travel_advance_request.html", {"today": today, "cities": cities_data, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers}
+            request, "userForms/travel_advance_request.html", context
         )
     else:
         form_data = request.POST
@@ -123,7 +138,7 @@ def travel_advance_request(request):
             return render(
                 request,
                 "userForms/travel_advance_request.html",
-                {"today": today, "form_data": form_data, "cities": cities_data, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers},
+                context,
             )
         elif form_data.get("departureDate") > form_data.get("returnDate"):
             messages.error(
@@ -133,7 +148,7 @@ def travel_advance_request(request):
             return render(
                 request,
                 "userForms/travel_advance_request.html",
-                {"today": today, "form_data": form_data, "cities": cities_data, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers},
+                context,
             )
 
         else:
@@ -190,17 +205,11 @@ def travel_advance_request(request):
 @login_required
 @csrf_exempt
 def travel_expense_legalization(request):
-    today = date.today().isoformat()
-
-    cities_data = get_cities_with_countries()
-    bank_data = get_bank_data()
-    account_types = get_account_types()
-    dependences = get_dependence_data()
-    cost_centers = get_cost_center_data()
+    context = create_context()
 
     if request.method == "GET":
         return render(
-            request, "userForms/travel_expense_legalization.html", {"today": today, "cities": cities_data, "banks": bank_data}
+            request, "userForms/travel_expense_legalization.html", context,
         )
     else:
         form_data = request.POST
@@ -212,7 +221,7 @@ def travel_expense_legalization(request):
             return render(
                 request,
                 "userForms/travel_expense_legalization.html",
-                {"today": today, "form_data": form_data, "cities": cities_data, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers},
+                context,
             )
         elif form_data.get("departureDate") > form_data.get("returnDate"):
             messages.error(
@@ -222,7 +231,7 @@ def travel_expense_legalization(request):
             return render(
                 request,
                 "userForms/travel_expense_legalization.html",
-                {"today": today, "form_data": form_data, "cities": cities_data, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers},
+                context,
             )
         else:
             # Create a new GeneralData object
@@ -293,15 +302,10 @@ def travel_expense_legalization(request):
 @login_required
 @csrf_exempt
 def advance_legalization(request):
-    today = date.today().isoformat()
-
-    bank_data = get_bank_data()
-    account_types = get_account_types()
-    dependences = get_dependence_data()
-    cost_centers = get_cost_center_data()
+    context = create_context()
 
     if request.method == "GET":
-        return render(request, "userForms/advance_legalization.html", {"today": today, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers})
+        return render(request, "userForms/advance_legalization.html", context)
     else:
         form_data = request.POST
 
@@ -310,7 +314,7 @@ def advance_legalization(request):
             return render(
                 request,
                 "userForms/advance_legalization.html",
-                {"today": today, "form_data": form_data, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers},
+                context,
             )
         else:
             # Create a new GeneralData object
@@ -375,18 +379,14 @@ def advance_legalization(request):
 @login_required
 @csrf_exempt
 def billing_account(request):
-    today = date.today().isoformat()
-
-    bank_data = get_bank_data()
-    account_types = get_account_types()
-    dependences = get_dependence_data()
-    cost_centers = get_cost_center_data()
+    context = create_context()
+    context["include_cex"] = True
 
     if request.method == "GET":
         return render(
             request,
             "userForms/billing_account.html",
-            {"today": today, "include_cex": True, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers},
+            context,
         )
     else:
         form_data = request.POST
@@ -396,7 +396,7 @@ def billing_account(request):
             return render(
                 request,
                 "userForms/billing_account.html",
-                {"today": today, "form_data": form_data, "include_cex": True, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers},
+                context,
             )
         else:
             # Create a new GeneralData object
@@ -442,15 +442,10 @@ def billing_account(request):
 @login_required
 @csrf_exempt
 def requisition(request):
-    today = date.today().isoformat()
-
-    bank_data = get_bank_data()
-    account_types = get_account_types()
-    dependences = get_dependence_data()
-    cost_centers = get_cost_center_data()
+    context = create_context()
 
     if request.method == "GET":
-        return render(request, "userForms/requisition.html", {"today": today, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers})
+        return render(request, "userForms/requisition.html", context)
     else:
         form_data = request.POST
 
@@ -459,7 +454,7 @@ def requisition(request):
             return render(
                 request,
                 "userForms/requisition.html",
-                {"today": today, "form_data": form_data, "banks": bank_data, "account_types": account_types, "dependences": dependences, "cost_centers": cost_centers},
+                context,
             )
         else:
             # Create a new GeneralData object
