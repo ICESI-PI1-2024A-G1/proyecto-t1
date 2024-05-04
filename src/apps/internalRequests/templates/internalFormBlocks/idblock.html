@@ -7,19 +7,19 @@
             <label for="requestDate">Fecha de solicitud</label>
             <div class="d-flex justify-content-between">
                 <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ request.request_date|date:'Y-m-d' }}" disabled>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
                     <input type="checkbox" class="btn-check" id="btncheckRequestDate" name="dateCheck" data-message="Fecha de solicitud">
                     <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckRequestDate" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                 {% endif %}
             </div>
         </div>
         <div class="form-group">
-            <label for="travelerName">Nombre completo</label>
+            <label for="fullName">Nombre completo</label>
             <div class="d-flex justify-content-between">
-                <input type="text" class="form-control" id="travelerName" name="travelerName" value="{{ request.full_name|default:request.traveler_name }}" disabled>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                    <input type="checkbox" class="btn-check" id="btncheckTravelerName" name="nameCheck" data-message="Nombre completo">
-                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTravelerName" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.fullname|default:request.fullname }}" disabled>
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                    <input type="checkbox" class="btn-check" id="btncheckfullName" name="nameCheck" data-message="Nombre completo">
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckfullName" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                 {% endif %}
             </div>
         </div>
@@ -27,7 +27,7 @@
             <label for="idNumber">No. de identificación</label>
             <div class="d-flex justify-content-between">
                 <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.id_person }}" disabled>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
                     <input type="checkbox" class="btn-check" id="btncheckIdNumber" name="idCheck" data-message="No. de identificación">
                     <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckIdNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                 {% endif %}
@@ -43,7 +43,7 @@
                     <option {% if request.dependence == "Op1" %}selected{% endif %}>Op1</option>
                     <option {% if request.dependence == "Op2" %}selected{% endif %}>Op2</option>
                 </select>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
                     <input type="checkbox" class="btn-check" id="btncheckDependence" name="dependenceCheck" data-message="Dependencia">
                     <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDependence" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                 {% endif %}
@@ -57,7 +57,7 @@
                     <option {% if request.costCenter == "Op1" %}selected{% endif %}>Op1</option>
                     <option {% if request.costCenter == "Op2" %}selected{% endif %}>Op2</option>
                 </select>
-                {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
                     <input type="checkbox" class="btn-check" id="btncheckCostCenter" name="costsCheck" data-message="Centro de costos">
                     <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckCostCenter" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
                 {% endif %}

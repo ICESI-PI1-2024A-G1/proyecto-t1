@@ -1,0 +1,58 @@
+<div class="mb-2">
+    <label class="h5">
+        <strong>Identificación</strong>
+    </label>
+</div>
+<div class="row mb-4">
+    <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+            <label for="requestDate">Fecha de solicitud</label>
+            <input type="date"
+                   class="form-control"
+                   id="requestDate"
+                   name="requestDate"
+                   value="{{ today }}"
+                   readonly>
+        </div>
+        <div class="form-group">
+            <label for="fullName">Nombre completo</label>
+            <input type="text"
+                   class="form-control"
+                   id="fullName"
+                   name="fullName"
+                   value="{{ request.user.first_name }} {{ request.user.last_name }}"
+                   readonly>
+        </div>
+        <div class="form-group">
+            <label for="idNumber">No. de identificación</label>
+            <input type="number"
+                   class="form-control"
+                   id="idNumber"
+                   name="idNumber"
+                   value="{{ request.user.id }}"
+                   readonly>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+            <label for="dependence">Dependencia</label>
+            <select class="form-control" id="dependence" name="dependence" required>
+                <option value="">Selecciona una opción</option>
+                <option {% if form_data.dependence == "Publicidad" %}selected{% endif %}>Publicidad</option>
+                <option {% if form_data.dependence == "Tienda" %}selected{% endif %}>Tienda</option>
+                <option {% if form_data.dependence == "Recursos humanos" %}selected{% endif %}>Recursos humanos</option>
+                <option {% if form_data.dependence == "Administración" %}selected{% endif %}>Administración</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="costCenter">Centro de costos</label>
+            <select class="form-control" id="costCenter" name="costCenter" required>
+                <option value="">Selecciona una opción</option>
+                <option {% if form_data.costCenter == "Publicidad" %}selected{% endif %}>Publicidad</option>
+                <option {% if form_data.costCenter == "Semilleros" %}selected{% endif %}>Semilleros</option>
+                <option {% if form_data.costCenter == "Semestre" %}selected{% endif %}>Semestre</option>
+                <option {% if form_data.costCenter == "Bienestar" %}selected{% endif %}>Bienestar</option>
+            </select>
+        </div>
+    </div>
+</div>

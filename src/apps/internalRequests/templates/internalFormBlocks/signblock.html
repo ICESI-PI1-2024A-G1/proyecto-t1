@@ -26,11 +26,5 @@
         <input type="file" id="signatureImage" accept="image/*" style="display: none;">
         <canvas id="signatureCanvas" width="600" height="120" style="border:1px solid #000000; display: none;"></canvas>
         <h4 style="font-size: 1em; text-align: center;" class="mt-1">Firma del solicitante</h4>
-        <div class="d-flex justify-content-center">
-            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
-                <input type="checkbox" class="btn-check" id="btncheckSignature" name="signCheck" data-message="Firma">
-                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckSignature" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
-            {% endif %}
-        </div>
     </div>
 </div>

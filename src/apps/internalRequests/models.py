@@ -15,6 +15,7 @@ class Traceability(models.Model):
         prev_state (str): Previous state of the request.
         new_state (str): New state of the request.
     """
+
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

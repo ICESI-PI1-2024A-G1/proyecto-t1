@@ -49,7 +49,7 @@
                 <option {% if request.bank == 'Rappipay' %}selected{% endif %}>Rappipay</option>
                 <option {% if request.bank == 'Scotiabank Colpatria S.A' %}selected{% endif %}>Scotiabank Colpatria S.A</option>
             </select>
-            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                 <input type="checkbox" class="btn-check" id="btncheckBank" name="bankCheck" data-message="Banco">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckBank" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
             {% endif %}
@@ -63,7 +63,7 @@
                 <option value="Ahorros" {% if request.accountType == 'Ahorros' %}selected{% endif %}>Ahorros</option>
                 <option value="Corriente" {% if request.accountType == 'Corriente' %}selected{% endif %}>Corriente</option>
             </select>
-            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                 <input type="checkbox" class="btn-check" id="btncheckAccountType" name="typeAccountCheck" data-message="Tipo de cuenta">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAccountType" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
             {% endif %}
@@ -75,7 +75,7 @@
         <label>N° de cuenta:</label>
         <div class="d-flex justify-content-between">
             <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ request.account_number }}" required disabled>
-            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                 <input type="checkbox" class="btn-check" id="btncheckAccountNumber" name="idBankCheck" data-message="N° de cuenta">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAccountNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
             {% endif %}
@@ -86,7 +86,7 @@
         <label>N° CEX:</label>
         <div class="d-flex justify-content-between">
             <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ request.cex_number }}" required disabled>
-            {% if not user.is_applicant and request.status == "EN REVISIÓN" and request.is_reviewed == False %}
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                 <input type="checkbox" class="btn-check" id="btncheckCexNumber" name="cexCheck" data-message="N° Cex">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckCexNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
             {% endif %}

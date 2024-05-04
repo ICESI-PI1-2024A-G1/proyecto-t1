@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}
+Equipos
+{% endblock %}
+
+{%block main_route %}Equipos{% endblock %}
+{%block secondary_route %}Ver Equipos{% endblock %}
+
+{% block content %}
+
+{% include 'show-members.html' with members=team.members.all %}
+
+{% endblock %}

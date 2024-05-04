@@ -37,13 +37,13 @@
         </ol>
         <div class="my-2 mx-2 border-bottom border-3"></div>
         <!-- User data -->
-            {% include 'formBlocks/idBlock.html' %}
+            {% include 'formBlocks/idblock.html' %}
             <div class="form-group">
                 <label for="purchaseReason">Motivo de compra o servicio</label>
                 <textarea class="form-control"
                             id="purchaseReason"
                             name="purchaseReason"
-                            rows="3"></textarea>
+                            rows="3">{{ form_data.purchaseReason }}</textarea>
             </div>
             <div class="my-2 mx-2 border-bottom border-3"></div>
             <!--Spend data-->
@@ -53,7 +53,7 @@
                 </label>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover">
+                <table id="tableAdvanceLegalization" class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
                             <th class="col-2">Nombre del tercero de la factura</th>
@@ -64,75 +64,32 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
-                                <input type="text" class="form-control" name="category_0">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="provider_0">
-                            </td>
-                            <td>
-                                <input type="number" class="form-control" placeholder="0" name="pesos_0">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="concept_0">
-                            </td>
+                            <td><input type="text" class="form-control" name="category_0" value="{{ form_data.category_0 }}"></td>
+                            <td><input type="text" class="form-control" name="provider_0" value="{{ form_data.provider_0 }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_0" min="0" value="{{ form_data.pesos_0 }}"></td>
+                            <td><input type="text" class="form-control" name="concept_0" value="{{ form_data.concept_0 }}"></td>
                         </tr>
                         <tr>
-                            <td>
-                                <input type="text" class="form-control" name="category_1">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="provider_1">
-                            </td>
-                            <td>
-                                <input type="number" class="form-control" placeholder="0" name="pesos_1">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" name="concept_1">
-                            </td>
+                            <td><input type="text" class="form-control" name="category_1" value="{{ form_data.category_1 }}"></td>
+                            <td><input type="text" class="form-control" name="provider_1" value="{{ form_data.provider_1 }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_1" value="{{ form_data.pesos_1 }}" min="0"></td>
+                            <td><input type="text" class="form-control" name="concept_1" value="{{ form_data.concept_1 }}"></td>
                         </tr>
                         <tr id="totals">
                             <td colspan="2" class="text-end">Total de gastos:</td>
-                            <td>
-                                <input id="total"
-                                        name="total"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
+                            <td><input id="total" name="total" type="number" class="form-control" placeholder="0" value="{{ form_data.total }}" readonly></td>
                         </tr>
                         <tr id="advance">
                             <td colspan="2" class="text-end">Valor del anticipo:</td>
-                            <td>
-                                <input id="advanceTotal"
-                                        name="advanceTotal"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0">
-                            </td>
+                            <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" value="{{ form_data.advanceTotal }}" placeholder="0" min="0"></td>
                         </tr>
                         <tr id="employeeBalance">
                             <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
-                            <td>
-                                <input id="employeeBalanceValue"
-                                        name="employeeBalanceValue"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
+                            <td><input id="employeeBalanceValue" name="employeeBalanceValue" type="number" class="form-control" placeholder="0" value="{{ form_data.employeeBalanceValue }}" readonly></td>
                         </tr>
                         <tr id="icesiBalance">
                             <td colspan="2" class="text-end">Saldo a favor de ICESI:</td>
-                            <td>
-                                <input id="icesiBalanceValue"
-                                        name="icesiBalanceValue"
-                                        type="number"
-                                        class="form-control"
-                                        placeholder="0"
-                                        readonly>
-                            </td>
+                            <td><input id="icesiBalanceValue" name="icesiBalanceValue" type="number" class="form-control" placeholder="0" value="{{ form_data.icesiBalanceValue }}" readonly></td>
                         </tr>
                     </tbody>
                 </table>
@@ -172,5 +129,9 @@
         </div>
     </form>
 
+{{ form_data|json_script:"form_data" }}
+<script type="text/javascript">
+    var form_data = JSON.parse(document.getElementById('form_data').textContent);
+</script>
 <script src="../../static/forms/js/advance_legalization.js"></script>
 {% endblock %}

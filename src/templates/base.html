@@ -37,6 +37,8 @@
         <script src="{% static 'general/js/vendor/helpers.js' %}"></script>
         <script src="{% static 'general/js/vendor/config.js' %}"></script>
 
+        <link rel="shortcut icon" href="{% static 'general/img/logo.svg' %}">
+
     </head>
 
     <body>
@@ -109,7 +111,7 @@
                   <ul class="menu-sub">
                     {% include 'components/nav-item.html' with text="Solicitud viaje" link="/forms/travel_advance_request" %}
                     {% include 'components/nav-item.html' with text="Legalización viaje" link="/forms/travel_expense_legalization" %}
-                    {% include 'components/nav-item.html' with text="Solicitud anticipo" link="/forms/advance_legalization" %}
+                    {% include 'components/nav-item.html' with text="Legalización anticipo" link="/forms/advance_legalization" %}
                     {% include 'components/nav-item.html' with text="Cuenta de cobro" link="/forms/billing_account" %}
                     {% include 'components/nav-item.html' with text="Requisición" link="/forms/requisition" %}
                   </ul>

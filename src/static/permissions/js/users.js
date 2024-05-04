@@ -64,17 +64,10 @@ $(document).ready(function () {
             data: JSON.stringify(newValues),
             contentType: 'application/json; charset=utf-8',
             success: function(response) {
-                if (response.message) {
-                    var alertClass = response.status === 'success' ? 'alert-success' : 'alert-danger';
-                    var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
-                        response.message +
-                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                        '</div>';
-                    $('#messageContainer').html(alertHtml);
-                }
+                location.reload()
             },
             error: function(error) {
-                console.log(error);
+                location.reload()
             }
         });
     });

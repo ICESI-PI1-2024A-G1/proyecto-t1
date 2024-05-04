@@ -195,3 +195,13 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_ADDRESS")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
+
+
+# EXTRA VARIABLES
+FORM_TYPES = {
+    "AdvanceLegalization": "Legalización de Anticipos",
+    "BillingAccount": "Cuenta de Cobro",
+    "Requisition": "Requisición",
+    "TravelAdvanceRequest": "Solicitud de Viaje",
+    "TravelExpenseLegalization": "Legalización de Gastos de Viaje",
+}
