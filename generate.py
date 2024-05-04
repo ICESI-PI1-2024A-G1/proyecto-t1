@@ -17,10 +17,13 @@ from apps.teams.models import Team
 from datetime import datetime, timedelta
 from api.sharepoint_api import SharePointAPI
 from apps.forms.models import *
+from apps.requests.models import SharePoint
 from django.utils import timezone
 import json
 from django.db import transaction
 from django.db.models import Max
+
+from apps.internalRequests.views import get_all_requests
 
 
 def get_next_id():
@@ -56,13 +59,13 @@ EXCEL_FILE_PATH = os.path.join(
 )
 
 # print(EXCEL_FILE_PATH)
-
 # Clear contents
 sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
 sharepoint_api.clear_db()
 Traceability.objects.all().delete()
 Team.objects.all().delete()
 User.objects.all().delete()
+SharePoint.objects.all().delete()
 # Forms
 TravelAdvanceRequest.objects.all().delete()
 TravelExpenseLegalization_Table.objects.all().delete()
@@ -71,26 +74,16 @@ AdvanceLegalization_Table.objects.all().delete()
 AdvanceLegalization.objects.all().delete()
 BillingAccount.objects.all().delete()
 Requisition.objects.all().delete()
-
-# Create superuser
-
-admin = None
-if not User.objects.filter(id=0).exists():
-    admin = User.objects.create_user(
-        id=os.getenv("ADMIN_PASSWORD"),
-        username="admin",
-        email=os.getenv("ADMIN_EMAIL"),
-        password=os.getenv("ADMIN_PASSWORD"),
-        first_name="Accounting",
-        last_name="Admin",
-        is_superuser=True,
-    )
-    admin.save()
-    print(admin)
-
+Country.objects.all().delete()
+City.objects.all().delete()
+Bank.objects.all().delete()
+AccountType.objects.all().delete()
+Dependency.objects.all().delete()
+CostCenter.objects.all().delete()
 
 # Create users
-users_amount = 15
+users_amount = 35
+print(f"Generating {users_amount} users...")
 users = []
 for _ in range(users_amount):
     id = str(random.randint(1000000, 99999999))
@@ -108,48 +101,43 @@ for _ in range(users_amount):
         last_name=last_name,
     )
     users.append(user)
-print(f"Generated {users_amount} users")
 
+print("Assigning permissions...")
 
-# Create teams, leaders and add members
-teams = []
+# Assign applicants, leaders and members
 leaders = []
-formTypes = [
-    "Legalización de Anticipos",
-    "Cuenta de Cobro",
-    "Requisición",
-    "Solicitud de Viaje",
-    "Legalización de Gastos de Viaje",
-]
+applicants = []
+members = []
+for i in range(5):
+    users[i].is_leader = True
+    leaders.append(users[i])
+    users[i].save()
+for i in range(5, 10):
+    users[i].is_applicant = True
+    applicants.append(users[i])
+    users[i].save()
+for i in range(10, len(users)):
+    users[i].is_member = True
+    members.append(users[i])
+    users[i].save()
+formTypes = list(settings.FORM_TYPES.values())
+
+# Create teams
+teams = []
 for i in range(5):
     name = formTypes[i]
     description = fake.text(max_nb_chars=100)
-    leader = random.choice(
-        User.objects.exclude(id__in=[leader.id for leader in leaders])
-    )
-    # leader = random.choice(users)
-    leader.is_leader = True
-    leader.save()
+    leader = leaders[i]
     leaders.append(leader)
     formType = formTypes[i]
     team = Team.objects.create(
         name=name, description=description, leader=leader, typeForm=formType
     )
 
-    # Seleccionar miembros para el equipo (excluyendo al líder)
-    team_members = random.sample(
-        [user for user in users if user != leader], random.randint(3, 5)
-    )
-
-    # Asignar el permiso de "is_member" a los miembros del equipo
-    for member in team_members:
-        member.is_member = True
-        member.save()
-
+    team_members = random.sample(members, 5)
     team.members.add(*team_members)
-
+    team.save()
     teams.append(team)
-
 
 faculty = [
     "Ciencias Administrativas y económicas",
@@ -157,44 +145,129 @@ faculty = [
     "Ciencias Humanas",
     "Ciencias de la Salud",
 ]
+
+countries = [
+    {"code": "CO", "name": "Colombia"},
+    {"code": "ES", "name": "Spain"},
+    {"code": "FR", "name": "France"},
+    {"code": "US", "name": "United States"},
+    {"code": "CL", "name": "Chile"},
+    {"code": "CR", "name": "Costa Rica"},
+]
+
+cities = [
+    {"name": "Cali", "country": "CO"},
+    {"name": "Bogotá", "country": "CO"},
+    {"name": "Medellín", "country": "CO"},
+    {"name": "Cartagena", "country": "CO"},
+    {"name": "Barranquilla", "country": "CO"},
+    {"name": "Madrid", "country": "ES"},
+    {"name": "Barcelona", "country": "ES"},
+    {"name": "Valencia", "country": "ES"},
+    {"name": "Sevilla", "country": "ES"},
+    {"name": "Paris", "country": "FR"},
+    {"name": "Marsella", "country": "FR"},
+    {"name": "Lyon", "country": "FR"},
+    {"name": "Toulouse", "country": "FR"},
+    {"name": "New York", "country": "US"},
+    {"name": "Los Angeles", "country": "US"},
+    {"name": "Chicago", "country": "US"},
+    {"name": "Miami", "country": "US"},
+    {"name": "Santiago", "country": "CL"},
+    {"name": "Valparaíso", "country": "CL"},
+    {"name": "Concepción", "country": "CL"},
+    {"name": "La Serena", "country": "CL"},
+    {"name": "San José", "country": "CR"},
+    {"name": "Alajuela", "country": "CR"},
+    {"name": "Cartago", "country": "CR"},
+    {"name": "Heredia", "country": "CR"},
+    {"name": "San Francisco", "country": "US"},
+    {"name": "Houston", "country": "US"},
+    {"name": "Dallas", "country": "US"},
+    {"name": "Austin", "country": "US"},
+    {"name": "Santa Marta", "country": "CO"},
+    {"name": "Pereira", "country": "CO"},
+    {"name": "Manizales", "country": "CO"},
+    {"name": "Neiva", "country": "CO"},
+    {"name": "Murcia", "country": "ES"},
+    {"name": "Bilbao", "country": "ES"},
+    {"name": "Granada", "country": "ES"},
+    {"name": "Lille", "country": "FR"},
+    {"name": "Niza", "country": "FR"},
+    {"name": "Nantes", "country": "FR"},
+    {"name": "Philadelphia", "country": "US"},
+    {"name": "Phoenix", "country": "US"},
+    {"name": "San Diego", "country": "US"},
+    {"name": "San Antonio", "country": "US"},
+    {"name": "Valdivia", "country": "CL"},
+    {"name": "Arica", "country": "CL"},
+    {"name": "Talca", "country": "CL"},
+    {"name": "Puntarenas", "country": "CR"},
+    {"name": "Liberia", "country": "CR"},
+]
+
 banks = [
-    "Banco de Bogotá",
     "Bancolombia",
-    "Banco Davivienda",
-    "Banco Popular",
+    "Banco Agrario",
     "Banco AV Villas",
     "Banco Caja Social",
+    "Banco Cooperativo Coopcentral",
+    "Banco Credifinanciera SA",
+    "Banco Davivienda",
+    "Banco de Bogotá",
+    "Banco de las Microfinanzas Bancamia S.A.",
     "Banco de Occidente",
+    "Banco Falabella S.A.",
+    "Banco Finandina S.A.",
+    "Banco GNB Colombia S.A",
     "Banco GNB Sudameris",
-    "Banco Itaú",
-    "Bancoomeva",
+    "Banco Mundo Mujer",
     "Banco Pichincha",
-    "Banco Santander Colombia",
-    "BBVA Colombia",
-    "Citibank Colombia",
-    "Scotiabank Colpatria",
-    "Banco Finandina",
-    "HSBC",
-    "Citibank",
-    "JPMorgan Chase",
-    "Bank of America",
-    "Barclays",
+    "Banco Popular",
+    "Banco Procredit",
+    "Banco Santander de Negocios",
+    "Banco Serfinanza",
+    "Banco W S.A",
+    "Bancoomeva",
+    "Bancóldex S.A.",
+    "BBVA",
     "BNP Paribas",
-    "Deutsche Bank",
-    "UBS",
-    "Santander",
-    "Credit Suisse",
-    "ING Group",
-    "Goldman Sachs",
-    "Morgan Stanley",
-    "Wells Fargo",
-    "Standard Chartered",
-    "Banco Santander",
-    "Royal Bank of Canada",
-    "Banco Sabadell",
-    "Banco Bilbao Vizcaya Argentaria (BBVA)",
-    "The Bank of Tokyo-Mitsubishi UFJ",
+    "Citibank",
+    "Coltefinanciera S.A.",
+    "Confiar",
+    "Coofinep Cooperativa Financiera",
+    "Cooperativa Financiera de Antioquia",
+    "Cotrafa Cooperativa Financiera",
+    "Daviplata",
+    "Financiera Juriscoop S.A. Compañía de Financiamiento",
+    "Giros y Finanzas Compañía de Financiamiento S.A.",
+    "Itaú",
+    "Itaú antes CorpBanca",
+    "Mibanco S.A.",
+    "Nequi",
+    "Rappipay",
+    "Scotiabank Colpatria S.A",
 ]
+
+dependencies = [
+    "Publicidad",
+    "Tienda",
+    "Recursos Humanos",
+    "Administración",
+]
+
+account_types = [
+    "Ahorros",
+    "Corriente"
+]
+
+cost_centers = [
+    "Publicidad",
+    "Semilleros",
+    "Semestre",
+    "Bienestar",
+]
+
 eps = [
     "Sura",
     "Sanitas",
@@ -217,6 +290,7 @@ eps = [
     "Comfandi",
     "Comfasucre",
 ]
+
 pension_fund = [
     "Porvenir",
     "Protección",
@@ -264,36 +338,43 @@ arls = [
 ]
 
 documents = [
-    "Cuenta de cobro",
-    "Legalizacion",
-    "Anticipo",
-    "Viatico",
-    "Factura",
-    "Factura CEX",
+    "Legalización de Anticipos",
+    "Cuenta de Cobro",
     "Requisición",
+    "Solicitud de Viaje",
+    "Legalización de Gastos de Viaje",
 ]
 
 
-requestStatus = ["PENDIENTE", "EN REVISIÓN", "DEVUELTO", "RECHAZADO"]
+requestStatus = [
+    "PENDIENTE",
+    "EN REVISIÓN",
+    "POR APROBAR",
+    "DEVUELTO",
+    "RECHAZADO",
+    "RESUELTO",
+]
 
-for i in range(10):
+print("Generating requests...")
+
+for i in range(30):
     initial_date = fake.date_between(start_date="-30d", end_date="+4d")
     final_date = initial_date + timedelta(days=random.randint(1, 30))
 
     data = {
         "status": random.choice(status_options),
-        "manager": random.choice(users),
+        "manager": random.choice(members),
         "team": random.choice(teams).id,
-        "initial_date": initial_date.strftime("%d-%m-%Y"),
-        "final_date": final_date.strftime("%d-%m-%Y"),
-        "fullname": fake.name(),
+        "initial_date": initial_date.strftime("%Y-%m-%d"),
+        "final_date": final_date.strftime("%Y-%m-%d"),
+        "fullname": random.choice(applicants).get_fullname(),
         "faculty": random.choice(faculty),
         "document": random.choice(documents),
         "phone_number": fake.phone_number(),
         "email": fake.email(),
-        "CENCO": fake.random_number(digits=5),
+        "CENCO": random.choice(cost_centers),
         "bank": random.choice(banks),
-        "account_type": random.choice(["Ahorros", "Corriente"]),
+        "account_type": random.choice(account_types),
         "health_provider": random.choice(eps),
         "pension_fund": random.choice(pension_fund),
         "arl": random.choice(arls),
@@ -302,6 +383,9 @@ for i in range(10):
     }
 
     sharepoint_api.create_data(data)
+    SharePoint.objects.create(**data)
+
+print(f"Generated 30 sharepoint requests")
 
 t_request = sharepoint_api.get_all_requests()
 t_request = json.loads(t_request.content)
@@ -310,13 +394,6 @@ for i in range(len(t_request)):
     user = User.objects.first()
     temp_r = t_request[random.randint(0, len(t_request) - 1)]
     new_id = temp_r["id"]
-    # traceability = Traceability.objects.create(
-    #     modified_by=user,
-    #     request=new_id,
-    #     date=fake.date_time_between(start_date="-30d", end_date="+3d"),
-    #     prev_state=temp_r["status"],
-    #     new_state=random.choice(requestStatus),
-    # )
 
 
 def generate_traceability(id):
@@ -330,8 +407,8 @@ def generate_traceability(id):
             reason=fake.text(),
         )
 
-
 def create_fake_travel_request():
+    team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelAdvanceRequest"])
     expenses_dict = {
         "airportTransport": fake.random_int(min=50, max=500),
         "localTransport": fake.random_int(min=100, max=1000),
@@ -341,28 +418,27 @@ def create_fake_travel_request():
         "others": fake.random_int(min=0, max=300),
         "total": fake.random_int(min=0, max=300),
     }
-
+    person = random.choice(applicants)
     request = TravelAdvanceRequest(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        traveler_name=fake.name(),
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
-        dependence=fake.company(),
-        cost_center=fake.random_int(min=1000, max=9999),
-        destination_city=fake.city(),
+        fullname=person.get_fullname(),
+        id_person=person.id,
+        member=random.choice(team.members.all()),
+        dependence=random.choice(dependencies),
+        cost_center=random.choice(cost_centers),
+        destination_city=random.choice(cities)["name"],
         departure_date=fake.date_between(start_date="+1d", end_date="+60d"),
         return_date=fake.date_between(start_date="+61d", end_date="+120d"),
         travel_reason=fake.sentence(nb_words=6),
         currency=fake.random.choice(["dollars", "euros", "No"]),
-        signature_status=fake.random_element(
-            elements=("Pendiente", "Aprobada", "Rechazada")
-        ),
+        signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=999999999),
         observations=fake.text(),
-        team_id=fake.random_int(min=1, max=10),
+        team_id=team,
+        signatureInput="1---" + person.get_fullname(),
     )
     request.set_expenses(expenses_dict)
     with transaction.atomic():
@@ -372,15 +448,17 @@ def create_fake_travel_request():
 
 
 def create_fake_travel_expense_legalization():
+    person = random.choice(applicants)
+    team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelExpenseLegalization"])
     travel_expense = TravelExpenseLegalization(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        traveler_name=fake.name(),
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
-        dependence=fake.company(),
-        cost_center=fake.random_int(min=1000, max=9999),
-        destination_city=fake.city(),
+        fullname=person.get_fullname(),
+        id_person=person.id,
+        member=random.choice(team.members.all()),
+        dependence=random.choice(dependencies),
+        cost_center=random.choice(cost_centers),
+        destination_city=random.choice(cities)["name"],
         departure_date=fake.date_between(start_date="+1d", end_date="+60d"),
         return_date=fake.date_between(start_date="+61d", end_date="+120d"),
         travel_reason=fake.text(),
@@ -396,12 +474,13 @@ def create_fake_travel_expense_legalization():
         icesi_balance1=fake.random_int(min=0, max=500),
         icesi_balance2=fake.random_int(min=0, max=500),
         icesi_balance3=fake.random_int(min=0, max=500),
-        signature_status=fake.boolean(),
+        signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
-        team_id=fake.random_int(min=1, max=10),
+        team_id=team,
+        signatureInput="1---" + person.get_fullname(),
     )
     with transaction.atomic():
         travel_expense.id = get_next_id()
@@ -427,25 +506,28 @@ def create_fake_travel_expense_legalization():
 
 
 def create_fake_advance_legalization():
+    team = Team.objects.get(typeForm=settings.FORM_TYPES["AdvanceLegalization"])
+    person = random.choice(applicants)
     advance_legalization = AdvanceLegalization(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        traveler_name=fake.name(),
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
-        dependence=fake.company(),
-        cost_center=fake.random_int(min=1000, max=9999),
+        fullname=person.get_fullname(),
+        id_person=person.id,
+        member=random.choice(team.members.all()),
+        dependence=random.choice(dependencies),
+        cost_center=random.choice(cost_centers),
         purchase_reason=fake.text(),
         total=fake.random_int(min=100, max=1000),
         advance_total=fake.random_int(min=50, max=500),
         employee_balance_value=fake.random_int(min=0, max=500),
         icesi_balance_value=fake.random_int(min=0, max=500),
-        signature_status=fake.boolean(),
+        signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
-        team_id=fake.random_int(min=1, max=10),
+        team_id=team,
+        signatureInput="1---" + person.get_fullname(),
     )
     with transaction.atomic():
         advance_legalization.id = get_next_id()
@@ -467,29 +549,30 @@ def create_fake_advance_legalization():
 
 
 def create_fake_billing_account():
+    team = Team.objects.get(typeForm=settings.FORM_TYPES["BillingAccount"])
+    person = random.choice(applicants)
     billing_account = BillingAccount(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        full_name=fake.name(),
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
+        fullname=person.get_fullname(),
+        id_person=person.id,
+        member=random.choice(team.members.all()),
         status=fake.random.choice(requestStatus),
         value=fake.random_int(min=100, max=1000),
         concept_reason=fake.sentence(),
         retention=fake.random.choice(["yes", "no"]),
         tax_payer=fake.random.choice(["yes", "no"]),
         resident=fake.random.choice(["yes", "no"]),
-        request_city=fake.city(),
+        request_city=random.choice(cities)["name"],
         address=fake.address(),
         phone_number=fake.phone_number(),
-        signature_status=fake.random_element(
-            elements=("Pendiente", "Aprobada", "Rechazada")
-        ),
+        signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
         cex_number=fake.random_number(digits=8),
-        team_id=fake.random_int(min=1, max=10),
+        team_id=team,
+        signatureInput="1---" + person.get_fullname(),
     )
     with transaction.atomic():
         billing_account.id = get_next_id()
@@ -498,24 +581,27 @@ def create_fake_billing_account():
 
 
 def create_fake_requisition():
+    team = Team.objects.get(typeForm=settings.FORM_TYPES["Requisition"])
+    person = random.choice(applicants)
     requisition = Requisition(
         request_date=fake.date_between(start_date="-30d", end_date="today"),
         final_date=fake.date_between(start_date="today", end_date="+30d"),
-        requester_name=fake.name(),
-        id_person=fake.random_number(digits=8),
-        member_name=fake.name(),
+        fullname=person.get_fullname(),
+        id_person=person.id,
+        member=random.choice(team.members.all()),
         status=fake.random.choice(requestStatus),
         work=fake.job(),
-        dependence=fake.company(),
-        cenco=fake.random_int(min=1000, max=9999),
+        dependence=random.choice(dependencies),
+        cenco=random.choice(cost_centers),
         id_value=fake.random_number(digits=8),
         description=fake.text(),
-        signature_status=fake.boolean(),
+        signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
-        team_id=fake.random_int(min=1, max=10),
+        team_id=team,
+        signatureInput="1---" + person.get_fullname(),
     )
     with transaction.atomic():
         requisition.id = get_next_id()
@@ -526,16 +612,78 @@ def create_fake_requisition():
 form_amount = 10
 for _ in range(form_amount):
     create_fake_billing_account()
-print(f"Generated {form_amount} billing accounts")
-for _ in range(form_amount):
     create_fake_requisition()
-print(f"Generated {form_amount} requisitions")
-for _ in range(form_amount):
     create_fake_advance_legalization()
-print(f"Generated {form_amount} advance legalizations")
-for _ in range(form_amount):
     create_fake_travel_expense_legalization()
-print(f"Generated {form_amount} travel expense legalizations")
-for _ in range(form_amount):
     create_fake_travel_request()
-print(f"Generated {form_amount} travel requests")
+
+"""
+for r in get_all_requests():
+    if r.status in ["RECHAZADO", "DEVUELTO", "RESUELTO"]:
+        r.member = None
+        r.save()
+"""
+
+admin = User.objects.create_user(
+    id=os.getenv("ADMIN_PASSWORD"),
+    username="admin",
+    email=os.getenv("ADMIN_EMAIL"),
+    password=os.getenv("ADMIN_PASSWORD"),
+    first_name="Accounting",
+    last_name="Admin",
+    is_superuser=True,
+)
+admin.save()
+
+# Generar países y ciudades
+
+print("Generating countries and cities...")
+
+country_instances = {}
+for country in countries:
+    country_instance = Country(code=country["code"], name=country["name"])
+    country_instance.save()
+    country_instances[country["code"]] = country_instance
+
+for city in cities:
+    country_instance = country_instances[city["country"]]
+    city_instance = City(name=city["name"], country=country_instance)
+    city_instance.save()
+
+
+# Generar bancos
+
+print("Generating banks...")
+
+for bank in banks:
+    bank_instance = Bank(name=bank)
+    bank_instance.save()
+
+
+# Generar tipos de cuenta
+
+print("Generating account types...")
+
+for account_type in account_types:
+    account_type_instance = AccountType(name=account_type)
+    account_type_instance.save()
+
+
+# Generar dependencias
+
+print("Generating dependencies...")
+
+for dependency in dependencies:
+    dependency_instance = Dependency(name=dependency)
+    dependency_instance.save()
+
+
+# Generar centros de costo
+
+print("Generating cost centers...")
+
+for cost_center in cost_centers:
+    cost_center_instance = CostCenter(name=cost_center)
+    cost_center_instance.save()
+
+print("Done 🤑")

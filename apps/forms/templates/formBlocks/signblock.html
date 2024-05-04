@@ -11,12 +11,13 @@
 
 <div class="row justify-content-center" style="margin-top: 80px;">
     <div class="col-md-6 mb-1 text-center">
-        <div style="border-bottom: 1px solid black; display: flex; justify-content: center; align-items: center;" id="signature" style="position: relative;"></div>
+        <div id="signature" name="signature" style="border-bottom: 1px solid black; display: flex; justify-content: center; align-items: center; position: relative;"></div>
+        <input type="hidden" id="signatureInput" name="signatureInput">
         <input type="hidden" id="signatureStatus" name="signatureStatus" value="No">
         <div class="d-flex justify-content-center">
             <button id="signButton" class="btn btn-primary my-2" type="button"><i class="fa fa-pen mr-2"></i> Firmar</button>
         </div>
-        <div id="signature" style="display: flex; justify-content: center; align-items: center;"></div>
+        <div style="display: flex; justify-content: center; align-items: center;"></div>
         <input type="file" id="signatureImage" accept="image/*" style="display: none;">
         <canvas id="signatureCanvas" width="600" height="120" style="border:1px solid #000000; display: none;"></canvas>
     </div>

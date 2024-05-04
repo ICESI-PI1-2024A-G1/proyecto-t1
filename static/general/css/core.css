@@ -757,11 +757,11 @@
   }
   
   .top-0 {
-    top: 0 !important;
+    top: 1.5rem !important;
   }
   
   .start-0 {
-    left: 0 !important;
+    left: 1.5rem !important;
   }
   
   .start-50 {
@@ -770,11 +770,11 @@
   }
   
   .end-0 {
-    right: 0 !important;
+    right: 1.5rem !important;
   }
   
   .bottom-0 {
-    bottom: 0 !important;
+    bottom: 1.5rem !important;
   }
   
   .translate-middle-x {
@@ -785,9 +785,6 @@
     transform: translateY(-50%) !important;
   }
   
-  .top-0, .start-0, .start-50, .end-0, .bottom-0, .translate-middle-x, .translate-middle-y {
-    margin: 20px !important;
-  }
 
   .m-0 {
     margin: 0 !important;
@@ -949,4 +946,8 @@
   }
   .mr-auto {
     margin-right: auto !important;
+  }
+
+  .card-fluid {
+    overflow-y: scroll;
   }
