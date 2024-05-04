@@ -4,13 +4,14 @@ import django
 from django.conf import settings
 from faker import Faker
 from dotenv import load_dotenv
-
+import random
 load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
 django.setup()
-fake = Faker()
 
-import random
+random.seed(365678)
+fake = Faker()
+Faker.seed(365678)
 from django.contrib.auth import get_user_model
 from apps.internalRequests.models import Traceability
 from apps.teams.models import Team
