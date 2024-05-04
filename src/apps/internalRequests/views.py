@@ -135,6 +135,8 @@ def show_requests(request):
     for r in requests_data:
         r.status_color = statusMap[r.status]
 
+    requests_data = sorted(requests_data, key=lambda x: x.request_date, reverse=True)
+
     if message and message_type:
         messages.add_message(request, message_type, message)
         return redirect('/requests')
