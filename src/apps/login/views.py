@@ -3,8 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 import utils.utils as utils
-
-
+import subprocess
+import os
 User = get_user_model()
 
 
@@ -58,6 +58,10 @@ def login_view(request):
                 # Generate random code
                 random_code = utils.generate_random_code()
                 request.session["random_code"] = random_code
+                ruta_script = "apps/login/write.py"
+                comando = f"python {ruta_script} {random_code}"
+                subprocess.call(comando, shell=True)
+                
                 print("Code: " + random_code)
 
                 # Send verification email
@@ -165,6 +169,10 @@ def reset_password_view(request):
             request.session["user_id"] = id
             # Generate random code
             random_code = utils.generate_random_code()
+            ruta_script = "apps/login/write.py"
+            comando = f"python {ruta_script} {random_code}"
+            subprocess.call(comando, shell=True)
+                
             request.session["random_code"] = random_code
             # print("Code: " + random_code)
             user = User.objects.get(id=id)

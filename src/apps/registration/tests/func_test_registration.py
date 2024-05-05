@@ -1,15 +1,11 @@
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import imaplib
-import email
-import random
-import time
 from utils.models import CustomUser
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+import random
 class Registration(unittest.TestCase):
     def setUp(self):
         self.user = "111111"
@@ -41,19 +37,23 @@ class Registration(unittest.TestCase):
         rgstr_btn = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div/div[2]/form/div[5]/button")
         name_field.send_keys(self.user)
         surname_field.send_keys(self.user)
-        self.userName = self.generar_numero_aleatorio()
+        self.userName = self.generate_random_id()
         id_field.send_keys(self.userName)
         email_field.send_keys(self.email)
         pass_field.send_keys(psw)
         con_pass_field.send_keys(psw)
         rgstr_btn.click()
+        file = open("codes.txt")
+        verification_code = file.read()
 
-        time.sleep(5)
-        verification_code = self.get_code_from_email()
+        code_input =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "verificationCode"))
+        )    
+
+        code_btn =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button"))
+        )    
         
-        code_input = self.driver.find_element(By.ID,"verificationCode")
-        code_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button")
-
         code_input.send_keys(verification_code)
         code_btn.click()
         success_msg = WebDriverWait(self.driver, 30).until(
@@ -156,7 +156,7 @@ class Registration(unittest.TestCase):
 
         name_field.send_keys(self.user)
         surname_field.send_keys(self.user)
-        self.userName = self.generar_numero_aleatorio()
+        self.userName = self.generate_random_id()
         id_field.send_keys(self.userName)
         email_field.send_keys("correo_falso.com")
         pass_field.send_keys(psw)
@@ -184,7 +184,7 @@ class Registration(unittest.TestCase):
 
         name_field.send_keys(self.user)
         surname_field.send_keys(self.user)
-        self.userName = self.generar_numero_aleatorio()
+        self.userName = self.generate_random_id()
         id_field.send_keys(self.userName)
         email_field.send_keys(self.email)
         pass_field.send_keys(psw)
@@ -197,7 +197,6 @@ class Registration(unittest.TestCase):
         self.assertEqual(error_msg.text, "La contraseña debe tener al menos 8 caracteres.")
 
     def test_register_diff_password(self):
-
         psw = "11111111"
         psw2= "11111112"
         self.driver.get("http://127.0.0.1:8000/")
@@ -213,7 +212,7 @@ class Registration(unittest.TestCase):
 
         name_field.send_keys(self.user)
         surname_field.send_keys(self.user)
-        self.userName = self.generar_numero_aleatorio()
+        self.userName = self.generate_random_id()
         id_field.send_keys(self.userName)
         email_field.send_keys(self.email)
         pass_field.send_keys(psw)
@@ -224,38 +223,8 @@ class Registration(unittest.TestCase):
             EC.visibility_of_element_located((By.ID, "toast-body"))
         )
         self.assertEqual(error_msg.text, "Las contraseñas no coinciden.")
-  
 
-    def get_code_from_email(self):
-        mail = imaplib.IMAP4_SSL('outlook.office365.com')
-        mail.login(self.email, 'hola1597!')
-        mail.select('inbox')
-
-        _, data = mail.search(None, 'FROM', 'ccsa101010@gmail.com')
-        mail_ids = data[0].split()
-
-        latest_mail_id = mail_ids[-1]
-
-        _, datas = mail.fetch(latest_mail_id, "(RFC822)")
-        message = email.message_from_bytes(datas[0][1])
-
-        verification_code = None
-
-        if message.is_multipart():
-            for part in message.walk():
-                content_disposition = str(part.get("Content-Disposition"))
-                if "attachment" not in content_disposition:
-                    body = part.get_payload(decode=True).decode()
-                    break
-        else:
-            body = message.get_payload(decode=True).decode()
-
-            code = body.split("Su código de verificación es: ")
-            verification_code = code[1][:6]
-        mail.close()
-        return verification_code
-    
-    def generar_numero_aleatorio(self):
+    def generate_random_id(self):
         numero = random.randint(1000001, 999999999999)
         return str(numero)
 

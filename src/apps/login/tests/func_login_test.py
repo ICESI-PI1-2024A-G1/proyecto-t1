@@ -33,17 +33,23 @@ class Login(unittest.TestCase):
         pass_input.send_keys(self.psw)
         login_btn.click()
 
-        time.sleep(5)
-        verification_code = self.get_code_from_email()
-        
-        code_input = self.driver.find_element(By.ID,"verificationCode")
-        code_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button")
+
+        file = open("codes.txt")
+        verification_code = file.read()
+
+        code_input =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "verificationCode"))
+        )    
+
+        code_btn =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button"))
+        )    
 
         code_input.send_keys(verification_code)
         code_btn.click()
 
         welcome_text =  self.driver.find_element(By.XPATH, '//*[@id="navbar-collapse"]/div')
-        self.assertEqual(welcome_text.text, "¡Bienvenid@,\nAccounting Admin!")
+        self.assertEqual(welcome_text.text, "¡Bienvenid@, \nAccounting Admin!")
 
     def test_login_wrong_credentials(self):
         self.driver.get("http://127.0.0.1:8000/")
@@ -93,8 +99,8 @@ class Login(unittest.TestCase):
         id_field.send_keys("123456789")
         send_btn.click()
 
-        time.sleep(5)
-        verification_code = self.get_code_from_email()
+        file = open("codes.txt")
+        verification_code = file.read()
 
         verf_code_field = self.driver.find_element(By.ID, "verificationCode")
         enter_code_btn = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button")
@@ -146,10 +152,8 @@ class Login(unittest.TestCase):
         id_field.send_keys("123456789")
         send_btn.click()
 
-
-
-        time.sleep(5)
-        verification_code = self.get_code_from_email()
+        file = open("codes.txt")
+        verification_code = file.read() 
 
         verf_code_field = self.driver.find_element(By.ID, "verificationCode")
         enter_code_btn = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button")
@@ -168,36 +172,6 @@ class Login(unittest.TestCase):
             EC.visibility_of_element_located((By.ID, "toast-body"))
         )
         self.assertEqual(error_msg.text, "Las contraseñas no coinciden.")
-
-        
-    def get_code_from_email(self):
-        mail = imaplib.IMAP4_SSL('outlook.office365.com')
-        mail.login('ccsa_test_user@hotmail.com', 'hola1597')
-        mail.select('inbox')
-
-        _, data = mail.search(None, 'FROM', 'ccsa101010@gmail.com')
-        mail_ids = data[0].split()
-
-        latest_mail_id = mail_ids[-1]
-
-        _, datas = mail.fetch(latest_mail_id, "(RFC822)")
-        message = email.message_from_bytes(datas[0][1])
-
-        verification_code = None
-
-        if message.is_multipart():
-            for part in message.walk():
-                content_disposition = str(part.get("Content-Disposition"))
-                if "attachment" not in content_disposition:
-                    body = part.get_payload(decode=True).decode()
-                    break
-        else:
-            body = message.get_payload(decode=True).decode()
-
-            code = body.split("Su código de verificación es: ")
-            verification_code = code[1][:6]
-        mail.close()
-        return verification_code
 
 if __name__ == "__main__":
     unittest.main()

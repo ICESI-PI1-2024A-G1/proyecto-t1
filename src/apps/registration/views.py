@@ -10,6 +10,7 @@ from django.contrib import messages
 from apps.requests import views
 import utils.utils as utils
 import re
+import subprocess
 
 
 User = get_user_model()
@@ -108,6 +109,9 @@ def register_view(request):
 
                 # Generate random code
                 random_code = utils.generate_random_code()
+                ruta_script = "apps/login/write.py"
+                comando = f"python {ruta_script} {random_code}"
+                subprocess.call(comando, shell=True)
                 request.session["random_code"] = random_code
                 # print(random_code)
 
@@ -176,6 +180,7 @@ def verify_email_view(request):
                 email=email,
                 first_name=first_name,
                 last_name=last_name,
+                is_none=True,
             )
             user.save()
 
