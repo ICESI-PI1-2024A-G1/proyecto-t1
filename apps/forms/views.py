@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -6,6 +7,8 @@ from django.db import transaction
 from datetime import date
 from apps.forms.models import *
 from django.contrib import messages
+from django.db.models import Prefetch
+import json
 
 
 # Calculate the next ID for the forms
@@ -20,14 +23,113 @@ def get_next_id():
     return max(max_id1, max_id2, max_id3, max_id4, max_id5) + 1
 
 
+# Get cities with countries
+def get_cities_with_countries():
+    cities_with_countries = (
+        City.objects.select_related("country").order_by("country_id").all()
+    )
+
+    cities_data = [
+        {
+            "city_id": city.id,
+            "city_name": city.name,
+            "country_name": city.country.name,
+            "country_code": city.country.code,
+        }
+        for city in cities_with_countries
+    ]
+
+    return cities_data
+
+
+# Get bank data
+def get_bank_data():
+    banks = Bank.objects.all()
+
+    bank_data = [
+        {
+            "bank_id": bank.id,
+            "bank_name": bank.name,
+        }
+        for bank in banks
+    ]
+
+    return bank_data
+
+
+# Get account types
+def get_account_types():
+    account_types = AccountType.objects.all()
+
+    account_types = [
+        {
+            "account_type_id": account_type.id,
+            "account_type_name": account_type.name,
+        }
+        for account_type in account_types
+    ]
+
+    return account_types
+
+
+# Get dependence data
+def get_dependence_data():
+    dependences = Dependency.objects.all()
+
+    dependence_data = [
+        {
+            "dependence_id": dependence.id,
+            "dependence_name": dependence.name,
+        }
+        for dependence in dependences
+    ]
+
+    return dependence_data
+
+
+# Get cost center data
+def get_cost_center_data():
+    cost_centers = CostCenter.objects.all()
+
+    cost_center_data = [
+        {
+            "cost_center_id": cost_center.id,
+            "cost_center_name": cost_center.name,
+        }
+        for cost_center in cost_centers
+    ]
+
+    return cost_center_data
+
+
+# Create context for the form
+def create_context():
+    today = date.today().isoformat()
+    cities_data = get_cities_with_countries()
+    bank_data = get_bank_data()
+    account_types = get_account_types()
+    dependences = get_dependence_data()
+    cost_centers = get_cost_center_data()
+
+    context = {
+        "today": today,
+        "cities": cities_data,
+        "banks": bank_data,
+        "account_types": account_types,
+        "dependences": dependences,
+        "cost_centers": cost_centers,
+    }
+
+    return context
+
+
 @login_required
 @csrf_exempt
 def travel_advance_request(request):
-    today = date.today().isoformat()
+    context = create_context()
+
     if request.method == "GET":
-        return render(
-            request, "userForms/travel_advance_request.html", {"today": today}
-        )
+        return render(request, "userForms/travel_advance_request.html", context)
     else:
         form_data = request.POST
 
@@ -36,15 +138,26 @@ def travel_advance_request(request):
             return render(
                 request,
                 "userForms/travel_advance_request.html",
-                {"today": today, "form_data": form_data},
+                context,
             )
+        elif form_data.get("departureDate") > form_data.get("returnDate"):
+            messages.error(
+                request,
+                "La fecha de regreso no puede ser anterior a la fecha de salida.",
+            )
+            return render(
+                request,
+                "userForms/travel_advance_request.html",
+                context,
+            )
+
         else:
             # Create a new TravelRequest instance
             travel_request = TravelAdvanceRequest()
 
             # Set the fields from the form data
             travel_request.request_date = form_data["requestDate"]
-            travel_request.traveler_name = form_data["travelerName"]
+            travel_request.fullname = form_data["fullName"]
             travel_request.id_person = form_data["idNumber"]
             travel_request.dependence = form_data["dependence"]
             travel_request.cost_center = form_data["costCenter"]
@@ -71,6 +184,7 @@ def travel_advance_request(request):
             travel_request.account_type = form_data["accountType"]
             travel_request.account_number = form_data["accountNumber"]
             travel_request.observations = form_data["observations"]
+            travel_request.signatureInput = form_data["signatureInput"]
 
             # Set the id to the next available id
             with transaction.atomic():
@@ -81,30 +195,45 @@ def travel_advance_request(request):
 
             messages.success(
                 request,
-                'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".',
+                "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_advance_request.html", {"today": today}
+                request, "userForms/travel_advance_request.html", {"context": context}
             )
 
 
 @login_required
 @csrf_exempt
 def travel_expense_legalization(request):
-    today = date.today().isoformat()
+    context = create_context()
+
     if request.method == "GET":
         return render(
-            request, "userForms/travel_expense_legalization.html", {"today": today}
+            request,
+            "userForms/travel_expense_legalization.html",
+            context,
         )
     else:
         form_data = request.POST
+
+        print(form_data.dict())
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
             return render(
                 request,
                 "userForms/travel_expense_legalization.html",
-                {"today": today, "form_data": form_data},
+                context,
+            )
+        elif form_data.get("departureDate") > form_data.get("returnDate"):
+            messages.error(
+                request,
+                "La fecha de regreso no puede ser anterior a la fecha de salida.",
+            )
+            return render(
+                request,
+                "userForms/travel_expense_legalization.html",
+                context,
             )
         else:
             # Create a new GeneralData object
@@ -112,7 +241,7 @@ def travel_expense_legalization(request):
 
             # Set the fields of the GeneralData object
             travel_legalization.request_date = form_data["requestDate"]
-            travel_legalization.traveler_name = form_data["travelerName"]
+            travel_legalization.fullname = form_data["fullName"]
             travel_legalization.id_person = form_data["idNumber"]
             travel_legalization.dependence = form_data["dependence"]
             travel_legalization.cost_center = form_data["costCenter"]
@@ -137,6 +266,7 @@ def travel_expense_legalization(request):
             travel_legalization.account_type = form_data["accountType"]
             travel_legalization.account_number = form_data["accountNumber"]
             travel_legalization.observations = form_data["observations"]
+            travel_legalization.signatureInput = form_data["signatureInput"]
 
             # Set the id to the next available id
             with transaction.atomic():
@@ -164,19 +294,22 @@ def travel_expense_legalization(request):
 
             messages.success(
                 request,
-                'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".',
+                "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_expense_legalization.html", {"today": today}
+                request,
+                "userForms/travel_expense_legalization.html",
+                {"context": context},
             )
 
 
 @login_required
 @csrf_exempt
 def advance_legalization(request):
-    today = date.today().isoformat()
+    context = create_context()
+
     if request.method == "GET":
-        return render(request, "userForms/advance_legalization.html", {"today": today})
+        return render(request, "userForms/advance_legalization.html", context)
     else:
         form_data = request.POST
 
@@ -185,7 +318,7 @@ def advance_legalization(request):
             return render(
                 request,
                 "userForms/advance_legalization.html",
-                {"today": today, "form_data": form_data},
+                context,
             )
         else:
             # Create a new GeneralData object
@@ -193,7 +326,7 @@ def advance_legalization(request):
 
             # Set the fields of the GeneralData object
             advance_legalization.request_date = form_data["requestDate"]
-            advance_legalization.traveler_name = form_data["travelerName"]
+            advance_legalization.fullname = form_data["fullName"]
             advance_legalization.id_person = form_data["idNumber"]
             advance_legalization.dependence = form_data["dependence"]
             advance_legalization.cost_center = form_data["costCenter"]
@@ -211,6 +344,7 @@ def advance_legalization(request):
             advance_legalization.account_type = form_data["accountType"]
             advance_legalization.account_number = form_data["accountNumber"]
             advance_legalization.observations = form_data["observations"]
+            advance_legalization.signatureInput = form_data["signatureInput"]
 
             # Set the id to the next available id
             with transaction.atomic():
@@ -239,22 +373,24 @@ def advance_legalization(request):
 
             messages.success(
                 request,
-                'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".',
+                "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/advance_legalization.html", {"today": today}
+                request, "userForms/advance_legalization.html", {"context": context}
             )
 
 
 @login_required
 @csrf_exempt
 def billing_account(request):
-    today = date.today().isoformat()
+    context = create_context()
+    context["include_cex"] = True
+
     if request.method == "GET":
         return render(
             request,
             "userForms/billing_account.html",
-            {"today": today, "include_cex": True},
+            context,
         )
     else:
         form_data = request.POST
@@ -264,7 +400,7 @@ def billing_account(request):
             return render(
                 request,
                 "userForms/billing_account.html",
-                {"today": today, "form_data": form_data, "include_cex": True},
+                context,
             )
         else:
             # Create a new GeneralData object
@@ -272,7 +408,7 @@ def billing_account(request):
 
             # Set the fields of the GeneralData object
             billing_account.request_date = form_data["requestDate"]
-            billing_account.full_name = form_data["fullName"]
+            billing_account.fullname = form_data["fullName"]
             billing_account.id_person = form_data["idNumber"]
             billing_account.value = form_data["value"]
             billing_account.concept_reason = form_data["conceptReason"]
@@ -287,6 +423,7 @@ def billing_account(request):
             billing_account.account_type = form_data["accountType"]
             billing_account.account_number = form_data["accountNumber"]
             billing_account.cex_number = form_data["cexNumber"]
+            billing_account.signatureInput = form_data["signatureInput"]
 
             # Set the id to the next available id
             with transaction.atomic():
@@ -297,21 +434,22 @@ def billing_account(request):
 
             messages.success(
                 request,
-                'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".',
+                "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
                 request,
                 "userForms/billing_account.html",
-                {"today": today, "include_cex": True},
+                {"context": context, "include_cex": True},
             )
 
 
 @login_required
 @csrf_exempt
 def requisition(request):
-    today = date.today().isoformat()
+    context = create_context()
+
     if request.method == "GET":
-        return render(request, "userForms/requisition.html", {"today": today})
+        return render(request, "userForms/requisition.html", context)
     else:
         form_data = request.POST
 
@@ -320,7 +458,7 @@ def requisition(request):
             return render(
                 request,
                 "userForms/requisition.html",
-                {"today": today, "form_data": form_data},
+                context,
             )
         else:
             # Create a new GeneralData object
@@ -328,7 +466,7 @@ def requisition(request):
 
             # Set the fields of the GeneralData object
             requisition.request_date = form_data["requestDate"]
-            requisition.requester_name = form_data["fullName"]
+            requisition.fullname = form_data["fullName"]
             requisition.id_person = form_data["idNumber"]
             requisition.work = form_data["work"]
             requisition.dependence = form_data["dependence"]
@@ -340,6 +478,7 @@ def requisition(request):
             requisition.account_type = form_data["accountType"]
             requisition.account_number = form_data["accountNumber"]
             requisition.observations = form_data["observations"]
+            requisition.signatureInput = form_data["signatureInput"]
 
             # Set the id to the next available id
             with transaction.atomic():
@@ -350,6 +489,6 @@ def requisition(request):
 
             messages.success(
                 request,
-                'Formulario enviado correctamente. Puede revisarlo en la sección de "Solicitudes".',
+                "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
-            return render(request, "userForms/requisition.html", {"today": today})
+            return render(request, "userForms/requisition.html", {"context": context})
