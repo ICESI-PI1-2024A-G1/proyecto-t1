@@ -1,0 +1,73 @@
+<input type="date" id="newFinalDateInput" name="newFinalDate" class="form-control" value="{{request.final_date}}">
+
+<textarea id="reasonTextarea" name="reason" class="form-control mt-3" placeholder="Motivo" rows="3" required></textarea>
+
+<button onclick="changeFinalDate('{{request.id}}')" type="button" class="btn btn-primary my-4" id="changeDateBtn">Guardar</button>
+
+<script>
+    const changeFinalDate = id => {
+        var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+        var newFinalDate = $('#newFinalDateInput').val();
+        var oldFinalDate = '{{request.final_date}}';
+        var reason = $('#reasonTextarea').val();
+        if (reason === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe ingresar un motivo para cambiar la fecha final de la solicitud.'
+            });
+            return;
+        }
+        if (newFinalDate === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe ingresar una fecha final para la solicitud.'
+            });
+            return;
+        }
+        if (newFinalDate === oldFinalDate || newFinalDate < oldFinalDate) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'La fecha final debe ser mayor a la fecha actual.'
+            });
+            return;
+        }
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Quieres establecer la solicitud con la fecha final ' + newFinalDate + '?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cambiar',
+            cancelButtonText: 'No, cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/requests/change-final-date/' + id,
+                    method: 'POST',
+                    data: {
+                        newFinalDate: newFinalDate,
+                        reason: reason,
+                        csrfmiddlewaretoken: csrftoken
+                    },
+                    success: function (response) {
+                        window.location.href = "/requests/?changeFinalDateDone";
+                    },
+                    error: function (xhr, status, error) {
+                        window.location.href = "/requests/?changeFinalDateFailed";
+                    }
+                });
+                $('#detailsModal').modal('hide');
+            }
+        });
+    }
+</script>
+l
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+    .swal2-container {
+        z-index: 2000 !important;
+    }
+</style>

@@ -39,8 +39,8 @@
                 {% for request in requests %}
                 <tr id="request_{{ request.id }}">
                     <td>{{ request.id }}</td>
-                    <td>{{ request.request_date }}</div></td>
-                    <td>{%if request.final_date %} {{request.final_date}} {%else %}Sin asignar{%endif%}</td>
+                    <td>{{ request.request_date|date:'Y-m-d' }}</div></td>
+                    <td>{%if request.final_date %} {{request.final_date|date:'Y-m-d'}} {%else %}Sin asignar{%endif%}</td>
                     <td>{{ request.document }}</td>
                     <td>{{ request.fullname }}</td>
                     <td>
@@ -92,6 +92,11 @@
                                                 Cambiar Estado
                                             </button>
                                         {% endif %}
+                                        <button onclick="showModal('Cambiar fecha estimada de finalización', '/requests/change-final-date/{{request.id}}')"
+                                            class="dropdown-item" data-request-id="{{ request.id }}">
+                                            <i class="mr-2 fa fa-calendar"></i>
+                                            Cambiar Fecha Final
+                                        </button>
                                     {% endif %}
                                 {% endif %}
                             </div>

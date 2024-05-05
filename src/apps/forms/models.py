@@ -159,3 +159,34 @@ class Requisition(Form):
     account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
     signatureInput = models.TextField(null=True, blank=True)
+
+
+class Country(models.Model):
+    code = models.CharField(max_length=200, primary_key=True)
+    name = models.CharField(max_length=200)
+
+
+class City(models.Model):
+    id = models.AutoField(primary_key=True)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+
+
+class Bank(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+
+
+class AccountType(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+
+
+class Dependency(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+
+
+class CostCenter(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)

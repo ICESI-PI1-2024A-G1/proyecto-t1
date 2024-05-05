@@ -37,6 +37,101 @@ statusMap = {
 
 User = get_user_model()
 
+# Get cities with countries
+def get_cities_with_countries():
+    cities_with_countries = City.objects.select_related('country').order_by('country_id').all()
+
+    cities_data = [
+        {
+            "city_id": city.id,
+            "city_name": city.name,
+            "country_name": city.country.name,
+            "country_code": city.country.code,
+        }
+        for city in cities_with_countries
+    ]
+
+    return cities_data
+
+
+# Get bank data
+def get_bank_data():
+    banks = Bank.objects.all()
+
+    bank_data = [
+        {
+            "bank_id": bank.id,
+            "bank_name": bank.name,
+        }
+        for bank in banks
+    ]
+
+    return bank_data
+
+
+# Get account types
+def get_account_types():
+    account_types = AccountType.objects.all()
+
+    account_types = [
+        {
+            "account_type_id": account_type.id,
+            "account_type_name": account_type.name,
+        }
+        for account_type in account_types
+    ]
+
+    return account_types
+
+
+# Get dependence data
+def get_dependence_data():
+    dependences = Dependency.objects.all()
+
+    dependence_data = [
+        {
+            "dependence_id": dependence.id,
+            "dependence_name": dependence.name,
+        }
+        for dependence in dependences
+    ]
+
+    return dependence_data
+
+
+# Get cost center data
+def get_cost_center_data():
+    cost_centers = CostCenter.objects.all()
+
+    cost_center_data = [
+        {
+            "cost_center_id": cost_center.id,
+            "cost_center_name": cost_center.name,
+        }
+        for cost_center in cost_centers
+    ]
+
+    return cost_center_data
+
+
+# Create context for the form
+def create_context():
+    cities_data = get_cities_with_countries()
+    bank_data = get_bank_data()
+    account_types = get_account_types()
+    dependences = get_dependence_data()
+    cost_centers = get_cost_center_data()
+
+    context = {
+        "cities": cities_data,
+        "banks": bank_data,
+        "account_types": account_types,
+        "dependences": dependences,
+        "cost_centers": cost_centers,
+    }
+
+    return context
+
 
 # This function is used to get the request by its id
 def get_request_by_id(id):
@@ -82,28 +177,30 @@ def show_requests(request):
     """
     Show requests
     """
+    message = None
+    message_type = None
+
     if "changeStatusDone" in request.GET:
-        messages.add_message(
-            request,
-            messages.SUCCESS,
-            "El estado de la solicitud ha sido actualizado correctamente.",
-        )
+        message = "El estado de la solicitud ha sido actualizado correctamente."
+        message_type = messages.SUCCESS
     elif "changeStatusFailed" in request.GET:
-        messages.add_message(
-            request, messages.ERROR, "No se pudo realizar la operación."
-        )
+        message = "No se pudo realizar la operación."
+        message_type = messages.ERROR
     elif "fixRequestDone" in request.GET:
-        messages.add_message(
-            request, messages.SUCCESS, "El formulario ha sido enviado para revisión."
-        )
+        message = "El formulario ha sido enviado para revisión."
+        message_type = messages.SUCCESS
     elif "fixRequestFailed" in request.GET:
-        messages.add_message(
-            request, messages.ERROR, "No se pudo enviar el formulario para revisión."
-        )
+        message = "No se pudo enviar el formulario para revisión."
+        message_type = messages.ERROR
     elif "reviewDone" in request.GET:
-        messages.add_message(
-            request, messages.SUCCESS, "El formulario ha sido revisado."
-        )
+        message = "El formulario ha sido revisado."
+        message_type = messages.SUCCESS
+    elif "changeFinalDateDone" in request.GET:
+        message = "La fecha final de la solicitud ha sido actualizada correctamente."
+        message_type = messages.SUCCESS
+    elif "changeFinalDateFailed" in request.GET:
+        message = "No se pudo actualizar la fecha final de la solicitud."
+        message_type = messages.ERROR
 
     requests_data = get_all_requests()
     print(request.user.is_leader)
@@ -138,6 +235,12 @@ def show_requests(request):
 
     for r in requests_data:
         r.status_color = statusMap[r.status]
+
+    requests_data = sorted(requests_data, key=lambda x: x.request_date, reverse=True)
+
+    if message and message_type:
+        messages.add_message(request, message_type, message)
+        return redirect('/requests')
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 
@@ -413,6 +516,65 @@ def change_status(request, id):
             )
 
 
+@csrf_exempt
+@login_required
+def change_final_date(request, id):
+    """
+    Allows users to change the final date of a request.
+
+    HTTP Methods:
+    - GET: Renders a form to change the final date of the request.
+    - POST: Handles form submission, updates the final date of the request, and records traceability.
+
+    Dependencies:
+    - Models: For accessing request data in the database.
+    - Traceability: Model for recording changes in request status.
+
+    Parameters:
+    - request: Django request object.
+    - id: ID of the request to be updated.
+
+    Returns:
+    - JsonResponse: JSON response indicating the result of the operation.
+    """
+    if request.method == "GET":
+        curr_request = get_request_by_id(id)
+        curr_request.final_date = curr_request.final_date.strftime('%Y-%m-%d')
+        return render(request, "change-date.html", {"request": curr_request})
+    elif request.method == "POST":
+        try:
+            curr_request = get_request_by_id(id)
+            new_final_date_str = request.POST.get("newFinalDate")
+            reason = request.POST.get("reason")
+            prev_state = curr_request.status
+            prev_date = curr_request.final_date
+            curr_request.final_date = new_final_date_str
+            curr_request.save()
+
+            # Convertir new_final_date a un objeto datetime.date
+            new_final_date = datetime.strptime(new_final_date_str, '%Y-%m-%d').date()
+
+            Traceability.objects.create(
+                modified_by=request.user,
+                prev_state=prev_state,
+                new_state=prev_state,
+                reason="Hubo un cambio de fecha: " + prev_date.strftime('%Y-%m-%d') + " -> " + new_final_date.strftime('%Y-%m-%d') + ".<br>Motivo: " + reason,
+                date=datetime.now(),
+                request=id,
+            )
+
+            return JsonResponse(
+                {
+                    "message": f"La fecha final de la solicitud {id} ha sido actualizada correctamente."
+                }
+            )
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
+            )
+
+
 @never_cache
 @csrf_exempt
 @login_required
@@ -435,6 +597,9 @@ def detail_request(request, id):
     """
     request_data = get_request_by_id(id)
     context = {"request": request_data}
+
+    # Obtain bank, account type, city, dependence, and cost center data
+    context.update(create_context())
 
     # Use the request type to determine which template to render
     if isinstance(request_data, AdvanceLegalization):
