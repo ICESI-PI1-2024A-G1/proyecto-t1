@@ -32,7 +32,7 @@ def send_verification_email(request, subject, bigSubject, email, message, attach
         subject,
         template,
         bigSubject,
-        [email],
+        email if isinstance(email, list) else [email],
     )
 
     if attachment is not None:

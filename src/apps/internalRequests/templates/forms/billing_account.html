@@ -1,9 +1,6 @@
 {% extends 'clean-base.html' %}
 
-{% block title %}Cuenta de cobro{% endblock %}
-
 {% block content %}
-
 <!-- Title -->
 
 <div class="d-flex justify-content-between">
@@ -139,12 +136,12 @@
         <div class="form-group" style="display: flex; align-items: flex-start;">
             <p style="margin-right: 10px;">b. Soy declarante del Impuesto de Renta:</p>
             <div style="display: flex; align-items: center; margin-right: 10px;">
-                <label for="taxPayerYes" style="margin-right: 5px;">SI</label>
                 <input type="radio" id="taxPayerYes" name="taxPayer" value="yes" {% if request.tax_payer == 'yes' %}checked{% endif %} disabled>
+                <label for="taxPayerYes" style="margin-left: 5px;">SI</label>
             </div>
             <div style="display: flex; align-items: center; margin-right: 10px;">
-                <label for="taxPayerNo" style="margin-right: 5px;">NO</label>
                 <input type="radio" id="taxPayerNo" name="taxPayer" value="no" {% if request.tax_payer == 'no' %}checked{% endif %} disabled>
+                <label for="taxPayerNo" style="margin-left: 5px;">NO</label>
             </div>
         </div>
         <div>
@@ -159,12 +156,12 @@
         <div class="form-group" style="display: flex; align-items: flex-start;">
             <p style="margin-right: 10px;">c. Soy residente fiscal en Colombia:</p>
             <div style="display: flex; align-items: center; margin-right: 10px;">
-                <label for="residentYes" style="margin-right: 5px;">SI</label>
                 <input type="radio" id="residentYes" name="resident" value="yes" {% if request.resident == 'yes' %}checked{% endif %} disabled>
+                <label for="residentYes" style="margin-left: 5px;">SI</label>
             </div>
             <div style="display: flex; align-items: center; margin-right: 10px;">
-                <label for="residentNo" style="margin-right: 5px;">NO</label>
                 <input type="radio" id="residentNo" name="resident" value="no" {% if request.resident == 'no' %}checked{% endif %} disabled>
+                <label for="residentNo" style="margin-left: 5px;">NO</label>
             </div>
         </div>
         <div>

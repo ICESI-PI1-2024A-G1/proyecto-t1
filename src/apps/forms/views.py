@@ -198,7 +198,7 @@ def travel_advance_request(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_advance_request.html", {"today": today}
+                request, "userForms/travel_advance_request.html", context
             )
 
 
@@ -295,7 +295,7 @@ def travel_expense_legalization(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_expense_legalization.html", {"today": today}
+                request, "userForms/travel_expense_legalization.html", context
             )
 
 
@@ -372,7 +372,7 @@ def advance_legalization(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/advance_legalization.html", {"today": today}
+                request, "userForms/advance_legalization.html", context
             )
 
 
@@ -435,7 +435,7 @@ def billing_account(request):
             return render(
                 request,
                 "userForms/billing_account.html",
-                {"today": today, "include_cex": True},
+                context,
             )
 
 
@@ -487,4 +487,4 @@ def requisition(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
-            return render(request, "userForms/requisition.html", {"today": today})
+            return render(request, "userForms/requisition.html", context)
