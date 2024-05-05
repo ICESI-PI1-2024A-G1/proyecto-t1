@@ -5,9 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.test import TestCase, Client
 from selenium.webdriver.common.action_chains import ActionChains
-import time
+from selenium.common.exceptions import NoSuchElementException
 import os
-import pyautogui
 import re
 class Requests(TestCase):
     def setUp(self):
@@ -20,9 +19,105 @@ class Requests(TestCase):
     def tearDown(self):
         self.driver.quit()
 
-    def test_fill_form_happy_leg(self):
+    def test_fill_form_happy_req(self):
         self.login("99685182")
-        self.click_form("1")
+        self.click_form("5")
+
+        self.driver.find_element(By.ID, "work").send_keys("Comandante general")
+
+        self.driver.find_element(By.ID, "value").send_keys("1000000")
+
+        self.driver.find_element(By.ID, "conceptReason").send_keys("Compras compulsivas")
+
+        self.driver.find_element(By.ID, "retentionYes").click()
+        self.driver.find_element(By.ID, "taxPayerYes").click()
+        self.driver.find_element(By.ID, "residentNo").click()
+
+        self.select_option("#requestCity")
+
+        self.driver.find_element(By.ID, "phoneNumber").send_keys("3015582755")
+        self.driver.find_element(By.ID, "address").send_keys("CLL Cristian, 75-24")
+
+        self.sign("robotop")
+
+        self.driver.find_element(By.NAME, 'bank').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[15]/div[1]/select/option[2]').click()
+
+        self.driver.find_element(By.XPATH, 'bank').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[15]/div[2]/select/option[2]').click()
+        
+        self.driver.find_element(By.ID, "idBank").send_keys("456475")
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
+
+        self.driver.find_element(By.ID, "idCex").send_keys("78651")
+
+        aler = self.get_alert()
+        self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
+
+    def tesst_fill_form_happy_cc(self):
+        self.login("99685182")
+        self.click_form("4")
+
+        self.driver.find_element(By.ID, "value").send_keys("1000000")
+
+        self.driver.find_element(By.ID, "conceptReason").send_keys("Compras compulsivas")
+
+        self.driver.find_element(By.ID, "retentionYes").click()
+        self.driver.find_element(By.ID, "taxPayerYes").click()
+        self.driver.find_element(By.ID, "residentNo").click()
+
+        self.select_option("#requestCity")
+
+        self.driver.find_element(By.ID, "phoneNumber").send_keys("3015582755")
+        self.driver.find_element(By.ID, "address").send_keys("CLL Cristian, 75-24")
+
+        self.sign("robotop")
+
+        self.driver.find_element(By.NAME, 'bank').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[15]/div[1]/select/option[2]').click()
+
+        self.driver.find_element(By.XPATH, 'bank').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[15]/div[2]/select/option[2]').click()
+        
+        self.driver.find_element(By.ID, "idBank").send_keys("456475")
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
+
+        self.driver.find_element(By.ID, "idCex").send_keys("78651")
+
+        aler = self.get_alert()
+        self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
+
+    def tesst_fill_form_happy_legan(self):
+        self.login("99685182")
+        self.click_form("3")
+        
+        scrollable = self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]')
+        selects = ["#dependence", "#costCenter"]
+        for selector in selects:
+            self.select_option(selector)
+
+        self.driver.find_element(By.ID, "purchaseReason").send_keys("Compras compulsivas")
+
+        self.fill_rowsadv()
+
+        self.driver.find_element(By.NAME, "advanceTotal").send_keys("10000")
+        self.sign("robotop")
+
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[13]/div[1]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[13]/div[1]/select/option[2]').click()
+
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[13]/div[2]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[13]/div[2]/select/option[2]').click()
+        
+        self.driver.find_element(By.ID, "idBank").send_keys("456475")
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
+
+        aler = self.get_alert()
+        self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
+
+    def tesst_fill_form_happy_legv(self):
+        self.login("99685182")
+        self.click_form("2")
         
         scrollable = self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]')
         selects = ["#dependence", "#costCenter", "#destinationCity"]
@@ -33,20 +128,17 @@ class Requests(TestCase):
         
         self.driver.find_element(By.ID, "travelReason").send_keys("Cumpleaños")
 
-        self.driver.find_element(By.ID, "dollars").click()
+        self.fill_rows()
 
-        self.fill_prices(2,12,2)
-
-        tot = self.driver.find_element(By.ID, "total")
-        self.assertEqual(tot.get_attribute("value"), "6")
+        self.fill_advance()
 
         self.sign("robotop")
 
-        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[1]/select').click()
-        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[1]/select/option[2]').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[16]/div[1]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[16]/div[1]/select/option[2]').click()
 
-        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[2]/select').click()
-        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[2]/select/option[2]').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[16]/div[2]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[16]/div[2]/select/option[2]').click()
         
         self.driver.find_element(By.ID, "idBank").send_keys("456475")
         self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
@@ -54,6 +146,45 @@ class Requests(TestCase):
         aler = self.get_alert()
         self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
 
+    def fill_advance(self):
+        self.driver.find_element(By.ID, "advanceTotal1").send_keys("100000")
+        self.driver.find_element(By.ID, "advanceTotal2").send_keys("100")
+        self.driver.find_element(By.ID, "advanceTotal3").send_keys("80")
+        
+
+    def fill_rows(self):
+        i = 0
+        while True:
+            try:
+                self.driver.find_element(By.ID, "provider_"+str(i)).send_keys("Chocolisto S.A")
+                
+                self.driver.find_element(By.ID, "nit_"+str(i)).send_keys("4156185")
+
+                self.driver.find_element(By.ID, "concept_"+str(i)).send_keys("Avianca")
+                self.driver.find_element(By.ID, "pesos_"+str(i)).send_keys("130000")
+                self.driver.find_element(By.ID, "dollars_"+str(i)).send_keys("200")
+                self.driver.find_element(By.ID, "euros_"+str(i)).send_keys("140")
+
+                i += 1
+            except NoSuchElementException:
+
+                break
+
+    def fill_rowsadv(self):
+        i = 0
+        while True:
+            try:
+                self.driver.find_element(By.NAME, "category_"+str(i)).send_keys("Saldo")
+                
+                self.driver.find_element(By.NAME, "provider_"+str(i)).send_keys("Morty y asociados")
+
+                self.driver.find_element(By.NAME, "pesos_"+str(i)).send_keys("50000")
+                self.driver.find_element(By.NAME, "concept_"+str(i)).send_keys("Interdimesional")
+
+                i += 1
+            except NoSuchElementException:
+
+                break
     def tesst_fill_form_happy_1(self):
         self.login("99685182")
         self.click_form("1")
