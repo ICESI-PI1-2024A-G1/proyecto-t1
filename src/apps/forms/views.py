@@ -198,7 +198,7 @@ def travel_advance_request(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_advance_request.html", {"today": today}
+                request, "userForms/travel_advance_request.html", {"context": context}
             )
 
 
