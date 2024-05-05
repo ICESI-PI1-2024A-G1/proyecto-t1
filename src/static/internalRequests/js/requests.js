@@ -49,8 +49,19 @@ $(document).ready(function () {
      * Initializes DataTable with the given table ID and handles search functionality.
      *
      * @param {string} tableId - The ID of the table to initialize DataTable on.
-     */ 
-    DataTableInit("requestsTable", 10)
+     */
+    DataTableInit("requestsTable", 10, [
+        {
+            "targets": 1, // This is only applied to the date column
+            "orderable": true,
+            "type": "date" // Using ordering by date
+        },
+        {
+            "targets": 2, // This is only applied to the date column
+            "orderable": true,
+            "type": "date" // Using ordering by date
+        },
+    ])
     $("#performSearchButton").on('click', function () {
         var query = $("#searchBar").val() || '';
         $.ajax({

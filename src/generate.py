@@ -74,6 +74,12 @@ AdvanceLegalization_Table.objects.all().delete()
 AdvanceLegalization.objects.all().delete()
 BillingAccount.objects.all().delete()
 Requisition.objects.all().delete()
+Country.objects.all().delete()
+City.objects.all().delete()
+Bank.objects.all().delete()
+AccountType.objects.all().delete()
+Dependency.objects.all().delete()
+CostCenter.objects.all().delete()
 
 # Create users
 users_amount = 35
@@ -140,43 +146,126 @@ faculty = [
     "Ciencias de la Salud",
 ]
 
+countries = [
+    {"code": "CO", "name": "Colombia"},
+    {"code": "ES", "name": "Spain"},
+    {"code": "FR", "name": "France"},
+    {"code": "US", "name": "United States"},
+    {"code": "CL", "name": "Chile"},
+    {"code": "CR", "name": "Costa Rica"},
+]
+
+cities = [
+    {"name": "Cali", "country": "CO"},
+    {"name": "Bogotá", "country": "CO"},
+    {"name": "Medellín", "country": "CO"},
+    {"name": "Cartagena", "country": "CO"},
+    {"name": "Barranquilla", "country": "CO"},
+    {"name": "Madrid", "country": "ES"},
+    {"name": "Barcelona", "country": "ES"},
+    {"name": "Valencia", "country": "ES"},
+    {"name": "Sevilla", "country": "ES"},
+    {"name": "Paris", "country": "FR"},
+    {"name": "Marsella", "country": "FR"},
+    {"name": "Lyon", "country": "FR"},
+    {"name": "Toulouse", "country": "FR"},
+    {"name": "New York", "country": "US"},
+    {"name": "Los Angeles", "country": "US"},
+    {"name": "Chicago", "country": "US"},
+    {"name": "Miami", "country": "US"},
+    {"name": "Santiago", "country": "CL"},
+    {"name": "Valparaíso", "country": "CL"},
+    {"name": "Concepción", "country": "CL"},
+    {"name": "La Serena", "country": "CL"},
+    {"name": "San José", "country": "CR"},
+    {"name": "Alajuela", "country": "CR"},
+    {"name": "Cartago", "country": "CR"},
+    {"name": "Heredia", "country": "CR"},
+    {"name": "San Francisco", "country": "US"},
+    {"name": "Houston", "country": "US"},
+    {"name": "Dallas", "country": "US"},
+    {"name": "Austin", "country": "US"},
+    {"name": "Santa Marta", "country": "CO"},
+    {"name": "Pereira", "country": "CO"},
+    {"name": "Manizales", "country": "CO"},
+    {"name": "Neiva", "country": "CO"},
+    {"name": "Murcia", "country": "ES"},
+    {"name": "Bilbao", "country": "ES"},
+    {"name": "Granada", "country": "ES"},
+    {"name": "Lille", "country": "FR"},
+    {"name": "Niza", "country": "FR"},
+    {"name": "Nantes", "country": "FR"},
+    {"name": "Philadelphia", "country": "US"},
+    {"name": "Phoenix", "country": "US"},
+    {"name": "San Diego", "country": "US"},
+    {"name": "San Antonio", "country": "US"},
+    {"name": "Valdivia", "country": "CL"},
+    {"name": "Arica", "country": "CL"},
+    {"name": "Talca", "country": "CL"},
+    {"name": "Puntarenas", "country": "CR"},
+    {"name": "Liberia", "country": "CR"},
+]
+
 banks = [
-    "Banco de Bogotá",
     "Bancolombia",
-    "Banco Davivienda",
-    "Banco Popular",
+    "Banco Agrario",
     "Banco AV Villas",
     "Banco Caja Social",
+    "Banco Cooperativo Coopcentral",
+    "Banco Credifinanciera SA",
+    "Banco Davivienda",
+    "Banco de Bogotá",
+    "Banco de las Microfinanzas Bancamia S.A.",
     "Banco de Occidente",
+    "Banco Falabella S.A.",
+    "Banco Finandina S.A.",
+    "Banco GNB Colombia S.A",
     "Banco GNB Sudameris",
-    "Banco Itaú",
-    "Bancoomeva",
+    "Banco Mundo Mujer",
     "Banco Pichincha",
-    "Banco Santander Colombia",
-    "BBVA Colombia",
-    "Citibank Colombia",
-    "Scotiabank Colpatria",
-    "Banco Finandina",
-    "HSBC",
-    "Citibank",
-    "JPMorgan Chase",
-    "Bank of America",
-    "Barclays",
+    "Banco Popular",
+    "Banco Procredit",
+    "Banco Santander de Negocios",
+    "Banco Serfinanza",
+    "Banco W S.A",
+    "Bancoomeva",
+    "Bancóldex S.A.",
+    "BBVA",
     "BNP Paribas",
-    "Deutsche Bank",
-    "UBS",
-    "Santander",
-    "Credit Suisse",
-    "ING Group",
-    "Goldman Sachs",
-    "Morgan Stanley",
-    "Wells Fargo",
-    "Standard Chartered",
-    "Banco Santander",
-    "Royal Bank of Canada",
-    "Banco Sabadell",
-    "Banco Bilbao Vizcaya Argentaria (BBVA)",
-    "The Bank of Tokyo-Mitsubishi UFJ",
+    "Citibank",
+    "Coltefinanciera S.A.",
+    "Confiar",
+    "Coofinep Cooperativa Financiera",
+    "Cooperativa Financiera de Antioquia",
+    "Cotrafa Cooperativa Financiera",
+    "Daviplata",
+    "Financiera Juriscoop S.A. Compañía de Financiamiento",
+    "Giros y Finanzas Compañía de Financiamiento S.A.",
+    "Itaú",
+    "Itaú antes CorpBanca",
+    "Mibanco S.A.",
+    "Nequi",
+    "Rappipay",
+    "Scotiabank Colpatria S.A",
+]
+
+dependencies = [
+    "Publicidad",
+    "Tienda",
+    "Recursos Humanos",
+    "Administración",
+]
+
+account_types = [
+    "Ahorros",
+    "Corriente"
+]
+
+cost_centers = [
+    "Publicidad",
+    "Semilleros",
+    "Semestre",
+    "Bienestar",
 ]
 
 eps = [
@@ -283,9 +372,9 @@ for i in range(30):
         "document": random.choice(documents),
         "phone_number": fake.phone_number(),
         "email": fake.email(),
-        "CENCO": fake.random_number(digits=5),
+        "CENCO": random.choice(cost_centers),
         "bank": random.choice(banks),
-        "account_type": random.choice(["Ahorros", "Corriente"]),
+        "account_type": random.choice(account_types),
         "health_provider": random.choice(eps),
         "pension_fund": random.choice(pension_fund),
         "arl": random.choice(arls),
@@ -318,7 +407,6 @@ def generate_traceability(id):
             reason=fake.text(),
         )
 
-
 def create_fake_travel_request():
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelAdvanceRequest"])
     expenses_dict = {
@@ -337,16 +425,16 @@ def create_fake_travel_request():
         fullname=person.get_fullname(),
         id_person=person.id,
         member=random.choice(team.members.all()),
-        dependence=fake.company(),
-        cost_center=fake.random_int(min=1000, max=9999),
-        destination_city=fake.city(),
+        dependence=random.choice(dependencies),
+        cost_center=random.choice(cost_centers),
+        destination_city=random.choice(cities)["name"],
         departure_date=fake.date_between(start_date="+1d", end_date="+60d"),
         return_date=fake.date_between(start_date="+61d", end_date="+120d"),
         travel_reason=fake.sentence(nb_words=6),
         currency=fake.random.choice(["dollars", "euros", "No"]),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=999999999),
         observations=fake.text(),
         team_id=team,
@@ -368,9 +456,9 @@ def create_fake_travel_expense_legalization():
         fullname=person.get_fullname(),
         id_person=person.id,
         member=random.choice(team.members.all()),
-        dependence=fake.company(),
-        cost_center=fake.random_int(min=1000, max=9999),
-        destination_city=fake.city(),
+        dependence=random.choice(dependencies),
+        cost_center=random.choice(cost_centers),
+        destination_city=random.choice(cities)["name"],
         departure_date=fake.date_between(start_date="+1d", end_date="+60d"),
         return_date=fake.date_between(start_date="+61d", end_date="+120d"),
         travel_reason=fake.text(),
@@ -388,7 +476,7 @@ def create_fake_travel_expense_legalization():
         icesi_balance3=fake.random_int(min=0, max=500),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=team,
@@ -426,8 +514,8 @@ def create_fake_advance_legalization():
         fullname=person.get_fullname(),
         id_person=person.id,
         member=random.choice(team.members.all()),
-        dependence=fake.company(),
-        cost_center=fake.random_int(min=1000, max=9999),
+        dependence=random.choice(dependencies),
+        cost_center=random.choice(cost_centers),
         purchase_reason=fake.text(),
         total=fake.random_int(min=100, max=1000),
         advance_total=fake.random_int(min=50, max=500),
@@ -435,7 +523,7 @@ def create_fake_advance_legalization():
         icesi_balance_value=fake.random_int(min=0, max=500),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=team,
@@ -475,12 +563,12 @@ def create_fake_billing_account():
         retention=fake.random.choice(["yes", "no"]),
         tax_payer=fake.random.choice(["yes", "no"]),
         resident=fake.random.choice(["yes", "no"]),
-        request_city=fake.city(),
+        request_city=random.choice(cities)["name"],
         address=fake.address(),
         phone_number=fake.phone_number(),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
         cex_number=fake.random_number(digits=8),
         team_id=team,
@@ -503,13 +591,13 @@ def create_fake_requisition():
         member=random.choice(team.members.all()),
         status=fake.random.choice(requestStatus),
         work=fake.job(),
-        dependence=fake.company(),
-        cenco=fake.random_int(min=1000, max=9999),
+        dependence=random.choice(dependencies),
+        cenco=random.choice(cost_centers),
         id_value=fake.random_number(digits=8),
         description=fake.text(),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
+        account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
         observations=fake.text(),
         team_id=team,
@@ -546,5 +634,56 @@ admin = User.objects.create_user(
     is_superuser=True,
 )
 admin.save()
+
+# Generar países y ciudades
+
+print("Generating countries and cities...")
+
+country_instances = {}
+for country in countries:
+    country_instance = Country(code=country["code"], name=country["name"])
+    country_instance.save()
+    country_instances[country["code"]] = country_instance
+
+for city in cities:
+    country_instance = country_instances[city["country"]]
+    city_instance = City(name=city["name"], country=country_instance)
+    city_instance.save()
+
+
+# Generar bancos
+
+print("Generating banks...")
+
+for bank in banks:
+    bank_instance = Bank(name=bank)
+    bank_instance.save()
+
+
+# Generar tipos de cuenta
+
+print("Generating account types...")
+
+for account_type in account_types:
+    account_type_instance = AccountType(name=account_type)
+    account_type_instance.save()
+
+
+# Generar dependencias
+
+print("Generating dependencies...")
+
+for dependency in dependencies:
+    dependency_instance = Dependency(name=dependency)
+    dependency_instance.save()
+
+
+# Generar centros de costo
+
+print("Generating cost centers...")
+
+for cost_center in cost_centers:
+    cost_center_instance = CostCenter(name=cost_center)
+    cost_center_instance.save()
 
 print("Done")

@@ -135,7 +135,14 @@
             <div class="col">
                 <div class="form-group">
                     <label for="requestCity">Ciudad</label>
-                    <input type="text" class="form-control" id="requestCity" name="requestCity">
+                    <select class="form-control" id="requestCity" name="requestCity" required>
+                        <option value="">Selecciona una opción</option>
+                        {% for city in cities %}
+                            {% with city_name_and_country=city.city_name|add:" ("|add:city.country_name|add:") "|add:city.country_code %}
+                                <option value="{{ city_name_and_country }}" {% if form_data.requestCity == city_name_and_country %}selected{% endif %}>{{ city_name_and_country }}</option>
+                            {% endwith %}
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="address">Dirección</label>

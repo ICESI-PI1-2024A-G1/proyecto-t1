@@ -8,8 +8,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             for (var i = 0; i < obj; i++) {
                 addRow();
             }
-        } else if (rowCount < 4) {
-            for (var i = obj; i > 4 - obj; i--) {
+        } else if (rowCount < 0) {
+            console.log(rowCount);
+            for (var i = obj; i < 0; i++) {
+                console.log(i)
                 removeRow();
             }
         }
