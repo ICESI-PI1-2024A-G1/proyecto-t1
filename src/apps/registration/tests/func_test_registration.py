@@ -47,13 +47,18 @@ class Registration(unittest.TestCase):
         pass_field.send_keys(psw)
         con_pass_field.send_keys(psw)
         rgstr_btn.click()
+        file = open("codes.txt")
+        verification_code = file.read()
 
-        time.sleep(5)
+        code_input =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "verificationCode"))
+        )    
+
+        code_btn =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button"))
+        )    
         verification_code = self.get_code_from_email()
         
-        code_input = self.driver.find_element(By.ID,"verificationCode")
-        code_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button")
-
         code_input.send_keys(verification_code)
         code_btn.click()
         success_msg = WebDriverWait(self.driver, 30).until(

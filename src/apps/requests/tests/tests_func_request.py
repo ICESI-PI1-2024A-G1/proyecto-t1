@@ -8,18 +8,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+from django.test import TestCase, Client
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from django.core import mail
+from apps.requests import views as requests_views
+from apps.teams import views as teams_views
+import re
+import time
 class Requests(TestCase):
     def setUp(self):
         
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(5)
-        self.login()
+        
 
     def tearDown(self):
         self.driver.quit()
 
     def tesst_show_request_table(self):
+        self.login("123456789")
         bread_crumbs = self.driver.find_element(By.XPATH, '//*[@id="navBarHeader"]/div/h5')
         table = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(1) span")
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(2) span")
@@ -42,6 +51,7 @@ class Requests(TestCase):
         self.assertEqual(first_child_element['textContent'], "\n                        Detalles\n                        ")
 
     def tesst_show_request_table(self):
+        self.login("123456789")
         action = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody tr td:nth-child(7) button")
         action.click()
         fld1 = WebDriverWait(self.driver, 3).until(
@@ -119,6 +129,7 @@ class Requests(TestCase):
         self.assertEqual(fld18.text, "PAGO ÚNICO")
 
     def tesst_search_request_happy(self):
+        self.login("123456789")
         input_search = self.driver.find_element(By.ID, "requestsTableSearch")
         srch = "11"
         input_search.send_keys(srch)
@@ -132,6 +143,7 @@ class Requests(TestCase):
         self.assertTrue(table.text.__contains__(srch) or table1.text.__contains__(srch) or table2.text.__contains__(srch) or table3.text.__contains__(srch) or table4.text.__contains__(srch) or table5.text.__contains__(srch) or table6.text.__contains__(srch))
 
     def tesst_search_request_notFound(self):
+        self.login("123456789")
         input_search = self.driver.find_element(By.ID, "requestsTableSearch")
         input_search.send_keys("00")
         result = self.driver.find_element(By.XPATH, '//*[@id="requestsTable"]/tbody/tr/td')
@@ -139,10 +151,12 @@ class Requests(TestCase):
 
         
     def tesst_assert_state(self):
+        self.login("123456789")
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(6)")
         self.assertTrue(table1.text == "PAGADO - CONTABILIDAD" or table1.text == "APROBADO - DECANO" or table1.text == "APROBADO - CENCO" or table1.text == "CERRADO" or table1.text == "RECHAZADO - DECANO")
 
     def tesst_show_request_table(self):
+        self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
         bread_crumbs = self.driver.find_element(By.XPATH, '//*[@id="navBarHeader"]/div/h5')
@@ -167,6 +181,7 @@ class Requests(TestCase):
         self.assertEqual(first_child_element, 'bx bx-dots-vertical-rounded')
 
     def tesst_search_request_inner(self):
+            self.login("123456789")
             intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
             intern.click()
             search = "11"
@@ -182,90 +197,211 @@ class Requests(TestCase):
             self.assertTrue(table.text.__contains__(search) or table1.text.__contains__(search) or table2.text.__contains__(search) or table3.text.__contains__(search) or table4.text.__contains__(search) or table5.text.__contains__(search) or table6.text.__contains__(search))
 
     def tesst_assert_inner_state_labels(self):
+        self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
         self.assertTrue(table1.text == "EN REVISIÓN" or table1.text == "DEVUELTO" or table1.text == "PENDIENTE" or table1.text == "RESUELTO" or table1.text == "RECHAZADO" or table1.text == "POR APROBAR")
 
     def tesst_search_request_inner_notFound(self):
+        self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
         input_search = self.driver.find_element(By.ID, "requestsTableSearch")
         input_search.send_keys("00")
         result = self.driver.find_element(By.XPATH, '//*[@id="requestsTable"]/tbody/tr/td')
-        self.assertTrue(result.text, "No se encontraron resultados")
+        self.assertEqual(result.text, "No se encontraron resultados")
 
     def tesst_review_request_happy_path(self):
-        intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
-        intern.click()
+        self.login("123456789")
+
+        self.click_inner_requests()
+
+        self.search("pendiente natalie 5 so jon")
+
+        self.click_change_state()
+
+        self.input_change_reason("Una razón")
+
+        noti = self.get_alert()
+        self.search("en natalie 5 so jon")
+        state = self.get_status()
+
+        self.assertEqual(noti.text, "El estado de la solicitud ha sido actualizado correctamente.")
+        self.assertEqual(state.text, "EN REVISIÓN")
+     
+        gestor = self.extract_gestor()
         
-        tb= self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead th:nth-child(2)")
-        tb.click()
-        table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button")
-        table1.click()
-        table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div div button:nth-child(1)")
-        table2.click()
-        mdl = WebDriverWait(self.driver, 3).until(
-            EC.visibility_of_element_located((By.ID, "detailsContent"))
-        ) 
+        self.logout()
 
-        scroll_height = mdl.size['height']
-        self.driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", mdl)
+        self.login(gestor)
+        self.search("en natalie 5 so jon")
 
-        reason_fl = self.driver.find_element(By.ID, "reason")
-        reason_fl.send_keys("Razon válida   ")
+        self.click_review_first()
+
+        mdl = self.driver.find_element(By.ID, "detailsContent")  
+
+        self.scroll_element(mdl)
+
+        self.accept_all_fields()
+
+        self.search("por natalie 5 so jon") 
+
+        table1 = self.get_status()   
+        self.assertEqual(table1.text, "POR APROBAR")
+
+    def test_review_request_return(self):
+        self.login("56843806")
+
+        self.search("en revisi breanna Requ Eric")
+
+        self.click_review_first()
+
+        user = self.driver.find_element(By.ID, "idNumber").get_attribute("value")
+        mdl = self.driver.find_element(By.ID, "detailsContent")  
+
+        self.scroll_element(mdl)
+
+        self.check_all_fields()
+
+        self.driver.find_element(By.XPATH, '//*[@id="detailsContent"]/form/div[15]/label').click()
+
+        self.driver.find_element(By.ID, "reason").send_keys("Observaciones inválidas")
+
+        self.scroll_element(mdl)
+
+        self.accept_alert((By.ID, "returnReview"))
+
+        alert = self.get_alert()
+
+        self.assertEqual(alert.text, "El estado de la solicitud ha sido actualizado correctamente.")
+        self.logout()
+        self.login(user)
+        self.search("dev breanna Requ Eric") 
+        table1 = self.get_status()   
+        self.click_review_first()
+        mdl = self.driver.find_element(By.ID, "detailsContent")  
+        self.scroll_element(mdl)
+        input(" ")
+        self.assertEqual(table1.text, "DEVUELTO")
+
+
+    def check_all_fields(self):
+        reason_fl = self.driver.find_element(By.ID, "reason").send_keys("Razon válida")
+
+        checkAll = self.driver.find_element(By.ID, "markAll")
+        checkAll.click() 
+
+    def accept_all_fields(self):
+        reason_fl = self.driver.find_element(By.ID, "reason").send_keys("Razon válida")
 
         checkAll = self.driver.find_element(By.ID, "markAll")
         checkAll.click()
 
-        completeBtn = self.driver.find_element(By.ID, "completeReview")
-        completeBtn.click()
-        input(" ")
+        self.accept_alert((By.ID, "completeReview"))
 
-    def login(self): 
+
+    def accept_alert(self, selector):
+        
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(selector)
+        ).click()
+        
+        confirmBtn = WebDriverWait(self.driver, 30).until(
+            EC.visibility_of_element_located((By.XPATH, "/html/body/div[5]/div/div[4]/div[2]/button"))
+        )    
+        confirmBtn.click()
+
+        WebDriverWait(self.driver, 30).until(
+            EC.invisibility_of_element_located((By.ID, "detailsContent"))
+        )   
+
+    def scroll_element(self, element):
+        scroll_height = element.size['height']
+        self.driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", element)
+
+    def extract_gestor(self):
+        tableUser = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(6)")
+        return self.extraer_texto(tableUser.text)
+
+    def logout(self):
+        logout = self.driver.find_element(By.XPATH, '//*[@id="layout-navbar"]/div[3]')
+        logout.click()
+
+    def get_status(self):
+        return WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)"))
+        )    
+
+    def get_alert(self):
+        return WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "toast-body"))
+        ) 
+
+    def click_change_state(self):
+        table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button")
+        table1.click()
+        table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div div button:nth-child(2)")
+        table2.click()
+        
+
+    def search(self, criteria):
+        input_search =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "requestsTableSearch"))
+            
+        )    
+        input_search.send_keys(criteria)
+
+    def input_change_reason(self, reason):
+        reasonTxt = WebDriverWait(self.driver, 3).until(
+            EC.visibility_of_element_located((By.ID, "reasonTextarea"))
+        ) 
+        reasonTxt.send_keys(reason)
+        changeBtn = self.driver.find_element(By.ID, "changeStatusBtn")
+        changeBtn.click()
+
+        confirmBtn = WebDriverWait(self.driver, 5).until(
+            EC.visibility_of_element_located((By.XPATH, "/html/body/div[5]/div/div[6]/button[1]"))
+        ) 
+        confirmBtn.click()
+
+    def click_inner_requests(self):
+        intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
+        intern.click()
+
+    def click_review_first(self):
+        table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button")
+        table1.click()
+        table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div div button:nth-child(1)")
+        table2.click()
+
+    def login(self, user): 
+        client = Client()
         self.driver.get("http://127.0.0.1:8000/")
         user_input = self.driver.find_element(By.ID,"usuario")
         pass_input = self.driver.find_element(By.ID,"contrasena")
         login_btn = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div/div[2]/form/div[2]")
-        user_input.send_keys("123456789")
+        user_input.send_keys(user)
         pass_input.send_keys("123456789")
         login_btn.click()
+        file = open("codes.txt")
+        verification_code = file.read()
 
-        time.sleep(5)
-        verification_code = self.get_code_from_email()
-        
-        code_input = self.driver.find_element(By.ID,"verificationCode")
-        code_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button")
+        code_input =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "verificationCode"))
+        )    
 
+        code_btn =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button"))
+        )    
         code_input.send_keys(verification_code)
         code_btn.click()
 
-    def get_code_from_email(self):
-        mail = imaplib.IMAP4_SSL('outlook.office365.com')
-        mail.login('ccsa_test_user@hotmail.com', 'hola1597')
-        mail.select('inbox')
+    def extraer_texto(self, texto):
+    # Define el patrón de búsqueda utilizando una expresión regular
+        patron = r'@([^)]+)'
+        # Busca todas las ocurrencias del patrón en el texto
+        coincidencias = re.findall(patron, texto)
+        # Retorna la lista de coincidencias encontradas
+        return coincidencias
 
-        _, data = mail.search(None, 'FROM', 'ccsa101010@gmail.com')
-        mail_ids = data[0].split()
-
-        latest_mail_id = mail_ids[-1]
-
-        _, datas = mail.fetch(latest_mail_id, "(RFC822)")
-        message = email.message_from_bytes(datas[0][1])
-
-        verification_code = None
-
-        if message.is_multipart():
-            for part in message.walk():
-                content_disposition = str(part.get("Content-Disposition"))
-                if "attachment" not in content_disposition:
-                    body = part.get_payload(decode=True).decode()
-                    break
-        else:
-            body = message.get_payload(decode=True).decode()
-
-            code = body.split("Su código de verificación es: ")
-            verification_code = code[1][:6]
-        mail.close()
-        return verification_code
-    

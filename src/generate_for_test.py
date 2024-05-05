@@ -86,7 +86,7 @@ for _ in range(users_amount):
     last_name = fake.last_name()
     username = id
     email = fake.email()
-    password = "12345678"
+    password = "123456789"
     user = User.objects.create_user(
         id=id,
         username=username,
