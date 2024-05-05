@@ -1,3 +1,5 @@
+{% extends 'clean-base.html' %}
+
 {% block content %}
 
 <!--Icons-->
@@ -70,19 +72,19 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <th class="col-2">Nombre del tercero de la factura</th>
-                    <th class="col-2">Identificación del tercero de la factura</th>
-                    <th class="col-2">Valor ($)</th>
-                    <th class="col-6">Concepto de la compra</th>
+                    <th class="col-1">Nombre del tercero de la factura</th>
+                    <th class="col-1">Identificación del tercero de la factura</th>
+                    <th class="col-1">Valor ($)</th>
+                    <th class="col-2 concept-column">Concepto de la compra</th>
                 </tr>
             </thead>
             <tbody>
                 {% for expense in expenses %}
                     <tr>
-                        <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled></td>
-                        <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled></td>
-                        <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled></td>
-                        <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled></td>
+                        <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled required></td>
+                        <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled required></td>
+                        <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled required></td>
+                        <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled required></td>
                     </tr>
                 {% endfor %}
                 <tr id="totals">
@@ -91,7 +93,7 @@
                 </tr>
                 <tr id="advance">
                     <td colspan="2" class="text-end">Valor del anticipo:</td>
-                    <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled></td>
+                    <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled required></td>
                 </tr>
                 <tr id="employeeBalance">
                     <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
@@ -103,12 +105,12 @@
                 </tr>
             </tbody>
         </table>
-    <div class="d-flex justify-content-center mt-3">
-        {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
-            <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
-            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
-        {% endif %}
-    </div>
+        <div class="d-flex justify-content-center mt-3">
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
