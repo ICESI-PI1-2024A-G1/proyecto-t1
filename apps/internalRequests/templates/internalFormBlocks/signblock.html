@@ -9,22 +9,18 @@
     </style>
 </head>
 
-<div class="row justify-content-center" style="margin-top: 20px;">
+<div class="row justify-content-center" style="margin-top: 80px;">
     <div class="col-md-6 mb-1 text-center">
-        <div style="border-bottom: 1px solid black; position: relative; display: flex; justify-content: center; align-items: center;" id="signature">
-            {% with signatureType=request.signatureInput|slice:":1" signatureValue=request.signatureInput|slice:"4:" %}
-                {% if signatureType == '1' %}
-                    <p style="font-family: Cathylise Janetson; font-size: 60px;">{{ signatureValue }}</p>
-                {% elif signatureType == '2' %}
-                    <img src="{{ signatureValue }}">
-                {% elif signatureType == '3' %}
-                    <img src="{{ signatureValue }}" style="max-width: 100%; height: auto;">
-                {% endif %}
-            {% endwith %}
-        </div>
-        <input type="hidden" id="signatureStatus" value="No">
+        <div style="border-bottom: 1px solid black;" id="signature" style="position: relative;"></div>
+        <input type="hidden" id="signatureStatus" name="signatureStatus" value="No">
+        <div id="signature"></div>
         <input type="file" id="signatureImage" accept="image/*" style="display: none;">
         <canvas id="signatureCanvas" width="600" height="120" style="border:1px solid #000000; display: none;"></canvas>
-        <h4 style="font-size: 1em; text-align: center;" class="mt-1">Firma del solicitante</h4>
     </div>
 </div>
+
+<!-- Scripts -->
+
+<script src="https://unpkg.com/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../../static/forms/js/sign_logic.js"></script>

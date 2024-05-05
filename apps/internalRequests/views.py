@@ -1,4 +1,3 @@
-from itertools import chain
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
@@ -13,14 +12,8 @@ from apps.teams.models import Team
 import utils.utils as utils
 from datetime import datetime
 from django.db import transaction
-from xhtml2pdf import pisa
-from io import BytesIO
-from django.template.loader import get_template
-from bs4 import BeautifulSoup
 import math
-import ast
 import json
-import os
 from django.conf import settings
 import random
 from datetime import datetime
@@ -37,9 +30,12 @@ statusMap = {
 
 User = get_user_model()
 
+
 # Get cities with countries
 def get_cities_with_countries():
-    cities_with_countries = City.objects.select_related('country').order_by('country_id').all()
+    cities_with_countries = (
+        City.objects.select_related("country").order_by("country_id").all()
+    )
 
     cities_data = [
         {
@@ -240,7 +236,7 @@ def show_requests(request):
 
     if message and message_type:
         messages.add_message(request, message_type, message)
-        return redirect('/requests')
+        return redirect("/requests")
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 
@@ -539,7 +535,7 @@ def change_final_date(request, id):
     """
     if request.method == "GET":
         curr_request = get_request_by_id(id)
-        curr_request.final_date = curr_request.final_date.strftime('%Y-%m-%d')
+        curr_request.final_date = curr_request.final_date.strftime("%Y-%m-%d")
         return render(request, "change-date.html", {"request": curr_request})
     elif request.method == "POST":
         try:
@@ -552,13 +548,18 @@ def change_final_date(request, id):
             curr_request.save()
 
             # Convertir new_final_date a un objeto datetime.date
-            new_final_date = datetime.strptime(new_final_date_str, '%Y-%m-%d').date()
+            new_final_date = datetime.strptime(new_final_date_str, "%Y-%m-%d").date()
 
             Traceability.objects.create(
                 modified_by=request.user,
                 prev_state=prev_state,
                 new_state=prev_state,
-                reason="Hubo un cambio de fecha: " + prev_date.strftime('%Y-%m-%d') + " -> " + new_final_date.strftime('%Y-%m-%d') + ".<br>Motivo: " + reason,
+                reason="Hubo un cambio de fecha: "
+                + prev_date.strftime("%Y-%m-%d")
+                + " -> "
+                + new_final_date.strftime("%Y-%m-%d")
+                + ".<br>Motivo: "
+                + reason,
                 date=datetime.now(),
                 request=id,
             )

@@ -3,11 +3,8 @@ Request views
 
 This module contains views for handling requests-related operations within the application.
 """
-from datetime import datetime
-import json
+
 import math
-import os
-import traceback
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from api.sharepoint_api import SharePointAPI
@@ -16,9 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.conf import settings
 from django.contrib.auth import get_user_model
-import utils.utils as utils
 
-from apps.teams.models import Team
 
 from django.conf import settings
 

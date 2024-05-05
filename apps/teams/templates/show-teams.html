@@ -4,93 +4,85 @@
 Equipos
 {% endblock %}
 
-{%block main_route %}Equipos{% endblock %}
-{%block secondary_route %}Ver Equipos{% endblock %}
-
 {% block content %}
 
-<div class="card-header pb-0">
-    <!-- <h2>Solicitudes</h2> -->
-    <div class="input-group mb-3">
-        <input type="text" id="teamsTableSearch" class="form-control" aria-label="Sizing example input"
-        aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
-        <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
-    </div>
-</div>
 <div class="container">
-    <div class="table-responsive card-fluid">
-        <table id="teamsTable" class="table border-top no-footer dtr-column ">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Formulario</th>
-                    <th>Líder</th>
-                    <th>Descripción</th>
-                    <th>Fecha de Creación</th>
-                    <th class="col-1">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for team in teams %}
-                <tr>
-                    <td>
-                        {{ team.id }}
-                    </td>
-                    <td>
-                        <p>
-                            {{ team.name }}
-                        </p>
-                        <p class="text-nowrap">
-                            ({{ team.length }} miembros)
-                        </p>
-                    </td>
-                    <td>
-                        {{ team.typeForm }}
-                    </td>
-                    <td>
-                        {{ team.leader }}
-                    </td>
-                    <td>
-                        {{ team.description }}
-                    </td>
-                    <td>
-                        {{ team.created_at|date:"d-m-Y" }}
-                    </td>
-                    <td>    
-                        <div class="dropdown">
-                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                              <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <button onclick="showModal('{{team.name}}', '/teams/show-members/{{team.id}}')"
-                                    class="dropdown-item"><i class='bx bx-group me-1'></i> Ver Miembros</button>
-                                {% if user.is_superuser %}
-                                <a class="dropdown-item" href="/teams/edit-team/{{team.id}}/"
-                                    ><i class="bx bx-edit-alt me-1"></i> Editar</a
-                                >
-                                <a class="dropdown-item delete-team" href="javascript:void(0);" data-team-id="{{ team.id }}"
-                                    ><i class="bx bx-trash me-1"></i> Eliminar</a
-                                >
-                                {% endif %}
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+    <h4 class="py-2 mb-4"><span class="text-muted fw-light">Equipos /</span> Ver Equipos</h4>
+    <div class="card">
+        <div class="card-header pb-0">
+            <!-- <h2>Solicitudes</h2> -->
+            <div class="input-group mb-3">
+                <input type="text" id="teamsTableSearch" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
+                <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="table-responsive">
+                <table id="teamsTable" class="table border-top no-footer dtr-column ">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Líder</th>
+                            <th>Descripción</th>
+                            <th>Fecha de Creación</th>
+                            <th class="col-1">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in teams %}
+                        <tr>
+                            <td>
+                                {{ team.id }}
+                            </td>
+                            <td>
+                                {{ team.name }}
+                            </td>
+                            <td>
+                                {{ team.leader }}
+                            </td>
+                            <td>
+                                {{ team.description }}
+                            </td>
+                            <td>
+                                {{ team.created_at|date:"d-m-Y" }}
+                            </td>
+                            <td>    
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                      <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <button onclick="showModal('Miembros del equipo {{team.name}}', '/teams/show-members/{{team.id}}')"
+                                            class="dropdown-item"><i class='bx bx-group me-1'></i> Ver Miembros</button>
+                                        <a class="dropdown-item" href="/teams/edit-team/{{team.id}}/"
+                                            ><i class="bx bx-edit-alt me-1"></i> Editar</a
+                                        >
+                                        <a class="dropdown-item delete-team" href="javascript:void(0);" data-team-id="{{ team.id }}"
+                                            ><i class="bx bx-trash me-1"></i> Eliminar</a
+                                        >
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-<div class="card-footer pb-2">
-    <div id="teamsTablePagination" class="row">
-    
+        </div>
+
+        </div>
+
+        <div class="card-footer pb-2">
+            <div id="teamsTablePagination" class="row">
+            
+            </div>
+        </div>
     </div>
 </div>
 
 {% load static %}
 <script src="{% static '/teams/js/teams.js' %}"></script>
-
 
 {% endblock %}

@@ -15,9 +15,6 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 import json
-from django.contrib import messages
-
-from apps.teams.models import Team
 
 
 User = get_user_model()
@@ -93,64 +90,20 @@ def update_user_permissions(request):
         - Returns a JSON response indicating the status of the operation.
     """
     if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-
-            for item in data:
-                user = User.objects.get(id=item["id"])
-                permission = item.get("permission")
-                if (
-                    user.is_leader
-                    and permission != "is_leader"
-                    and Team.objects.filter(leader=user).exists()
-                ):
-                    messages.error(
-                        request,
-                        f"No se puede cambiar el permiso de líder a un usuario que lidera un equipo. {user}",
-                    )
-                    return JsonResponse(
-                        {
-                            "status": "failed",
-                            "message": "No se puede cambiar el permiso de líder a un usuario que lidera un equipo.",
-                        }
-                    )
-                if user.is_member and permission != "is_member":
-                    for team in Team.objects.all():
-                        print(team.members.all())
-                        print(user)
-                        if user in team.members.all():
-                            messages.error(
-                                request,
-                                f"No se puede cambiar el permiso de miembro a un usuario que es miembro de un equipo. {user}",
-                            )
-                            return JsonResponse(
-                                {
-                                    "status": "failed",
-                                    "message": "No se puede cambiar el permiso de miembro a un usuario que es miembro de un equipo.",
-                                }
-                            )
-                if permission:
-                    user.is_leader = permission == "is_leader"
-                    user.is_member = permission == "is_member"
-                    user.is_applicant = permission == "is_applicant"
-                    user.is_none = permission == "is_none"
-                user.save()
-            messages.success(request, "Permisos actualizados correctamente.")
-            return JsonResponse(
-                {"status": "success", "message": "Permisos actualizados correctamente."}
-            )
-        except Exception as e:
-            print(e)
-            messages.error(request, "Los permisos no se pudieron actualizar.")
-            return JsonResponse(
-                {
-                    "status": "failed",
-                    "message": "Los permisos no se pudieron actualizar.",
-                }
-            )
-
+        data = json.loads(request.body)
+        for item in data:
+            user = User.objects.get(id=item["id"])
+            permission = item.get("permission")
+            if permission:
+                user.is_leader = permission == "is_leader"
+                user.is_member = permission == "is_member"
+                user.is_applicant = permission == "is_applicant"
+                user.is_none = permission == "is_none"
+            user.save()
+        return JsonResponse(
+            {"status": "success", "message": "Permisos actualizados correctamente."}
+        )
     else:
-        messages.error(request, "Los permisos no se pudieron actualizar.")
         return JsonResponse(
             {"status": "failed", "message": "Los permisos no se pudieron actualizar."}
         )

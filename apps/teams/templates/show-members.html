@@ -1,50 +1,9 @@
-{% load static %}
-
-<div class="card-header pb-0">
-    <p class="text-silent my-0">Miembros del equipo</p>
-    <h3 >{{team.name}}</h3>
-    <!-- <h2>Solicitudes</h2> -->
-    <div class="input-group mb-3">
-        <input type="text" id="membersTableSearch" class="form-control" aria-label="Sizing example input"
-        aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
-        <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
-    </div>
-</div>
 <div class="container">
-    <div class="table-responsive card-fluid">
-        <table id="membersTable" class="table border-top no-footer dtr-column ">
-            <thead>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Nombre</th>
-                    <th>Correo Electrónico</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for member in members %}
-                <tr>
-                    <td>
-                        {{ member.username }}
-                    </td>
-                    <td>
-                        <p>
-                            {{ member.first_name }} {{ member.last_name }}
-                        </p>
-                    </td>
-                    <td>
-                        {{ member.email }}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <ul class="list-group">
+        {% for member in members %}
+        <li class="list-group-item">
+            {{member}}
+        </li>
+        {% endfor %}
+    </ul>
 </div>
-
-<div class="card-footer pb-2">
-    <div id="membersTablePagination" class="row">
-    
-    </div>
-</div>
-
-<script src="{% static 'teams/js/members.js' %}"></script>

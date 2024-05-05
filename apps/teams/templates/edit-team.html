@@ -1,116 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Editar equipo{% endblock %}
-{%block main_route %}Equipos{% endblock %}
-{%block secondary_route %}Editar Equipo{% endblock %}
+{% block title %}
+Cambiar líder de equipo
+{% endblock %}
 
 {% block content %}
 
-<form method="post">
-    {% csrf_token %}
-    <div class="card-header">
-        <h2>Editar Equipo</h2>
-    </div>
-    <div class="card-body card-fluid">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="name" class="mt-2">Nombre del equipo</label>
-                    <input type="text" value="{{team.name}}" class="form-control" id="name" name="name" required>
-                </div>     
-                <div class="form-group">
-                    <label for="leader" class="mt-2">Líder</label>
-                    <select class="form-control" id="leader" name="leader" required>
-                        <option value="">...</option>
-                        {% for user in leaders %}
-                            <option {%if user.id == team.leader.id %}selected{%endif%}  value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }} (@{{user.id}}) </option>
-                        {% endfor %}
-                    </select>
-                </div>    
-                <div class="form-group">
-                    <label for="form_type" class="mt-2">Tipo de Formulario</label>
-                    <select class="form-control" id="form_type" name="form_type" required>
-                        <option value="">...</option>
-                        {% for type in form_types %}
-                            <option {%if type == team.typeForm %}selected{%endif%}  value="{{ type }}">{{ type}} </option>
-                        {% endfor %}
-                    </select>
-                </div>    
-                <div class="form-group">
-                    <label for="name" class="mt-2">Descripción</label>
-                    <textarea type="text" class="form-control" id="description" name="description" required> {{team.description}} </textarea>
-                </div>
-                <ul class="list-group" id="selectedMembersList" style="height: 30vh; overflow-y: scroll;">
-                    Miembros seleccionados:
-                    {% for member in members %}
-                        <li class="list-group-item" {% if not member in team.members.all %}style="display: none;"{% endif %}  id="selected-member-{{member.id}}">{{member}}</li>
-                    {% endfor %}
-                </ul>       
-            </div>
-            <div class="col-md-6">
-            
-                <div class="card-header px-0">
-                    <p>Añadir miembro</p>
-                    <!-- <h2>Solicitudes</h2> -->
-                    <div class="input-group mb-0">
-                        <input type="text" id="memberSelectionTableSearch" class="form-control" aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
-                        <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
+<div class="container">
+    <div class="card">
+        <div class="card-body p-4">
+            <h2>Editar Equipo</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{form.as_p}}
+                <div class="mt-4 mx-auto col-md-4 d-flex justify-content-between">
+                    <div>
+                        <a href="/teams" class="btn btn-danger">Cancelar <i class="fa fa-times"></i></a>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Guardar <i class="fa fa-user-plus"></i></button>
                     </div>
                 </div>
-                
-                <div id="memberSelectionTableContainer" class="table-responsive" style="height:30vh; overflow-y: scroll;">
-                    <table id="memberSelectionTable" class="table border-top no-footer dtr-column ">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Añadir</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for member in members %}
-                            <tr id="member_{{ member.id }}">
-                                <td class="text-center">{{ member.id }}</td>
-                                <td>{{ member.first_name }} {{member.last_name}}</td>
-                                <td>
-                                    <input type="checkbox" data-member="{{member}}" id="member-{{member.id}}" name="member-{{ member.id }}" onclick="selectMember('{{member.id}}')"  {%if member in team.members.all %}checked="checked"{%endif%}>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                
-                </div>
-                
-                <div class="card-footer">
-                    <div id="memberSelectionTablePagination" class="row">
-                    </div>
-                </div>
-
-            </div>
+            </form>
         </div>
     </div>
-    <div class="card-footer">        
-        <div class="mt-4 mx-auto col-md-4 d-flex justify-content-center">
-            <div>
-                <a href="/teams" class="btn btn-danger">Cancelar<i class="ml-2 fa fa-times"></i></a>
-            </div>
-            <div>
-                <button type="submit" class="btn btn-primary mx-2">Guardar<i class="ml-2 fa fa-user-plus"></i></button>
-            </div>
-        </div>
-    </div>
-</form>
+</div>
 
-<script>
-    $(document).ready(function() {
-        DataTableInit("memberSelectionTable",5);
-    });
-</script>
-
-{% load static %}
-<script src="{% static 'teams/js/teams.js' %}"></script>
-<script src="{% static 'teams/js/add-team.js' %}"></script>
 
 {% endblock %}

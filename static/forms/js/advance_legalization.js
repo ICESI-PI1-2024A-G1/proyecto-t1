@@ -1,19 +1,44 @@
 // adds a new row to the table
 document.addEventListener('DOMContentLoaded', (event) => {
-    var rowCount = localStorage.getItem('rowCount');
-    if (rowCount !== null) {
-        obj = rowCount - 2;
-        if (obj > 0) {
-            for (var i = 0; i < obj; i++) {
-                addRow();
-            }
-        } else if (rowCount == 1) {
-            removeRow();
-        }
-    }
+    document.getElementById('addRow').addEventListener('click', function() {
+        var table = document.querySelector('tbody');
+        var newRow = document.createElement('tr');
 
-    document.getElementById('addRow').addEventListener('click', addRow);
-    document.getElementById('removeRow').addEventListener('click', removeRow);
+        var rowNumber = table.getElementsByTagName('tr').length - 4;
+
+        for (var i = 0; i < 4; i++) {
+            var newCell = document.createElement('td');
+            var input = document.createElement('input');
+            input.type = i < 4 ? 'text' : 'number';
+            input.className = 'form-control';
+            if (i == 2) {
+                input.placeholder = '0';
+            }
+            console.log(rowNumber);
+            input.name = ['category', 'provider', 'pesos', 'concept'][i] + '_' + rowNumber;
+            newCell.appendChild(input);
+            newRow.appendChild(newCell);
+        }
+
+        var totalsRow = document.getElementById('totals');
+        table.insertBefore(newRow, totalsRow);
+
+        updateTotals();
+    });
+    // removes the last row from the table
+    document.getElementById('removeRow').addEventListener('click', function() {
+        var table = document.querySelector('tbody');
+        var rows = Array.from(table.children);
+        var totalsRowIndex = rows.findIndex(row => row.id === 'totals');
+
+        // Check if there is a row above the totals row
+        if (totalsRowIndex > 0) {
+            var rowToRemove = rows[totalsRowIndex - 1];
+            table.removeChild(rowToRemove);
+        }
+
+        updateTotals();
+    });
 });
 
 // detects changes in the input fields
@@ -22,50 +47,6 @@ document.querySelector('tbody').addEventListener('input', function(event) {
         updateTotals();
     }
 });
-
-// adds a new row to the table
-function addRow() {
-    var table = document.querySelector('tbody');
-    var newRow = document.createElement('tr');
-
-    var rowNumber = table.getElementsByTagName('tr').length - 4;
-
-    for (var i = 0; i < 4; i++) {
-        var newCell = document.createElement('td');
-        var input = document.createElement('input');
-        input.type = i < 4 ? 'text' : 'number';
-        input.className = 'form-control';
-        if (i == 2) {
-            input.placeholder = '0';
-        }
-        input.name = ['category', 'provider', 'pesos', 'concept'][i] + '_' + rowNumber;
-        input.value = form_data[input.name] || '';
-        newCell.appendChild(input);
-        newRow.appendChild(newCell);
-    }
-
-    var totalsRow = document.getElementById('totals');
-    table.insertBefore(newRow, totalsRow);
-
-    updateTotals();
-    updateRowCount();
-};
-
-// removes the last row from the table
-function removeRow() {
-    var table = document.querySelector('tbody');
-    var rows = Array.from(table.children);
-    var totalsRowIndex = rows.findIndex(row => row.id === 'totals');
-
-    // Check if there is a row above the totals row
-    if (totalsRowIndex > 0) {
-        var rowToRemove = rows[totalsRowIndex - 1];
-        table.removeChild(rowToRemove);
-    }
-
-    updateTotals();
-    updateRowCount();
-};
 
 // updates the totals row
 function updateTotals() {
@@ -92,9 +73,4 @@ function updateTotals() {
     // update "Saldo a favor del empleado" and "Saldo a favor de ICESI" fields
     document.getElementById('employeeBalanceValue').value = employeeBalance;
     document.getElementById('icesiBalanceValue').value = icesiBalance;
-}
-
-function updateRowCount() {
-    var rowCount = document.getElementById('tableAdvanceLegalization').rows.length - 5;
-    localStorage.setItem('rowCount', rowCount);
 }

@@ -2,23 +2,59 @@
     <label class="h5"><strong>Datos bancarios</strong></label>
 </div>
 
-<div class="row">
+<div class="row mb-4">
     <div class="col-md-6 mb-1">
         <label>Banco:</label>
         <select class="form-control" name="bank" required>
             <option value="">Selecciona una opción</option>
-            {% for bank in banks %}
-                <option value="{{ bank.bank_name }}" {% if form_data.bank == bank.bank_name %}selected{% endif %}>{{ bank.bank_name }}</option>
-            {% endfor %}
+            <option {% if form_data.bank == 'BANCOLOMBIA' %}selected{% endif %}>BANCOLOMBIA</option>
+            <option {% if form_data.bank == 'BANCO AGRARIO' %}selected{% endif %}>BANCO AGRARIO</option>
+            <option {% if form_data.bank == 'BANCO AV VILLAS' %}selected{% endif %}>BANCO AV VILLAS</option>
+            <option {% if form_data.bank == 'BANCO CAJA SOCIAL' %}selected{% endif %}>BANCO CAJA SOCIAL</option>
+            <option {% if form_data.bank == 'BANCO COOPERATIVO COOPCENTRAL' %}selected{% endif %}>BANCO COOPERATIVO COOPCENTRAL</option>
+            <option {% if form_data.bank == 'BANCO CREDIFINANCIERA SA.' %}selected{% endif %}>BANCO CREDIFINANCIERA SA.</option>
+            <option {% if form_data.bank == 'BANCO DAVIVIENDA' %}selected{% endif %}>BANCO DAVIVIENDA</option>
+            <option {% if form_data.bank == 'BANCO DE BOGOTÁ' %}selected{% endif %}>BANCO DE BOGOTÁ</option>
+            <option {% if form_data.bank == 'BANCO DE LAS MICROFINANZAS BANCAMIA S.A.' %}selected{% endif %}>BANCO DE LAS MICROFINANZAS BANCAMIA S.A.</option>
+            <option {% if form_data.bank == 'BANCO DE OCCIDENTE' %}selected{% endif %}>BANCO DE OCCIDENTE</option>
+            <option {% if form_data.bank == 'BANCO FALABELLA S.A.' %}selected{% endif %}>BANCO FALABELLA S.A.</option>
+            <option {% if form_data.bank == 'BANCO FINANDINA S.A.' %}selected{% endif %}>BANCO FINANDINA S.A.</option>
+            <option {% if form_data.bank == 'BANCO GNB COLOMBIA S.A' %}selected{% endif %}>BANCO GNB COLOMBIA S.A</option>
+            <option {% if form_data.bank == 'BANCO GNB SUDAMERIS' %}selected{% endif %}>BANCO GNB SUDAMERIS</option>
+            <option {% if form_data.bank == 'BANCO MUNDO MUJER' %}selected{% endif %}>BANCO MUNDO MUJER</option>
+            <option {% if form_data.bank == 'BANCO PICHINCHA' %}selected{% endif %}>BANCO PICHINCHA</option>
+            <option {% if form_data.bank == 'BANCO POPULAR' %}selected{% endif %}>BANCO POPULAR</option>
+            <option {% if form_data.bank == 'BANCO PROCREDIT' %}selected{% endif %}>BANCO PROCREDIT</option>
+            <option {% if form_data.bank == 'BANCO SANTANDER DE NEGOCIOS' %}selected{% endif %}>BANCO SANTANDER DE NEGOCIOS</option>
+            <option {% if form_data.bank == 'BANCO SERFINANZA' %}selected{% endif %}>BANCO SERFINANZA</option>
+            <option {% if form_data.bank == 'BANCO W S.A' %}selected{% endif %}>BANCO W S.A</option>
+            <option {% if form_data.bank == 'BANCOOMEVA' %}selected{% endif %}>BANCOOMEVA</option>
+            <option {% if form_data.bank == 'BANCÓLDEX S.A.' %}selected{% endif %}>BANCÓLDEX S.A.</option>
+            <option {% if form_data.bank == 'BBVA' %}selected{% endif %}>BBVA</option>
+            <option {% if form_data.bank == 'BNP PARIBAS' %}selected{% endif %}>BNP PARIBAS</option>
+            <option {% if form_data.bank == 'CITIBANK' %}selected{% endif %}>CITIBANK</option>
+            <option {% if form_data.bank == 'COLTEFINANCIERA S.A.' %}selected{% endif %}>COLTEFINANCIERA S.A.</option>
+            <option {% if form_data.bank == 'CONFIAR' %}selected{% endif %}>CONFIAR</option>
+            <option {% if form_data.bank == 'COOFINEP COOPERATIVA FINANCIERA' %}selected{% endif %}>COOFINEP COOPERATIVA FINANCIERA</option>
+            <option {% if form_data.bank == 'COOPERATIVA FINANCIERA DE ANTIOQUIA' %}selected{% endif %}>COOPERATIVA FINANCIERA DE ANTIOQUIA</option>
+            <option {% if form_data.bank == 'COTRAFA COOPERATIVA FINANCIERA' %}selected{% endif %}>COTRAFA COOPERATIVA FINANCIERA</option>
+            <option {% if form_data.bank == 'Daviplata' %}selected{% endif %}>Daviplata</option>
+            <option {% if form_data.bank == 'FINANCIERA JURISCOOP S.A. COMPAÑÍA DE FINANCIAMIENTO' %}selected{% endif %}>FINANCIERA JURISCOOP S.A. COMPAÑÍA DE FINANCIAMIENTO</option>
+            <option {% if form_data.bank == 'GIROS Y FINANZAS COMPAÑÍA DE FINANCIAMIENTO S.A.' %}selected{% endif %}>GIROS Y FINANZAS COMPAÑÍA DE FINANCIAMIENTO S.A.</option>
+            <option {% if form_data.bank == 'ITAÚ' %}selected{% endif %}>ITAÚ</option>
+            <option {% if form_data.bank == 'ITAÚ antes CorpBanca' %}selected{% endif %}>ITAÚ antes CorpBanca</option>
+            <option {% if form_data.bank == 'MIBANCO S.A.' %}selected{% endif %}>MIBANCO S.A.</option>
+            <option {% if form_data.bank == 'NEQUI' %}selected{% endif %}>NEQUI</option>
+            <option {% if form_data.bank == 'Rappipay' %}selected{% endif %}>Rappipay</option>
+            <option {% if form_data.bank == 'Scotiabank Colpatria S.A' %}selected{% endif %}>Scotiabank Colpatria S.A</option>
         </select>
     </div>
     <div class="col-md-6 mb-1">
         <label>Tipo de cuenta:</label>
         <select class="form-control" name="accountType" required>
             <option value="">Selecciona una opción</option>
-            {% for account_type in account_types %}
-                <option value="{{ account_type.account_type_name }}" {% if form_data.accountType == account_type.account_type_name %}selected{% endif %}>{{ account_type.account_type_name }}</option>
-            {% endfor %}
+            <option value="Ahorros" {% if form_data.accountType == 'Ahorros' %}selected{% endif %}>Ahorros</option>
+            <option value="Corriente" {% if form_data.accountType == 'Corriente' %}selected{% endif %}>Corriente</option>
         </select>
     </div>
 </div>
