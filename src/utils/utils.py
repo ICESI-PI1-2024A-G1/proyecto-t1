@@ -4,9 +4,12 @@ from django.template.loader import render_to_string
 import random
 import string
 
-verification_codes = {} 
+verification_codes = {}
 
-def send_verification_email(request, subject, bigSubject, email, message, attachment=None):
+
+def send_verification_email(
+    request, subject, bigSubject, email, message, attachments=None
+):
     """
     Sends a verification email using Django's EmailMessage.
 
@@ -35,8 +38,9 @@ def send_verification_email(request, subject, bigSubject, email, message, attach
         email if isinstance(email, list) else [email],
     )
 
-    if attachment is not None:
-        email.attach('Solicitud.pdf', attachment, 'application/pdf')
+    if attachments:
+        for attachment in attachments:
+            email.attach(attachment["name"], attachment["content"], attachment["type"])
 
     # Email sender
     email.fail_silently = False

@@ -68,50 +68,11 @@
         }
     </style>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover">
-            <thead>
-                <tr>
-                    <th class="col-1">Nombre del tercero de la factura</th>
-                    <th class="col-1">Identificación del tercero de la factura</th>
-                    <th class="col-1">Valor ($)</th>
-                    <th class="col-2 concept-column">Concepto de la compra</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for expense in expenses %}
-                    <tr>
-                        <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled required></td>
-                        <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled required></td>
-                        <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled required></td>
-                        <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled required></td>
-                    </tr>
-                {% endfor %}
-                <tr id="totals">
-                    <td colspan="2" class="text-end">Total de gastos:</td>
-                    <td><input id="total" name="total" type="number" class="form-control" placeholder="0" value="{{ request.total|floatformat:"-0" }}" disabled></td>
-                </tr>
-                <tr id="advance">
-                    <td colspan="2" class="text-end">Valor del anticipo:</td>
-                    <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled required></td>
-                </tr>
-                <tr id="employeeBalance">
-                    <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
-                    <td><input id="employeeBalanceValue" name="employeeBalanceValue" type="number" class="form-control" placeholder="0" value="{{ request.employee_balance_value|floatformat:"-0" }}" disabled></td>
-                </tr>
-                <tr id="icesiBalance">
-                    <td colspan="2" class="text-end">Saldo a favor de ICESI:</td>
-                    <td><input id="icesiBalanceValue" name="icesiBalanceValue" type="number" class="form-control" placeholder="0" value="{{ request.icesi_balance_value|floatformat:"-0" }}" disabled></td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="d-flex justify-content-center mt-3">
-            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
-                <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
-                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
-            {% endif %}
-        </div>
-    </div>
+    {% if showTable %}
+        {% include 'tables/advance_legalization.html' with expenses=expenses user=user %}
+    {% else %}
+    <p>La tabla se encuentra en el archivo adjunto</p>
+    {% endif %}
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
