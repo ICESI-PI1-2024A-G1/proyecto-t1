@@ -8,17 +8,8 @@ pip install -r requirements.txt
 #install npm dependencies
 npm install
 
-# ls -l
-
-# # Apply any outstanding database migrations
-# python manage.py migrate
-
-# python makemigrations utils
-
-# python manage.py migrate utils
-
 # Convert static asset files
-# python manage.py collectstatic --no-input
+python manage.py collectstatic --no-input
 
 
 # Make users and data
