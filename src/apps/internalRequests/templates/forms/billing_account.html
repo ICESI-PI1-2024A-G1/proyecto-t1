@@ -213,7 +213,7 @@
             <div class="form-group">
                 <label for="phoneNumber">Teléfono</label>
                 <div class="d-flex justify-content-between">
-                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="{{ request.phone_number }}" disabled>
+                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="{{ request.phone_number }}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" disabled>
                     {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                         <input type="checkbox" class="btn-check" id="btncheckPhoneNumber" name="cellphoneCheck" data-message="Teléfono">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPhoneNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
