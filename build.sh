@@ -8,10 +8,10 @@ pip install -r requirements.txt
 #install npm dependencies
 npm install
 
+ls -l
+
 # Apply any outstanding database migrations
 python manage.py migrate
-
-ls -l
 
 python makemigrations utils
 
