@@ -199,7 +199,7 @@ def travel_advance_request(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_advance_request.html", context
+                request, "userForms/travel_advance_request.html", {"today": date.today().isoformat()}
             )
 
 
@@ -297,7 +297,7 @@ def travel_expense_legalization(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_expense_legalization.html", context
+                request, "userForms/travel_expense_legalization.html", {"today": date.today().isoformat()}
             )
 
 
@@ -375,7 +375,7 @@ def advance_legalization(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/advance_legalization.html", context
+                request, "userForms/advance_legalization.html", {"today": date.today().isoformat()}
             )
 
 
@@ -439,7 +439,7 @@ def billing_account(request):
             return render(
                 request,
                 "userForms/billing_account.html",
-                context,
+                {"today": date.today().isoformat()},
             )
 
 
@@ -492,4 +492,4 @@ def requisition(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
-            return render(request, "userForms/requisition.html", context)
+            return render(request, "userForms/requisition.html", {"today": date.today().isoformat()})
