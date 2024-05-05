@@ -19,4 +19,4 @@ python manage.py migrate utils
 python manage.py collectstatic --no-input
 
 # Make users and data
-python generate.py shell
+# python generate.py shell
