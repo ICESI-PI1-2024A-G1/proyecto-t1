@@ -320,7 +320,6 @@ def change_status(request, id):
                         team_id.leader.email,
                         f"Hola, el usuario identificado como {request.user} del equipo {team_id} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
                     )
-
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
@@ -536,6 +535,8 @@ def change_final_date(request, id):
 @csrf_exempt
 @login_required
 def detail_request(request, id, pdf=False, save_to_file=False):
+    # pdf = True
+    # save_to_file = True
     """
     Renders a page displaying details of a specific request.
 
@@ -554,16 +555,17 @@ def detail_request(request, id, pdf=False, save_to_file=False):
     """
     request_data = get_request_by_id(id)
     context = {"request": request_data}
-
+    table = None
     # Obtain bank, account type, city, dependence, and cost center data
     context.update(create_context())
-
+    context["showTable"] = not pdf
     # Use the request type to determine which template to render
     if isinstance(request_data, AdvanceLegalization):
         expenses = AdvanceLegalization_Table.objects.filter(
             general_data_id=request_data.id
         )
         context["expenses"] = expenses
+        table = "tables/advance_legalization.html"
         template = "forms/advance_legalization.html"
     elif isinstance(request_data, BillingAccount):
         context["include_cex"] = True
@@ -579,6 +581,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
             travel_info_id=request_data.id
         )
         context["expenses"] = expenses
+        table = "tables/travel_expense_legalization.html"
         template = "forms/travel_expense_legalization.html"
     else:
         template = "forms/default_form.html"
@@ -597,14 +600,22 @@ def detail_request(request, id, pdf=False, save_to_file=False):
         css_file_path = os.path.join(
             settings.BASE_DIR, "static", "general", "css", "bootstrap.css"
         )
-        template = get_template(template)
-        html = template.render(context)
+        css_horizontal = os.path.join(
+            settings.BASE_DIR, "static", "general", "css", "horizontal.css"
+        )
+        print(css_horizontal)
+
+        template_r = get_template(template)
+        html = template_r.render(context)
         if save_to_file:
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 out_pdf = tmp_file.name
                 # Convierte la plantilla HTML en PDF usando weasyprint
                 pdf_bytes = HTML(string=html).write_pdf(
-                    out_pdf, stylesheets=[css_file_path], presentational_hints=True
+                    out_pdf,
+                    stylesheets=[css_file_path],
+                    presentational_hints=True,
+                    page_size="letter",
                 )
                 # Lee el PDF generado y envíalo como respuesta HTTP
                 with open(out_pdf, "rb") as pdf_file:
@@ -616,15 +627,43 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                     )
                     return response
         else:
+            pdfs = []
+            # render table
+            template_r = get_template(template)
+            html = template_r.render(context)
             pdf_bytes = HTML(string=html).write_pdf(
-                stylesheets=[css_file_path], presentational_hints=True
+                stylesheets=[css_file_path],
+                presentational_hints=True,
+                page_size="letter",
             )
+            pdfs.append(
+                {
+                    "name": f"Solicitud {id}",
+                    "content": pdf_bytes,
+                    "type": "application/pdf",
+                }
+            )
+            if table:
+                template_r = get_template(table)
+                html = template_r.render(context)
+                pdf_bytes = HTML(string=html).write_pdf(
+                    stylesheets=[css_horizontal, css_file_path],
+                    presentational_hints=True,
+                    page_size="letter",
+                )
+                pdfs.append(
+                    {
+                        "name": f"Tabla {id}",
+                        "content": pdf_bytes,
+                        "type": "application/pdf",
+                    }
+                )
+
             addresses = ["ccsa101010@gmail.com"]
             try:
                 leader_email = Team.objects.get(
                     typeForm=settings.FORM_TYPES[request_data.__class__.__name__]
                 ).leader.email
-                print(leader_email)
                 addresses.append(leader_email)
             except:
                 pass
@@ -635,7 +674,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                 "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
                 addresses,
                 f"Hola, el equipo de Contabilidad de la Universidad Icesi te envía el siguiente archivo para ser revisado. Este archivo contiene detalles de la solicitud {id} que ha sido actualizada recientemente. Por favor, revisa el archivo adjunto y haznos saber si tienes alguna pregunta o necesitas más información. Gracias por tu atención a este asunto.",
-                pdf_bytes,
+                pdfs,
             )
     else:
         # Renderizar la plantilla HTML normalmente
@@ -705,7 +744,6 @@ def assign_request(request, request_id):
     else:
         form_type = None
 
-    print(form_type)
     if request.method == "GET":
         if form_type is not None:
             teams = Team.objects.filter(leader=request.user)

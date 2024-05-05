@@ -10,7 +10,7 @@
 </head>
 
 <div class="row justify-content-center" style="margin-top: 20px;">
-    <div class="col-md-6 mb-1 text-center">
+    <div class="col-md-6 mb-1 text-center mx-auto">
         <div style="border-bottom: 1px solid black; position: relative; display: flex; justify-content: center; align-items: center;" id="signature">
             {% with signatureType=request.signatureInput|slice:":1" signatureValue=request.signatureInput|slice:"4:" %}
                 {% if signatureType == '1' %}
@@ -31,6 +31,6 @@
         <input type="hidden" id="signatureStatus" value="No">
         <input type="file" id="signatureImage" accept="image/*" style="display: none;">
         <canvas id="signatureCanvas" width="600" height="120" style="border:1px solid #000000; display: none;"></canvas>
-        <h4 style="font-size: 1em; text-align: center;" class="mt-1">Firma del solicitante</h4>
+        <h4 style="font-size: 1em; text-align: center; margin-top:0.5rem">Firma del solicitante</h4>
     </div>
 </div>
