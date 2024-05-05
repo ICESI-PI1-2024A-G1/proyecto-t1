@@ -3,7 +3,7 @@ const DataTableInit = (id, pageLength=4) => {
         "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Todos"]],
         "pageLength":pageLength,
         "language": {
-            "url": "/static/general/json/datatables-ES.json"
+            "url": "https://ccsa-accounting-bucket.s3.amazonaws.com/general/json/datatables-ES.json",
         },
         // "searching": false,
         // dom: '<"table-wrapper"f>tip'
