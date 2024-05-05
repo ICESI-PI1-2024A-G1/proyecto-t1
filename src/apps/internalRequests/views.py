@@ -1,9 +1,11 @@
 from itertools import chain
 from django.contrib.auth.decorators import login_required
+from django.test import Client
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from apps.forms.models import *
@@ -37,9 +39,12 @@ statusMap = {
 
 User = get_user_model()
 
+
 # Get cities with countries
 def get_cities_with_countries():
-    cities_with_countries = City.objects.select_related('country').order_by('country_id').all()
+    cities_with_countries = (
+        City.objects.select_related("country").order_by("country_id").all()
+    )
 
     cities_data = [
         {
@@ -240,7 +245,7 @@ def show_requests(request):
 
     if message and message_type:
         messages.add_message(request, message_type, message)
-        return redirect('/requests')
+        return redirect("/requests")
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 
@@ -291,7 +296,7 @@ def change_status(request, id):
             new_reason = request.POST.get("reason")
             prev_status = curr_request.status
             curr_request.status = new_status
-            team_id = curr_request.team_id.id
+            team_id = curr_request.team_id
 
             Traceability.objects.create(
                 modified_by=request.user,
@@ -302,25 +307,25 @@ def change_status(request, id):
                 request=id,
             )
 
-            if not math.isnan(team_id):
-                team = Team.objects.filter(id=team_id)
-                if team.exists():
-                    if request.user.is_superuser:
-                        utils.send_verification_email(
-                            request,
-                            f"Actualización del estado de la solicitud {curr_request.id}",
-                            "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                            team[0].leader.email,
-                            f"Hola, el Administrador del Sistema ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
-                        )
-                    else:
-                        utils.send_verification_email(
-                            request,
-                            f"Actualización del estado de la solicitud {curr_request.id}",
-                            "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                            team[0].leader.email,
-                            f"Hola, el usuario identificado como {request.user} del equipo {team[0]} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
-                        )
+            if team_id:
+                print(team_id.leader)
+                print(team_id.leader.email)
+                if request.user.is_superuser:
+                    utils.send_verification_email(
+                        request,
+                        f"Actualización del estado de la solicitud {curr_request.id}",
+                        "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                        team_id.leader.email,
+                        f"Hola, el Administrador del Sistema ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
+                    )
+                else:
+                    utils.send_verification_email(
+                        request,
+                        f"Actualización del estado de la solicitud {curr_request.id}",
+                        "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                        team_id.leader.email,
+                        f"Hola, el usuario identificado como {request.user} del equipo {team_id} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
+                    )
 
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
@@ -342,57 +347,10 @@ def change_status(request, id):
                 else:
                     form_type = None
 
-                """
-                # Render the HTML file with curr_request as context
-                template = get_template(html_file_path)
-                html_string = template.render({"request": curr_request})
-
-                # Parse the HTML with BeautifulSoup
-                soup = BeautifulSoup(html_string, "html.parser")
-
-                # Find all input, textarea, and select elements that are not inside a table
-                inputs = soup.select(
-                    ":not(table) input, :not(table) textarea, :not(table) select"
-                )
-
-                # Replace each input, textarea, or select element with a p element containing the input's value
-                for input_elem in inputs:
-                    if input_elem.name == "input":
-                        value = input_elem.get("value", "")
-                    elif input_elem.name == "textarea":
-                        value = input_elem.string or ""
-                    else:  # select
-                        selected_option = input_elem.find("option", selected=True)
-                        value = (
-                            selected_option.get("value", "") if selected_option else ""
-                        )
-                    p_elem = soup.new_tag("p")
-                    p_elem.string = value
-                    input_elem.replace_with(p_elem)
-
-                # Convert the modified HTML to a string
-                html_string = str(soup)
-
                 try:
-                    # Convert the rendered HTML string to PDF
-                    pdf_io = BytesIO()
-                    pisa.CreatePDF(html_string, dest=pdf_io)
+                    detail_request(request, id, pdf=True)
                 except Exception as e:
-                    print(f"Unexpected error: {e}")
-                else:
-                    # Send the email with the PDF as an attachment
-                    utils.send_verification_email(
-                        request,
-                        f"Archivo para revisión de la solicitud {curr_request.id}",
-                        "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                        "ccsa101010@gmail.com",
-                        f"Hola, el equipo de Contabilidad de la Universidad Icesi te envía el siguiente archivo para ser revisado. Este archivo contiene detalles de la solicitud {curr_request.id} que ha sido actualizada recientemente. Por favor, revisa el archivo adjunto y haznos saber si tienes alguna pregunta o necesitas más información. Gracias por tu atención a este asunto.",
-                        pdf_io.getvalue(),
-                    )
-
-                    print(f"Email sent to {team[0].leader.email}")
-                """
-                # Simulate SharePoint request
+                    print(e)
                 faculty = [
                     "Ciencias Administrativas y económicas",
                     "Ingeniería, Diseño y Ciencias Aplicadas",
@@ -481,7 +439,7 @@ def change_status(request, id):
                 SharePoint.objects.create(
                     status=random.choice(status_options),
                     manager=curr_request.member,
-                    team=curr_request.team_id.id,
+                    team=curr_request.team_id.id if curr_request.team_id else None,
                     initial_date=datetime.now(),
                     final_date=datetime.now(),
                     fullname=fullname,
@@ -578,7 +536,7 @@ def change_final_date(request, id):
 @never_cache
 @csrf_exempt
 @login_required
-def detail_request(request, id):
+def detail_request(request, id, pdf=False, save_to_file=False):
     """
     Renders a page displaying details of a specific request.
 
@@ -633,8 +591,48 @@ def detail_request(request, id):
     ) and request_data.status == "EN REVISIÓN":
         context["canReview"] = True
 
-    return render(request, template, context)
+    
+    from django_weasyprint import WeasyTemplateResponse
+    from weasyprint import HTML
+    import tempfile
+    if pdf:
+        context["pdf"] = True
+        context["user"] = request.user
+        context["user"].is_applicant = True
+        css_file_path = os.path.join(settings.BASE_DIR, "static" , "general","css", "bootstrap.css")
+        template = get_template(template)
+        html = template.render(context)
+        if save_to_file:
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                out_pdf = tmp_file.name
+                # Convierte la plantilla HTML en PDF usando weasyprint
+                pdf_bytes = HTML(string=html).write_pdf(out_pdf, stylesheets=[css_file_path], presentational_hints=True)
+                # Lee el PDF generado y envíalo como respuesta HTTP
+                with open(out_pdf, 'rb') as pdf_file:
+                    response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+                    response['Content-Disposition'] = 'attachment; filename="archivo.pdf"'
+                    return response
+        else:
+            pdf_bytes = HTML(string=html).write_pdf(stylesheets=[css_file_path], presentational_hints=True)
+            addresses = ["ccsa101010@gmail.com"]
+            try:
+                leader_email = Team.objects.get(typeForm=settings.FORM_TYPES[request_data.__class__.__name__]).leader.email
+                print(leader_email)
+                addresses.append(leader_email)
+            except:
+                pass
 
+            utils.send_verification_email(
+                request,
+                f"Archivo para revisión de la solicitud {id}",
+                "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                addresses,
+                f"Hola, el equipo de Contabilidad de la Universidad Icesi te envía el siguiente archivo para ser revisado. Este archivo contiene detalles de la solicitud {id} que ha sido actualizada recientemente. Por favor, revisa el archivo adjunto y haznos saber si tienes alguna pregunta o necesitas más información. Gracias por tu atención a este asunto.",
+                pdf_bytes,
+            )
+    else:
+        # Renderizar la plantilla HTML normalmente
+        return render(request, template, context)
 
 @csrf_exempt
 @login_required

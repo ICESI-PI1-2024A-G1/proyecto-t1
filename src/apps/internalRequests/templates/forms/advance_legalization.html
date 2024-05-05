@@ -1,3 +1,5 @@
+{% extends 'clean-base.html' %}
+
 {% block content %}
 
 <!--Icons-->
@@ -70,10 +72,10 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <th class="col-2">Nombre del tercero de la factura</th>
-                    <th class="col-2">Identificación del tercero de la factura</th>
-                    <th class="col-2">Valor ($)</th>
-                    <th class="col-6">Concepto de la compra</th>
+                    <th class="col-1">Nombre del tercero de la factura</th>
+                    <th class="col-1">Identificación del tercero de la factura</th>
+                    <th class="col-1">Valor ($)</th>
+                    <th class="col-2 concept-column">Concepto de la compra</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,12 +105,12 @@
                 </tr>
             </tbody>
         </table>
-    <div class="d-flex justify-content-center mt-3">
-        {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
-            <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
-            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
-        {% endif %}
-    </div>
+        <div class="d-flex justify-content-center mt-3">
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                <input type="checkbox" class="btn-check" id="btncheckTable" name="tableCheck" data-message="Tabla de valores">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTable"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>

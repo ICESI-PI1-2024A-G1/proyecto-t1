@@ -439,7 +439,7 @@ def billing_account(request):
             return render(
                 request,
                 "userForms/billing_account.html",
-                {"include_cex": True},
+                context,
             )
 
 
