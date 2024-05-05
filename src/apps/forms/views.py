@@ -25,7 +25,9 @@ def get_next_id():
 
 # Get cities with countries
 def get_cities_with_countries():
-    cities_with_countries = City.objects.select_related('country').order_by('country_id').all()
+    cities_with_countries = (
+        City.objects.select_related("country").order_by("country_id").all()
+    )
 
     cities_data = [
         {
@@ -127,11 +129,10 @@ def travel_advance_request(request):
     context = create_context()
 
     if request.method == "GET":
-        return render(
-            request, "userForms/travel_advance_request.html", context
-        )
+        return render(request, "userForms/travel_advance_request.html", context)
     else:
         form_data = request.POST
+        context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
@@ -197,9 +198,7 @@ def travel_advance_request(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
-            return render(
-                request, "userForms/travel_advance_request.html", context
-            )
+            return render(request, "userForms/travel_advance_request.html", context)
 
 
 @login_required
@@ -209,11 +208,14 @@ def travel_expense_legalization(request):
 
     if request.method == "GET":
         return render(
-            request, "userForms/travel_expense_legalization.html", context,
+            request,
+            "userForms/travel_expense_legalization.html",
+            context,
         )
     else:
         form_data = request.POST
-        
+        context["form_data"] = form_data
+
         print(form_data.dict())
 
         if form_data.get("signatureStatus") != "Yes":
@@ -308,6 +310,7 @@ def advance_legalization(request):
         return render(request, "userForms/advance_legalization.html", context)
     else:
         form_data = request.POST
+        context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
@@ -371,9 +374,7 @@ def advance_legalization(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
-            return render(
-                request, "userForms/advance_legalization.html", context
-            )
+            return render(request, "userForms/advance_legalization.html", context)
 
 
 @login_required
@@ -390,6 +391,7 @@ def billing_account(request):
         )
     else:
         form_data = request.POST
+        context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
@@ -448,6 +450,7 @@ def requisition(request):
         return render(request, "userForms/requisition.html", context)
     else:
         form_data = request.POST
+        context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
