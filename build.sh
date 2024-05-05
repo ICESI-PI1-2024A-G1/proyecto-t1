@@ -7,10 +7,10 @@ pip install -r requirements.txt
 
 npm install
 
+# Apply any outstanding database migrations
+python manage.py migrate
+
 # Convert static asset files
 python manage.py collectstatic --no-input
 
 python generate.py shell
-
-# Apply any outstanding database migrations
-python manage.py migrate
