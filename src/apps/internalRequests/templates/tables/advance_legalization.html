@@ -14,7 +14,7 @@
                     <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled required></td>
                     <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled required></td>
                     <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled required></td>
-                    <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled required></td>
+                    <td><textarea class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled required>{{ expense.concept }}</textarea></td>
                 </tr>
             {% endfor %}
             <tr id="totals">

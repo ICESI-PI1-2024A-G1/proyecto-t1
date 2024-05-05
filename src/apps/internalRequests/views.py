@@ -292,15 +292,6 @@ def change_status(request, id):
             curr_request.status = new_status
             team_id = curr_request.team_id
 
-            Traceability.objects.create(
-                modified_by=request.user,
-                prev_state=prev_status,
-                new_state=new_status,
-                reason=new_reason,
-                date=datetime.now(),
-                request=id,
-            )
-
             if team_id:
                 print(team_id.leader)
                 print(team_id.leader.email)
@@ -429,10 +420,21 @@ def change_status(request, id):
                 else:
                     cenco = "No aplica"
 
+                team_id = Team.objects.all()[0]
+                try:
+                    team_id = (
+                        curr_request.team_id
+                        if curr_request.team_id
+                        else Team.objects.get(leader=request.user)
+                    )
+                except:
+                    pass
                 SharePoint.objects.create(
                     status=random.choice(status_options),
-                    manager=curr_request.member,
-                    team=curr_request.team_id.id if curr_request.team_id else None,
+                    manager=(
+                        curr_request.member if curr_request.member else request.user
+                    ),
+                    team=team_id.id,
                     initial_date=datetime.now(),
                     final_date=datetime.now(),
                     fullname=fullname,
@@ -454,6 +456,14 @@ def change_status(request, id):
             # if curr_request.status in ["DEVUELTO", "RECHAZADO", "RESUELTO"]:
             #     curr_request.member = None
             curr_request.save()
+            Traceability.objects.create(
+                modified_by=request.user,
+                prev_state=prev_status,
+                new_state=new_status,
+                reason=new_reason,
+                date=datetime.now(),
+                request=id,
+            )
             return JsonResponse(
                 {
                     "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."

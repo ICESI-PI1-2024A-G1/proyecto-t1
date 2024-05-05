@@ -17,10 +17,10 @@
         <tbody>
             {% for expense in expenses %}
                 <tr>
-                    <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" id="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled required></td>
-                    <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" id="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled required></td>
-                    <td><input type="text" class="form-control" name="nit_{{ forloop.counter0 }}" id="nit_{{ forloop.counter0 }}" value="{{ expense.nit }}" disabled required></td>
-                    <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" id="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled></td>
+                    <td><textarea class="form-control" name="category_{{ forloop.counter0 }}" id="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled required>{{ expense.category }}</textarea></td>
+                    <td><textarea class="form-control" name="provider_{{ forloop.counter0 }}" id="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled required>{{ expense.provider }}</textarea></td>
+                    <td><textarea class="form-control" name="nit_{{ forloop.counter0 }}" id="nit_{{ forloop.counter0 }}" value="{{ expense.nit }}" disabled required>{{ expense.nit }}</textarea></td>
+                    <td><textarea class="form-control" name="concept_{{ forloop.counter0 }}" id="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled>{{ expense.concept }}</textarea></td>
                     <td><input type="text" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" id="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled required></td>
                     <td><input type="text" class="form-control" placeholder="0" name="dollars_{{ forloop.counter0 }}" id="dollars_{{ forloop.counter0 }}" value="{{ expense.dollars|floatformat:"-0" }}" disabled required></td>
                     <td><input type="text" class="form-control" placeholder="0" name="euros_{{ forloop.counter0 }}" id="euros_{{ forloop.counter0 }}" value="{{ expense.euros|floatformat:"-0" }}" disabled required></td>
