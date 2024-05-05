@@ -638,7 +638,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
             )
             pdfs.append(
                 {
-                    "name": f"Solicitud {id}",
+                    "name": f"Solicitud {id}.pdf",
                     "content": pdf_bytes,
                     "type": "application/pdf",
                 }
@@ -653,7 +653,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                 )
                 pdfs.append(
                     {
-                        "name": f"Tabla {id}",
+                        "name": f"Tabla {id}.pdf",
                         "content": pdf_bytes,
                         "type": "application/pdf",
                     }

@@ -11,10 +11,10 @@
         <tbody>
             {% for expense in expenses %}
                 <tr>
-                    <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled></td>
-                    <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled></td>
-                    <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled></td>
-                    <td><textarea class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled>{{ expense.concept }}</textarea></td>
+                    <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled required></td>
+                    <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled required></td>
+                    <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled required></td>
+                    <td><input type="text" class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled required></td>
                 </tr>
             {% endfor %}
             <tr id="totals">
@@ -23,7 +23,7 @@
             </tr>
             <tr id="advance">
                 <td colspan="2" class="text-end">Valor del anticipo:</td>
-                <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled></td>
+                <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled required></td>
             </tr>
             <tr id="employeeBalance">
                 <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
