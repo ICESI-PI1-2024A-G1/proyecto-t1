@@ -111,7 +111,7 @@ class Internal_requests_test(TestCase):
         table1 = self.get_status()   
         self.assertEqual(table1.text, "POR APROBAR")
 
-    def tesst_review_request_return(self):
+    def test_review_request_return(self):
         self.login("56843806")
 
         self.search("en revisi")
