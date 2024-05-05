@@ -77,7 +77,7 @@
             <div class="form-group">
                 <label for="value">Valor (en pesos colombianos $)</label>
                 <div class="d-flex justify-content-between">
-                    <input type="text" class="form-control" id="value" name="value" value="{{ request.value|floatformat:0 }}" disabled>
+                    <input type="number" class="form-control" id="value" name="value" value="{{ request.value|floatformat:0 }}" min="0" disabled>
                     {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                         <input type="checkbox" class="btn-check" id="btncheck4" name="valueCheck" data-message="Valor">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck4" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
