@@ -11,6 +11,10 @@ npm install
 # Apply any outstanding database migrations
 python manage.py migrate
 
+python makemigrations utils
+
+python manage.py migrate utils
+
 # Convert static asset files
 python manage.py collectstatic --no-input
 
