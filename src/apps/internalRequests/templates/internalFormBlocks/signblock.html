@@ -22,9 +22,9 @@
                     </style>    
                     <p class="sign-block" style="font-family: Cathylise Janetson; font-size: 60px;">{{ signatureValue }}</p>
                 {% elif signatureType == '2' %}
-                    <img src="{{ signatureValue }}">
+                    <img style="max-height:150px" src="{{ signatureValue }}">
                 {% elif signatureType == '3' %}
-                    <img src="{{ signatureValue }}" style="max-width: 100%; height: auto;">
+                    <img style="max-height:150px" src="{{ signatureValue }}">
                 {% endif %}
             {% endwith %}
         </div>

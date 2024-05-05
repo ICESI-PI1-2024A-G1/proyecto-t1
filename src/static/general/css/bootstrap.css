@@ -347,14 +347,15 @@ input[type="radio"] {
     border-color: #ccc;
 }
 
-/* @font-face {
+@font-face {
     font-family: 'Cathylise Janetson';
-    src: url("../../forms/fonts/Cathylise Janetson.otf")
-} */
+    src: url("../../forms/fonts/Cathylise Janetson.otf");
+    font-display: swap;
+}
 
 
 .sign-block {
-    /* font-family: Cathylise Janetson !important; */
+    font-family: Cathylise Janetson !important;
     font-size: 2rem !important;
     margin-top:0;
     margin-bottom: 0;
