@@ -200,6 +200,12 @@ def show_requests(request):
     elif "reviewDone" in request.GET:
         message = "El formulario ha sido revisado."
         message_type = messages.SUCCESS
+    elif "changeFinalDateDone" in request.GET:
+        message = "La fecha final de la solicitud ha sido actualizada correctamente."
+        message_type = messages.SUCCESS
+    elif "changeFinalDateFailed" in request.GET:
+        message = "No se pudo actualizar la fecha final de la solicitud."
+        message_type = messages.ERROR
 
     requests_data = get_all_requests()
     print(request.user.is_leader)
@@ -461,6 +467,65 @@ def change_status(request, id):
                 }
             )
 
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
+            )
+
+
+@csrf_exempt
+@login_required
+def change_final_date(request, id):
+    """
+    Allows users to change the final date of a request.
+
+    HTTP Methods:
+    - GET: Renders a form to change the final date of the request.
+    - POST: Handles form submission, updates the final date of the request, and records traceability.
+
+    Dependencies:
+    - Models: For accessing request data in the database.
+    - Traceability: Model for recording changes in request status.
+
+    Parameters:
+    - request: Django request object.
+    - id: ID of the request to be updated.
+
+    Returns:
+    - JsonResponse: JSON response indicating the result of the operation.
+    """
+    if request.method == "GET":
+        curr_request = get_request_by_id(id)
+        curr_request.final_date = curr_request.final_date.strftime('%Y-%m-%d')
+        return render(request, "change-date.html", {"request": curr_request})
+    elif request.method == "POST":
+        try:
+            curr_request = get_request_by_id(id)
+            new_final_date_str = request.POST.get("newFinalDate")
+            reason = request.POST.get("reason")
+            prev_state = curr_request.status
+            prev_date = curr_request.final_date
+            curr_request.final_date = new_final_date_str
+            curr_request.save()
+
+            # Convertir new_final_date a un objeto datetime.date
+            new_final_date = datetime.strptime(new_final_date_str, '%Y-%m-%d').date()
+
+            Traceability.objects.create(
+                modified_by=request.user,
+                prev_state=prev_state,
+                new_state=prev_state,
+                reason="Hubo un cambio de fecha: " + prev_date.strftime('%Y-%m-%d') + " -> " + new_final_date.strftime('%Y-%m-%d') + ".<br>Motivo: " + reason,
+                date=datetime.now(),
+                request=id,
+            )
+
+            return JsonResponse(
+                {
+                    "message": f"La fecha final de la solicitud {id} ha sido actualizada correctamente."
+                }
+            )
         except Exception as e:
             print(e)
             return JsonResponse(
