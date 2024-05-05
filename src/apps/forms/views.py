@@ -132,6 +132,7 @@ def travel_advance_request(request):
         )
     else:
         form_data = request.POST
+        context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
@@ -213,6 +214,7 @@ def travel_expense_legalization(request):
         )
     else:
         form_data = request.POST
+        context["form_data"] = form_data
         
         print(form_data.dict())
 
@@ -308,6 +310,7 @@ def advance_legalization(request):
         return render(request, "userForms/advance_legalization.html", context)
     else:
         form_data = request.POST
+        context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
@@ -390,6 +393,7 @@ def billing_account(request):
         )
     else:
         form_data = request.POST
+        context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
@@ -448,6 +452,7 @@ def requisition(request):
         return render(request, "userForms/requisition.html", context)
     else:
         form_data = request.POST
+        context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
