@@ -18,5 +18,7 @@ python manage.py migrate utils
 # Convert static asset files
 python manage.py collectstatic --no-input
 
+ls -l
+
 # Make users and data
 # python generate.py shell
