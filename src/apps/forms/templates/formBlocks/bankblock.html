@@ -25,12 +25,12 @@
 <div class="row">
     <div class="col-md-6 mb-1">
         <label>N° de cuenta:</label>
-        <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ form_data.accountNumber }}" required>
+        <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ form_data.accountNumber }}" min="0" required>
     </div>
     {% if include_cex %}
     <div class="col-md-6 mb-1">
         <label>N° CEX:</label>
-        <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ form_data.cexNumber }}" required>
+        <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ form_data.cexNumber }}" min="0" required>
     </div>
     {% endif %}
 </div>
