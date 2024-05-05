@@ -4,6 +4,10 @@ from django.test import TestCase
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.test import TestCase, Client
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+import os
+import pyautogui
 import re
 class Requests(TestCase):
     def setUp(self):
@@ -16,7 +20,7 @@ class Requests(TestCase):
     def tearDown(self):
         self.driver.quit()
 
-    def tesst_fill_form_happy_1(self):
+    def test_fill_form_happy_leg(self):
         self.login("99685182")
         self.click_form("1")
         
@@ -25,7 +29,7 @@ class Requests(TestCase):
         for selector in selects:
             self.select_option(selector)
 
-        self.ínputDates("01022024", "07022024")
+        self.inputDates("01022024", "07022024")
         
         self.driver.find_element(By.ID, "travelReason").send_keys("Cumpleaños")
 
@@ -50,7 +54,107 @@ class Requests(TestCase):
         aler = self.get_alert()
         self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
 
-    def test_fill_form_bad_dates(self):
+    def tesst_fill_form_happy_1(self):
+        self.login("99685182")
+        self.click_form("1")
+        
+        scrollable = self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]')
+        selects = ["#dependence", "#costCenter", "#destinationCity"]
+        for selector in selects:
+            self.select_option(selector)
+
+        self.inputDates("01022024", "07022024")
+        
+        self.driver.find_element(By.ID, "travelReason").send_keys("Cumpleaños")
+
+        self.driver.find_element(By.ID, "dollars").click()
+
+        self.fill_prices(2,12,2)
+
+        tot = self.driver.find_element(By.ID, "total")
+        self.assertEqual(tot.get_attribute("value"), "6")
+
+        self.sign("robotop")
+
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[1]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[1]/select/option[2]').click()
+
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[2]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[2]/select/option[2]').click()
+        
+        self.driver.find_element(By.ID, "idBank").send_keys("456475")
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
+
+        aler = self.get_alert()
+        self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
+
+    def tesst_fill_form_happy_sign2(self):
+        self.login("99685182")
+        self.click_form("1")
+        
+        scrollable = self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]')
+        selects = ["#dependence", "#costCenter", "#destinationCity"]
+        for selector in selects:
+            self.select_option(selector)
+
+        self.inputDates("01022024", "07022024")
+        
+        self.driver.find_element(By.ID, "travelReason").send_keys("Cumpleaños")
+
+        self.driver.find_element(By.ID, "dollars").click()
+
+        self.fill_prices(2,12,2)
+
+        tot = self.driver.find_element(By.ID, "total")
+        self.assertEqual(tot.get_attribute("value"), "6")
+
+        self.sign2()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[1]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[1]/select/option[2]').click()
+
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[2]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[2]/select/option[2]').click()
+        
+        self.driver.find_element(By.ID, "idBank").send_keys("456475")
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
+
+        aler = self.get_alert()
+        self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
+
+    def tesst_fill_form_happy_sign3(self):
+        self.login("99685182")
+        self.click_form("1")
+        
+        scrollable = self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]')
+        selects = ["#dependence", "#costCenter", "#destinationCity"]
+        for selector in selects:
+            self.select_option(selector)
+
+        self.inputDates("01022024", "07022024")
+        
+        self.driver.find_element(By.ID, "travelReason").send_keys("Cumpleaños")
+
+        self.driver.find_element(By.ID, "dollars").click()
+
+        self.fill_prices(2,12,2)
+
+        tot = self.driver.find_element(By.ID, "total")
+        self.assertEqual(tot.get_attribute("value"), "6")
+
+        self.sign3()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[1]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[1]/select/option[2]').click()
+
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[2]/select').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[17]/div[2]/select/option[2]').click()
+        
+        self.driver.find_element(By.ID, "idBank").send_keys("456475")
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
+
+        aler = self.get_alert()
+        self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
+
+    def tesst_fill_form_bad_dates(self):
         self.login("99685182")
         self.click_form("1")
         
@@ -97,6 +201,37 @@ class Requests(TestCase):
         self.driver.find_element(By.ID, "swal2-input").send_keys(sign)
         self.driver.find_element(By.XPATH, '/html/body/div[4]/div/div[6]/button[1]').click()
 
+    def sign2(self):
+        self.driver.find_element(By.ID, "signButton").click()
+        self.select_optionz("#swal2-select", "3")
+
+        self.driver.find_element(By.XPATH, '/html/body/div[4]/div/div[6]/button[1]').click()
+
+
+        canvas = self.driver.find_element(By.XPATH, '//*[@id="swal2-html-container"]/canvas')
+        action_chains = ActionChains(self.driver)
+        action_chains.move_to_element_with_offset(canvas, 0, 0) 
+        action_chains.click_and_hold()  
+        action_chains.move_by_offset(10, 10) 
+        action_chains.move_by_offset(20, 10) 
+        action_chains.release() 
+        action_chains.perform() 
+        self.driver.find_element(By.XPATH, '/html/body/div[4]/div/div[6]/button[1]').click()
+
+
+    def sign3(self):
+        self.driver.find_element(By.ID, "signButton").click()
+        self.select_optionz("#swal2-select", "4")
+
+        self.driver.find_element(By.XPATH, '/html/body/div[4]/div/div[6]/button[1]').click()
+ 
+        img = self.driver.find_element(By.XPATH, '/html/body/div[4]/div/input[2]')
+        ruta_script = os.path.dirname(os.path.abspath(__file__))
+        ruta_archivo = os.path.join(ruta_script, 'test', 'firma.jpg')
+
+        img.send_keys(ruta_archivo)
+        self.driver.find_element(By.XPATH, '/html/body/div[4]/div/div[6]/button[1]').click()
+
     def get_alert(self):
         return WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.ID, "toast-body"))
@@ -105,6 +240,10 @@ class Requests(TestCase):
     def select_option(self, selector):
         self.driver.find_element(By.CSS_SELECTOR, selector).click()
         self.driver.find_element(By.CSS_SELECTOR, selector+' option:nth-child(2)').click()
+
+    def select_optionz(self, selector, opt):
+        self.driver.find_element(By.CSS_SELECTOR, selector).click()
+        self.driver.find_element(By.CSS_SELECTOR, selector+' option:nth-child('+opt+')').click()
 
 
     def fill_prices(self, init, end, step):
