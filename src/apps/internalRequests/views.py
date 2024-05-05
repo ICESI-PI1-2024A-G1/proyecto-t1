@@ -1,7 +1,4 @@
-from itertools import chain
 from django.contrib.auth.decorators import login_required
-from django.test import Client
-from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
 from django.shortcuts import get_object_or_404, render, redirect
@@ -15,18 +12,15 @@ from apps.teams.models import Team
 import utils.utils as utils
 from datetime import datetime
 from django.db import transaction
-from xhtml2pdf import pisa
-from io import BytesIO
 from django.template.loader import get_template
-from bs4 import BeautifulSoup
-import math
-import ast
 import json
 import os
 from django.conf import settings
 import random
 from datetime import datetime
 import re
+from weasyprint import HTML
+import tempfile
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -497,7 +491,7 @@ def change_final_date(request, id):
     """
     if request.method == "GET":
         curr_request = get_request_by_id(id)
-        curr_request.final_date = curr_request.final_date.strftime('%Y-%m-%d')
+        curr_request.final_date = curr_request.final_date.strftime("%Y-%m-%d")
         return render(request, "change-date.html", {"request": curr_request})
     elif request.method == "POST":
         try:
@@ -510,13 +504,18 @@ def change_final_date(request, id):
             curr_request.save()
 
             # Convertir new_final_date a un objeto datetime.date
-            new_final_date = datetime.strptime(new_final_date_str, '%Y-%m-%d').date()
+            new_final_date = datetime.strptime(new_final_date_str, "%Y-%m-%d").date()
 
             Traceability.objects.create(
                 modified_by=request.user,
                 prev_state=prev_state,
                 new_state=prev_state,
-                reason="Hubo un cambio de fecha: " + prev_date.strftime('%Y-%m-%d') + " -> " + new_final_date.strftime('%Y-%m-%d') + ".<br>Motivo: " + reason,
+                reason="Hubo un cambio de fecha: "
+                + prev_date.strftime("%Y-%m-%d")
+                + " -> "
+                + new_final_date.strftime("%Y-%m-%d")
+                + ".<br>Motivo: "
+                + reason,
                 date=datetime.now(),
                 request=id,
             )
@@ -591,32 +590,40 @@ def detail_request(request, id, pdf=False, save_to_file=False):
     ) and request_data.status == "EN REVISIÓN":
         context["canReview"] = True
 
-    
-    from django_weasyprint import WeasyTemplateResponse
-    from weasyprint import HTML
-    import tempfile
     if pdf:
         context["pdf"] = True
         context["user"] = request.user
         context["user"].is_applicant = True
-        css_file_path = os.path.join(settings.BASE_DIR, "static" , "general","css", "bootstrap.css")
+        css_file_path = os.path.join(
+            settings.BASE_DIR, "static", "general", "css", "bootstrap.css"
+        )
         template = get_template(template)
         html = template.render(context)
         if save_to_file:
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 out_pdf = tmp_file.name
                 # Convierte la plantilla HTML en PDF usando weasyprint
-                pdf_bytes = HTML(string=html).write_pdf(out_pdf, stylesheets=[css_file_path], presentational_hints=True)
+                pdf_bytes = HTML(string=html).write_pdf(
+                    out_pdf, stylesheets=[css_file_path], presentational_hints=True
+                )
                 # Lee el PDF generado y envíalo como respuesta HTTP
-                with open(out_pdf, 'rb') as pdf_file:
-                    response = HttpResponse(pdf_file.read(), content_type='application/pdf')
-                    response['Content-Disposition'] = 'attachment; filename="archivo.pdf"'
+                with open(out_pdf, "rb") as pdf_file:
+                    response = HttpResponse(
+                        pdf_file.read(), content_type="application/pdf"
+                    )
+                    response["Content-Disposition"] = (
+                        'attachment; filename="archivo.pdf"'
+                    )
                     return response
         else:
-            pdf_bytes = HTML(string=html).write_pdf(stylesheets=[css_file_path], presentational_hints=True)
+            pdf_bytes = HTML(string=html).write_pdf(
+                stylesheets=[css_file_path], presentational_hints=True
+            )
             addresses = ["ccsa101010@gmail.com"]
             try:
-                leader_email = Team.objects.get(typeForm=settings.FORM_TYPES[request_data.__class__.__name__]).leader.email
+                leader_email = Team.objects.get(
+                    typeForm=settings.FORM_TYPES[request_data.__class__.__name__]
+                ).leader.email
                 print(leader_email)
                 addresses.append(leader_email)
             except:
@@ -633,6 +640,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
     else:
         # Renderizar la plantilla HTML normalmente
         return render(request, template, context)
+
 
 @csrf_exempt
 @login_required

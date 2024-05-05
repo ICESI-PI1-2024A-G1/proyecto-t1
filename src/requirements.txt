@@ -2,7 +2,6 @@ arabic-reshaper==3.0.0
 asgiref==3.8.1
 asn1crypto==1.5.1
 attrs==23.2.0
-beautifulsoup4==4.12.3
 blinker==1.8.1
 Brotli==1.1.0
 certifi==2024.2.2
@@ -70,7 +69,6 @@ pyzmq==26.0.2
 qrcode==7.4.2
 rcssmin==1.1.1
 regex==2023.12.25
-reportlab==4.0.9
 requests==2.31.0
 rjsmin==1.2.1
 roundrobin==0.0.4
@@ -94,7 +92,7 @@ urllib3==2.2.1
 webencodings==0.5.1
 Werkzeug==3.0.2
 wsproto==1.2.0
-xhtml2pdf==0.2.15
 xlwings==0.31.1
 zope.event==5.0
 zope.interface==6.3
+weasyprint==61.2
