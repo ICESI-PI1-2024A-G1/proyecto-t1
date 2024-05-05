@@ -134,6 +134,7 @@ for i in range(5):
     team.save()
     teams.append(team)
 
+
 faculty = [
     "Ciencias Administrativas y económicas",
     "Ingeniería, Diseño y Ciencias Aplicadas",
@@ -141,43 +142,126 @@ faculty = [
     "Ciencias de la Salud",
 ]
 
+countries = [
+    {"code": "CO", "name": "Colombia"},
+    {"code": "ES", "name": "Spain"},
+    {"code": "FR", "name": "France"},
+    {"code": "US", "name": "United States"},
+    {"code": "CL", "name": "Chile"},
+    {"code": "CR", "name": "Costa Rica"},
+]
+
+cities = [
+    {"name": "Cali", "country": "CO"},
+    {"name": "Bogotá", "country": "CO"},
+    {"name": "Medellín", "country": "CO"},
+    {"name": "Cartagena", "country": "CO"},
+    {"name": "Barranquilla", "country": "CO"},
+    {"name": "Madrid", "country": "ES"},
+    {"name": "Barcelona", "country": "ES"},
+    {"name": "Valencia", "country": "ES"},
+    {"name": "Sevilla", "country": "ES"},
+    {"name": "Paris", "country": "FR"},
+    {"name": "Marsella", "country": "FR"},
+    {"name": "Lyon", "country": "FR"},
+    {"name": "Toulouse", "country": "FR"},
+    {"name": "New York", "country": "US"},
+    {"name": "Los Angeles", "country": "US"},
+    {"name": "Chicago", "country": "US"},
+    {"name": "Miami", "country": "US"},
+    {"name": "Santiago", "country": "CL"},
+    {"name": "Valparaíso", "country": "CL"},
+    {"name": "Concepción", "country": "CL"},
+    {"name": "La Serena", "country": "CL"},
+    {"name": "San José", "country": "CR"},
+    {"name": "Alajuela", "country": "CR"},
+    {"name": "Cartago", "country": "CR"},
+    {"name": "Heredia", "country": "CR"},
+    {"name": "San Francisco", "country": "US"},
+    {"name": "Houston", "country": "US"},
+    {"name": "Dallas", "country": "US"},
+    {"name": "Austin", "country": "US"},
+    {"name": "Santa Marta", "country": "CO"},
+    {"name": "Pereira", "country": "CO"},
+    {"name": "Manizales", "country": "CO"},
+    {"name": "Neiva", "country": "CO"},
+    {"name": "Murcia", "country": "ES"},
+    {"name": "Bilbao", "country": "ES"},
+    {"name": "Granada", "country": "ES"},
+    {"name": "Lille", "country": "FR"},
+    {"name": "Niza", "country": "FR"},
+    {"name": "Nantes", "country": "FR"},
+    {"name": "Philadelphia", "country": "US"},
+    {"name": "Phoenix", "country": "US"},
+    {"name": "San Diego", "country": "US"},
+    {"name": "San Antonio", "country": "US"},
+    {"name": "Valdivia", "country": "CL"},
+    {"name": "Arica", "country": "CL"},
+    {"name": "Talca", "country": "CL"},
+    {"name": "Puntarenas", "country": "CR"},
+    {"name": "Liberia", "country": "CR"},
+]
+
 banks = [
-    "Banco de Bogotá",
     "Bancolombia",
-    "Banco Davivienda",
-    "Banco Popular",
+    "Banco Agrario",
     "Banco AV Villas",
     "Banco Caja Social",
+    "Banco Cooperativo Coopcentral",
+    "Banco Credifinanciera SA",
+    "Banco Davivienda",
+    "Banco de Bogotá",
+    "Banco de las Microfinanzas Bancamia S.A.",
     "Banco de Occidente",
+    "Banco Falabella S.A.",
+    "Banco Finandina S.A.",
+    "Banco GNB Colombia S.A",
     "Banco GNB Sudameris",
-    "Banco Itaú",
-    "Bancoomeva",
+    "Banco Mundo Mujer",
     "Banco Pichincha",
-    "Banco Santander Colombia",
-    "BBVA Colombia",
-    "Citibank Colombia",
-    "Scotiabank Colpatria",
-    "Banco Finandina",
-    "HSBC",
-    "Citibank",
-    "JPMorgan Chase",
-    "Bank of America",
-    "Barclays",
+    "Banco Popular",
+    "Banco Procredit",
+    "Banco Santander de Negocios",
+    "Banco Serfinanza",
+    "Banco W S.A",
+    "Bancoomeva",
+    "Bancóldex S.A.",
+    "BBVA",
     "BNP Paribas",
-    "Deutsche Bank",
-    "UBS",
-    "Santander",
-    "Credit Suisse",
-    "ING Group",
-    "Goldman Sachs",
-    "Morgan Stanley",
-    "Wells Fargo",
-    "Standard Chartered",
-    "Banco Santander",
-    "Royal Bank of Canada",
-    "Banco Sabadell",
-    "Banco Bilbao Vizcaya Argentaria (BBVA)",
-    "The Bank of Tokyo-Mitsubishi UFJ",
+    "Citibank",
+    "Coltefinanciera S.A.",
+    "Confiar",
+    "Coofinep Cooperativa Financiera",
+    "Cooperativa Financiera de Antioquia",
+    "Cotrafa Cooperativa Financiera",
+    "Daviplata",
+    "Financiera Juriscoop S.A. Compañía de Financiamiento",
+    "Giros y Finanzas Compañía de Financiamiento S.A.",
+    "Itaú",
+    "Itaú antes CorpBanca",
+    "Mibanco S.A.",
+    "Nequi",
+    "Rappipay",
+    "Scotiabank Colpatria S.A",
+]
+
+dependencies = [
+    "Publicidad",
+    "Tienda",
+    "Recursos Humanos",
+    "Administración",
+]
+
+account_types = [
+    "Ahorros",
+    "Corriente"
+]
+
+cost_centers = [
+    "Publicidad",
+    "Semilleros",
+    "Semestre",
+    "Bienestar",
 ]
 
 eps = [
@@ -547,5 +631,54 @@ admin = User.objects.create_user(
     is_superuser=True,
 )
 admin.save()
+
+print("Generating countries and cities...")
+
+country_instances = {}
+for country in countries:
+    country_instance = Country(code=country["code"], name=country["name"])
+    country_instance.save()
+    country_instances[country["code"]] = country_instance
+
+for city in cities:
+    country_instance = country_instances[city["country"]]
+    city_instance = City(name=city["name"], country=country_instance)
+    city_instance.save()
+
+
+# Generar bancos
+
+print("Generating banks...")
+
+for bank in banks:
+    bank_instance = Bank(name=bank)
+    bank_instance.save()
+
+
+# Generar tipos de cuenta
+
+print("Generating account types...")
+
+for account_type in account_types:
+    account_type_instance = AccountType(name=account_type)
+    account_type_instance.save()
+
+
+# Generar dependencias
+
+print("Generating dependencies...")
+
+for dependency in dependencies:
+    dependency_instance = Dependency(name=dependency)
+    dependency_instance.save()
+
+
+# Generar centros de costo
+
+print("Generating cost centers...")
+
+for cost_center in cost_centers:
+    cost_center_instance = CostCenter(name=cost_center)
+    cost_center_instance.save()
 
 print("Done")

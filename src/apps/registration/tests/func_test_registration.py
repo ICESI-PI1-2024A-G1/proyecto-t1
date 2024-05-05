@@ -229,40 +229,6 @@ class Registration(unittest.TestCase):
             EC.visibility_of_element_located((By.ID, "toast-body"))
         )
         self.assertEqual(error_msg.text, "Las contraseñas no coinciden.")
-  
-
-    def get_code_from_email(self):
-        mail = imaplib.IMAP4_SSL('outlook.office365.com')
-        mail.login(self.email, 'hola1597!')
-        mail.select('inbox')
-
-        _, data = mail.search(None, 'FROM', 'ccsa101010@gmail.com')
-        mail_ids = data[0].split()
-
-        latest_mail_id = mail_ids[-1]
-
-        _, datas = mail.fetch(latest_mail_id, "(RFC822)")
-        message = email.message_from_bytes(datas[0][1])
-
-        verification_code = None
-
-        if message.is_multipart():
-            for part in message.walk():
-                content_disposition = str(part.get("Content-Disposition"))
-                if "attachment" not in content_disposition:
-                    body = part.get_payload(decode=True).decode()
-                    break
-        else:
-            body = message.get_payload(decode=True).decode()
-
-            code = body.split("Su código de verificación es: ")
-            verification_code = code[1][:6]
-        mail.close()
-        return verification_code
-    
-    def generar_numero_aleatorio(self):
-        numero = random.randint(1000001, 999999999999)
-        return str(numero)
 
 if __name__ == "__main__":
     unittest.main()

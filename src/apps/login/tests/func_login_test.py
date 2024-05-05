@@ -189,6 +189,5 @@ class Login(unittest.TestCase):
         )
         self.assertEqual(error_msg.text, "Las contraseñas no coinciden.")
 
-
 if __name__ == "__main__":
     unittest.main()
