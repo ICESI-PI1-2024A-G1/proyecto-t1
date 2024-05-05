@@ -25,31 +25,25 @@ class Requests(TestCase):
 
         self.driver.find_element(By.ID, "work").send_keys("Comandante general")
 
-        self.driver.find_element(By.ID, "value").send_keys("1000000")
+        self.driver.find_element(By.ID, "idValue").send_keys("1000000")   
 
-        self.driver.find_element(By.ID, "conceptReason").send_keys("Compras compulsivas")
+        selects = ["#dependence", "#cenco"]
 
-        self.driver.find_element(By.ID, "retentionYes").click()
-        self.driver.find_element(By.ID, "taxPayerYes").click()
-        self.driver.find_element(By.ID, "residentNo").click()
+        for selector in selects:
+            self.select_option(selector)
 
-        self.select_option("#requestCity")
-
-        self.driver.find_element(By.ID, "phoneNumber").send_keys("3015582755")
-        self.driver.find_element(By.ID, "address").send_keys("CLL Cristian, 75-24")
-
+        self.driver.find_element(By.ID, "description").send_keys("My name is Yoshikage Kira. I'm 33 years old. My house is in the northeast section of Morioh, where all the villas are, and I am not married. I work as an employee for the Kame Yu department stores, and I get home every day by 8 PM at the latest. I don't smoke, but I occasionally drink. I'm in bed by 11 PM, and make sure I get eight hours of sleep, no matter what. After having a glass of warm milk and doing about twenty minutes of stretches before going to bed, I usually have no problems sleeping until morning. Just like a baby, I wake up without any fatigue or stress in the morning. I was told there were no issues at my last check-up. I'm trying to explain that I'm a person who wishes to live a very quiet life. I take care not to trouble myself with any enemies, like winning and losing, that would cause me to lose sleep at night. That is how I deal with society, and I know that is what brings me happiness. Although, if I were to fight I wouldn't lose to anyone.")
         self.sign("robotop")
 
         self.driver.find_element(By.NAME, 'bank').click()
-        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[15]/div[1]/select/option[2]').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[11]/div[1]/select/option[2]').click()
 
-        self.driver.find_element(By.XPATH, 'bank').click()
-        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[15]/div[2]/select/option[2]').click()
+        self.driver.find_element(By.NAME, 'accountType').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[11]/div[2]/select/option[2]').click()
         
         self.driver.find_element(By.ID, "idBank").send_keys("456475")
-        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
 
-        self.driver.find_element(By.ID, "idCex").send_keys("78651")
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
 
         aler = self.get_alert()
         self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
@@ -76,15 +70,17 @@ class Requests(TestCase):
         self.driver.find_element(By.NAME, 'bank').click()
         self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[15]/div[1]/select/option[2]').click()
 
-        self.driver.find_element(By.XPATH, 'bank').click()
+        self.driver.find_element(By.NAME, 'accountType').click()
         self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[15]/div[2]/select/option[2]').click()
         
         self.driver.find_element(By.ID, "idBank").send_keys("456475")
         self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
 
         self.driver.find_element(By.ID, "idCex").send_keys("78651")
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
 
         aler = self.get_alert()
+
         self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
 
     def tesst_fill_form_happy_legan(self):

@@ -49,7 +49,7 @@ class Login(unittest.TestCase):
         code_btn.click()
 
         welcome_text =  self.driver.find_element(By.XPATH, '//*[@id="navbar-collapse"]/div')
-        self.assertEqual(welcome_text.text, "¡Bienvenid@,\nAccounting Admin!")
+        self.assertEqual(welcome_text.text, "¡Bienvenid@, \nAccounting Admin!")
 
     def test_login_wrong_credentials(self):
         self.driver.get("http://127.0.0.1:8000/")
@@ -101,14 +101,6 @@ class Login(unittest.TestCase):
 
         file = open("codes.txt")
         verification_code = file.read()
-
-        code_input =  WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located((By.ID, "verificationCode"))
-        )    
-
-        code_btn =  WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button"))
-        )    
 
         verf_code_field = self.driver.find_element(By.ID, "verificationCode")
         enter_code_btn = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button")
