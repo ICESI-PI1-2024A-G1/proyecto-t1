@@ -153,15 +153,7 @@ class Login(unittest.TestCase):
         send_btn.click()
 
         file = open("codes.txt")
-        verification_code = file.read()
-
-        code_input =  WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located((By.ID, "verificationCode"))
-        )    
-
-        code_btn =  WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button"))
-        )    
+        verification_code = file.read() 
 
         verf_code_field = self.driver.find_element(By.ID, "verificationCode")
         enter_code_btn = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button")

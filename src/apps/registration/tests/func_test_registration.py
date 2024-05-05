@@ -1,15 +1,11 @@
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import imaplib
-import email
-import random
-import time
 from utils.models import CustomUser
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+import random
 class Registration(unittest.TestCase):
     def setUp(self):
         self.user = "111111"
@@ -41,7 +37,7 @@ class Registration(unittest.TestCase):
         rgstr_btn = self.driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div/div[2]/form/div[5]/button")
         name_field.send_keys(self.user)
         surname_field.send_keys(self.user)
-        self.userName = self.generar_numero_aleatorio()
+        self.userName = self.generate_random_id()
         id_field.send_keys(self.userName)
         email_field.send_keys(self.email)
         pass_field.send_keys(psw)
@@ -57,7 +53,6 @@ class Registration(unittest.TestCase):
         code_btn =  WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div/div/div[3]/form/div[2]/button"))
         )    
-        verification_code = self.get_code_from_email()
         
         code_input.send_keys(verification_code)
         code_btn.click()
@@ -161,7 +156,7 @@ class Registration(unittest.TestCase):
 
         name_field.send_keys(self.user)
         surname_field.send_keys(self.user)
-        self.userName = self.generar_numero_aleatorio()
+        self.userName = self.generate_random_id()
         id_field.send_keys(self.userName)
         email_field.send_keys("correo_falso.com")
         pass_field.send_keys(psw)
@@ -189,7 +184,7 @@ class Registration(unittest.TestCase):
 
         name_field.send_keys(self.user)
         surname_field.send_keys(self.user)
-        self.userName = self.generar_numero_aleatorio()
+        self.userName = self.generate_random_id()
         id_field.send_keys(self.userName)
         email_field.send_keys(self.email)
         pass_field.send_keys(psw)
@@ -202,7 +197,6 @@ class Registration(unittest.TestCase):
         self.assertEqual(error_msg.text, "La contraseña debe tener al menos 8 caracteres.")
 
     def test_register_diff_password(self):
-
         psw = "11111111"
         psw2= "11111112"
         self.driver.get("http://127.0.0.1:8000/")
@@ -218,7 +212,7 @@ class Registration(unittest.TestCase):
 
         name_field.send_keys(self.user)
         surname_field.send_keys(self.user)
-        self.userName = self.generar_numero_aleatorio()
+        self.userName = self.generate_random_id()
         id_field.send_keys(self.userName)
         email_field.send_keys(self.email)
         pass_field.send_keys(psw)
@@ -229,6 +223,10 @@ class Registration(unittest.TestCase):
             EC.visibility_of_element_located((By.ID, "toast-body"))
         )
         self.assertEqual(error_msg.text, "Las contraseñas no coinciden.")
+
+    def generate_random_id(self):
+        numero = random.randint(1000001, 999999999999)
+        return str(numero)
 
 if __name__ == "__main__":
     unittest.main()
