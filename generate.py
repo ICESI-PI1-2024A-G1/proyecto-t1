@@ -15,7 +15,8 @@ from django.contrib.auth import get_user_model
 from apps.internalRequests.models import Traceability
 from apps.teams.models import Team
 from datetime import datetime, timedelta
-from api.sharepoint_api import SharePointAPI
+
+# from api.sharepoint_api import SharePointAPI
 from apps.forms.models import *
 from apps.requests.models import SharePoint
 from django.utils import timezone
@@ -60,26 +61,26 @@ EXCEL_FILE_PATH = os.path.join(
 
 # print(EXCEL_FILE_PATH)
 # Clear contents
-sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
-sharepoint_api.clear_db()
-Traceability.objects.all().delete()
-Team.objects.all().delete()
-User.objects.all().delete()
-SharePoint.objects.all().delete()
-# Forms
-TravelAdvanceRequest.objects.all().delete()
-TravelExpenseLegalization_Table.objects.all().delete()
-TravelExpenseLegalization.objects.all().delete()
-AdvanceLegalization_Table.objects.all().delete()
-AdvanceLegalization.objects.all().delete()
-BillingAccount.objects.all().delete()
-Requisition.objects.all().delete()
-Country.objects.all().delete()
-City.objects.all().delete()
-Bank.objects.all().delete()
-AccountType.objects.all().delete()
-Dependency.objects.all().delete()
-CostCenter.objects.all().delete()
+# sharepoint_api = SharePointAPI(EXCEL_FILE_PATH)
+# sharepoint_api.clear_db()
+# Traceability.objects.all().delete()
+# Team.objects.all().delete()
+# User.objects.all().delete()
+# SharePoint.objects.all().delete()
+# # Forms
+# TravelAdvanceRequest.objects.all().delete()
+# TravelExpenseLegalization_Table.objects.all().delete()
+# TravelExpenseLegalization.objects.all().delete()
+# AdvanceLegalization_Table.objects.all().delete()
+# AdvanceLegalization.objects.all().delete()
+# BillingAccount.objects.all().delete()
+# Requisition.objects.all().delete()
+# Country.objects.all().delete()
+# City.objects.all().delete()
+# Bank.objects.all().delete()
+# AccountType.objects.all().delete()
+# Dependency.objects.all().delete()
+# CostCenter.objects.all().delete()
 
 # Create users
 users_amount = 35
@@ -379,18 +380,18 @@ for i in range(30):
         "is_one_time_payment": random.choice([True, False]),
     }
 
-    sharepoint_api.create_data(data)
+    # sharepoint_api.create_data(data)
     SharePoint.objects.create(**data)
 
 print(f"Generated 30 sharepoint requests")
 
-t_request = sharepoint_api.get_all_requests()
-t_request = json.loads(t_request.content)
+# t_request = sharepoint_api.get_all_requests()
+# t_request = json.loads(t_request.content)
 
-for i in range(len(t_request)):
-    user = User.objects.first()
-    temp_r = t_request[random.randint(0, len(t_request) - 1)]
-    new_id = temp_r["id"]
+# for i in range(len(t_request)):
+#     user = User.objects.first()
+#     temp_r = t_request[random.randint(0, len(t_request) - 1)]
+#     new_id = temp_r["id"]
 
 
 def generate_traceability(id):
@@ -684,4 +685,4 @@ for cost_center in cost_centers:
     cost_center_instance = CostCenter(name=cost_center)
     cost_center_instance.save()
 
-print("Done")
+print("Done 🤑")

@@ -205,7 +205,7 @@ STATICFILES_FINDERS = [
 EMAIL_BACKEND = env("EMAIL_BACKEND")
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_PORT = env("EMAIL_PORT")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_USER = env("EMAIL_HOST_ADDRESS")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 
@@ -229,4 +229,12 @@ STORAGES = {
     "staticfiles": {
         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
     },
+}
+
+FORM_TYPES = {
+    "AdvanceLegalization": "Legalización de Anticipos",
+    "BillingAccount": "Cuenta de Cobro",
+    "Requisition": "Requisición",
+    "TravelAdvanceRequest": "Solicitud de Viaje",
+    "TravelExpenseLegalization": "Legalización de Gastos de Viaje",
 }

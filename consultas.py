@@ -11,31 +11,31 @@ conn = psycopg2.connect(
 # Crea un cursor
 cur = conn.cursor()
 
-# Ejecuta una consulta SQL para obtener todas las tablas que contienen 'forms' en su nombre
+# Ejecuta una consulta SQL para obtener todas las tablas en la base de datos
 cur.execute(
     """
     SELECT table_name 
     FROM information_schema.tables 
-    WHERE table_schema = 'public' 
-    AND table_name LIKE '%forms%'
+    WHERE table_schema = 'public'
 """
 )
 
 # Obtiene los nombres de las tablas
 tables = cur.fetchall()
 
-# Obtiene los nombres de las tablas
+# Para cada tabla, ejecuta una consulta DROP TABLE para eliminar la tabla
 for table in tables:
-    print(f"Table: {table[0]}")
-    cur.execute(f"SELECT * FROM {table[0]} LIMIT 0")
-    column_names = [desc[0] for desc in cur.description]
-    print("Column names:", column_names)
-
-    # Si la columna 'member_id' existe en la tabla, la elimina
-    if "member_id" in column_names:
-        cur.execute(f"ALTER TABLE {table[0]} DROP COLUMN member_id")
-        conn.commit()
-        print(f"Column 'member_id' has been dropped from table {table[0]}")
+    print(f"Dropping table: {table[0]}")
+    cur.execute(
+        f"""
+        DO $$ BEGIN
+            IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = '{table[0]}') THEN
+                EXECUTE 'DROP TABLE IF EXISTS "{table[0]}" CASCADE';
+            END IF;
+        END $$;
+    """
+    )
+    conn.commit()
 
 # Cierra la conexión
 cur.close()
