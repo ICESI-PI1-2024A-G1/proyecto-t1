@@ -14,7 +14,13 @@
         <div style="border-bottom: 1px solid black; position: relative; display: flex; justify-content: center; align-items: center;" id="signature">
             {% with signatureType=request.signatureInput|slice:":1" signatureValue=request.signatureInput|slice:"4:" %}
                 {% if signatureType == '1' %}
-                    <p style="font-family: Cathylise Janetson; font-size: 60px;">{{ signatureValue }}</p>
+                    <style>
+                        @font-face {
+                            font-family: 'Cathylise Janetson';
+                            src: url('{% static "forms/fonts/Cathylise Janetson.otf" %}');
+                        }
+                    </style>    
+                    <p class="sign-block" style="font-family: Cathylise Janetson; font-size: 60px;">{{ signatureValue }}</p>
                 {% elif signatureType == '2' %}
                     <img src="{{ signatureValue }}">
                 {% elif signatureType == '3' %}

@@ -35,6 +35,7 @@ function addRow() {
         var input = document.createElement('input');
         input.type = i < 4 ? 'text' : 'number';
         input.className = 'form-control';
+        input.required = true;
         if (i == 2) {
             input.placeholder = '0';
         }

@@ -3,12 +3,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var rowCount = localStorage.getItem('rowCount');
     console.log(rowCount);
     if (rowCount !== null) {
-        obj = rowCount - 4;
+        var obj = rowCount - 4;
+        console.log(obj);
         if (obj > 0) {
             for (var i = 0; i < obj; i++) {
                 addRow();
             }
-        } else if (rowCount < 0) {
+        } else if (obj < 0) {
             console.log(rowCount);
             for (var i = obj; i < 0; i++) {
                 console.log(i)
@@ -45,6 +46,7 @@ function addRow() {
         if (i >= 4) {
             input.placeholder = '0';
             input.min = 0; // To avoid negative values
+            input.required = true;
             input.addEventListener('input', function () {
                 if (this.value < 0) {
                     this.value = 0;
@@ -56,7 +58,7 @@ function addRow() {
         input.value = form_data[input.name] || '';
         newCell.appendChild(input);
         newRow.appendChild(newCell);
-    }  
+    }
 
     var totalsRow = document.getElementById('totals');
     table.insertBefore(newRow, totalsRow);

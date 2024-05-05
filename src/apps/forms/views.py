@@ -25,7 +25,9 @@ def get_next_id():
 
 # Get cities with countries
 def get_cities_with_countries():
-    cities_with_countries = City.objects.select_related('country').order_by('country_id').all()
+    cities_with_countries = (
+        City.objects.select_related("country").order_by("country_id").all()
+    )
 
     cities_data = [
         {
@@ -127,9 +129,7 @@ def travel_advance_request(request):
     context = create_context()
 
     if request.method == "GET":
-        return render(
-            request, "userForms/travel_advance_request.html", context
-        )
+        return render(request, "userForms/travel_advance_request.html", context)
     else:
         form_data = request.POST
         context["form_data"] = form_data
@@ -199,7 +199,7 @@ def travel_advance_request(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_advance_request.html", context
+                request, "userForms/travel_advance_request.html", {"today": date.today().isoformat()}
             )
 
 
@@ -210,13 +210,13 @@ def travel_expense_legalization(request):
 
     if request.method == "GET":
         return render(
-            request, "userForms/travel_expense_legalization.html", context,
+            request,
+            "userForms/travel_expense_legalization.html",
+            context,
         )
     else:
         form_data = request.POST
         context["form_data"] = form_data
-        
-        print(form_data.dict())
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
@@ -297,7 +297,7 @@ def travel_expense_legalization(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/travel_expense_legalization.html", context
+                request, "userForms/travel_expense_legalization.html", {"today": date.today().isoformat()}
             )
 
 
@@ -375,7 +375,7 @@ def advance_legalization(request):
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
             return render(
-                request, "userForms/advance_legalization.html", context
+                request, "userForms/advance_legalization.html", {"today": date.today().isoformat()}
             )
 
 
@@ -439,7 +439,7 @@ def billing_account(request):
             return render(
                 request,
                 "userForms/billing_account.html",
-                {"include_cex": True},
+                {"today": date.today().isoformat()},
             )
 
 
@@ -492,4 +492,4 @@ def requisition(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
-            return render(request, "userForms/requisition.html", context)
+            return render(request, "userForms/requisition.html", {"today": date.today().isoformat()})
