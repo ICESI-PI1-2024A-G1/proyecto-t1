@@ -256,10 +256,7 @@ dependencies = [
     "Administración",
 ]
 
-account_types = [
-    "Ahorros",
-    "Corriente"
-]
+account_types = ["Ahorros", "Corriente"]
 
 cost_centers = [
     "Publicidad",
@@ -406,6 +403,7 @@ def generate_traceability(id):
             new_state=random.choice(requestStatus),
             reason=fake.text(),
         )
+
 
 def create_fake_travel_request():
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelAdvanceRequest"])
@@ -686,4 +684,4 @@ for cost_center in cost_centers:
     cost_center_instance = CostCenter(name=cost_center)
     cost_center_instance.save()
 
-print("Done 🤑")
+print("Done")
