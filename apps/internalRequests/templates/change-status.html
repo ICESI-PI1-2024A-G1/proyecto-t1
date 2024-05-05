@@ -1,22 +1,10 @@
-{% if comments is not None %}    
-    {% if resultReviewShow %}
-        <p style="color: darkred;">La solicitud presenta inconsistencias que deben revisarse.<br></p>
-    {% else %}
-        <p style="color: darkgreen;">La solicitud no presentó ningún problema.<br></p>
-    {% endif %}
-{% endif %}
-
 <select id="newStatusSelect" class="form-control">
     {% for status in status_options %}
         <option value="{{status}}" {% if status == request.status %}selected{%endif%} >{{status}}</option>
     {% endfor %}
 </select>
 
-{% if resultReviewShow %}
-    <textarea id="reasonTextarea" class="form-control mt-3" placeholder="Motivo:" rows="5">{{ comments }}</textarea>
-{% else %}
-    <textarea id="reasonTextarea" class="form-control mt-3" placeholder="Motivo:" rows="5"></textarea>
-{% endif %}
+<textarea id="reasonTextarea" class="form-control mt-3" placeholder="Motivo:" rows="5"></textarea>
 
 <button onclick="changeStatus('{{request.id}}')" type="button" class="btn btn-primary my-4" id="changeStatusBtn">Guardar</button>
 
