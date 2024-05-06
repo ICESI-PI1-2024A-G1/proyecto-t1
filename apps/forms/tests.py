@@ -48,7 +48,7 @@ class Requests(TestCase):
         aler = self.get_alert()
         self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
 
-    def tesst_fill_form_happy_cc(self):
+    def test_fill_form_happy_cc(self):
         self.login("99685182")
         self.click_form("4")
 
@@ -83,7 +83,7 @@ class Requests(TestCase):
 
         self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
 
-    def tesst_fill_form_happy_legan(self):
+    def test_fill_form_happy_legan(self):
         self.login("99685182")
         self.click_form("3")
         
@@ -111,7 +111,7 @@ class Requests(TestCase):
         aler = self.get_alert()
         self.assertEqual(aler.text, "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.")
 
-    def tesst_fill_form_happy_legv(self):
+    def test_fill_form_happy_legv(self):
         self.login("99685182")
         self.click_form("2")
         
