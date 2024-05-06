@@ -115,7 +115,6 @@ class Internal_requests_test(TestCase):
         self.login("56843806")
 
         self.search("en revisi")
-        input(" ")
         self.click_review_first()
 
         user = self.driver.find_element(By.ID, "idNumber").get_attribute("value")
@@ -124,8 +123,7 @@ class Internal_requests_test(TestCase):
         self.scroll_element(mdl)
 
         self.check_all_fields()
-
-        self.driver.find_element(By.XPATH, '//*[@id="detailsContent"]/form/div[16]/div[2]/div/label').click()
+        self.driver.find_element(By.XPATH, '//*[@id="detailsContent"]/div/form/div[16]/div[2]/div/label').click()
 
         self.driver.find_element(By.ID, "reason").send_keys("CEX inválido")
 
@@ -140,12 +138,96 @@ class Internal_requests_test(TestCase):
         self.login(user)
         self.search("dev") 
         table1 = self.get_status()   
-        self.click_review_first()
-        mdl = self.driver.find_element(By.ID, "detailsContent")  
-        self.scroll_element(mdl)
-        input(" ")
+        #self.click_review_first()
+        #mdl = self.driver.find_element(By.ID, "detailsContent")  
+        #self.scroll_element(mdl)
+
         self.assertEqual(table1.text, "DEVUELTO")
 
+    def test_integration_review_request_return(self):
+        self.fill_req()
+        self.logout()
+        self.login("67647092")
+        self.click_inner_requests()
+        self.search("Breanna pendiente")
+        self.click_first("2")
+        self.select_option("#userSelector")
+        self.driver.find_element(By.XPATH, '//*[@id="detailsContent"]/div/form/button').click()
+        self.logout()
+        self.login("28356854")
+        self.search("breanna pen")
+        self.click_change_state()
+        self.input_change_reason("Una razón")
+        alert = self.get_alert()
+        input_search =  WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "requestsTableSearch"))
+            
+        )    
+        input_search.clear()
+        self.search("breanna en re")
+        self.click_first("1")
+        mdl = self.driver.find_element(By.ID, "detailsContent")  
+        self.scroll_element(mdl)
+        self.check_all_fields()
+        self.driver.find_element(By.XPATH, '//*[@id="detailsContent"]/div/form/div[15]/label').click()
+        self.driver.find_element(By.ID, "reason").send_keys("Desc invalid")
+        self.scroll_element(mdl)
+        self.accept_alert((By.ID, "returnReview"))
+        self.logout()
+        self.login("99685182")
+        self.search("dev 51") 
+        self.click_first("1")
+        mdl = self.driver.find_element(By.ID, "detailsContent") 
+        self.scroll_element(mdl)
+        input(" ")
+        table1 = self.get_status()   
+        #self.click_review_first()
+        #mdl = self.driver.find_element(By.ID, "detailsContent")  
+        #self.scroll_element(mdl)
+
+        self.assertEqual(table1.text, "DEVUELTO")
+    def select_option(self, selector):
+        self.driver.find_element(By.CSS_SELECTOR, selector).click()
+        self.driver.find_element(By.CSS_SELECTOR, selector+' option:nth-child(2)').click()
+
+    def fill_req(self):
+        self.login("99685182")
+        self.click_form("5")
+
+        self.driver.find_element(By.ID, "work").send_keys("Comandante general")
+
+        self.driver.find_element(By.ID, "idValue").send_keys("1000000")   
+
+        selects = ["#dependence", "#cenco"]
+
+        for selector in selects:
+            self.select_option(selector)
+
+        self.driver.find_element(By.ID, "description").send_keys("My name is Yoshikage Kira. I'm 33 years old. My house is in the northeast section of Morioh, where all the villas are, and I am not married. I work as an employee for the Kame Yu department stores, and I get home every day by 8 PM at the latest. I don't smoke, but I occasionally drink. I'm in bed by 11 PM, and make sure I get eight hours of sleep, no matter what. After having a glass of warm milk and doing about twenty minutes of stretches before going to bed, I usually have no problems sleeping until morning. Just like a baby, I wake up without any fatigue or stress in the morning. I was told there were no issues at my last check-up. I'm trying to explain that I'm a person who wishes to live a very quiet life. I take care not to trouble myself with any enemies, like winning and losing, that would cause me to lose sleep at night. That is how I deal with society, and I know that is what brings me happiness. Although, if I were to fight I wouldn't lose to anyone.")
+        self.sign("robotop")
+
+        self.driver.find_element(By.NAME, 'bank').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[11]/div[1]/select/option[2]').click()
+
+        self.driver.find_element(By.NAME, 'accountType').click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[11]/div[2]/select/option[2]').click()
+        
+        self.driver.find_element(By.ID, "idBank").send_keys("456475")
+
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
+
+    def click_form(self, number):
+        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/a').click()
+        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/ul/li['+number+']').click()
+
+    def sign(self, sign):
+        self.driver.find_element(By.ID, "signButton").click()
+        self.select_option("#swal2-select")
+
+        self.driver.find_element(By.XPATH, '/html/body/div[4]/div/div[6]/button[1]').click()
+
+        self.driver.find_element(By.ID, "swal2-input").send_keys(sign)
+        self.driver.find_element(By.XPATH, '/html/body/div[4]/div/div[6]/button[1]').click()
 
     def check_all_fields(self):
         reason_fl = self.driver.find_element(By.ID, "reason").send_keys("Razon válida")
@@ -195,7 +277,7 @@ class Internal_requests_test(TestCase):
         )    
 
     def get_alert(self):
-        return WebDriverWait(self.driver, 10).until(
+        return WebDriverWait(self.driver, 15).until(
             EC.visibility_of_element_located((By.ID, "toast-body"))
         ) 
 
@@ -234,6 +316,12 @@ class Internal_requests_test(TestCase):
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button")
         table1.click()
         table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div div button:nth-child(1)")
+        table2.click()
+
+    def click_first(self, num):
+        table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button")
+        table1.click()
+        table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div div button:nth-child("+num+")")
         table2.click()
 
     def login(self, user): 

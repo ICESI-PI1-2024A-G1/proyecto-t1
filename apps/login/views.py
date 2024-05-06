@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 import utils.utils as utils
 import subprocess
-import os
 User = get_user_model()
 
 
