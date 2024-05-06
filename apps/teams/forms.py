@@ -21,10 +21,20 @@ class TeamForm(forms.ModelForm):
     Note:
         This form is used for creating and updating team data.
     """
+    
+    TYPEFORM_CHOICES = [
+        ("Legalización de Anticipos", "Legalización de Anticipos"),
+        ("Cuenta de Cobro", "Cuenta de Cobro"),
+        ("Requisición", "Requisición"),
+        ("Solicitud de Viaje", "Solicitud de Viaje"),
+        ("Legalización de Gastos de Viaje", "Legalización de Gastos de Viaje"),
+    ]
 
+    typeForm = forms.ChoiceField(choices=TYPEFORM_CHOICES, widget=forms.Select(attrs={"class": "form-control"}))
+    
     class Meta:
         model = Team
-        fields = ["name", "description", "leader", "members"]
+        fields = ["name", "description", "leader", "typeForm", "members"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control"}),
@@ -35,6 +45,7 @@ class TeamForm(forms.ModelForm):
             "name": "Nombre",
             "description": "Descripción",
             "leader": "Líder",
+            "typeForm": "Tipo de formulario",
             "members": "Miembros (al menos 1)",
         }
 
