@@ -180,6 +180,7 @@ def verify_email_view(request):
                 email=email,
                 first_name=first_name,
                 last_name=last_name,
+                is_none=True,
             )
             user.save()
 

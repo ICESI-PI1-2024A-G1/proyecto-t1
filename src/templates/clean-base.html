@@ -7,8 +7,6 @@
         <title>
             {% block title %}{% endblock %}
         </title>
-        {% load static %}
-        <link rel="stylesheet" href="{% static 'general/css/bootstrap.css' %}" type="text/css">
 
 
         <!-- <style>
@@ -36,6 +34,17 @@
         <div class="container">
             {% block content %}{% endblock %}
         </div>
+
+        {% if not pdf %}
+        <script>
+            $(document).ready(function () {
+                $(".btn-check, .btn-outline-primary").attr("tabindex", "-1");
+                $(".btn-check").on("click", function() {
+                    $(this).blur()
+                })
+            })
+        </script>
+        {% endif %}
         <!-- <script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script> -->
