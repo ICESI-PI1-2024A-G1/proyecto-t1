@@ -1,0 +1,382 @@
+body {
+    font-size: 1rem;
+}
+
+/* Estilo para inputs dentro de .form-group */
+input[type="text"], textarea, input[type="tel"], input[type="email"], input[type="password"], input[type="number"],  input[type="date"], select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-left:0.25rem;
+    margin-right:0.25rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    min-height:2rem;
+    height:auto;
+    resize: both;
+    text-overflow: ellipsis;
+}
+
+textarea {
+    resize: none;
+    overflow-y: hidden;
+    min-height: 8rem !important;
+    line-height: 24px !important;
+    padding: 8px !important;
+    line-height: 1 !important;
+    font-size: 0.8rem !important;
+    border: 1px solid #ccc;
+    width: 100%;
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+}
+
+/* Estilo para contenedores */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.col {
+    flex: 1;
+    padding: 0 10px;
+}
+
+
+/* Clase para columnas grandes */
+.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+    float: left;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+/* Columnas para dispositivos grandes */
+.col-lg-1 { width: 8.33333333%; }
+.col-lg-2 { width: 16.66666667%; }
+.col-lg-3 { width: 25%; }
+.col-lg-4 { width: 33.33333333%; }
+.col-lg-5 { width: 41.66666667%; }
+.col-lg-6 { width: 50%; }
+.col-lg-7 { width: 58.33333333%; }
+.col-lg-8 { width: 66.66666667%; }
+.col-lg-9 { width: 75%; }
+.col-lg-10 { width: 83.33333333%; }
+.col-lg-11 { width: 91.66666667%; }
+.col-lg-12 { width: 100%; }
+
+/* Clase para columnas medianas */
+.col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+    float: left;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+
+/* Columnas para dispositivos medianos */
+.col-md-1 { width: 8.33333333%; }
+.col-md-2 { width: 16.66666667%; }
+.col-md-3 { width: 25%; }
+.col-md-4 { width: 33.33333333%; }
+.col-md-5 { width: 41.66666667%; }
+.col-md-6 { width: 50%; }
+.col-md-7 { width: 58.33333333%; }
+.col-md-8 { width: 66.66666667%; }
+.col-md-9 { width: 75%; }
+.col-md-10 { width: 83.33333333%; }
+.col-md-11 { width: 91.66666667%; }
+.col-md-12 { width: 100%; }
+
+/* Clase para columnas pequeñas */
+.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
+    float: left;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 2.5rem; /* 40px */
+}
+
+h2 {
+    font-size: 2rem; /* 32px */
+}
+
+h3 {
+    font-size: 1.75rem; /* 28px */
+}
+
+h4 {
+    font-size: 1.5rem; /* 24px */
+}
+
+h5 {
+    font-size: 1.25rem; /* 20px */
+}
+
+.h5 {
+    font-size: 1.25rem;
+}
+
+h6 {
+    font-size: 1rem; /* 16px */
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #ccc;
+}
+
+/* Estilos para formularios */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Estilo para etiquetas de formularios */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    box-sizing: border-box;
+    appearance: none; /* Oculta la flecha del select en algunos navegadores */
+}
+
+/* Estilo para textarea */
+textarea {
+    resize: vertical;
+}
+
+/* Estilo para checkboxes y radios */
+input[type="checkbox"], input[type="radio"] {
+    margin-right: 5px;
+}
+
+* {
+    font-family: Arial, Helvetica, sans-serif, sans-serif;
+    font-weight: 400;
+}
+
+/* Clases de margen */
+.m {
+    margin: 1rem; /* Margen uniforme de 1 rem */
+}
+
+.mx {
+    margin-right: 1rem; /* Margen horizontal derecha e izquierda de 1 rem */
+    margin-left: 1rem;
+}
+
+.my {
+    margin-top: 1rem; /* Margen vertical superior e inferior de 1 rem */
+    margin-bottom: 1rem;
+}
+
+.ml {
+    margin-left: 1rem; /* Margen izquierda de 1 rem */
+}
+
+.mr {
+    margin-right: 1rem; /* Margen derecha de 1 rem */
+}
+
+.mt {
+    margin-top: 1rem; /* Margen superior de 1 rem */
+}
+
+.mb {
+    margin-bottom: 1rem; /* Margen inferior de 1 rem */
+}
+
+/* Variantes de margen */
+.m-0 {
+    margin: 0; /* Sin margen */
+}
+
+.mx-0 {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.my-0 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.ml-0 {
+    margin-left: 0;
+}
+
+.mr-0 {
+    margin-right: 0;
+}
+
+.mt-0 {
+    margin-top: 0;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+/* Otras variantes */
+.m-1 {
+    margin: 0.25rem; /* Margen uniforme de 0.25 rem */
+}
+
+.m-2 {
+    margin: 0.5rem; /* Margen uniforme de 0.5 rem */
+}
+
+.m-3 {
+    margin: 0.75rem; /* Margen uniforme de 0.75 rem */
+}
+
+.m-4 {
+    margin: 1rem; /* Margen uniforme de 1 rem */
+}
+
+.m-5 {
+    margin: 1.25rem; /* Margen uniforme de 1.25 rem */
+}
+
+.m-6 {
+    margin: 1.5rem; /* Margen uniforme de 1.5 rem */
+}
+
+.m-8 {
+    margin: 2rem; /* Margen uniforme de 2 rem */
+}
+
+.m-10 {
+    margin: 2.5rem; /* Margen uniforme de 2.5 rem */
+}
+
+/* Variantes específicas */
+.mx-auto {
+    margin-right: auto; /* Margen horizontal automático */
+    margin-left: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr, th {
+    font-size: 0.8rem;
+    max-width: 20vw;
+}
+
+.table {
+    max-width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Estilo para el encabezado de la tabla */
+.table thead th {
+    background-color: #dbdbdb; /* Color de fondo del encabezado */
+    padding: 10px; /* Espaciado interno del encabezado */
+}
+
+/* Estilo para las celdas del cuerpo de la tabla */
+.table tbody td {
+    border-bottom: 1px solid #ddd; /* Borde inferior de las celdas */
+    padding: 10px; /* Espaciado interno de las celdas */
+}
+
+/* Estilo para las filas impares */
+.table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Color de fondo para filas impares */
+}
+
+
+/* Estilo para las celdas de la última columna */
+.table tbody td:last-child {
+    text-align: right; /* Alineación a la derecha para la última columna */
+}
+
+.concept-column {
+    max-width: 200px;
+    text-wrap: break-word;
+}
+
+.table td.columna-max-width input {
+    width: auto; /* Permitir que el input se expanda verticalmente */
+    box-sizing: border-box; /* Incluir el padding en el ancho del input */
+}
+
+.table {
+    width: 100%; /* Ancho de la tabla al 100% del contenedor */
+    table-layout: fixed; /* Distribución uniforme del ancho de las columnas */
+    overflow-x: auto; /* Desplazamiento horizontal si es necesario */
+}
+
+/* Estilo para las celdas */
+.table td, .table th {
+    overflow: hidden; /* Ocultar contenido que desborda las celdas */
+}
+
+input[type="radio"] {
+    width: 14px; /* Ancho del círculo */
+    height: 14px; /* Altura del círculo */
+    margin-right: 5px; /* Espaciado entre radio button y etiqueta */
+}
+
+/* Estilos para etiquetas de radio buttons */
+label.radio-inline {
+    font-size: 14px; /* Tamaño de la etiqueta */
+}
+
+li, p {
+    font-size: 0.8rem;
+}
+
+label {
+    font-size: 0.8rem;
+}
+
+input[type="radio"] {
+    width: 0.5rem; /* Ancho del círculo */
+    height: 0.5rem; /* Altura del círculo */
+    border-color: #ccc;
+}
+
+@font-face {
+    font-family: 'Cathylise Janetson';
+    src: url("../../forms/fonts/Cathylise Janetson.otf");
+    font-display: swap;
+}
+
+
+.sign-block {
+    font-family: Cathylise Janetson !important;
+    font-size: 2rem !important;
+    margin-top:0;
+    margin-bottom: 0;
+}

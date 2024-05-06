@@ -1,6 +1,7 @@
 from django.db import models
 import json
 from django.contrib.auth import get_user_model
+from django.apps import apps
 from apps.teams.models import Team
 
 User = get_user_model()

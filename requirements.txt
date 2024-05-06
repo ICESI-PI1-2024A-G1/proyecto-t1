@@ -33,6 +33,7 @@ Faker==24.3.0
 Flask==3.0.3
 Flask-Cors==4.0.0
 Flask-Login==0.6.3
+fonttools==4.51.0
 gevent==24.2.1
 geventhttpclient==2.2.1
 google-api-core==2.18.0
@@ -74,11 +75,13 @@ psycopg2-binary==2.9.9
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
 pycparser==2.22
+pydyf==0.10.0
 pyHanko==0.24.0
 pyhanko-certvalidator==0.26.3
 pyparsing==3.1.2
 pypdf==4.2.0
 PyPDF2==3.0.1
+pyphen==0.15.0
 pypng==0.20220715.0
 PySocks==1.7.1
 python-bidi==0.4.2
@@ -114,6 +117,7 @@ tzlocal==5.2
 uritemplate==4.1.1
 uritools==4.0.2
 urllib3==2.2.1
+weasyprint==61.2
 webencodings==0.5.1
 Werkzeug==3.0.2
 wsproto==1.2.0
@@ -121,3 +125,4 @@ xhtml2pdf==0.2.15
 xlwings==0.31.1
 zope.event==5.0
 zope.interface==6.3
+zopfli==0.2.3

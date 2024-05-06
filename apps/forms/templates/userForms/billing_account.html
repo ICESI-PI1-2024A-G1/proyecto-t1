@@ -55,7 +55,7 @@
             </div>
             <div class="form-group">
                 <label for="value">Valor (en pesos colombianos $)</label>
-                <input type="number" class="form-control" id="value" name="value">
+                <input type="number" class="form-control" id="value" name="value" min="0">
             </div>
         </div>
     </div>
@@ -152,8 +152,9 @@
             <div class="col">
                 <div class="form-group">
                     <label for="phoneNumber">Teléfono</label>
-                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber">
+                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                 </div>
+                
             </div>
         </div>
 

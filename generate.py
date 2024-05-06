@@ -685,4 +685,4 @@ for cost_center in cost_centers:
     cost_center_instance = CostCenter(name=cost_center)
     cost_center_instance.save()
 
-print("Done 🤑")
+print("Done")

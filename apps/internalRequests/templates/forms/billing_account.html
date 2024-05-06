@@ -1,5 +1,6 @@
-{% block content %}
+{% extends 'clean-base.html' %}
 
+{% block content %}
 <!-- Title -->
 
 <div class="d-flex justify-content-between">
@@ -7,8 +8,6 @@
         <h2 class="mb-4">Cuenta de cobro para contratos de Gestión Humana</h2>
     </div>
 </div>
-
-<!-- Messages -->
 
 <!-- Announcement -->
 
@@ -33,8 +32,11 @@
 
 <!-- User data -->
 
-<form action="/forms/billing_account" method="POST">
+<form action="/requests/billing_account_review" method="POST">
     {{ form.csrf_token }}
+
+    <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
+
     <div class="mb-2">
         <label class="h5"><strong>Datos del solicitante</strong></label>
     </div>
@@ -42,27 +44,57 @@
         <div class="col">
             <div class="form-group">
                 <label for="requestDate">Fecha de solicitud</label>
-                <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ request.request_date|date:'Y-m-d' }}" readonly>
+                <div class="d-flex justify-content-between">
+                    <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ request.request_date|date:'Y-m-d' }}" disabled>
+                    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                        <input type="checkbox" class="btn-check" id="btncheck" name="dateCheck" data-message="Fecha de solicitud">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
+                </div>
             </div>
             <div class="form-group">
                 <label for="fullName">Nombre completo</label>
-                <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.full_name }}" readonly>
+                <div class="d-flex justify-content-between">
+                    <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.fullname }}" disabled>
+                    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                        <input type="checkbox" class="btn-check" id="btncheck2" name="nameCheck" data-message="Nombre">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck2" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="col">
             <div class="form-group">
                 <label for="idNumber">No. de identificación</label>
-                <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.id_person }}" readonly>
+                <div class="d-flex justify-content-between">
+                    <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.id_person }}" disabled>
+                    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                        <input type="checkbox" class="btn-check" id="btncheck3" name="idCheck" data-message="No. de identificación">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck3" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
+                </div>
             </div>
             <div class="form-group">
                 <label for="value">Valor (en pesos colombianos $)</label>
-                <input type="text" class="form-control" id="value" name="value" value="{{ request.value|floatformat:0 }}" readonly>
+                <div class="d-flex justify-content-between">
+                    <input type="number" class="form-control" id="value" name="value" value="{{ request.value|floatformat:0 }}" min="0" disabled>
+                    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                        <input type="checkbox" class="btn-check" id="btncheck4" name="valueCheck" data-message="Valor">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck4" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
     <div class="form-group">
         <label for="conceptReason">Concepto</label>
-        <textarea class="form-control" id="conceptReason" name="conceptReason" rows="3" readonly>{{ request.concept_reason }}</textarea>
+        <div class="d-flex justify-content-between">
+            <textarea class="form-control" id="conceptReason" name="conceptReason" rows="3" disabled>{{ request.concept_reason }}</textarea>
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                <input type="checkbox" class="btn-check" id="btncheck5" name="conceptCheck" data-message="Concepto">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheck5" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
     </div>
 
     <div class="my-2 mx-2 border-bottom border-3"></div>
@@ -82,45 +114,61 @@
 
     <div class="form-group">
         <p>a. Se tomarán costos y deducciones asociados a las rentas de trabajo por los servicios prestados:</p>
-
-        <div>
-            <input type="radio" id="retentionYes" name="retention" value="yes" {% if request.retention == 'yes' %}checked{% endif %} disabled>
-            <label for="retentionYes">(SI) Retención en la fuente artículos 392 y 401 del Estatuto Tributario</label>
+        <div class="d-flex justify-content-between">
+            <div>
+                <input type="radio" id="retentionYes" name="retention" value="yes" {% if request.retention == 'yes' %}checked{% endif %} disabled>
+                <label for="retentionYes">(SI) Retención en la fuente artículos 392 y 401 del Estatuto Tributario</label>
+                <br>
+                <input type="radio" id="retentionNo" name="retention" value="no" {% if request.retention == 'no' %}checked{% endif %} disabled>
+                <label for="retentionNo">(NO) Retención en la fuente artículo 383 del Estatuto Tributario</label>
+            </div>
+            <div>
+                {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                    <input type="checkbox" class="btn-check" id="btncheck8" name="retentionCheck" data-message="Retención en la fuente">
+                    <label class="btn btn-outline-primary col-1 d-flex align-items-center justify-content-center" for="btncheck8"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                {% endif %}
+            </div>
         </div>
-        
-        <div>
-            <input type="radio" id="retentionNo" name="retention" value="no" {% if request.retention == 'no' %}checked{% endif %} disabled>
-            <label for="retentionNo">(NO) Retención en la fuente artículo 383 del Estatuto Tributario</label>
-        </div>
-
         <p>Si no marca ninguna opción, se aplicará la retención de los artículos 392 y 401 del ET.</p>
     </div>
 
-    <div class="form-group" style="display: flex; align-items: flex-start;">
-        <p style="margin-right: 10px;">b. Soy declarante del Impuesto de Renta: </p>
-
-        <div style="display: flex; align-items: center; margin-right: 10px;">
-            <label for="taxPayerYes" style="margin-right: 5px;">SI</label>
-            <input type="radio" id="taxPayerYes" name="taxPayer" value="yes" {% if request.tax_payer == 'yes' %}checked{% endif %} disabled>
+    <div class="form-group mb-1" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="form-group" style="display: flex; align-items: flex-start;">
+            <p style="margin-right: 10px;">b. Soy declarante del Impuesto de Renta:</p>
+            <div style="display: flex; align-items: center; margin-right: 10px;">
+                <input type="radio" id="taxPayerYes" name="taxPayer" value="yes" {% if request.tax_payer == 'yes' %}checked{% endif %} disabled>
+                <label for="taxPayerYes" style="margin-left: 5px;">SI</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-right: 10px;">
+                <input type="radio" id="taxPayerNo" name="taxPayer" value="no" {% if request.tax_payer == 'no' %}checked{% endif %} disabled>
+                <label for="taxPayerNo" style="margin-left: 5px;">NO</label>
+            </div>
         </div>
-
-        <div style="display: flex; align-items: center;">
-            <label for="taxPayerNo" style="margin-right: 5px;">NO</label>
-            <input type="radio" id="taxPayerNo" name="taxPayer" value="no" {% if request.tax_payer == 'no' %}checked{% endif %} disabled>
+        <div>
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                <input type="checkbox" class="btn-check" id="btncheck11" style="margin-left: 5px;" name="taxCheck" data-message="Declaración de impuestos">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center justify-content-center" for="btncheck11"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
         </div>
     </div>
 
-    <div class="form-group" style="display: flex; align-items: flex-start;">
-        <p style="margin-right: 10px;">c. Soy residente fiscal en Colombia: </p>
-
-        <div style="display: flex; align-items: center; margin-right: 10px;">
-            <label for="residentYes" style="margin-right: 5px;">SI</label>
-            <input type="radio" id="residentYes" name="resident" value="yes" {% if request.resident == 'yes' %}checked{% endif %} disabled>
+    <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="form-group" style="display: flex; align-items: flex-start;">
+            <p style="margin-right: 10px;">c. Soy residente fiscal en Colombia:</p>
+            <div style="display: flex; align-items: center; margin-right: 10px;">
+                <input type="radio" id="residentYes" name="resident" value="yes" {% if request.resident == 'yes' %}checked{% endif %} disabled>
+                <label for="residentYes" style="margin-left: 5px;">SI</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-right: 10px;">
+                <input type="radio" id="residentNo" name="resident" value="no" {% if request.resident == 'no' %}checked{% endif %} disabled>
+                <label for="residentNo" style="margin-left: 5px;">NO</label>
+            </div>
         </div>
-
-        <div style="display: flex; align-items: center;">
-            <label for="residentNo" style="margin-right: 5px;">NO</label>
-            <input type="radio" id="residentNo" name="resident" value="no" {% if request.resident == 'no' %}checked{% endif %} disabled>
+        <div>
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                <input type="checkbox" class="btn-check" id="btncheck12" style="margin-left: 5px;" name="residentCheck" data-message="Residencia">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center justify-content-center" for="btncheck12"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
         </div>
     </div>
 
@@ -136,20 +184,48 @@
         <div class="col">
             <div class="form-group">
                 <label for="requestCity">Ciudad</label>
-                <input type="text" class="form-control" id="requestCity" name="requestCity" value="{{ request.request_city }}" readonly>
+                <div class="d-flex justify-content-between">
+                    <select class="form-control" id="requestCity" name="requestCity" required disabled>
+                        {% for city in cities %}
+                            {% with city_name_and_country=city.city_name|add:" ("|add:city.country_name|add:") "|add:city.country_code %}
+                                <option value="{{ city_name_and_country }}" {% if request.destination_city == city_name_and_country %}selected{% endif %}>{{ city_name_and_country }}</option>
+                            {% endwith %}
+                        {% endfor %}
+                    </select>
+                    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                        <input type="checkbox" class="btn-check" id="btncheckRequestCity" name="cityCheck" data-message="Ciudad">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckRequestCity" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
+                </div>
             </div>
             <div class="form-group">
                 <label for="address">Dirección</label>
-                <input type="text" class="form-control" id="address" name="address" value="{{ request.address }}" readonly>
+                <div class="d-flex justify-content-between">
+                    <input type="text" class="form-control" id="address" name="address" value="{{ request.address }}" disabled>
+                    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                        <input type="checkbox" class="btn-check" id="btncheckAddress" name="addressCheck" data-message="Dirección">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAddress" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="col">
             <div class="form-group">
                 <label for="phoneNumber">Teléfono</label>
-                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="{{ request.phone_number }}" readonly>
+                <div class="d-flex justify-content-between">
+                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="{{ request.phone_number }}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" disabled>
+                    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                        <input type="checkbox" class="btn-check" id="btncheckPhoneNumber" name="cellphoneCheck" data-message="Teléfono">
+                        <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPhoneNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Sign data -->
 
     {% include 'internalFormBlocks/signblock.html' %}
 
@@ -158,6 +234,30 @@
     <!-- Bank data -->
 
     {% include 'internalFormBlocks/bankblock.html' %}
+
+    <!-- Confirm Review -->
+
+    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+        {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
+
+    {% if editable %}
+    <script>
+        const inputs = document.querySelectorAll('input, textarea, select');
+        const idsToSkip = ['requestDate', 'fullName', 'idNumber'];
+
+        inputs.forEach(input => {
+            if (idsToSkip.includes(input.id)) {
+                input.setAttribute('disabled', true);
+            } else {
+                input.removeAttribute('disabled');
+                input.removeAttribute('readonly');
+            }
+        });
+    </script>
+    {% include 'internalFormBlocks/savereviewblock.html' %}
+    {% endif %}
+    
 </form>
 
 {% endblock %}

@@ -198,7 +198,10 @@ def travel_advance_request(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
-            return render(request, "userForms/travel_advance_request.html", context)
+            context["form_data"] = None
+            return render(
+                request, "userForms/travel_advance_request.html", {"today": date.today().isoformat()}
+            )
 
 
 @login_required
@@ -215,8 +218,6 @@ def travel_expense_legalization(request):
     else:
         form_data = request.POST
         context["form_data"] = form_data
-
-        print(form_data.dict())
 
         if form_data.get("signatureStatus") != "Yes":
             messages.error(request, "Por favor, firme el formulario.")
@@ -296,6 +297,7 @@ def travel_expense_legalization(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
+            context["form_data"] = None
             return render(
                 request, "userForms/travel_expense_legalization.html", context
             )
@@ -374,7 +376,10 @@ def advance_legalization(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
-            return render(request, "userForms/advance_legalization.html", context)
+            context["form_data"] = None
+            return render(
+                request, "userForms/advance_legalization.html", context
+            )
 
 
 @login_required
@@ -394,6 +399,7 @@ def billing_account(request):
         context["form_data"] = form_data
 
         if form_data.get("signatureStatus") != "Yes":
+            context["form_data"] = form_data
             messages.error(request, "Por favor, firme el formulario.")
             return render(
                 request,
@@ -434,10 +440,11 @@ def billing_account(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
+            context["form_data"] = None
             return render(
                 request,
                 "userForms/billing_account.html",
-                {"include_cex": True},
+                context,
             )
 
 
@@ -490,4 +497,5 @@ def requisition(request):
                 request,
                 "Formulario enviado correctamente. Puede revisarlo en la sección de Solicitudes.",
             )
+            context["form_data"] = None
             return render(request, "userForms/requisition.html", context)
