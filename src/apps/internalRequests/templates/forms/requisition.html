@@ -189,10 +189,9 @@
     <script>
         const inputs = document.querySelectorAll('input, textarea, select');
         const idsToSkip = ['requestDate', 'fullName', 'idNumber'];
-        const tableInputs = document.querySelector('#expensesTable').querySelectorAll('input, textarea, select');
 
         inputs.forEach(input => {
-            if (idsToSkip.includes(input.id) || Array.from(tableInputs).includes(input)) {
+            if (idsToSkip.includes(input.id)) {
                 input.setAttribute('disabled', true);
             } else {
                 input.removeAttribute('disabled');
