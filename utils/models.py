@@ -58,8 +58,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         null=True,
         blank=True,
     )
-    first_name = models.CharField(max_length=30, verbose_name="Nombre")
-    last_name = models.CharField(max_length=30, verbose_name="Apellido")
+    first_name = models.CharField(max_length=100, verbose_name="Nombre")
+    last_name = models.CharField(max_length=100, verbose_name="Apellido")
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     is_member = models.BooleanField(default=False, verbose_name="Miembro")

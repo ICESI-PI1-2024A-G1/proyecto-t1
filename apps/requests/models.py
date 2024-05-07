@@ -9,7 +9,7 @@ class SharePoint(models.Model):
     final_date = models.DateField()
     fullname = models.CharField(max_length=100)
     faculty = models.CharField(max_length=100)
-    document = models.CharField(max_length=200)
+    document = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=100)
     email = models.EmailField()
     CENCO = models.CharField(max_length=100)

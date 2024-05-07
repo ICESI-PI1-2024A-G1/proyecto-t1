@@ -464,9 +464,6 @@ def change_status(request, id):
                 date=datetime.now(),
                 request=id,
             )
-            messages.success(
-                request, "El estado de la solicitud ha sido actualizado correctamente."
-            )
             return JsonResponse(
                 {
                     "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
@@ -475,7 +472,6 @@ def change_status(request, id):
 
         except Exception as e:
             print(e)
-            messages.error(request, "No se pudo realizar la operación.")
             return JsonResponse(
                 {"error": f"No se pudo realizar la operación: {str(e)}"}, status=500
             )
@@ -504,10 +500,7 @@ def change_final_date(request, id):
     """
     if request.method == "GET":
         curr_request = get_request_by_id(id)
-        if curr_request.final_date:
-            curr_request.final_date = curr_request.final_date.strftime("%Y-%m-%d")
-        else:
-            curr_request.final_date = datetime.now().strftime("%Y-%m-%d")
+        curr_request.final_date = curr_request.final_date.strftime("%Y-%m-%d")
         return render(request, "change-date.html", {"request": curr_request})
     elif request.method == "POST":
         try:
@@ -526,15 +519,12 @@ def change_final_date(request, id):
                 modified_by=request.user,
                 prev_state=prev_state,
                 new_state=prev_state,
-                reason=(
-                    "Hubo un cambio de fecha: " + prev_date.strftime("%Y-%m-%d")
-                    if prev_date
-                    else "Sin asignar"
-                    + " -> "
-                    + new_final_date.strftime("%Y-%m-%d")
-                    + ".<br>Motivo: "
-                    + reason
-                ),
+                reason="Hubo un cambio de fecha: "
+                + prev_date.strftime("%Y-%m-%d")
+                + " -> "
+                + new_final_date.strftime("%Y-%m-%d")
+                + ".<br>Motivo: "
+                + reason,
                 date=datetime.now(),
                 request=id,
             )

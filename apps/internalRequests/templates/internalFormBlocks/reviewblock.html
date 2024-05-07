@@ -93,7 +93,7 @@
                         reason = '<strong>Celdas afectadas:</strong><br>' + messages + '<br><strong>Motivo:</strong> ' + reason;
                     }
                     $.ajax({
-                        url: '/requests/change-status/' + id + '/',
+                        url: '/requests/change-status/' + id,
                         method: 'POST',
                         data: {
                             newStatus: newStatus,

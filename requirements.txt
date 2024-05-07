@@ -36,11 +36,6 @@ Flask-Login==0.6.3
 fonttools==4.51.0
 gevent==24.2.1
 geventhttpclient==2.2.1
-google-api-core==2.18.0
-google-api-python-client==2.127.0
-google-auth==2.29.0
-google-auth-httplib2==0.2.0
-googleapis-common-protos==1.63.0
 greenlet==3.0.3
 gunicorn==22.0.0
 h11==0.14.0

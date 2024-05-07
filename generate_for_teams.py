@@ -4,13 +4,14 @@ import django
 from django.conf import settings
 from faker import Faker
 from dotenv import load_dotenv
-
+import random
 load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
 django.setup()
-fake = Faker()
 
-import random
+random.seed(365678)
+fake = Faker()
+Faker.seed(365678)
 from django.contrib.auth import get_user_model
 from apps.internalRequests.models import Traceability
 from apps.teams.models import Team
@@ -74,15 +75,9 @@ AdvanceLegalization_Table.objects.all().delete()
 AdvanceLegalization.objects.all().delete()
 BillingAccount.objects.all().delete()
 Requisition.objects.all().delete()
-Country.objects.all().delete()
-City.objects.all().delete()
-Bank.objects.all().delete()
-AccountType.objects.all().delete()
-Dependency.objects.all().delete()
-CostCenter.objects.all().delete()
 
 # Create users
-users_amount = 35
+users_amount = 36
 print(f"Generating {users_amount} users...")
 users = []
 for _ in range(users_amount):
@@ -91,7 +86,7 @@ for _ in range(users_amount):
     last_name = fake.last_name()
     username = id
     email = fake.email()
-    password = "12345678"
+    password = "123456789"
     user = User.objects.create_user(
         id=id,
         username=username,
@@ -108,7 +103,7 @@ print("Assigning permissions...")
 leaders = []
 applicants = []
 members = []
-for i in range(5):
+for i in range(6):
     users[i].is_leader = True
     leaders.append(users[i])
     users[i].save()
@@ -133,11 +128,12 @@ for i in range(5):
     team = Team.objects.create(
         name=name, description=description, leader=leader, typeForm=formType
     )
-
-    team_members = random.sample(members, 5)
-    team.members.add(*team_members)
+    if(i != 0):
+        team_members = random.sample(members, 5)
+        team.members.add(*team_members)
     team.save()
     teams.append(team)
+
 
 faculty = [
     "Ciencias Administrativas y económicas",
@@ -256,7 +252,10 @@ dependencies = [
     "Administración",
 ]
 
-account_types = ["Ahorros", "Corriente"]
+account_types = [
+    "Ahorros",
+    "Corriente"
+]
 
 cost_centers = [
     "Publicidad",
@@ -369,9 +368,9 @@ for i in range(30):
         "document": random.choice(documents),
         "phone_number": fake.phone_number(),
         "email": fake.email(),
-        "CENCO": random.choice(cost_centers),
+        "CENCO": fake.random_number(digits=5),
         "bank": random.choice(banks),
-        "account_type": random.choice(account_types),
+        "account_type": random.choice(["Ahorros", "Corriente"]),
         "health_provider": random.choice(eps),
         "pension_fund": random.choice(pension_fund),
         "arl": random.choice(arls),
@@ -401,7 +400,7 @@ def generate_traceability(id):
             date=fake.date_time_between(start_date="-30d", end_date="+3d"),
             prev_state=random.choice(requestStatus),
             new_state=random.choice(requestStatus),
-            reason=fake.text(max_nb_chars=100),
+            reason=fake.text(),
         )
 
 
@@ -423,18 +422,18 @@ def create_fake_travel_request():
         fullname=person.get_fullname(),
         id_person=person.id,
         member=random.choice(team.members.all()),
-        dependence=random.choice(dependencies),
-        cost_center=random.choice(cost_centers),
-        destination_city=random.choice(cities)["name"],
+        dependence=fake.company(),
+        cost_center=fake.random_int(min=1000, max=9999),
+        destination_city=fake.city(),
         departure_date=fake.date_between(start_date="+1d", end_date="+60d"),
         return_date=fake.date_between(start_date="+61d", end_date="+120d"),
         travel_reason=fake.sentence(nb_words=6),
         currency=fake.random.choice(["dollars", "euros", "No"]),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=random.choice(account_types),
+        account_type=fake.random_element(elements=("Savings", "Checking")),
         account_number=fake.random_int(min=100000000, max=999999999),
-        observations=fake.text(max_nb_chars=100),
+        observations=fake.text(),
         team_id=team,
         signatureInput="1---" + person.get_fullname(),
     )
@@ -454,12 +453,12 @@ def create_fake_travel_expense_legalization():
         fullname=person.get_fullname(),
         id_person=person.id,
         member=random.choice(team.members.all()),
-        dependence=random.choice(dependencies),
-        cost_center=random.choice(cost_centers),
-        destination_city=random.choice(cities)["name"],
+        dependence=fake.company(),
+        cost_center=fake.random_int(min=1000, max=9999),
+        destination_city=fake.city(),
         departure_date=fake.date_between(start_date="+1d", end_date="+60d"),
         return_date=fake.date_between(start_date="+61d", end_date="+120d"),
-        travel_reason=fake.text(max_nb_chars=100),
+        travel_reason=fake.text(),
         total1=fake.random_int(min=100, max=1000),
         total2=fake.random_int(min=100, max=1000),
         total3=fake.random_int(min=100, max=1000),
@@ -474,9 +473,9 @@ def create_fake_travel_expense_legalization():
         icesi_balance3=fake.random_int(min=0, max=500),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=random.choice(account_types),
+        account_type=fake.random_element(elements=("Savings", "Checking")),
         account_number=fake.random_int(min=100000000, max=9999999999),
-        observations=fake.text(max_nb_chars=100),
+        observations=fake.text(),
         team_id=team,
         signatureInput="1---" + person.get_fullname(),
     )
@@ -503,7 +502,7 @@ def create_fake_travel_expense_legalization():
         generate_traceability(travel_info.id)
 
 
-def create_fake_advance_legalization():
+"""def create_fake_advance_legalization():
     team = Team.objects.get(typeForm=settings.FORM_TYPES["AdvanceLegalization"])
     person = random.choice(applicants)
     advance_legalization = AdvanceLegalization(
@@ -512,18 +511,18 @@ def create_fake_advance_legalization():
         fullname=person.get_fullname(),
         id_person=person.id,
         member=random.choice(team.members.all()),
-        dependence=random.choice(dependencies),
-        cost_center=random.choice(cost_centers),
-        purchase_reason=fake.text(max_nb_chars=100),
+        dependence=fake.company(),
+        cost_center=fake.random_int(min=1000, max=9999),
+        purchase_reason=fake.text(),
         total=fake.random_int(min=100, max=1000),
         advance_total=fake.random_int(min=50, max=500),
         employee_balance_value=fake.random_int(min=0, max=500),
         icesi_balance_value=fake.random_int(min=0, max=500),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=random.choice(account_types),
+        account_type=fake.random_element(elements=("Savings", "Checking")),
         account_number=fake.random_int(min=100000000, max=9999999999),
-        observations=fake.text(max_nb_chars=100),
+        observations=fake.text(),
         team_id=team,
         signatureInput="1---" + person.get_fullname(),
     )
@@ -541,10 +540,10 @@ def create_fake_advance_legalization():
             category=fake.word(),
             provider=fake.company(),
             pesos=fake.random_int(min=100, max=1000),
-            concept=fake.text(max_nb_chars=100),
+            concept=fake.text(),
         )
         advance_table.save()
-
+"""
 
 def create_fake_billing_account():
     team = Team.objects.get(typeForm=settings.FORM_TYPES["BillingAccount"])
@@ -561,12 +560,12 @@ def create_fake_billing_account():
         retention=fake.random.choice(["yes", "no"]),
         tax_payer=fake.random.choice(["yes", "no"]),
         resident=fake.random.choice(["yes", "no"]),
-        request_city=random.choice(cities)["name"],
+        request_city=fake.city(),
         address=fake.address(),
         phone_number=fake.phone_number(),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=random.choice(account_types),
+        account_type=fake.random_element(elements=("Savings", "Checking")),
         account_number=fake.random_int(min=100000000, max=9999999999),
         cex_number=fake.random_number(digits=8),
         team_id=team,
@@ -589,15 +588,15 @@ def create_fake_requisition():
         member=random.choice(team.members.all()),
         status=fake.random.choice(requestStatus),
         work=fake.job(),
-        dependence=random.choice(dependencies),
-        cenco=random.choice(cost_centers),
+        dependence=fake.company(),
+        cenco=fake.random_int(min=1000, max=9999),
         id_value=fake.random_number(digits=8),
-        description=fake.text(max_nb_chars=100),
+        description=fake.text(),
         signature_status=True,
         bank=random.choice(banks),
-        account_type=random.choice(account_types),
+        account_type=fake.random_element(elements=("Savings", "Checking")),
         account_number=fake.random_int(min=100000000, max=9999999999),
-        observations=fake.text(max_nb_chars=100),
+        observations=fake.text(),
         team_id=team,
         signatureInput="1---" + person.get_fullname(),
     )
@@ -609,20 +608,12 @@ def create_fake_requisition():
 
 form_amount = 10
 for _ in range(form_amount):
-    print(f"Generateing {form_amount} billing account forms")
-    create_fake_billing_account()
-for _ in range(form_amount):
-    print(f"Generateing {form_amount} requisition forms")
-    create_fake_requisition()
-for _ in range(form_amount):
-    print(f"Generateing {form_amount} advance legalization forms")
-    create_fake_advance_legalization()
-for _ in range(form_amount):
-    print(f"Generateing {form_amount} travel expense legalization forms")
-    create_fake_travel_expense_legalization()
-for _ in range(form_amount):
-    print(f"Generateing {form_amount} travel request forms")
-    create_fake_travel_request()
+    if(_ != 0):
+        create_fake_billing_account()
+        create_fake_requisition()
+        #create_fake_advance_legalization()
+        create_fake_travel_expense_legalization()
+        create_fake_travel_request()
 
 """
 for r in get_all_requests():
@@ -641,8 +632,6 @@ admin = User.objects.create_user(
     is_superuser=True,
 )
 admin.save()
-
-# Generar países y ciudades
 
 print("Generating countries and cities...")
 

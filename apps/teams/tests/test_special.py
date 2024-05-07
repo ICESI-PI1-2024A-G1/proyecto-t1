@@ -5,9 +5,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.test import TestCase, Client
 import re
-class Internal_requests_test(TestCase):
+import subprocess
+import time
+class teams_test(TestCase):
     def setUp(self):
-        
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(5)
@@ -15,179 +16,50 @@ class Internal_requests_test(TestCase):
 
     def tearDown(self):
         self.driver.quit()
-
-    def tesst_show_request_table(self):
+   
+    def test_change_leader_and_delete_team_succesful(self):
+        ruta_script = "generate_for_teams.py"
+        comando = f"python {ruta_script}"
+        subprocess.call(comando, shell=True)
         self.login("123456789")
-        intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
-        intern.click()
-        bread_crumbs = self.driver.find_element(By.XPATH, '//*[@id="navBarHeader"]/div/h5')
-        table = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(1) span")
-        table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(2) span")
-        table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(3) span")
-        table3 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(4) span")
-        table4 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(5) span")
-        table5 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(6) span")
-        table6 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(7) span")
-        action = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody tr td:nth-child(8) div button i")
-        
-        self.assertEqual(bread_crumbs.text, "Solicitudes / Solicitudes Internas")
-        self.assertEqual(table.text, "ID")
-        self.assertEqual(table1.text, "FECHA INICIO")
-        self.assertEqual(table2.text, "FECHA FINAL")
-        self.assertEqual(table3.text, "DOCUMENTO")
-        self.assertEqual(table4.text, "SOLICITANTE")
-        self.assertEqual(table5.text, "GESTOR")
-        self.assertEqual(table6.text, "ESTADO")
-        first_child_element = self.driver.execute_script("return arguments[0].className;", action)
-        self.assertEqual(first_child_element, 'bx bx-dots-vertical-rounded')
-
-    def tesst_search_request_inner(self):
-            self.login("123456789")
-            intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
-            intern.click()
-            search = "11"
-            input_search = self.driver.find_element(By.ID, "requestsTableSearch")
-            input_search.send_keys(search)
-            table = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(1)")
-            table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(2)")
-            table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(3)")
-            table3 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(4)")
-            table4 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(5)")
-            table5 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(6)")
-            table6 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
-            self.assertTrue(table.text.__contains__(search) or table1.text.__contains__(search) or table2.text.__contains__(search) or table3.text.__contains__(search) or table4.text.__contains__(search) or table5.text.__contains__(search) or table6.text.__contains__(search))
-
-    def tesst_assert_inner_state_labels(self):
-        self.login("123456789")
-        intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
-        intern.click()
-        table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
-        self.assertTrue(table1.text == "EN REVISIÓN" or table1.text == "DEVUELTO" or table1.text == "PENDIENTE" or table1.text == "RESUELTO" or table1.text == "RECHAZADO" or table1.text == "POR APROBAR")
-
-    def tesst_search_request_inner_notFound(self):
-        self.login("123456789")
-        intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
-        intern.click()
-        input_search = self.driver.find_element(By.ID, "requestsTableSearch")
-        input_search.send_keys("00")
-        result = self.driver.find_element(By.XPATH, '//*[@id="requestsTable"]/tbody/tr/td')
-        self.assertEqual(result.text, "No se encontraron resultados")
-
-    def tesst_review_request_happy_path(self):
-        self.login("123456789")
-
-        self.click_inner_requests()
-
-        self.search("pendiente shelby Requ")
-
-        self.click_change_state()
-
-        self.input_change_reason("Una razón")
-
-        noti = self.get_alert()
-        self.search("en shelby Requ")
-        state = self.get_status()
-
-        self.assertEqual(noti.text, "El estado de la solicitud ha sido actualizado correctamente.")
-        self.assertEqual(state.text, "EN REVISIÓN")
-     
-        gestor = self.extract_gestor()
-        
-        self.logout()
-
-        self.login(gestor)
-        self.search("en shelby Requ")
-
-        self.click_review_first()
-
-        mdl = self.driver.find_element(By.ID, "detailsContent")  
-
-        self.scroll_element(mdl)
-
-        self.accept_all_fields()
-
-        self.search("por shelby Requ") 
-
-        table1 = self.get_status()   
-        self.assertEqual(table1.text, "POR APROBAR")
-
-    def tesst_review_request_return(self):
-        self.login("56843806")
-
-        self.search("en revisi")
-        self.click_review_first()
-
-        user = self.driver.find_element(By.ID, "idNumber").get_attribute("value")
-        mdl = self.driver.find_element(By.ID, "detailsContent")  
-
-        self.scroll_element(mdl)
-
-        self.check_all_fields()
-        self.driver.find_element(By.XPATH, '//*[@id="detailsContent"]/div/form/div[16]/div[2]/div/label').click()
-
-        self.driver.find_element(By.ID, "reason").send_keys("CEX inválido")
-
-        self.scroll_element(mdl)
-
-        self.accept_alert((By.ID, "returnReview"))
-
+        self.select_opt_teams("1")
+        self.click_opt_first("2")
+        self.driver.find_element(By.ID, "leader").click()
+        self.driver.find_element(By.CSS_SELECTOR, "#leader option:nth-child(3)").click()
+        self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/div[2]/button').click()
         alert = self.get_alert()
-
-        self.assertEqual(alert.text, "El estado de la solicitud ha sido actualizado correctamente.")
-        self.logout()
-        self.login(user)
-        self.search("dev") 
-        table1 = self.get_status()   
-        #self.click_review_first()
-        #mdl = self.driver.find_element(By.ID, "detailsContent")  
-        #self.scroll_element(mdl)
-
-        self.assertEqual(table1.text, "DEVUELTO")
-
-    def test_integration_review_request_return(self):
-        self.fill_req()
-        self.logout()
-        self.login("67647092")
-        self.click_inner_requests()
-        self.search("Breanna pendiente")
-        self.click_first("2")
-        self.select_option("#userSelector")
-        self.driver.find_element(By.XPATH, '//*[@id="detailsContent"]/div/form/button').click()
-        self.logout()
-        self.login("28356854")
-        self.search("breanna pen")
-        self.click_change_state()
-        self.input_change_reason("Una razón")
+        self.assertEqual(alert.text, "Equipo editado con éxito")
+        WebDriverWait(self.driver, 30).until(
+            EC.invisibility_of_element_located((By.ID, "toast-body"))
+        )   
+        self.click_opt_first("3")
+        time.sleep(2)
+        alerta = self.driver.switch_to.alert
+        alerta.accept()
         alert = self.get_alert()
-        input_search =  WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located((By.ID, "requestsTableSearch"))
-            
-        )    
-        input_search.clear()
-        self.search("breanna en re")
-        self.click_first("1")
-        mdl = self.driver.find_element(By.ID, "detailsContent")  
-        self.scroll_element(mdl)
-        self.check_all_fields()
-        self.driver.find_element(By.XPATH, '//*[@id="detailsContent"]/div/form/div[15]/label').click()
-        self.driver.find_element(By.ID, "reason").send_keys("Desc invalid")
-        self.scroll_element(mdl)
-        self.accept_alert((By.ID, "returnReview"))
-        self.logout()
-        self.login("99685182")
-        self.search("dev 51") 
-        self.click_first("1")
-        mdl = self.driver.find_element(By.ID, "detailsContent") 
-        self.scroll_element(mdl)
-        table1 = self.get_status()   
-        #self.click_review_first()
-        #mdl = self.driver.find_element(By.ID, "detailsContent")  
-        #self.scroll_element(mdl)
+        self.assertEqual(alert.text, "Equipo eliminado con éxito")
 
-        self.assertEqual(table1.text, "DEVUELTO")
+
+    def click_opt_first(self, opt):
+        son = ""
+        if(opt=="1"):
+            son = "button"
+        else:
+            son = "a"
+        self.driver.find_element(By.CSS_SELECTOR, 'table#teamsTable tbody td:nth-child(7) div button').click()
+        table2 = self.driver.find_element(By.CSS_SELECTOR, "table#teamsTable tbody td:nth-child(7) div div "+son+":nth-child("+opt+")")
+        table2.click()
+
+    def select_opt_teams(self, num):
+        teambtn = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/a')
+        teambtn.click()
+        addbtn = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/ul/li['+num+']/a')
+        addbtn.click()
+
     def select_option(self, selector):
         self.driver.find_element(By.CSS_SELECTOR, selector).click()
         self.driver.find_element(By.CSS_SELECTOR, selector+' option:nth-child(2)').click()
+
 
     def fill_req(self):
         self.login("99685182")
@@ -295,7 +167,7 @@ class Internal_requests_test(TestCase):
         input_search.send_keys(criteria)
 
     def input_change_reason(self, reason):
-        reasonTxt = WebDriverWait(self.driver, 3).until(
+        reasonTxt = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.ID, "reasonTextarea"))
         ) 
         reasonTxt.send_keys(reason)
