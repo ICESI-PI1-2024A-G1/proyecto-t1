@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}Formularios{% endblock %}
+{%block main_route %}Formularios{% endblock %}
+{%block secondary_route %} Legalización de viaje{% endblock %}
+
+{% block content %}
+
+<form action="/forms/travel_expense_legalization" method="POST">
+{{ form.csrf_token }}
+
+    <div class="card-header">
+        <h2 class="mb-4">Legalización de gastos de viaje</h2>
+    </div>
+
+    <div class="card-body card-fluid">
+        <!-- Announcement -->
+        <p class="font-italic">
+            <strong>Por favor tenga en cuenta lo siguiente:</strong>
+        </p>
+        <ol>
+            <li>Este formato se debe tramitar por ventanilla única, adjuntando los soportes</li>
+            <li>
+                Este formato debe radicarse en ventanilla única por el total de los gastos incurridos en el viaje. El formato automáticamente registra si hay saldo a favor del colaborador o saldo a favor de Icesi
+            </li>
+            <li>
+                Todos los soportes de legalización deben venir a nombre de la Universidad Icesi Nit. 890.316.745-5. Documento sin este requisito, será rechazado en la legalización.
+            </li>
+            <li>
+                Si hay saldo es a favor de la Universidad ICESI, se debe regresar el dinero en la caja de la Universidad o autorizar en este formato el descuento por nómina
+            </li>
+            <li>Si hay saldo a favor del colaborador, se procede a reintegrar a la cuenta de nómina</li>
+            <li>Si el soporte de pago es una factura Pos, debe solicitar a la empresa la factura electrónica.</li>
+            <li>
+                Se debe legalizar en la moneda que se recibió en el anticipo (Pesos colombianos, Euros, Dólares) Si el colaborador gastó en una moneda diferente, debe pasar los gastos a la moneda original del anticipo y dejar registro del cambio de moneda.
+            </li>
+            <li>Solo utilizar la columna correspondiente a la moneda que va a legalizar</li>
+            <li>
+                Puede incluir más casillas para ítems diferentes, colocando el nombre que corresponda, reemplazando las celdas A39 en adelante; Ejemplo: Medicamentos, Ingresos a lugares de interés, sobrepeso de maleta en aerolínea, etc.
+            </li>
+            <li>Utilice este formato para legalizar el anticipo de viajes; en caso de no haber solicitado anticipo</li>
+            <li>Formato de uso interno</li>
+            <li>En transacciones con personas naturales debe adjuntar el Rut con fecha del año en curso</li>
+        </ol>
+        <div class="my-2 mx-2 border-bottom border-3"></div>
+        <!-- User data -->
+            
+            {% include 'formBlocks/idblock.html' %}
+            <div class="my-2 mx-2 border-bottom border-3"></div>
+            <!-- Travel data -->
+            {% include 'formBlocks/travelblock.html' %}
+            <div class="my-2 mx-2 border-bottom border-3"></div>
+            <!--Spend data-->
+            <div class="mb-2 mt-3">
+                <label class="h5">
+                    <strong>Relación de gastos</strong>
+                </label>
+            </div>
+            <style>
+            th {
+                text-align: center;
+                vertical-align: middle;
+            }
+            </style>
+            <div class="container table-responsive">
+                <table id="tableExpenseLegalization" class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th class="col-2" rowspan="2">Rubro</th>
+                            <th class="col-2" rowspan="2">Tercero proveedor</th>
+                            <th class="col-2" rowspan="2">Nit</th>
+                            <th class="col-2" rowspan="2">Concepto</th>
+                            <th class="col-3" colspan="3">Si su anticipo fue en:</th>
+                        </tr>
+                        <tr>
+                            <th class="col-1">Pesos ($)</th>
+                            <th class="col-1">Dólares ($)</th>
+                            <th class="col-1">Euros (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="form-control" name="category_0" id="category_0" value="{{ form_data.category_0|default:'Transporte' }}" required></td>
+                            <td><input type="text" class="form-control" name="provider_0" id="provider_0" value="{{ form_data.provider_0|default:'' }}" required></td>
+                            <td><input type="text" class="form-control" name="nit_0" id="nit_0" value="{{ form_data.nit_0|default:'' }}" required></td>
+                            <td><input type="text" class="form-control" name="concept_0" id="concept_0" value="{{ form_data.concept_0|default:'' }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_0" id="pesos_0" min="0" value="{{ form_data.pesos_0|default:'' }}" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="dollars_0" id="dollars_0" min="0" value="{{ form_data.dollars_0|default:'' }}" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="euros_0" id="euros_0" min="0" value="{{ form_data.euros_0|default:'' }}" required></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="form-control" name="category_1" id="category_1" value="{{ form_data.category_1|default:'Alimentación' }}" required></td>
+                            <td><input type="text" class="form-control" name="provider_1" id="provider_1" value="{{ form_data.provider_1|default:'' }}" required></td>
+                            <td><input type="text" class="form-control" name="nit_1" id="nit_1" value="{{ form_data.nit_1|default:'' }}" required></td>
+                            <td><input type="text" class="form-control" name="concept_1" id="concept_1" value="{{ form_data.concept_1|default:'' }}" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_1" id="pesos_1" value="{{ form_data.pesos_1|default:'' }}" min="0" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="dollars_1" id="dollars_1" value="{{ form_data.dollars_1|default:'' }}" min="0" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="euros_1" id="euros_1" value="{{ form_data.euros_1|default:'' }}" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="form-control" name="category_2" id="category_2" value="{{ form_data.category_2|default:'Alojamiento (aprobado por compras)' }}" required></td>
+                            <td><input type="text" class="form-control" name="provider_2" id="provider_2" value="{{ form_data.provider_2|default:'' }}" required></td>
+                            <td><input type="text" class="form-control" name="nit_2" id="nit_2" value="{{ form_data.nit_2|default:'' }}" required></td>
+                            <td><input type="text" class="form-control" name="concept_2" id="concept_2" value="{{ form_data.concept_2|default:'' }}" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_2" id="pesos_2" value="{{ form_data.pesos_2|default:'' }}" min="0" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="dollars_2" id="dollars_2" value="{{ form_data.dollars_2|default:'' }}" min="0" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="euros_2" id="euros_2" value="{{ form_data.euros_2|default:'' }}" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="form-control" name="category_3" id="category_3" value="{{ form_data.category_3|default:'Otros (detallar)' }}" required></td>
+                            <td><input type="text" class="form-control" name="provider_3" id="provider_3" value="{{ form_data.provider_3|default:'' }}" required></td>
+                            <td><input type="text" class="form-control" name="nit_3" id="nit_3" value="{{ form_data.nit_3|default:'' }}" required></td>
+                            <td><input type="text" class="form-control" name="concept_3" id="concept_3" value="{{ form_data.concept_3|default:'' }}"></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_3" id="pesos_3" value="{{ form_data.pesos_3|default:'' }}" min="0" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="dollars_3" id="dollars_3" value="{{ form_data.dollars_3|default:'' }}" min="0" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="euros_3" id="euros_3" value="{{ form_data.euros_3|default:'' }}" min="0" required></td>
+                        </tr>
+                        <tr id="totals">
+                            <td colspan="4" class="text-end">Total de gastos:</td>
+                            <td><input id="total1" name="total1" type="number" class="form-control" placeholder="0" value="{{ form_data.total1 }}" readonly></td>
+                            <td><input id="total2" name="total2" type="number" class="form-control" placeholder="0" value="{{ form_data.total2 }}" readonly></td>
+                            <td><input id="total3" name="total3" type="number" class="form-control" placeholder="0" value="{{ form_data.total3 }}" readonly></td>
+                        </tr>
+                        <tr id="advance">
+                            <td colspan="4" class="text-end">Valor del avance:</td>
+                            <td><input id="advanceTotal1" name="advanceTotal1" type="number" class="form-control" value="{{ form_data.advanceTotal1 }}" placeholder="0" required></td>
+                            <td><input id="advanceTotal2" name="advanceTotal2" type="number" class="form-control" value="{{ form_data.advanceTotal2 }}" placeholder="0" required></td>
+                            <td><input id="advanceTotal3" name="advanceTotal3" type="number" class="form-control" value="{{ form_data.advanceTotal3 }}" placeholder="0" required></td>
+                        </tr>
+                        <tr id="employeeBalance">
+                            <td colspan="4" class="text-end">Balance a favor del empleador:</td>
+                            <td><input id="employeeBalance1" name="employeeBalance1" type="number" class="form-control" placeholder="0" value="{{ form_data.employeeBalance1 }}" readonly></td>
+                            <td><input id="employeeBalance2" name="employeeBalance2" type="number" class="form-control" placeholder="0" value="{{ form_data.employeeBalance2 }}" readonly></td>
+                            <td><input id="employeeBalance3" name="employeeBalance3" type="number" class="form-control" placeholder="0" value="{{ form_data.employeeBalance3 }}" readonly></td>
+                        </tr>
+                        <tr id="icesiBalance">
+                            <td colspan="4" class="text-end">Balance a favor de ICESI:</td>
+                            <td><input id="icesiBalance1" name="icesiBalance1" type="number" class="form-control" placeholder="0" value="{{ form_data.icesiBalance1 }}" readonly></td>
+                            <td><input id="icesiBalance2" name="icesiBalance2" type="number" class="form-control" placeholder="0" value="{{ form_data.icesiBalance2 }}" readonly></td>
+                            <td><input id="icesiBalance3" name="icesiBalance3" type="number" class="form-control" placeholder="0" value="{{ form_data.icesiBalance3 }}" readonly></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" id="addRow" class="btn btn-primary me-2 mx-2 my-4">
+                    <i class="bi bi-plus-lg mr-2"></i> Agregar fila
+                </button>
+                <button type="button" id="removeRow" class="btn btn-danger mx-2 my-4">
+                    <i class="bi bi-dash-lg mr-2"></i> Eliminar fila
+                </button>
+            </div>
+            <div class="my-2 mx-2 border-bottom border-3"></div>
+            <!-- Authorization -->
+            <p class="text-center">
+                <i>Autorizo que el saldo a favor de la Universidad Icesi, sea descontado en una sola cuota en el siguiente pago de nómina: <strong>Sí</strong></i>
+            </p>
+            {% include 'formBlocks/signblock.html' %}
+            <div class="my-2 mx-2 border-bottom border-3"></div>
+            <!-- Bank data -->
+            {% include 'formBlocks/bankblock.html' %}
+            <div class="my-2 mx-2 border-bottom border-3"></div>
+            <!-- Observations -->
+            <div class="mb-2 mt-3">
+                <label for="observations" class="h5">
+                    <strong>Observaciones</strong>
+                </label>
+            </div>
+            <div>
+                <textarea class="form-control" id="observations" name="observations" rows="3">{{ form_data.observations }}</textarea>
+            </div>
+    </div>
+
+    <div class="card-footer">
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary mt-3" type="submit">
+                <i class="fa fa-save mr-2"></i> Guardar y enviar
+            </button>
+        </div>
+    </div>
+
+{{ form_data|json_script:"form_data" }}
+<script type="text/javascript">
+    var form_data = JSON.parse(document.getElementById('form_data').textContent);
+</script>
+<script src="../../static/forms/js/travel_expense_legalization.js"></script>
+{% endblock %}

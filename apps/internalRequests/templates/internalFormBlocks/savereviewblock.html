@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center mt-3">
+    <button type="submit" class="btn btn-success" id="completeReview" onclick="submitForm(event)">Guardar cambios y enviar</button>
+</div>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<style>
+    .swal-button--confirm {
+        background-color: #4CAF50 !important;
+    }
+</style>
+
+<script>
+    function submitForm(event) {
+        // Prevent the form from submitting
+        event.preventDefault();
+
+        swal({
+            title: "¿Estás seguro?",
+            text: "Una vez enviado, no se podrá volver a editar el formulario. ¿Deseas continuar?",
+            icon: "warning",
+            buttons: {
+                cancel: "Cancelar",
+                confirm: {
+                    text: "Confirmar",
+                    closeModal: false
+                }
+            },
+            dangerMode: true,
+        })
+        .then((willContinue) => {
+            if (willContinue) {
+                // Gather the form data
+                const formData = new FormData(document.querySelector('form'));
+
+                // Get the form ID
+                const formId = document.getElementById('request_id').value;
+
+                // Send the data to the server
+                fetch(`/requests/update-request/${formId}`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.href = "/requests/?fixRequestDone";
+                })
+                .catch(error => {
+                    window.location.href = "/requests/?fixRequestFailed";
+                });
+            }
+        });
+    }
+</script>

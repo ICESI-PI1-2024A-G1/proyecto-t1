@@ -1,0 +1,269 @@
+{% load sass_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head class="dark-style">
+        <meta charset="UTF-8"
+              name="viewport"
+              content="width=device-width,initial-scale=1.0">
+        <meta name="csrf_token" content="{{ csrf_token }}">
+        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+              rel="stylesheet"> -->
+        <link rel="stylesheet"
+              href="https://use.fontawesome.com/releases/v5.12.1/css/all.css"
+              crossorigin="anonymous">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <title>
+            {% block title %}{% endblock %}
+        </title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link href="{% sass_src 'scss/core.scss' %}" rel="stylesheet" type="text/css" />
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css"
+              rel="stylesheet"
+              type="text/css">
+        <link href="https://cdn.datatables.net/v/bs5/dt-2.0.3/b-3.0.1/b-html5-3.0.1/datatables.min.css"
+              rel="stylesheet">
+        <link href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css" type="text/css">
+        <link rel="stylesheet" href="{% static 'general/css/utils.css' %}">
+        
+        <!-- stylesheets -->
+        <link rel="stylesheet" href="{% static 'general/css/demo.css' %}">
+        <link rel="stylesheet" href="{% static 'general/css/core.css' %}">
+        
+        <!-- scripts -->
+        <script src="{% static 'general/js/base.js' %}"></script>
+        <script src="{% static 'general/js/vendor/helpers.js' %}"></script>
+        <script src="{% static 'general/js/vendor/config.js' %}"></script>
+
+        <link rel="shortcut icon" href="{% static 'general/img/logo.svg' %}">
+        
+    </head>
+
+    <body>
+        <!-- Layout wrapper -->
+        <div class="layout-wrapper layout-content-navbar">
+          <div class="layout-container">
+            <!-- Menu -->
+    
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+              <div class="app-brand demo">
+                <a href="/" class="app-brand-link">
+                  <span class="app-brand-logo demo">
+                    <img src="{% static 'general/img/logo.svg' %}">
+                  </span>
+                  <span class="app-brand-text demo menu-text fw-bold ms-2">CCSA</span>
+                </a>
+    
+                <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                  <i class="bx bx-chevron-left bx-sm align-middle"></i>
+                </a>
+              </div>
+    
+              <div class="menu-inner-shadow"></div>
+    
+              <ul class="menu-inner py-1">
+                
+                <li class="menu-header small text-uppercase">
+                    <span class="menu-header-text">General</span>
+                </li>
+
+                {% if user.is_superuser or user.is_leader %}
+                  <li class="menu-item {% if "requests" in request.path or "sharepoint" in request.path %}active open{% endif %}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                      <i class='menu-icon bx bxs-wallet'></i>
+                      <div data-i18n="Layouts">Solicitudes</div>
+                    </a>
+                    <ul class="menu-sub">
+                      {% include 'components/nav-item.html' with text="Solicitudes SharePoint" link="/sharepoint/" %}
+                      {% include 'components/nav-item.html' with text="Solicitudes Internas" link="/requests/" %}
+                    </ul>
+                  </li>
+                {% else %}
+                  <li class="menu-item {% if "requests" in request.path %}active open{% endif %}">
+                    <a href="/requests/" class="menu-link">
+                      <i class='menu-icon bx bxs-wallet'></i>
+                      <div data-i18n="Layouts">Solicitudes</div>
+                    </a>
+                  </li>
+                {% endif %}
+                
+                {% if user.is_superuser or user.is_leader %}
+                <li class="menu-item {% if "teams" in request.path %}active open{% endif %}">
+                  <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon fa fa-users"></i>
+                    <div data-i18n="Layouts">Equipos</div>
+                  </a>
+    
+                  <ul class="menu-sub">
+                    {% include 'components/nav-item.html' with text="Ver equipos" link="/teams/" %}
+                    {% include 'components/nav-item.html' with text="Añadir equipo" link="/teams/add-team-form/" %}
+                  </ul>
+                </li>
+                {% endif %}
+
+                <li class="menu-item {% if "forms" in request.path %}active open{% endif %}">
+                  <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon bx bxs-spreadsheet'></i>
+                    <div data-i18n="Layouts">Formularios</div>
+                  </a>
+                  <ul class="menu-sub">
+                    {% include 'components/nav-item.html' with text="Solicitud viaje" link="/forms/travel_advance_request" %}
+                    {% include 'components/nav-item.html' with text="Legalización viaje" link="/forms/travel_expense_legalization" %}
+                    {% include 'components/nav-item.html' with text="Legalización anticipo" link="/forms/advance_legalization" %}
+                    {% include 'components/nav-item.html' with text="Cuenta de cobro" link="/forms/billing_account" %}
+                    {% include 'components/nav-item.html' with text="Requisición" link="/forms/requisition" %}
+                  </ul>
+                </li>
+    
+                <li class="menu-header small text-uppercase">
+                  <span class="menu-header-text">Contacto &amp; Soporte</span>
+                </li>
+                
+                {% include 'components/nav-item.html' with text="Contacto" icon_class="fas fa-envelope" link="/emailContact/" %}
+
+                {% if request.user.is_superuser %}
+                  <li class="menu-header small text-uppercase">
+                    <span class="menu-header-text">Administrador</span>
+                  </li>
+                  {% include 'components/nav-item.html' with text="Usuarios" icon_class="fas fa-cog"  link="/permissions/" %}
+                {% endif %}
+
+              </ul>
+            </aside>
+            <!-- / Menu -->
+    
+            <!-- Layout container -->
+            <div class="layout-page">
+              <!-- Navbar -->
+
+              <header id="navBarHeader">
+                <nav
+                  class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                  id="layout-navbar">
+                  <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                    <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                      <i class="bx bx-menu bx-sm"></i>
+                    </a>
+                  </div>
+      
+                  <div class="navbar-nav-right d-flex align-items-center text-center" id="navbar-collapse">
+                      <div class="mx-auto px-2 nav-item d-flex flex-column flex-md-row align-items-center fs-5">
+                        ¡Bienvenid@,&nbsp;<span class="d-block d-md-inline">{{user.first_name}} {{user.last_name}}!</span>
+                      </div>
+                  </div>
+                  <div class="navbar-nav align-items-xr-center ">
+                      <a class="text-secondary nav-item px-0" href="/logout/?logout=true">
+                          <div class="d-flex align-items-center text-nowrap fw-medium">
+                            <i class='rotate-180 bx bx-log-out fs-3 mx-2 text-secondary'></i>
+                            <div class="d-none d-md-block d-lg-block">Cerrar Sesión</div>
+                          </div>
+                      </a>
+                    </div>
+                </nav>
+                <div class="container-xxl">
+                  <h5 class="py-2 my-2"><span class="text-muted fw-light">{% block main_route %}{% endblock %} /</span> {% block secondary_route %}{% endblock %}</h5>
+                </div>
+
+
+              </header>
+    
+    
+              <!-- / Navbar -->
+    
+              <!-- Content wrapper -->
+              <div class="content-wrapper">
+                <!-- Content -->
+    
+                <div class="container-xxl flex-grow-1" >
+                  <div class="card" id="mainContainer">
+                    {% block content %}{% endblock %}
+                  </div>
+                </div>
+                <!-- / Content -->
+    
+                <!-- Footer -->
+                <!-- <footer class="content-footer footer bg-footer-theme">
+                  <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                    <div class="mb-2 mb-md-0">
+                      ©
+                      <script>
+                        document.write(new Date().getFullYear());
+                      </script>
+                      , hecho con ❤️ por
+                      <a href="https://github.com/ICESI-PI1-2024A-G1/proyecto-t1" target="_blank" class="footer-link fw-medium">Grupo 1</a>
+                    </div>
+                    <div class="d-none d-lg-inline-block">
+                    </div>
+                  </div>
+                </footer> -->
+                <!-- / Footer -->
+    
+                <div class="content-backdrop fade"></div>
+              </div>
+              <!-- Content wrapper -->
+            </div>
+            <!-- / Layout page -->
+          </div>
+    
+          <!-- Overlay -->
+          <div class="layout-overlay layout-menu-toggle"></div>
+        </div>
+        <!-- / Layout wrapper -->
+
+        {% include 'components/modal.html' %}
+
+        <div
+          class="bs-toast toast toast-placement-ex m-2"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          data-bs-delay="5000">
+          <div class="toast-header">
+            <i class="bx bx-bell me-2" style="margin-right:10px"></i>
+            <div id="toast-title" class="me-auto fw-medium">Bootstrap</div>
+            <small id="toast-date" style="margin-left: auto;" >Ahora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div id="toast-body" class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>
+        </div>
+
+        <!-- libs -->
+        <!-- <script src="{% static 'general/js/lib/jquery.js' %}"></script>
+        <script src="{% static 'general/js/lib/popper.js' %}"></script> -->
+        <!-- vendor -->
+        <script src="{% static 'general/js/vendor/bootstrap.js' %}"></script>
+        <script src="{% static 'general/js/vendor/extended-ui-perfect-scrollbar.js' %}"></script>
+        <script src="{% static 'general/js/vendor/menu.js' %}"></script>
+        <script src="{% static 'general/js/vendor/main.js' %}"></script>
+        <!-- <script src="{% static 'general/js/vendor/datatables.js' %}"></script> -->
+        <!-- <script src="{% static 'general/js/vendor/forms-basic-inputs.js' %}"></script> -->
+        <!-- <script src="{% static 'general/js/vendor/ui-modals.js' %}"></script> -->
+        <script src="{% static 'general/js/vendor/ui-toasts.js' %}"></script> 
+        <script src="{% static 'general/js/vendor/ui-popover.js' %}"></script>
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
+        <!-- datatables -->
+        <script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/v/bs5/dt-2.0.3/b-3.0.1/b-html5-3.0.1/datatables.min.js"></script>
+          
+        {% if messages %}
+            {% for message in messages %}
+            <script>
+            $(document).ready(function () {
+                showToast("{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}", "bottom-right", "{% if message.tags == 'error' %}Error{% else %}Éxito{% endif %}", "{{message}}")
+            })
+            </script>
+            {% endfor %}
+          {% elif message %}
+            <script>
+              $(document).ready(function () {
+                showToast("danger", "bottom-right", "Error", "{{message}}")
+              })
+            </script>
+          {% endif %}  
+
+      </body>
+</html>

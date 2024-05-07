@@ -1,0 +1,36 @@
+{% load static %}
+
+<head>
+    <style>
+    @font-face {
+        font-family: 'Cathylise Janetson';
+        src: url('{% static "forms/fonts/Cathylise Janetson.otf" %}');
+    }
+    </style>
+</head>
+
+<div class="row justify-content-center" style="margin-top: 20px;">
+    <div class="col-md-6 mb-1 text-center mx-auto">
+        <div style="border-bottom: 1px solid black; position: relative; display: flex; justify-content: center; align-items: center;" id="signature">
+            {% with signatureType=request.signatureInput|slice:":1" signatureValue=request.signatureInput|slice:"4:" %}
+                {% if signatureType == '1' %}
+                    <style>
+                        @font-face {
+                            font-family: 'Cathylise Janetson';
+                            src: url('{% static "forms/fonts/Cathylise Janetson.otf" %}');
+                        }
+                    </style>    
+                    <p class="sign-block" style="font-family: Cathylise Janetson; font-size: 60px;">{{ signatureValue }}</p>
+                {% elif signatureType == '2' %}
+                    <img style="max-height:150px" src="{{ signatureValue }}">
+                {% elif signatureType == '3' %}
+                    <img style="max-height:150px" src="{{ signatureValue }}">
+                {% endif %}
+            {% endwith %}
+        </div>
+        <input type="hidden" id="signatureStatus" value="No">
+        <input type="file" id="signatureImage" accept="image/*" style="display: none;">
+        <canvas id="signatureCanvas" width="600" height="120" style="border:1px solid #000000; display: none;"></canvas>
+        <h4 style="font-size: 1em; text-align: center; margin-top:0.5rem">Firma del solicitante</h4>
+    </div>
+</div>

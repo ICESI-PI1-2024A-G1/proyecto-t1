@@ -1,0 +1,36 @@
+<div class="mb-2 mt-3">
+    <label class="h5"><strong>Datos bancarios</strong></label>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-1">
+        <label>Banco:</label>
+        <select class="form-control" name="bank" required>
+            <option value="">Selecciona una opción</option>
+            {% for bank in banks %}
+                <option value="{{ bank.bank_name }}" {% if form_data.bank == bank.bank_name %}selected{% endif %}>{{ bank.bank_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-6 mb-1">
+        <label>Tipo de cuenta:</label>
+        <select class="form-control" name="accountType" required>
+            <option value="">Selecciona una opción</option>
+            {% for account_type in account_types %}
+                <option value="{{ account_type.account_type_name }}" {% if form_data.accountType == account_type.account_type_name %}selected{% endif %}>{{ account_type.account_type_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-1">
+        <label>N° de cuenta:</label>
+        <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ form_data.accountNumber }}" min="0" required>
+    </div>
+    {% if include_cex %}
+    <div class="col-md-6 mb-1">
+        <label>N° CEX:</label>
+        <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ form_data.cexNumber }}" min="0" required>
+    </div>
+    {% endif %}
+</div>

@@ -1,0 +1,56 @@
+<div class="mb-2">
+    <label class="h5">
+        <strong>Identificación</strong>
+    </label>
+</div>
+<div class="row mb-4">
+    <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+            <label for="requestDate">Fecha de solicitud</label>
+            <input type="date"
+                   class="form-control"
+                   id="requestDate"
+                   name="requestDate"
+                   value="{{ today }}"
+                   readonly>
+        </div>
+        <div class="form-group">
+            <label for="fullName">Nombre completo</label>
+            <input type="text"
+                   class="form-control"
+                   id="fullName"
+                   name="fullName"
+                   value="{{ request.user.first_name }} {{ request.user.last_name }}"
+                   readonly>
+        </div>
+        <div class="form-group">
+            <label for="idNumber">No. de identificación</label>
+            <input type="number"
+                   class="form-control"
+                   id="idNumber"
+                   name="idNumber"
+                   value="{{ request.user.id }}"
+                   readonly>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+            <label for="dependence">Dependencia</label>
+            <select class="form-control" id="dependence" name="dependence" required>
+                <option value="">Selecciona una opción</option>
+                {% for dependence in dependences %}
+                    <option value="{{ dependence.dependence_name }}" {% if form_data.dependence == dependence.dependence_name %}selected{% endif %}>{{ dependence.dependence_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="costCenter">Centro de costos</label>
+            <select class="form-control" id="costCenter" name="costCenter" required>
+                <option value="">Selecciona una opción</option>
+                {% for cost_center in cost_centers %}
+                    <option value="{{ cost_center.cost_center_name }}" {% if form_data.costCenter == cost_center.cost_center_name %}selected{% endif %}>{{ cost_center.cost_center_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="card-header">
+    <div class="input-group mb-3">
+        <input type="text"
+               id="traceabilityTableSearch"
+               class="form-control"
+               aria-label="Sizing example input"
+               aria-describedby="inputGroup-sizing-default"
+               placeholder="Buscar">
+        <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
+    </div>
+</div>
+<div id="traceabilityTableContainer"
+     class="card-fluid container table-responsive">
+    <table id="traceabilityTable" class="table table-stripped">
+        <thead>
+            <th>Fecha</th>
+            <th>Modificado por</th>
+            <th>Motivo</th>
+            <th>Estado Anterior</th>
+            <th>Nuevo Estado</th>
+        </thead>
+        <tbody>
+            {% for trace in traceability %}
+                <tr>
+                    <td class="text-nowrap">{{ trace.date }}</td>
+                    <td>{{ trace.modified_by }}</td>
+                    <td style="min-width: 20rem;">{{ trace.reason|safe }}</td>
+                    <td>
+                        <div class="badge bg-label-{{ trace.prev_color }} ">
+                            <p id="prev_{{ trace.id }}" class="text-wrap mb-0 lh-sm">{{ trace.prev_state }}</p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="badge bg-label-{{ trace.new_color }} ">
+                            <p id="new_{{ trace.id }}" class="text-wrap mb-0 lh-sm">{{ trace.new_state }}</p>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="card-footer">
+    <div id="traceabilityTablePagination" class="row my-2"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        DataTableInit("traceabilityTable", 8, [
+            {
+                "targets": 0, // This is only applied to the date column
+                "orderable": true,
+                "type": "date" // Using ordering by date
+            },
+        ])
+    })
+</script>

@@ -1,0 +1,168 @@
+{% extends 'clean-base.html' %}
+
+{% block content %}
+
+<!--Icons-->
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Title -->
+
+<div class="d-flex justify-content-between">
+    <div>
+        <h2 class="mb-4">Legalización de anticipos</h2>
+    </div>
+</div>
+
+<!-- Announcement -->
+
+<p class="font-italic"><strong>Por favor tenga en cuenta lo
+        siguiente:</strong></p>
+<ol>
+    <li>Este formato se debe tramitar por ventanilla única, adjuntando los soportes</li>
+    <li>Utilice este formato para legalizar un anticipo (diferente de viajes) Se debe relacionar todos los gastos</li>
+    <li>Cuando se legaliza y queda saldo a favor del colaborador, se debe tramitar el pago en ventanilla única, por el valor del saldo a favor del empleado.</li>
+    <li>Todos los soportes de legalización deben venir a nombre de la Universidad Icesi Nit. 890.316.745-5. Documento sin este requisito, será rechazado en la legalización.</li>
+    <li>Si el saldo es a favor de ICESI, se debe regresar el dinero en la caja de la Universidad.</li>
+    <li>Los soportes físicos se debe escanear para adjuntar a este formato y deben cumplir los todos los requisitos de ley y que sean legibles.</li>
+    <li>Si el soporte de pago es una factura Pos, debe solicitar a la empresa la factura electrónica.</li>
+    <li>Puede incluir más casillas para relacionar todos los gastos.</li>
+    <li>Este formato se debe pasar a PDF para él envió a la oficina de contabilidad</li>
+    <li>Formato de uso interno</li>
+</ol>
+
+<div class="my-2 mx-2 border-bottom border-3"></div>
+
+<!-- User data -->
+
+<form id="myForm" action="/requests/advance_legalization_review" method="POST">
+    {{ form.csrf_token }}
+
+    <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
+    
+    {% include 'internalFormBlocks/idblock.html' %}
+
+    <div class="form-group">
+        <label for="purchaseReason">Motivo de compra o servicio</label>
+        <div class="d-flex justify-content-between">
+            <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" disabled>{{ request.purchase_reason }}</textarea>
+            {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+                <input type="checkbox" class="btn-check" id="btncheckPurchaseReason" name="purchaseReasonCheck" data-message="Motivo de compra o servicio">
+                <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPurchaseReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!--Spend data-->
+
+    <div class="mb-2 mt-3">
+        <label class="h5"><strong>Relación de gastos</strong></label>
+    </div>
+
+    <style>
+        th {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+
+    {% if showTable %}
+        {% include 'tables/advance_legalization.html' with expenses=expenses user=user %}
+    {% else %}
+    <p>La tabla se encuentra en el archivo adjunto</p>
+    {% endif %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Authorization -->
+
+    {% include 'internalFormBlocks/signblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Bank data -->
+
+    {% include 'internalFormBlocks/bankblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Observations -->
+
+    <div class="mb-2 mt-3">
+        <label for="observations" class="h5"><strong>Observaciones</strong></label>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
+        {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+            <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
+    </div>
+
+    <!-- Confirm Review -->
+    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+        {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
+
+    {% if editable %}
+    <!-- Input unlocker -->
+    <script>
+        var inputs = document.querySelectorAll('input, textarea, select');
+        var idsToSkip = ['requestDate', 'fullName', 'idNumber', 'total', 'employeeBalanceValue', 'icesiBalanceValue'];
+
+        inputs.forEach(input => {
+                if (!idsToSkip.includes(input.id)) {
+                    input.removeAttribute('readonly');
+                    input.removeAttribute('disabled');
+                } else if (input.id == 'total' || input.id == 'employeeBalanceValue' || input.id == 'icesiBalanceValue') {
+                    input.setAttribute('readonly', 'true');
+                    input.removeAttribute('disabled');
+                }
+            });
+    </script>
+    <!-- Budget total calculation -->
+    <script>
+        // detects changes in the input fields
+        inputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                updateTotals();
+            }
+        )});
+
+        // updates the totals row
+        function updateTotals() {
+            var total = 0;
+
+            // get all the rows except the totals, advance, employeeBalance, and icesiBalance rows
+            var form = document.querySelector('#myForm');
+            var rows = Array.from(form.querySelector('tbody').children);
+            rows = rows.filter(row => !['totals', 'advance', 'employeeBalance', 'icesiBalance'].includes(row.id));
+
+            // sum all the input fields for each row
+            rows.forEach(function(row) {
+                var input = row.children[2].firstChild;
+                total += Number(input.value);
+            });
+
+            // update the total field in the totals row
+            document.getElementById('total').value = total;
+
+            // calculate "Saldo a favor del empleado" and "Saldo a favor de ICESI"
+            var totalAdvance = Number(document.getElementById('advanceTotal').value);
+            var employeeBalance = total > totalAdvance ? total - totalAdvance : 0;
+            var icesiBalance = totalAdvance > total ? totalAdvance - total : 0;
+
+            // update "Saldo a favor del empleado" and "Saldo a favor de ICESI" fields
+            document.getElementById('employeeBalanceValue').value = employeeBalance;
+            document.getElementById('icesiBalanceValue').value = icesiBalance;
+        }
+    </script>
+    {% include 'internalFormBlocks/savereviewblock.html' %}
+    {% endif %}
+
+</form>
+
+{% endblock %}

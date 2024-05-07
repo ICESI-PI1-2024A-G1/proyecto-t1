@@ -1,0 +1,5 @@
+ADMIN_PASSWORD=123456789
+ADMIN_EMAIL=ccsa_test_user@hotmail.com
+
+EMAIL_HOST_PASSWORD=njbt qgre zevu ohwi
+EMAIL_HOST_ADDRESS=ccsa101010@gmail.com

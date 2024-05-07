@@ -1,0 +1,182 @@
+{% extends 'clean-base.html' %}
+
+{% block content %}
+
+<!--Icons-->
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<!--Title-->
+
+<div class="d-flex justify-content-between">
+    <div>
+        <h2 class="mb-4">Legalización de gastos de viaje</h2>
+    </div>
+</div>
+
+<!-- Announcement -->
+
+<p class="font-italic"><strong>Por favor tenga en cuenta lo siguiente:</strong></p>
+<ol>
+    <li>Este formato se debe tramitar por ventanilla única, adjuntando los soportes</li>
+    <li>Este formato debe radicarse en ventanilla única por el total de los gastos incurridos en el viaje. El formato automáticamente registra si hay saldo a favor del colaborador o saldo a favor de Icesi</li>
+    <li>Todos los soportes de legalización deben venir a nombre de la Universidad Icesi Nit. 890.316.745-5. Documento sin este requisito, será rechazado en la legalización.</li>
+    <li>Si hay saldo es a favor de la Universidad ICESI, se debe regresar el dinero en la caja de la Universidad o autorizar en este formato el descuento por nómina</li>
+    <li>Si hay saldo a favor del colaborador, se procede a reintegrar a la cuenta de nómina</li>
+    <li>Si el soporte de pago es una factura Pos, debe solicitar a la empresa la factura electrónica.</li>
+    <li>Se debe legalizar en la moneda que se recibió en el anticipo (Pesos colombianos, Euros, Dólares) Si el colaborador gastó en una moneda diferente, debe pasar los gastos a la moneda original del anticipo y dejar registro del cambio de moneda.</li>
+    <li>Solo utilizar la columna correspondiente a la moneda que va a legalizar</li>
+    <li>Puede incluir más casillas para ítems diferentes, colocando el nombre que corresponda, reemplazando las celdas A39 en adelante; Ejemplo: Medicamentos, Ingresos a lugares de interés, sobrepeso de maleta en aerolínea, etc.</li>
+    <li>Utilice este formato para legalizar el anticipo de viajes; en caso de no haber solicitado anticipo</li>
+    <li>Formato de uso interno</li>
+    <li>En transacciones con personas naturales debe adjuntar el Rut con fecha del año en curso</li>
+</ol>
+
+<div class="my-2 mx-2 border-bottom border-3"></div>
+
+<!-- User data -->
+
+<form id="myForm" action="/requests/travel_expense_legalization_review" method="POST">
+    {{ form.csrf_token }}
+
+    <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
+    
+    {% include 'internalFormBlocks/idblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Travel data -->
+
+    {% include 'internalFormBlocks/travelblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!--Spend data-->
+
+    <div class="mb-2 mt-3">
+        <label class="h5"><strong>Relación de gastos</strong></label>
+    </div>
+
+    <style>
+        th {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+
+    {% if showTable %}
+        {% include 'tables/travel_expense_legalization.html' with expenses=expenses user=user %}
+    {% else %}
+        <p>La tabla se encuentra en el archivo adjunto</p>
+    {% endif %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Authorization -->
+
+    <p class="text-center">
+        <i>Autorizo que el saldo a favor de la Universidad Icesi, sea descontado en una sola cuota en el siguiente pago de nómina: <strong>Sí</strong></i>
+    </p>
+
+    {% include 'internalFormBlocks/signblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Bank data -->
+
+    {% include 'internalFormBlocks/bankblock.html' %}
+
+    <div class="my-2 mx-2 border-bottom border-3"></div>
+
+    <!-- Observations -->
+
+    <div class="mb-2 mt-3">
+        <label for="observations" class="h5"><strong>Observaciones</strong></label>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
+        {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+            <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
+            <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
+        {% endif %}
+    </div>
+
+    <!-- Confirm Review -->
+
+    {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
+        {% include 'internalFormBlocks/reviewblock.html' %}
+    {% endif %}
+
+    {% if editable %}
+    <!-- Input unlocker -->
+    <script>
+        var inputs = document.querySelectorAll('input, textarea, select');
+        var idsToSkip = ['requestDate', 'fullName', 'idNumber'];
+        for (let i = 1; i <= 3; i++) {
+            idsToSkip.push(`total${i}`, `employeeBalance${i}`, `icesiBalance${i}`);
+        }
+
+        inputs.forEach(input => {
+            if (!idsToSkip.includes(input.id)) {
+                input.removeAttribute('readonly');
+                input.removeAttribute('disabled');
+            } else if (input.id.startsWith('total') || input.id.startsWith('employeeBalance') || input.id.startsWith('icesiBalance')) {
+                input.setAttribute('readonly', 'true');
+                input.removeAttribute('disabled');
+            }
+        });
+    </script>
+    <!-- Budget total calculation -->
+    <script>
+        // detects changes in the input fields
+        inputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                updateTotals();
+            }
+        )});
+
+        // updates the totals row
+        function updateTotals() {
+            var totals = [0, 0, 0];
+
+            // get all the rows except the totals, advance, employeeBalance, and icesiBalance rows
+            var form = document.querySelector('#myForm');
+            var rows = Array.from(form.querySelector('tbody').children);
+            rows = rows.filter(row => !['totals', 'advance', 'employeeBalance', 'icesiBalance'].includes(row.id));
+
+            // sum all the input fields for each row
+            rows.forEach(function(row) {
+                var inputs = Array.from(row.children).slice(4).map(td => td.firstChild);
+
+                inputs.forEach(function(input, index) {
+                    totals[index] += Number(input.value);
+                });
+            });
+
+            // update the total fields in the totals row
+            totals.forEach(function(total, index) {
+                document.getElementById('total' + (index + 1)).value = total;
+            });
+
+            // calculate "Saldo a favor del empleado" and "Saldo a favor de ICESI"
+            var totalAdvance = [1, 2, 3].map(i => Number(document.getElementById('advanceTotal' + i).value));
+            var employeeBalance = totals.map((total, i) => total > totalAdvance[i] ? total - totalAdvance[i] : 0);
+            var icesiBalance = totals.map((total, i) => totalAdvance[i] > total ? total - totalAdvance[i] : 0);
+
+            // update "Saldo a favor del empleado" and "Saldo a favor de ICESI" fields
+            employeeBalance.forEach((balance, i) => {
+                document.getElementById('employeeBalance' + (i + 1)).value = balance;
+            });
+
+            icesiBalance.forEach((balance, i) => {
+                document.getElementById('icesiBalance' + (i + 1)).value = balance;
+            });
+        }
+    </script>
+    {% include 'internalFormBlocks/savereviewblock.html' %}
+    {% endif %}
+    
+</form>
+
+{% endblock %}
