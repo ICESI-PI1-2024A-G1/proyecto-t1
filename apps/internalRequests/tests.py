@@ -16,7 +16,7 @@ class Internal_requests_test(TestCase):
     def tearDown(self):
         self.driver.quit()
 
-    def tesst_show_request_table(self):
+    def test_show_request_table(self):
         self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
@@ -41,7 +41,7 @@ class Internal_requests_test(TestCase):
         first_child_element = self.driver.execute_script("return arguments[0].className;", action)
         self.assertEqual(first_child_element, 'bx bx-dots-vertical-rounded')
 
-    def tesst_search_request_inner(self):
+    def test_search_request_inner(self):
             self.login("123456789")
             intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
             intern.click()
@@ -57,14 +57,14 @@ class Internal_requests_test(TestCase):
             table6 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
             self.assertTrue(table.text.__contains__(search) or table1.text.__contains__(search) or table2.text.__contains__(search) or table3.text.__contains__(search) or table4.text.__contains__(search) or table5.text.__contains__(search) or table6.text.__contains__(search))
 
-    def tesst_assert_inner_state_labels(self):
+    def test_assert_inner_state_labels(self):
         self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
         self.assertTrue(table1.text == "EN REVISIÓN" or table1.text == "DEVUELTO" or table1.text == "PENDIENTE" or table1.text == "RESUELTO" or table1.text == "RECHAZADO" or table1.text == "POR APROBAR")
 
-    def tesst_search_request_inner_notFound(self):
+    def test_search_request_inner_notFound(self):
         self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
@@ -73,7 +73,7 @@ class Internal_requests_test(TestCase):
         result = self.driver.find_element(By.XPATH, '//*[@id="requestsTable"]/tbody/tr/td')
         self.assertEqual(result.text, "No se encontraron resultados")
 
-    def tesst_review_request_happy_path(self):
+    def test_review_request_happy_path(self):
         self.login("123456789")
 
         self.click_inner_requests()
@@ -111,7 +111,7 @@ class Internal_requests_test(TestCase):
         table1 = self.get_status()   
         self.assertEqual(table1.text, "POR APROBAR")
 
-    def tesst_review_request_return(self):
+    def test_review_request_return(self):
         self.login("56843806")
 
         self.search("en revisi")
