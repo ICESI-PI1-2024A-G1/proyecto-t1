@@ -2,15 +2,15 @@ from django.db import models
 
 
 class SharePoint(models.Model):
-    status = models.CharField(max_length=50)
+    status = models.CharField(max_length=100)
     manager = models.CharField(max_length=100)
     team = models.IntegerField()
     initial_date = models.DateField()
     final_date = models.DateField()
     fullname = models.CharField(max_length=100)
     faculty = models.CharField(max_length=100)
-    document = models.CharField(max_length=20)
-    phone_number = models.CharField(max_length=20)
+    document = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=100)
     email = models.EmailField()
     CENCO = models.CharField(max_length=100)
     bank = models.CharField(max_length=100)

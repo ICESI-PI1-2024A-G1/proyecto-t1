@@ -2,9 +2,9 @@ const DataTableInit = (id, pageLength=4, columnDefs=[]) => {
     let dataTable = $(`#${id}`).DataTable({
         "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Todos"]],
         "pageLength":pageLength,
-        "language": {
-            "url": "/static/general/json/datatables-ES.json"
-        },
+        // "language": {
+        //     "url": "/static/general/json/datatables-ES.json"
+        // },
         "columnDefs": columnDefs,
         // "searching": false,
         // dom: '<"table-wrapper"f>tip'

@@ -18,6 +18,8 @@ from apps.teams.forms import TeamForm
 User = get_user_model()
 fake = Faker()
 
+from apps.teams.views import show_teams
+
 
 class TeamTestCase(TestCase):
     """
@@ -56,7 +58,7 @@ class TeamTestCase(TestCase):
                 last_name=fake.last_name(),
             )
             self.users.append(user)
-        names = ["Contabilidad", "Lógistica", "Programacion académica","Contratación"]
+        names = ["Contabilidad", "Lógistica", "Programacion académica", "Contratación"]
         self.leaders = [self.user]
         for i in range(4):
             leader = random.choice(

@@ -27,7 +27,7 @@
 
 <!-- User data -->
 
-<form action="/requests/travel_advance_request_review" method="POST">
+<form action="/requests/travel_advance_request_review/" method="POST">
     {{ form.csrf_token }}
 
     <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
