@@ -1,4 +1,7 @@
 coverage erase
+py manage.py test utils.testAdmin
+py manage.py test utils.testModel
+py manage.py test utils.test
 coverage run manage.py test apps.login.tests.tests_login
 coverage run manage.py test apps.registration.tests.tests_registration
 coverage run manage.py test apps.requests.tests.tests_requests
