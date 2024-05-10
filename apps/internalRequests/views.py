@@ -1,3 +1,5 @@
+import io
+from PyPDF2 import PdfMerger, PdfReader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
@@ -237,6 +239,7 @@ def show_requests(request):
 
     for r in requests_data:
         r.status_color = statusMap[r.status]
+        r.pdf_url = r.pdf_file.url if r.pdf_file else None
 
     requests_data = sorted(requests_data, key=lambda x: x.request_date, reverse=True)
 
@@ -354,9 +357,12 @@ def change_status(request, id):
                     form_type = None
 
                 try:
+                    curr_request.save()
                     detail_request(request, id, pdf=True)
                 except Exception as e:
                     print(e)
+                curr_request = get_request_by_id(id)
+                print("finished: ", curr_request.pdf_file.url)
                 faculty = [
                     "Ciencias Administrativas y económicas",
                     "Ingeniería, Diseño y Ciencias Aplicadas",
@@ -677,13 +683,15 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                 presentational_hints=True,
                 page_size="letter",
             )
-            pdfs.append(
-                {
-                    "name": f"Solicitud {id}.pdf",
-                    "content": pdf_bytes,
-                    "type": "application/pdf",
-                }
-            )
+            # pdfs.append(
+            #     {
+            #         "name": f"Solicitud {id}.pdf",
+            #         "content": pdf_bytes,
+            #         "type": "application/pdf",
+            #     }
+            # )
+            merger = PdfMerger()
+            merger.append(io.BytesIO(pdf_bytes))
             if table:
                 template_r = get_template(table)
                 html = template_r.render(context)
@@ -692,13 +700,25 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                     presentational_hints=True,
                     page_size="letter",
                 )
-                pdfs.append(
-                    {
-                        "name": f"Tabla {id}.pdf",
-                        "content": pdf_bytes,
-                        "type": "application/pdf",
-                    }
-                )
+                # pdfs.append(
+                #     {
+                #         "name": f"Tabla {id}.pdf",
+                #         "content": pdf_bytes,
+                #         "type": "application/pdf",
+                #     }
+                # )
+                merger.append(io.BytesIO(pdf_bytes))
+            
+            combined_pdf_bytes = io.BytesIO()
+            merger.write(combined_pdf_bytes)
+            combined_pdf_bytes.seek(0)
+            combined_pdf_bytes = combined_pdf_bytes.getvalue()
+            from django.core.files.base import ContentFile
+            pdf_file = ContentFile(combined_pdf_bytes, name=f'Solicitud-{id}.pdf')
+
+            # Asigna el objeto File al campo pdf_file de tu solicitud
+            request_data.pdf_file = pdf_file
+            request_data.save()
 
             addresses = ["ccsa101010@gmail.com"]
             try:
@@ -712,7 +732,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                     modified_by=request.user,
                     request_id=id,
                     date=datetime.now(),
-                    pdf_link=None,
+                    pdf_link=request_data.pdf_file.url,
                     form_type=settings.FORM_TYPES[request_data.__class__.__name__],
                 )
             except:

@@ -22,6 +22,8 @@ class Form(models.Model):
     review_data = models.TextField(null=True, blank=True)
     id_person = models.CharField(max_length=200, default="")
     fullname = models.CharField(max_length=200, default="")
+    pdf_file = models.FileField(upload_to="filled_forms/", null=True, blank=True, default=None)
+
 
     class Meta:
         abstract = True

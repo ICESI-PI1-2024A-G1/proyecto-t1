@@ -50,7 +50,9 @@
             <p>{{notification.user_target}}</p>
             <p>{{notification.date}}</p>
             <p>{{notification.form_type}}</p>
-            <p>{{notification.pdf_url}}</p>
+            <a href="{{notification.pdf_link}}">
+                <i class='bx bxs-file-pdf mx-2'>Documento Diligenciado</i>
+            </a>
         </li>
         {% endfor %}
 
