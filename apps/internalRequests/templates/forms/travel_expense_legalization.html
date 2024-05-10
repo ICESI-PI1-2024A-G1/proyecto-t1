@@ -36,7 +36,7 @@
 
 <!-- User data -->
 
-<form id="myForm" action="/requests/travel_expense_legalization_review" method="POST">
+<form id="myForm" action="/requests/travel_expense_legalization_review/" method="POST">
     {{ form.csrf_token }}
 
     <input type="hidden" id="request_id" name="id" value="{{ request.id }}">

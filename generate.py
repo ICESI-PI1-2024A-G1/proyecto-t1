@@ -256,10 +256,7 @@ dependencies = [
     "Administración",
 ]
 
-account_types = [
-    "Ahorros",
-    "Corriente"
-]
+account_types = ["Ahorros", "Corriente"]
 
 cost_centers = [
     "Publicidad",
@@ -404,8 +401,9 @@ def generate_traceability(id):
             date=fake.date_time_between(start_date="-30d", end_date="+3d"),
             prev_state=random.choice(requestStatus),
             new_state=random.choice(requestStatus),
-            reason=fake.text(),
+            reason=fake.text(max_nb_chars=100),
         )
+
 
 def create_fake_travel_request():
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelAdvanceRequest"])
@@ -436,7 +434,7 @@ def create_fake_travel_request():
         bank=random.choice(banks),
         account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=999999999),
-        observations=fake.text(),
+        observations=fake.text(max_nb_chars=100),
         team_id=team,
         signatureInput="1---" + person.get_fullname(),
     )
@@ -461,7 +459,7 @@ def create_fake_travel_expense_legalization():
         destination_city=random.choice(cities)["name"],
         departure_date=fake.date_between(start_date="+1d", end_date="+60d"),
         return_date=fake.date_between(start_date="+61d", end_date="+120d"),
-        travel_reason=fake.text(),
+        travel_reason=fake.text(max_nb_chars=100),
         total1=fake.random_int(min=100, max=1000),
         total2=fake.random_int(min=100, max=1000),
         total3=fake.random_int(min=100, max=1000),
@@ -478,7 +476,7 @@ def create_fake_travel_expense_legalization():
         bank=random.choice(banks),
         account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
-        observations=fake.text(),
+        observations=fake.text(max_nb_chars=100),
         team_id=team,
         signatureInput="1---" + person.get_fullname(),
     )
@@ -516,7 +514,7 @@ def create_fake_advance_legalization():
         member=random.choice(team.members.all()),
         dependence=random.choice(dependencies),
         cost_center=random.choice(cost_centers),
-        purchase_reason=fake.text(),
+        purchase_reason=fake.text(max_nb_chars=100),
         total=fake.random_int(min=100, max=1000),
         advance_total=fake.random_int(min=50, max=500),
         employee_balance_value=fake.random_int(min=0, max=500),
@@ -525,7 +523,7 @@ def create_fake_advance_legalization():
         bank=random.choice(banks),
         account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
-        observations=fake.text(),
+        observations=fake.text(max_nb_chars=100),
         team_id=team,
         signatureInput="1---" + person.get_fullname(),
     )
@@ -543,7 +541,7 @@ def create_fake_advance_legalization():
             category=fake.word(),
             provider=fake.company(),
             pesos=fake.random_int(min=100, max=1000),
-            concept=fake.text(),
+            concept=fake.text(max_nb_chars=100),
         )
         advance_table.save()
 
@@ -594,12 +592,12 @@ def create_fake_requisition():
         dependence=random.choice(dependencies),
         cenco=random.choice(cost_centers),
         id_value=fake.random_number(digits=8),
-        description=fake.text(),
+        description=fake.text(max_nb_chars=100),
         signature_status=True,
         bank=random.choice(banks),
         account_type=random.choice(account_types),
         account_number=fake.random_int(min=100000000, max=9999999999),
-        observations=fake.text(),
+        observations=fake.text(max_nb_chars=100),
         team_id=team,
         signatureInput="1---" + person.get_fullname(),
     )
@@ -610,11 +608,20 @@ def create_fake_requisition():
 
 
 form_amount = 10
+print(f"Generateing {form_amount} billing account forms")
 for _ in range(form_amount):
     create_fake_billing_account()
+print(f"Generateing {form_amount} requisition forms")
+for _ in range(form_amount):
     create_fake_requisition()
+print(f"Generateing {form_amount} advance legalization forms")
+for _ in range(form_amount):
     create_fake_advance_legalization()
+print(f"Generateing {form_amount} travel expense legalization forms")
+for _ in range(form_amount):
     create_fake_travel_expense_legalization()
+print(f"Generateing {form_amount} travel forms")
+for _ in range(form_amount):
     create_fake_travel_request()
 
 """

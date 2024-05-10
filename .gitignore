@@ -216,3 +216,8 @@ pip-selfcheck.json
 
 # Configuration files
 **/code.bat
+
+codes.txt
+
+env_test.txt
+tempenv.txt

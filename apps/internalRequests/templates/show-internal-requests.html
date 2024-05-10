@@ -65,20 +65,20 @@
                             </button>
                             <div class="dropdown-menu">
                                 {% if request.status != "PENDIENTE" %}
-                                <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}', 'xl')"
+                                <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}/', 'xl')"
                                     class="dropdown-item details-btn show-details" data-request-id="{{ request.id }}">
                                     <i class="mr-2 fa fa-info"></i>
                                     Revisar
                                 </button>
                                 {% endif %}
-                                <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}', 'xl')"
+                                <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}/', 'xl')"
                                     class="dropdown-item details-btn">
                                     <i class="mr-2 fa fa-eye"></i>
                                     Cambios
                                 </button>
                                 {% if request.status != "RECHAZADO" and request.status != "RESUELTO" and request.status != "DEVUELTO" %}
                                     {% if user.is_leader %}
-                                    <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}')"
+                                    <button onclick="showModal('Asignar solicitud', '/requests/assign-request/{{request.id}}/')"
                                         class="dropdown-item details-btn " data-request-id="{{ request.id }}">
                                         <i class="mr-2 fa fa-user-plus"></i>
                                         Asignar
@@ -86,13 +86,13 @@
                                     {% endif %}
                                     {% if user.is_superuser or user.is_leader or user.is_member %}
                                         {% if request.status != "EN REVISIÓN" %}
-                                            <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}')"
+                                            <button onclick="showModal('Cambiar estado', '/requests/change-status/{{request.id}}/')"
                                                 class="dropdown-item" data-request-id="{{ request.id }}">
                                                 <i class="mr-2 fa fa-edit"></i>
                                                 Cambiar Estado
                                             </button>
                                         {% endif %}
-                                        <button onclick="showModal('Cambiar fecha estimada de finalización', '/requests/change-final-date/{{request.id}}')"
+                                        <button onclick="showModal('Cambiar fecha estimada de finalización', '/requests/change-final-date/{{request.id}}/')"
                                             class="dropdown-item" data-request-id="{{ request.id }}">
                                             <i class="mr-2 fa fa-calendar"></i>
                                             Cambiar Fecha Final
@@ -117,5 +117,5 @@
 
 
 {% load static %}
-<script src="{% static 'internalRequests/js/requests.js' %}"></script>
+<script type="text/javascript" src="{% static 'internalRequests/js/requests.js' %}"></script>
 {% endblock %}

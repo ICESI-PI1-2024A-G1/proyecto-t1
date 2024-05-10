@@ -1,13 +1,15 @@
 from datetime import datetime
 from io import BytesIO
-import os
 from openpyxl import Workbook
-import pandas as pd
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from openpyxl import load_workbook
 from django.conf import settings
+from django.core.files.storage import default_storage
 from openpyxl.styles import Alignment
+import os
+import boto3
+import pandas as pd
 import xlwings as xw
 import tempfile
 
@@ -22,6 +24,11 @@ class SharePointAPI:
         Args:
             excel_path (str): The path to the Excel file.
         """
+        self.aws_access_key_id = settings.AWS_ACCESS_KEY_ID
+        self.aws_secret_access_key = settings.AWS_SECRET_ACCESS_KEY
+        self.bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+        self.object_name = "requests_database.xlsx"
+
         self.excel_path = excel_path
         self.request_columns = [
             "id",
