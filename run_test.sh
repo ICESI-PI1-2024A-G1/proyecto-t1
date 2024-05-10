@@ -10,7 +10,7 @@ coverage run manage.py test apps.forms.tests
 coverage run manage.py test apps.permissions.tests
 coverage run manage.py test apps.teams.tests.test_func_teams
 coverage run manage.py test apps.teams.tests.test_special
-py generate_for_test.py
-py generate.py shell
+python3 generate_for_test.py
+python3 generate.py shell
 coverage report
-py print_results.py
+python3 print_results.py
