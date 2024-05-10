@@ -10,8 +10,8 @@ cffi==1.16.0
 chardet==5.2.0
 charset-normalizer==3.3.2
 click==8.1.7
-colorama==0.4.6
 ConfigArgParse==1.7
+coverage==7.5.0
 cryptography==42.0.5
 cssbeautifier==1.15.1
 cssselect2==0.7.0

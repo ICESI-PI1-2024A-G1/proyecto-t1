@@ -60,8 +60,7 @@ def login_view(request):
                 ruta_script = "apps/login/write.py"
                 comando = f"python {ruta_script} {random_code}"
                 subprocess.call(comando, shell=True)
-                
-                print("Code: " + random_code)
+            
 
                 # Send verification email
                 utils.send_verification_email(

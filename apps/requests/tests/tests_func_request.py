@@ -16,7 +16,7 @@ class Requests(TestCase):
     def tearDown(self):
         self.driver.quit()
 
-    def tesst_show_request_table(self):
+    def test_show_request_table(self):
         self.login("123456789")
         bread_crumbs = self.driver.find_element(By.XPATH, '//*[@id="navBarHeader"]/div/h5')
         table = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable thead tr th:nth-child(1) span")
@@ -39,7 +39,7 @@ class Requests(TestCase):
         first_child_element = self.driver.execute_script("return arguments[0].firstChild;", action)
         self.assertEqual(first_child_element['textContent'], "\n                        Detalles\n                        ")
 
-    def tesst_show_request_table(self):
+    def test_show_request_table(self):
         self.login("123456789")
         action = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody tr td:nth-child(7) button")
         action.click()
@@ -117,7 +117,7 @@ class Requests(TestCase):
         self.assertEqual(fld17.text, "VALOR DE CONTRATO")
         self.assertEqual(fld18.text, "PAGO ÚNICO")
 
-    def tesst_search_request_happy(self):
+    def test_search_request_happy(self):
         self.login("123456789")
         input_search = self.driver.find_element(By.ID, "requestsTableSearch")
         srch = "11"
@@ -131,7 +131,7 @@ class Requests(TestCase):
         table6 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
         self.assertTrue(table.text.__contains__(srch) or table1.text.__contains__(srch) or table2.text.__contains__(srch) or table3.text.__contains__(srch) or table4.text.__contains__(srch) or table5.text.__contains__(srch) or table6.text.__contains__(srch))
 
-    def tesst_search_request_notFound(self):
+    def test_search_request_notFound(self):
         self.login("123456789")
         input_search = self.driver.find_element(By.ID, "requestsTableSearch")
         input_search.send_keys("00")
@@ -139,7 +139,7 @@ class Requests(TestCase):
         self.assertTrue(result.text, "No se encontraron resultados")
 
         
-    def tesst_assert_state(self):
+    def test_assert_state(self):
         self.login("123456789")
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(6)")
         self.assertTrue(table1.text == "PAGADO - CONTABILIDAD" or table1.text == "APROBADO - DECANO" or table1.text == "APROBADO - CENCO" or table1.text == "CERRADO" or table1.text == "RECHAZADO - DECANO")
