@@ -67,47 +67,6 @@ class SharePointAPI:
         workbook.save(self.excel_path)
         workbook.close()
 
-    @csrf_exempt
-    def get_request_by_id(self, id) -> JsonResponse:
-        """
-        Retrieves a request by its ID from the Excel data.
-
-        Args:
-            id (int): The ID of the request.
-
-        Returns:
-            JsonResponse: JSON response containing the request data.
-
-        Raises:
-            Http404: If the request is not found.
-        """
-        try:
-            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
-            data = df[df["id"] == id].to_dict(orient="records")
-            if len(data) > 0:
-                return JsonResponse(data=data[0], status=200, safe=False)
-            else:
-                raise Http404("Solicitud no encontrada.")
-        except FileNotFoundError:
-            raise Http404("El archivo no se encontró")
-
-    @csrf_exempt
-    def get_all_requests(self) -> JsonResponse:
-        """
-        Retrieves all requests from the Excel data.
-
-        Returns:
-            JsonResponse: JSON response containing all request data.
-
-        Raises:
-            Http404: If the file is not found.
-        """
-        try:
-            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
-            data = df.to_dict(orient="records")
-            return JsonResponse(data, status=200, safe=False)
-        except FileNotFoundError:
-            raise Http404("El archivo no se encontró")
 
     @csrf_exempt
     def create_data(self, data) -> JsonResponse:
@@ -142,10 +101,57 @@ class SharePointAPI:
             )
         except Exception as e:
             raise Http404("No se pudo crear la solicitud.")
+        
+    @csrf_exempt
+    def get_all_requests(self) -> JsonResponse:
+        """
+        Retrieves all requests from the Excel data.
 
+        Returns:
+            JsonResponse: JSON response containing all request data.
+
+        Raises:
+            Http404: If the file is not found.
+        """
+        try:
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
+            data = df.to_dict(orient="records")
+            return JsonResponse(data, status=200, safe=False)
+        except FileNotFoundError:
+            raise Http404("El archivo no se encontró")
+""" 
+#borrar
+    @csrf_exempt
+    def get_request_by_id(self, id) -> JsonResponse:
+        
+        Retrieves a request by its ID from the Excel data.
+
+        Args:
+            id (int): The ID of the request.
+
+        Returns:
+            JsonResponse: JSON response containing the request data.
+
+        Raises:
+            Http404: If the request is not found.
+        
+        try:
+            df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
+            data = df[df["id"] == id].to_dict(orient="records")
+            if len(data) > 0:
+                return JsonResponse(data=data[0], status=200, safe=False)
+            else:
+                raise Http404("Solicitud no encontrada.")
+        except FileNotFoundError:
+            raise Http404("El archivo no se encontró")
+"""
+    #borrar
+
+"""
+#borra
     @csrf_exempt
     def update_data(self, id, new_data) -> JsonResponse:
-        """
+        
         Updates existing data in the Excel file.
 
         Args:
@@ -157,7 +163,7 @@ class SharePointAPI:
 
         Raises:
             Http404: If the request update fails.
-        """
+        
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             mask = df["id"] == id
@@ -174,10 +180,10 @@ class SharePointAPI:
                 raise Http404("Solicitud no encontrada.")
         except FileNotFoundError:
             raise Http404("El archivo no se encontró")
-
+#borra
     @csrf_exempt
     def delete_data(self, id) -> JsonResponse:
-        """
+        
         Deletes data from the Excel file.
 
         Args:
@@ -188,7 +194,7 @@ class SharePointAPI:
 
         Raises:
             Http404: If the data deletion fails.
-        """
+        
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             original_rows = len(df)
@@ -207,10 +213,10 @@ class SharePointAPI:
                 )
         except FileNotFoundError:
             raise Http404("El archivo no se encontró")
-
+#borra
     @csrf_exempt
     def search_data(self, query) -> JsonResponse:
-        """
+        
         Searches data in the Excel file based on a query.
 
         Args:
@@ -221,7 +227,7 @@ class SharePointAPI:
 
         Raises:
             Http404: If the search fails.
-        """
+        
         try:
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
             filtered_df = df.copy()
@@ -242,10 +248,10 @@ class SharePointAPI:
             return JsonResponse(ans, status=200, safe=False)
         except FileNotFoundError:
             raise Http404("El archivo no se encontró")
-
+#borra
     @csrf_exempt
     def remove_team(self, id) -> JsonResponse:
-        """
+        
         Removes a team from the data by setting its team ID to NaN.
 
         Args:
@@ -256,7 +262,7 @@ class SharePointAPI:
 
         Raises:
             Exception: If the team removal fails.
-        """
+        
         try:
             # Cargar el archivo Excel
             df = pd.read_excel(self.excel_path, sheet_name="data", header=0)
@@ -283,7 +289,7 @@ class SharePointAPI:
                 status=500,
                 safe=False,
             )
-
+#borra
     def get_form_render(self, form_name=None, excel_file=None):
         try:
             if excel_file:
@@ -369,3 +375,4 @@ class SharePointAPI:
         wb.close()
 
         return output_file_path
+"""
