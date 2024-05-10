@@ -1,14 +1,5 @@
 {% load static %}
 
-<head>
-    <style>
-    @font-face {
-        font-family: 'Cathylise Janetson';
-        src: url('{% static "forms/fonts/Cathylise Janetson.otf" %}');
-    }
-    </style>
-</head>
-
 <div class="row justify-content-center" style="margin-top: 80px;">
     <div class="col-md-6 mb-1 text-center">
         <div id="signature" name="signature" style="border-bottom: 1px solid black; display: flex; justify-content: center; align-items: center; position: relative;"></div>
@@ -27,4 +18,4 @@
 
 <script src="https://unpkg.com/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{% static '/forms/js/sign_logic.js'}"></script>
+<script type="text/javascript" src="{% static '/forms/js/sign_logic.js' %}"></script>

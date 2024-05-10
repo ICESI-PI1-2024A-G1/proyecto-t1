@@ -37,7 +37,7 @@ def register_view(request):
     """
     if request.method == "GET":
         if request.user.is_authenticated:
-            return redirect("/requests")
+            return redirect("/requests/")
         else:
             return render(request, "register.html")
     else:
@@ -160,7 +160,7 @@ def verify_email_view(request):
             return render(request, "verifyEmailReg.html")
         else:
             if request.user.is_authenticated:
-                return redirect("/requests")
+                return redirect("/requests/")
             else:
                 return redirect("login:login_view")
     else:

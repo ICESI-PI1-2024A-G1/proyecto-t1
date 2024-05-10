@@ -239,7 +239,7 @@ def show_requests(request):
 
     if message and message_type:
         messages.add_message(request, message_type, message)
-        return redirect("/requests")
+        return redirect("/requests/")
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 
@@ -809,46 +809,51 @@ def travel_advance_request(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = TravelAdvanceRequest.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = TravelAdvanceRequest.objects.get(id=request_id)
 
-    # Mapping of field names to data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "dependenceCheck": "Dependencia",
-        "costsCheck": "Costos",
-        "destinationCheck": "Destino",
-        "startTravelCheck": "Inicio del viaje",
-        "endTravelCheck": "Fin del viaje",
-        "travelReasonCheck": "Razón del viaje",
-        "tableCheck": "Tabla",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "observationsCheck": "Observaciones",
-        "reasonData": "Razón",
-    }
+        # Mapping of field names to data-message
+        field_to_message = {
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "dependenceCheck": "Dependencia",
+            "costsCheck": "Costos",
+            "destinationCheck": "Destino",
+            "startTravelCheck": "Inicio del viaje",
+            "endTravelCheck": "Fin del viaje",
+            "travelReasonCheck": "Razón del viaje",
+            "tableCheck": "Tabla",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "observationsCheck": "Observaciones",
+            "reasonData": "Razón",
+        }
 
-    # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Initialize review_data_list with all checkboxes with a value of 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Update the values of the checkboxes that are checked
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Update the values of the checkboxes that are checked
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
 
-    return redirect("/requests/?reviewDone")
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -863,46 +868,51 @@ def travel_expense_legalization(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = TravelExpenseLegalization.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = TravelExpenseLegalization.objects.get(id=request_id)
 
-    # Mapping of field names to data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "dependenceCheck": "Dependencia",
-        "costsCheck": "Costos",
-        "destinationCheck": "Destino",
-        "startTravelCheck": "Inicio de viaje",
-        "endTravelCheck": "Fin de viaje",
-        "travelReasonCheck": "Razón de viaje",
-        "tableCheck": "Tabla",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "observationsCheck": "Observaciones",
-        "reasonData": "Razón",
-    }
+        # Mapping of field names to data-message
+        field_to_message = {
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "dependenceCheck": "Dependencia",
+            "costsCheck": "Costos",
+            "destinationCheck": "Destino",
+            "startTravelCheck": "Inicio de viaje",
+            "endTravelCheck": "Fin de viaje",
+            "travelReasonCheck": "Razón de viaje",
+            "tableCheck": "Tabla",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "observationsCheck": "Observaciones",
+            "reasonData": "Razón",
+        }
 
-    # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Initialize review_data_list with all checkboxes with a value of 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Update the values of the checkboxes that are checked
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Update the values of the checkboxes that are checked
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
 
-    return redirect("/requests/?reviewDone")
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -917,43 +927,47 @@ def advance_legalization(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = AdvanceLegalization.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = AdvanceLegalization.objects.get(id=request_id)
 
-    # Mapping of field names to data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "dependenceCheck": "Dependencia",
-        "costsCheck": "Costos",
-        "purchaseReasonCheck": "Razón de compra",
-        "tableCheck": "Tabla",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "observationsCheck": "Observaciones",
-        "reasonData": "Razón",
-    }
+        # Mapping of field names to data-message
+        field_to_message = {
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "dependenceCheck": "Dependencia",
+            "costsCheck": "Costos",
+            "purchaseReasonCheck": "Razón de compra",
+            "tableCheck": "Tabla",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "observationsCheck": "Observaciones",
+            "reasonData": "Razón",
+        }
 
-    # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Actualizar los valores de los checkboxes que están marcados
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Actualizar los valores de los checkboxes que están marcados
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
-
-    return redirect("/requests/?reviewDone")
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -968,47 +982,52 @@ def billing_account(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = BillingAccount.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = BillingAccount.objects.get(id=request_id)
 
-    # Mapping of field names to data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "valueCheck": "Valor",
-        "conceptCheck": "Concepto",
-        "retentionCheck": "Retención",
-        "taxCheck": "Impuesto",
-        "residentCheck": "Residente",
-        "cityCheck": "Ciudad",
-        "addressCheck": "Dirección",
-        "cellphoneCheck": "Celular",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "cexCheck": "CEX",
-        "reasonData": "Razón",
-    }
+        # Mapping of field names to data-message
+        field_to_message = {
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "valueCheck": "Valor",
+            "conceptCheck": "Concepto",
+            "retentionCheck": "Retención",
+            "taxCheck": "Impuesto",
+            "residentCheck": "Residente",
+            "cityCheck": "Ciudad",
+            "addressCheck": "Dirección",
+            "cellphoneCheck": "Celular",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "cexCheck": "CEX",
+            "reasonData": "Razón",
+        }
 
-    # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Initialize review_data_list with all checkboxes with a value of 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Update the values of the checkboxes that are checked
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Update the values of the checkboxes that are checked
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
 
-    return redirect("/requests/?reviewDone")
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -1023,45 +1042,50 @@ def requisition(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = Requisition.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = Requisition.objects.get(id=request_id)
 
-    # Mapeo de los nombres de los campos a los data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "workCheck": "Trabajo",
-        "dependenceCheck": "Dependencia",
-        "cencoCheck": "Cenco",
-        "valueCheck": "Valor",
-        "conceptCheck": "Concepto",
-        "descriptionCheck": "Descripción",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "observationsCheck": "Observaciones",
-        "reasonData": "Razón",
-    }
+        # Mapeo de los nombres de los campos a los data-message
+        field_to_message = {
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "workCheck": "Trabajo",
+            "dependenceCheck": "Dependencia",
+            "cencoCheck": "Cenco",
+            "valueCheck": "Valor",
+            "conceptCheck": "Concepto",
+            "descriptionCheck": "Descripción",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "observationsCheck": "Observaciones",
+            "reasonData": "Razón",
+        }
 
-    # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Actualizar los valores de los checkboxes que están marcados
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Actualizar los valores de los checkboxes que están marcados
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
 
-    return redirect("/requests/?reviewDone")
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt

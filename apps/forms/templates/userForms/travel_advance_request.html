@@ -4,6 +4,8 @@
 {%block main_route %}Formularios{% endblock %}
 {%block secondary_route %}Solicitudes de viaje{% endblock %}
 
+{% load static %}
+
 {% block content %}
 <form action="/forms/travel_advance_request" method="POST">
     <!--Title-->
@@ -200,5 +202,5 @@
         </div>
     </div>
 </form>
-<script src="{% static 'forms/js/travel_advance_request.js'}"></script>
+<script type="text/javascript" src="{% static 'forms/js/travel_advance_request.js' %}"></script>
 {% endblock %}

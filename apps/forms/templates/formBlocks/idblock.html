@@ -8,8 +8,8 @@
             <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ today }}" readonly>
         </div>
         <div class="form-group">
-            <label for="travelerName">Nombre completo</label>
-            <input type="text" class="form-control" id="travelerName" name="travelerName" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
+            <label for="fullName">Nombre completo</label>
+            <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
         </div>
         <div class="form-group">
             <label for="idNumber">No. de identificación</label>

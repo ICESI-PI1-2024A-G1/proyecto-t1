@@ -3,6 +3,7 @@
 {%block main_route %}Formularios{% endblock %}
 {%block secondary_route %} Legalización de viaje{% endblock %}
 
+{% load static %}
 {% block content %}
 
 <form action="/forms/travel_expense_legalization" method="POST">
@@ -182,5 +183,5 @@
 <script type="text/javascript">
     var form_data = JSON.parse(document.getElementById('form_data').textContent);
 </script>
-<script src="{% static 'forms/js/travel_expense_legalization.js'}"></script>
+<script type="text/javascript" src="{% static 'forms/js/travel_expense_legalization.js' %}"></script>
 {% endblock %}
