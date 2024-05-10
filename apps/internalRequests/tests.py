@@ -180,11 +180,8 @@ class Internal_requests_test(TestCase):
         mdl = self.driver.find_element(By.ID, "detailsContent") 
         self.scroll_element(mdl)
         table1 = self.get_status()   
-        #self.click_review_first()
-        #mdl = self.driver.find_element(By.ID, "detailsContent")  
-        #self.scroll_element(mdl)
-
         self.assertEqual(table1.text, "DEVUELTO")
+        
     def select_option(self, selector):
         self.driver.find_element(By.CSS_SELECTOR, selector).click()
         self.driver.find_element(By.CSS_SELECTOR, selector+' option:nth-child(2)').click()
@@ -212,7 +209,6 @@ class Internal_requests_test(TestCase):
         self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[2]/div[11]/div[2]/select/option[2]').click()
         
         self.driver.find_element(By.ID, "idBank").send_keys("456475")
-
         self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
 
     def click_form(self, number):
