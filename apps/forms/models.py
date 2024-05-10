@@ -3,6 +3,7 @@ import json
 from django.contrib.auth import get_user_model
 from django.apps import apps
 from apps.teams.models import Team
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -10,7 +11,7 @@ User = get_user_model()
 class Form(models.Model):
     id = models.AutoField(primary_key=True)
     request_date = models.DateField()
-    final_date = models.DateField(null=True, default=None)
+    final_date = models.DateField(null=True, default=timezone.now)
     member = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
 
     status = models.CharField(max_length=200, default="PENDIENTE")
