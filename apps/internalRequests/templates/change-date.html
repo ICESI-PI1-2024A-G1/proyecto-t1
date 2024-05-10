@@ -44,7 +44,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/requests/change-final-date/' + id,
+                    url: '/requests/change-final-date/' + id + '/',
                     method: 'POST',
                     data: {
                         newFinalDate: newFinalDate,
@@ -63,7 +63,7 @@
         });
     }
 </script>
-l
+
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>

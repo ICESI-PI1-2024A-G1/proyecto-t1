@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "apps.permissions",
     "apps.emailContact",
     "apps.forms",
+    "apps.notifications",
     "utils",
     "sass_processor",
     "storages",

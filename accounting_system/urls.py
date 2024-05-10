@@ -31,6 +31,7 @@ urlpatterns = [
     path("emailContact/", include("apps.emailContact.urls")),
     path("permissions/", include("apps.permissions.urls")),
     path("forms/", include("apps.forms.urls")),
+    path("notifications/", include("apps.notifications.urls")),
     path("error/", include("apps.errorHandler.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Notificationes{% endblock %}
+{%block main_route %}Notificaciones{% endblock %}
+{%block secondary_route %}Tus Notificaciones{% endblock %}
+
+{% block content %}
+<div class="card-body">
+    <ul class="list-group">
+        {% for notification in status_notifications %}
+            <li class="list-group-item">
+                <div>
+                    <h5>Cambio de estado</h5>
+                    <p>{{notification.modified_by}}</p>
+                    <p>{{notification.user_target}}</p>
+                    <p>{{notification.reason}}</p>
+                    <p>{{notification.date}}</p>
+                    <p>{{notification.prev_state}}</p>
+                    <p>{{notification.new_state}}</p>
+                </div>
+            </li>
+        {% endfor %}
+        {% for notification in date_notifications %}
+            <li class="list-group-item">
+                <div>
+                    <h5>Cambio de fecha final</h5>
+                    <p>{{notification.modified_by}}</p>
+                    <p>{{notification.user_target}}</p>
+                    <p>{{notification.date}}</p>
+                    <p>{{notification.prev_date|date:'Y-m-d' }}</p>
+                    <p>{{notification.new_date|date:'Y-m-d' }}</p>
+                </div>
+            </li>
+        {% endfor %}
+
+        {% for notification in assign_notifications %}
+            <li class="list-group-item"> 
+                <h5>Asignación de Solicitud</h5>
+                <p>{{notification.modified_by}}</p>
+                <p>{{notification.user_target}}</p>
+                <p>{{notification.reason}}</p>
+                <p>{{notification.date}}</p>
+                <p>{{notification.team}}</p>
+            </li>
+        {% endfor %}
+
+        {% for notification in fill_notifications %}
+        <li class="list-group-item"> 
+            <h5>Revisión de Formulario</h5>
+            <p>{{notification.modified_by}}</p>
+            <p>{{notification.user_target}}</p>
+            <p>{{notification.date}}</p>
+            <p>{{notification.form_type}}</p>
+            <a href="{{notification.pdf_link}}">
+                <i class='bx bxs-file-pdf mx-2'>Documento Diligenciado</i>
+            </a>
+        </li>
+        {% endfor %}
+
+    </ul>
+</div>
+{% load static %}
+{% endblock %}
