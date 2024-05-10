@@ -218,3 +218,6 @@ pip-selfcheck.json
 **/code.bat
 
 codes.txt
+
+env_test.txt
+tempenv.txt
