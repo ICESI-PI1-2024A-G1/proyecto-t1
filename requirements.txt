@@ -121,3 +121,4 @@ xlwings==0.31.1
 zope.event==5.0
 zope.interface==6.3
 zopfli==0.2.3
+coverage==7.5.1

@@ -608,20 +608,20 @@ def create_fake_requisition():
 
 
 form_amount = 10
+print(f"Generateing {form_amount} billing account forms")
 for _ in range(form_amount):
-    print(f"Generateing {form_amount} billing account forms")
     create_fake_billing_account()
+print(f"Generateing {form_amount} requisition forms")
 for _ in range(form_amount):
-    print(f"Generateing {form_amount} requisition forms")
     create_fake_requisition()
+print(f"Generateing {form_amount} advance legalization forms")
 for _ in range(form_amount):
-    print(f"Generateing {form_amount} advance legalization forms")
     create_fake_advance_legalization()
+print(f"Generateing {form_amount} travel expense legalization forms")
 for _ in range(form_amount):
-    print(f"Generateing {form_amount} travel expense legalization forms")
     create_fake_travel_expense_legalization()
+print(f"Generateing {form_amount} travel forms")
 for _ in range(form_amount):
-    print(f"Generateing {form_amount} travel request forms")
     create_fake_travel_request()
 
 """

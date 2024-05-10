@@ -9,7 +9,7 @@ coverage run manage.py test apps.internalRequests.tests
 coverage run manage.py test apps.forms.tests
 coverage run manage.py test apps.teams.tests.test_func_teams
 coverage run manage.py test apps.teams.tests.test_special
-python3 generate_for_test.py
+py generate_for_test.py
 coverage run manage.py test apps.permissions.tests
 py generate.py shell
 coverage report
