@@ -650,7 +650,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
         css_horizontal = os.path.join(
             settings.BASE_DIR, "static", "general", "css", "horizontal.css"
         )
-        print(css_horizontal)
+        # print(css_horizontal)
 
         template_r = get_template(template)
         html = template_r.render(context)
@@ -737,7 +737,6 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                 )
             except:
                 pass
-
             # utils.send_verification_email(
             #     request,
             #     f"Archivo para revisión de la solicitud {id}",
@@ -746,6 +745,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
             #     f"Hola, el equipo de Contabilidad de la Universidad Icesi te envía el siguiente archivo para ser revisado. Este archivo contiene detalles de la solicitud {id} que ha sido actualizada recientemente. Por favor, revisa el archivo adjunto y haznos saber si tienes alguna pregunta o necesitas más información. Gracias por tu atención a este asunto.",
             #     pdfs,
             # )
+            return JsonResponse({"message": "pdf generated"})
     else:
         # Renderizar la plantilla HTML normalmente
         return render(request, template, context)

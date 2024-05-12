@@ -2,8 +2,11 @@ import json
 import os
 import django
 from django.conf import settings
+from django.test import Client, RequestFactory
+from django.urls import reverse
 from faker import Faker
 from dotenv import load_dotenv
+from django.contrib.auth import authenticate, login, logout
 
 load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
@@ -14,6 +17,7 @@ import random
 from django.contrib.auth import get_user_model
 from apps.internalRequests.models import Traceability
 from apps.teams.models import Team
+from apps.notifications.models import *
 from datetime import datetime, timedelta
 from api.sharepoint_api import SharePointAPI
 from apps.forms.models import *
@@ -80,6 +84,10 @@ Bank.objects.all().delete()
 AccountType.objects.all().delete()
 Dependency.objects.all().delete()
 CostCenter.objects.all().delete()
+StatusNotification.objects.all().delete()
+AssignNotification.objects.all().delete()
+FillFormNotification.objects.all().delete()
+DateChangeNotification.objects.all().delete()
 
 # Create users
 users_amount = 35
@@ -443,6 +451,7 @@ def create_fake_travel_request():
         request.id = get_next_id()
     request.save()
     generate_traceability(request.id)
+    return request
 
 
 def create_fake_travel_expense_legalization():
@@ -501,6 +510,7 @@ def create_fake_travel_expense_legalization():
         )
         travel_info.save()
         generate_traceability(travel_info.id)
+    return travel_expense
 
 
 def create_fake_advance_legalization():
@@ -544,6 +554,7 @@ def create_fake_advance_legalization():
             concept=fake.text(max_nb_chars=100),
         )
         advance_table.save()
+    return advance_legalization
 
 
 def create_fake_billing_account():
@@ -576,6 +587,7 @@ def create_fake_billing_account():
         billing_account.id = get_next_id()
     billing_account.save()
     generate_traceability(billing_account.id)
+    return billing_account
 
 
 def create_fake_requisition():
@@ -605,24 +617,31 @@ def create_fake_requisition():
         requisition.id = get_next_id()
     requisition.save()
     generate_traceability(requisition.id)
+    return requisition
 
+filled_forms = []
 
 form_amount = 10
 print(f"Generateing {form_amount} billing account forms")
 for _ in range(form_amount):
-    create_fake_billing_account()
+    billing_account = create_fake_billing_account()
+    filled_forms.append(billing_account)
 print(f"Generateing {form_amount} requisition forms")
 for _ in range(form_amount):
-    create_fake_requisition()
+    requisition = create_fake_requisition()
+    filled_forms.append(requisition)
 print(f"Generateing {form_amount} advance legalization forms")
 for _ in range(form_amount):
-    create_fake_advance_legalization()
+    advance_legalization = create_fake_advance_legalization()
+    filled_forms.append(advance_legalization)
 print(f"Generateing {form_amount} travel expense legalization forms")
 for _ in range(form_amount):
-    create_fake_travel_expense_legalization()
+    travel_expense = create_fake_travel_expense_legalization()
+    filled_forms.append(travel_expense)
 print(f"Generateing {form_amount} travel forms")
 for _ in range(form_amount):
-    create_fake_travel_request()
+    travel_request = create_fake_travel_request()
+    filled_forms.append(travel_request)
 
 """
 for r in get_all_requests():
@@ -692,5 +711,54 @@ print("Generating cost centers...")
 for cost_center in cost_centers:
     cost_center_instance = CostCenter(name=cost_center)
     cost_center_instance.save()
+
+print("Generating Notifications")
+notification_number = 5
+def generate_notification_data():
+    return {
+        "user_target": random.choice(leaders),
+        "modified_by": random.choice(members),
+        "request_id": random.choice(filled_forms).id, 
+        "date": fake.date_between(start_date="-30d", end_date="+0d")
+    }
+
+print("Generating StatusNotifications")
+for i in range(notification_number):
+    data = generate_notification_data()
+    data["prev_state"] = random.choice(requestStatus)
+    data["new_state"] = random.choice(requestStatus)
+    data["reason"] = fake.text(max_nb_chars=100)
+    StatusNotification.objects.create(**data)
+
+print("Generating AssignNotifications")
+for i in range(notification_number):
+    data = generate_notification_data()
+    data["team"] = random.choice(teams)
+    AssignNotification.objects.create(**data)
+
+print("Generating FillFormNotifications")
+client = Client()
+client.login(id=os.getenv("ADMIN_PASSWORD"), password=os.getenv("ADMIN_PASSWORD"))
+for i in range(notification_number):
+    data = generate_notification_data()
+    ready_forms = [ form for form in filled_forms if form.status not in ["PENDIENTE", "EN REVISIÓN"] ]
+    request = random.choice(ready_forms)
+    client.get(reverse("internalRequests:show_pdf", args=[request.id, "pdf"]))
+    from apps.internalRequests.views import get_request_by_id
+    request = get_request_by_id(request.id)
+    pdf_link = request.pdf_file.url
+    team = Team.objects.get(id=request.team_id.id)
+    data["request_id"] = request.id
+    data["form_type"] = team.typeForm
+    data["pdf_link"] = pdf_link
+    FillFormNotification.objects.create(**data)
+client.logout()
+
+print("Generating DateChangeNotifications")
+for i in range(notification_number):
+    data = generate_notification_data()
+    data["prev_date"] = fake.date_between(start_date="-30d", end_date="+0d")
+    data["new_date"] = fake.date_between(start_date="+1d", end_date="+30d")
+    DateChangeNotification.objects.create(**data)
 
 print("Done")
