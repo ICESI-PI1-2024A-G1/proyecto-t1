@@ -41,6 +41,8 @@ function addRow() {
         }
         input.name = ['category', 'provider', 'pesos', 'concept'][i] + '_' + rowNumber;
         input.value = form_data[input.name] || '';
+        input.min = 0;
+        input.max = 99999999;
         newCell.appendChild(input);
         newRow.appendChild(newCell);
     }

@@ -64,7 +64,7 @@
                     </div>
                     <div class="form-group">
                         <label for="work">Cargo</label>
-                        <input type="text" class="form-control" id="work" name="work" required>
+                        <input type="text" class="form-control" id="work" name="work" maxlength="50" required>
                     </div>
                 </div>
             </div>
@@ -74,20 +74,18 @@
                         <label for="dependence">Dependencia</label>
                         <select class="form-control" id="dependence" name="dependence" required>
                             <option value="">Selecciona una opción</option>
-                            <option {% if form_data.dependence == "Publicidad" %}selected{% endif %}>Publicidad</option>
-                            <option {% if form_data.dependence == "Tienda" %}selected{% endif %}>Tienda</option>
-                            <option {% if form_data.dependence == "Recursos humanos" %}selected{% endif %}>Recursos humanos</option>
-                            <option {% if form_data.dependence == "Administración" %}selected{% endif %}>Administración</option>
+                            {% for dependence in dependences %}
+                                <option value="{{ dependence.dependence_name }}" {% if form_data.dependence == dependence.dependence_name %}selected{% endif %}>{{ dependence.dependence_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="cenco">Cenco</label>
                         <select class="form-control" id="cenco" name="cenco" required>
                             <option value="">Selecciona una opción</option>
-                            <option {% if form_data.costCenter == "Publicidad" %}selected{% endif %}>Publicidad</option>
-                            <option {% if form_data.costCenter == "Semilleros" %}selected{% endif %}>Semilleros</option>
-                            <option {% if form_data.costCenter == "Semestre" %}selected{% endif %}>Semestre</option>
-                            <option {% if form_data.costCenter == "Bienestar" %}selected{% endif %}>Bienestar</option>
+                            {% for cost_center in cost_centers %}
+                                <option value="{{ cost_center.cost_center_name }}" {% if form_data.costCenter == cost_center.cost_center_name %}selected{% endif %}>{{ cost_center.cost_center_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -99,6 +97,7 @@
                                id="idValue"
                                name="idValue"
                                min="0"
+                               max="99999999"
                                required>
                     </div>
                     <div class="form-group">
@@ -124,6 +123,7 @@
                           id="description"
                           name="description"
                           rows="5"
+                          maxlength="200"
                           required></textarea>
             </div>
             <!-- Authorization -->
@@ -142,7 +142,8 @@
                 <textarea class="form-control"
                           id="observations"
                           name="observations"
-                          rows="3"></textarea>
+                          rows="3"
+                          maxlength="200"></textarea>
             </div>
         </div>
         <div class="card-footer">

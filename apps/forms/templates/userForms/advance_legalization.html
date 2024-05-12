@@ -68,13 +68,13 @@
                         <tr>
                             <td><input type="text" class="form-control" name="category_0" value="{{ form_data.category_0 }}" required></td>
                             <td><input type="text" class="form-control" name="provider_0" value="{{ form_data.provider_0 }}" required></td>
-                            <td><input type="number" class="form-control" placeholder="0" name="pesos_0" min="0" value="{{ form_data.pesos_0 }}" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_0" min="0" max="99999999" value="{{ form_data.pesos_0 }}" required></td>
                             <td><input type="text" class="form-control" name="concept_0" value="{{ form_data.concept_0 }}" required></td>
                         </tr>
                         <tr>
                             <td><input type="text" class="form-control" name="category_1" value="{{ form_data.category_1 }}" required></td>
                             <td><input type="text" class="form-control" name="provider_1" value="{{ form_data.provider_1 }}" required></td>
-                            <td><input type="number" class="form-control" placeholder="0" name="pesos_1" value="{{ form_data.pesos_1 }}" min="0" required></td>
+                            <td><input type="number" class="form-control" placeholder="0" name="pesos_1" value="{{ form_data.pesos_1 }}" min="0" max="99999999" required></td>
                             <td><input type="text" class="form-control" name="concept_1" value="{{ form_data.concept_1 }}" required></td>
                         </tr>
                         <tr id="totals">
@@ -118,7 +118,7 @@
                 </label>
             </div>
             <div>
-                <textarea class="form-control" id="observations" name="observations" rows="3">{{ form_data.observations }}</textarea>
+                <textarea class="form-control" id="observations" name="observations" rows="3" maxlength="200">{{ form_data.observations }}</textarea>
             </div>
     </div>
 
