@@ -96,6 +96,7 @@
                             placeholder="0"
                             value="{{ form_data.airportTransport }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -108,6 +109,7 @@
                             placeholder="0"
                             value="{{ form_data.localTransport }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -120,6 +122,7 @@
                             placeholder="0"
                             value="{{ form_data.food }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -132,6 +135,7 @@
                             placeholder="0"
                             value="{{ form_data.accommodation }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -144,6 +148,7 @@
                             placeholder="0"
                             value="{{ form_data.exitTaxes }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -156,6 +161,7 @@
                             placeholder="0"
                             value="{{ form_data.others }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -193,7 +199,7 @@
                 </label>
             </div>
             <div>
-                <textarea class="form-control" id="observations" name="observations" rows="3">{{ form_data.observations }}</textarea>
+                <textarea class="form-control" id="observations" name="observations" rows="3" maxlength="200">{{ form_data.observations }}</textarea>
             </div>
     </div>
     <div class="card-footer">        

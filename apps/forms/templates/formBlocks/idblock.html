@@ -21,16 +21,18 @@
             <label for="dependence">Dependencia</label>
             <select class="form-control" id="dependence" name="dependence" required>
                 <option value="">Selecciona una opción</option>
-                <option {% if form_data.dependence == "Op1" %}selected{% endif %}>Op1</option>
-                <option {% if form_data.dependence == "Op2" %}selected{% endif %}>Op2</option>
+                {% for dependence in dependences %}
+                    <option value="{{ dependence.dependence_name }}" {% if form_data.dependence == dependence.dependence_name %}selected{% endif %}>{{ dependence.dependence_name }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="form-group">
             <label for="costCenter">Centro de costos</label>
             <select class="form-control" id="costCenter" name="costCenter" required>
                 <option value="">Selecciona una opción</option>
-                <option {% if form_data.costCenter == "Op1" %}selected{% endif %}>Op1</option>
-                <option {% if form_data.costCenter == "Op2" %}selected{% endif %}>Op2</option>
+                {% for cost_center in cost_centers %}
+                    <option value="{{ cost_center.cost_center_name }}" {% if form_data.costCenter == cost_center.cost_center_name %}selected{% endif %}>{{ cost_center.cost_center_name }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>

@@ -739,16 +739,18 @@ for i in range(notification_number):
 print("Generating FillFormNotifications")
 client = Client()
 client.login(id=os.getenv("ADMIN_PASSWORD"), password=os.getenv("ADMIN_PASSWORD"))
-for i in range(notification_number):
+for form_type in settings.FORM_TYPES:
     data = generate_notification_data()
-    ready_forms = [ form for form in filled_forms if form.status not in ["PENDIENTE", "EN REVISIÓN"] ]
-    request = random.choice(ready_forms)
-    client.get(reverse("internalRequests:show_pdf", args=[request.id, "pdf"]))
+    ready_forms = [ form for form in filled_forms if form.team_id.typeForm == settings.FORM_TYPES[form_type]]
+    form = random.choice(ready_forms)
+    form.status = "POR APROBAR"
+    form.save()
+    client.get(reverse("internalRequests:show_pdf", args=[form.id, "pdf"]))
     from apps.internalRequests.views import get_request_by_id
-    request = get_request_by_id(request.id)
-    pdf_link = request.pdf_file.url
-    team = Team.objects.get(id=request.team_id.id)
-    data["request_id"] = request.id
+    form = get_request_by_id(form.id)
+    pdf_link = form.pdf_file.url
+    team = Team.objects.get(id=form.team_id.id)
+    data["request_id"] = form.id
     data["form_type"] = team.typeForm
     data["pdf_link"] = pdf_link
     FillFormNotification.objects.create(**data)
