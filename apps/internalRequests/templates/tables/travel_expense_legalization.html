@@ -1,8 +1,3 @@
-<div>
-    <h1 class="text-center mx-auto">Tabla de Relación de gastos</h1>
-    <h4 class="mx-auto">Legalización de gastos de viaje</h4>
-</div>
-
 <div class="table-responsive">
     <table class="table table-bordered table-striped table-hover">
         <thead>
@@ -22,38 +17,38 @@
         <tbody>
             {% for expense in expenses %}
                 <tr>
-                    <td><textarea class="form-control" name="category_{{ forloop.counter0 }}" id="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled required>{{ expense.category }}</textarea></td>
-                    <td><textarea class="form-control" name="provider_{{ forloop.counter0 }}" id="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled required>{{ expense.provider }}</textarea></td>
-                    <td><textarea class="form-control" name="nit_{{ forloop.counter0 }}" id="nit_{{ forloop.counter0 }}" value="{{ expense.nit }}" disabled required>{{ expense.nit }}</textarea></td>
-                    <td><textarea class="form-control" name="concept_{{ forloop.counter0 }}" id="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled>{{ expense.concept }}</textarea></td>
-                    <td><input type="text" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" id="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled required></td>
-                    <td><input type="text" class="form-control" placeholder="0" name="dollars_{{ forloop.counter0 }}" id="dollars_{{ forloop.counter0 }}" value="{{ expense.dollars|floatformat:"-0" }}" disabled required></td>
-                    <td><input type="text" class="form-control" placeholder="0" name="euros_{{ forloop.counter0 }}" id="euros_{{ forloop.counter0 }}" value="{{ expense.euros|floatformat:"-0" }}" disabled required></td>
+                    <td><textarea class="form-control" name="category_{{ forloop.counter0 }}" id="category_{{ forloop.counter0 }}" value="{{ expense.category }}" maxlength="50" disabled required>{{ expense.category }}</textarea></td>
+                    <td><textarea class="form-control" name="provider_{{ forloop.counter0 }}" id="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" maxlength="50" disabled required>{{ expense.provider }}</textarea></td>
+                    <td><textarea class="form-control" name="nit_{{ forloop.counter0 }}" id="nit_{{ forloop.counter0 }}" value="{{ expense.nit }}" maxlength="50" disabled required>{{ expense.nit }}</textarea></td>
+                    <td><textarea class="form-control" name="concept_{{ forloop.counter0 }}" id="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" maxlength="50" disabled>{{ expense.concept }}</textarea></td>
+                    <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" id="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" min="0" max="99999999" disabled required></td>
+                    <td><input type="number" class="form-control" placeholder="0" name="dollars_{{ forloop.counter0 }}" id="dollars_{{ forloop.counter0 }}" value="{{ expense.dollars|floatformat:"-0" }}" min="0" max="99999999" disabled required></td>
+                    <td><input type="number" class="form-control" placeholder="0" name="euros_{{ forloop.counter0 }}" id="euros_{{ forloop.counter0 }}" value="{{ expense.euros|floatformat:"-0" }}" min="0" max="99999999" disabled required></td>
                 </tr>
             {% endfor %}
             <tr id="totals">
-                <td colspan="4" class="text-end">Total expenses:</td>
-                <td><input id="total1" name="total1" type="text" class="form-control" placeholder="0" value="{{ request.total1|floatformat:"-0" }}" disabled></td>
-                <td><input id="total2" name="total2" type="text" class="form-control" placeholder="0" value="{{ request.total2|floatformat:"-0" }}" disabled></td>
-                <td><input id="total3" name="total3" type="text" class="form-control" placeholder="0" value="{{ request.total3|floatformat:"-0" }}" disabled></td>
+                <td colspan="4" class="text-end">Total de gastos:</td>
+                <td><input id="total1" name="total1" type="number" class="form-control" placeholder="0" value="{{ request.total1|floatformat:"-0" }}" disabled></td>
+                <td><input id="total2" name="total2" type="number" class="form-control" placeholder="0" value="{{ request.total2|floatformat:"-0" }}" disabled></td>
+                <td><input id="total3" name="total3" type="number" class="form-control" placeholder="0" value="{{ request.total3|floatformat:"-0" }}" disabled></td>
             </tr>
             <tr id="advance">
-                <td colspan="4" class="text-end">Advance value:</td>
-                <td><input id="advanceTotal1" name="advanceTotal1" type="text" class="form-control" placeholder="0" value="{{ request.advance_total1|floatformat:"-0" }}" disabled required></td>
-                <td><input id="advanceTotal2" name="advanceTotal2" type="text" class="form-control" placeholder="0" value="{{ request.advance_total2|floatformat:"-0" }}" disabled required></td>
-                <td><input id="advanceTotal3" name="advanceTotal3" type="text" class="form-control" placeholder="0" value="{{ request.advance_total3|floatformat:"-0" }}" disabled required></td>
+                <td colspan="4" class="text-end">Valor del avance:</td>
+                <td><input id="advanceTotal1" name="advanceTotal1" type="number" class="form-control" placeholder="0" min="0" max="99999999" value="{{ request.advance_total1|floatformat:"-0" }}" disabled required></td>
+                <td><input id="advanceTotal2" name="advanceTotal2" type="number" class="form-control" placeholder="0" min="0" max="99999999" value="{{ request.advance_total2|floatformat:"-0" }}" disabled required></td>
+                <td><input id="advanceTotal3" name="advanceTotal3" type="number" class="form-control" placeholder="0" min="0" max="99999999" value="{{ request.advance_total3|floatformat:"-0" }}" disabled required></td>
             </tr>
             <tr id="employeeBalance">
-                <td colspan="4" class="text-end">Balance in favor of the employee:</td>
-                <td><input id="employeeBalance1" name="employeeBalance1" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance1|floatformat:"-0" }}" disabled></td>
-                <td><input id="employeeBalance2" name="employeeBalance2" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance2|floatformat:"-0" }}" disabled></td>
-                <td><input id="employeeBalance3" name="employeeBalance3" type="text" class="form-control" placeholder="0" value="{{ request.employee_balance3|floatformat:"-0" }}" disabled></td>
+                <td colspan="4" class="text-end">Balance a favor del empleador:</td>
+                <td><input id="employeeBalance1" name="employeeBalance1" type="number" class="form-control" placeholder="0" value="{{ request.employee_balance1|floatformat:"-0" }}" disabled></td>
+                <td><input id="employeeBalance2" name="employeeBalance2" type="number" class="form-control" placeholder="0" value="{{ request.employee_balance2|floatformat:"-0" }}" disabled></td>
+                <td><input id="employeeBalance3" name="employeeBalance3" type="number" class="form-control" placeholder="0" value="{{ request.employee_balance3|floatformat:"-0" }}" disabled></td>
             </tr>
             <tr id="icesiBalance">
-                <td colspan="4" class="text-end">Balance in favor of ICESI:</td>
-                <td><input id="icesiBalance1" name="icesiBalance1" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance1|floatformat:"-0" }}" disabled></td>
-                <td><input id="icesiBalance2" name="icesiBalance2" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance2|floatformat:"-0" }}" disabled></td>
-                <td><input id="icesiBalance3" name="icesiBalance3" type="text" class="form-control" placeholder="0" value="{{ request.icesi_balance3|floatformat:"-0" }}" disabled></td>
+                <td colspan="4" class="text-end">Balance a favor de ICESI:</td>
+                <td><input id="icesiBalance1" name="icesiBalance1" type="number" class="form-control" placeholder="0" value="{{ request.icesi_balance1|floatformat:"-0" }}" disabled></td>
+                <td><input id="icesiBalance2" name="icesiBalance2" type="number" class="form-control" placeholder="0" value="{{ request.icesi_balance2|floatformat:"-0" }}" disabled></td>
+                <td><input id="icesiBalance3" name="icesiBalance3" type="number" class="form-control" placeholder="0" value="{{ request.icesi_balance3|floatformat:"-0" }}" disabled></td>
             </tr>
         </tbody>
     </table>

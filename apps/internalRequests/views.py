@@ -316,7 +316,6 @@ def change_status(request, id):
                         date=datetime.now(),
                         prev_state=prev_status,
                         new_state=new_status,
-                        team=team_id,
                         reason=new_reason,
                     )
                 else:

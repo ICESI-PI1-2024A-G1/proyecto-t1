@@ -46,7 +46,7 @@
 <div class="form-group">
     <label for="travelReason">Motivo del viaje</label>
     <div class="d-flex justify-content-between">
-        <textarea class="form-control" id="travelReason" name="travelReason" rows="3" required disabled>{{ request.travel_reason }}</textarea>
+        <textarea class="form-control" id="travelReason" name="travelReason" rows="3" maxlength="200" required disabled>{{ request.travel_reason }}</textarea>
         {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
             <input type="checkbox" class="btn-check" id="btncheckTravelReason" name="travelReasonCheck" data-message="Motivo del viaje">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckTravelReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
