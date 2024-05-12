@@ -4,8 +4,9 @@
 {%block secondary_route %}Tus Notificaciones{% endblock %}
 
 {% block content %}
-
-<div class="nav-align-top mb-4">
+<div class="card-header p-0"></div>
+<div class="card-footer p-0"></div>
+<div class="nav-align-top mb-4 card-fluid">
     <ul class="nav nav-tabs nav-fill" role="tablist">
         <li class="nav-item">
             <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
@@ -40,14 +41,34 @@
             <ul class="list-group">
                 {% for notification in status_notifications %}
                 <li class="list-group-item">
-                    <div>
-                        <h5>Cambio de estado</h5>
-                        <p>{{notification.modified_by}}</p>
-                        <p>{{notification.user_target}}</p>
-                        <p>{{notification.reason}}</p>
-                        <p>{{notification.date}}</p>
-                        <p>{{notification.prev_state}}</p>
-                        <p>{{notification.new_state}}</p>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <h5>Solicitud {{notification.request_id}}</h5>
+                        </div>
+                        <div class="col-md-4 btn text-lg" >
+                            <div class="d-flex align-items-center">
+                                <div class="badge bg-label-{{notification.prev_color}}">
+                                    <p class="text-wrap mb-0 lh-sm">{{ notification.prev_state }}</p>
+                                </div>
+                                <i class='bx bx-right-arrow-circle display-6 text-secondary mx-2'></i>
+                                <div class="badge bg-label-{{notification.new_color}}">
+                                    <p class="text-wrap mb-0 lh-sm">{{ notification.new_state }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <p>
+                                <span><strong>Motivo:</strong></span>
+                                {% if notification.reason %}
+                                {{notification.reason}}
+                                {% else %}
+                                Sin motivo
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-3 float-right">
+                            {% include 'components/avatar.html' with icon="bx bxs-user-circle" description="Modificador por:" username=notification.modified_by date=notification.date %}
+                        </div>
                     </div>
                 </li>
                 {% endfor %}
@@ -58,13 +79,27 @@
             <ul class="list-group">
                 {% for notification in date_notifications %}
                 <li class="list-group-item">
-                    <div>
-                        <h5>Cambio de fecha final</h5>
-                        <p>{{notification.modified_by}}</p>
-                        <p>{{notification.user_target}}</p>
-                        <p>{{notification.date}}</p>
-                        <p>{{notification.prev_date|date:'Y-m-d' }}</p>
-                        <p>{{notification.new_date|date:'Y-m-d' }}</p>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <h5>Solicitud {{notification.request_id}}</h5>
+                        </div>
+                        <div class="col-md-4 btn text-lg" >
+                            <div class="d-flex align-items-center">
+                                <div class="badge bg-label-secondary">
+                                    <p class="text-wrap mb-0 lh-sm">{{ notification.prev_date }}</p>
+                                </div>
+                                <i class='bx bx-right-arrow-circle display-6 text-secondary mx-2'></i>
+                                <div class="badge bg-label-secondary">
+                                    <p class="text-wrap mb-0 lh-sm">{{ notification.new_date }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 float-right">
+                            {% include 'components/avatar.html' with icon="bx bxs-user-circle" description="Modificador por:" username=notification.modified_by%}
+                        </div>
+                        <div class="col-md-2">
+                            {% include 'components/date.html' with date=notification.date %}
+                        </div>
                     </div>
                 </li>
                 {% endfor %}
@@ -74,12 +109,20 @@
             <ul class="list-group">
                 {% for notification in assign_notifications %}
                 <li class="list-group-item">
-                    <h5>Asignación de Solicitud</h5>
-                    <p>{{notification.modified_by}}</p>
-                    <p>{{notification.user_target}}</p>
-                    <p>{{notification.reason}}</p>
-                    <p>{{notification.date}}</p>
-                    <p>{{notification.team}}</p>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <h5>Solicitud {{notification.request_id}}</h5>
+                        </div>
+                        <div class="col-md-4 text-lg" >
+                            {% include 'components/avatar.html' with icon="bx bxs-user-circle" description="Asignado a:" username=notification.user_target %}
+                        </div>
+                        <div class="col-md-4 float-right">
+                            {% include 'components/avatar.html' with icon="bx bxs-user-circle" description="Asignado por:" username=notification.modified_by %}
+                        </div>
+                        <div class="col-md-2">
+                            {% include 'components/date.html' with date=notification.date %}
+                        </div>
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
@@ -88,14 +131,24 @@
             <ul class="list-group">
                 {% for notification in fill_notifications %}
                 <li class="list-group-item">
-                    <h5>Revisión de Formulario</h5>
-                    <p>{{notification.modified_by}}</p>
-                    <p>{{notification.user_target}}</p>
-                    <p>{{notification.date}}</p>
-                    <p>{{notification.form_type}}</p>
-                    <a href="{{notification.pdf_link}}" target="_blank">
-                        <i class='bx bxs-file-pdf mx-2'>Documento Diligenciado</i>
-                    </a>
+                    <div class="row d-flex align-items-center">
+                        <div class="col-md-3">
+                            <h5 class="my-2">Solicitud {{notification.request_id}}</h5>
+                            {{notification.form_type}}
+                        </div>
+                        <div class="col-md-4 float-right">
+                            {% include 'components/avatar.html' with icon="bx bxs-user-circle" description="Revisado por:" username=notification.modified_by %}
+                        </div>
+                        <div class="col-md-3 text-lg" >
+                            <a class="btn btn-sm my-2 btn-secondary p" href="{{notification.pdf_link}}" target="_blank">
+                                <i class='bx bxs-file-pdf mr-2 text-lg'></i>Ver Documento
+                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            {% include 'components/date.html' with date=notification.date %}
+                        </div>
+                    </div>
+                    <p></p>
                 </li>
                 {% endfor %}
             </ul>

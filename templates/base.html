@@ -32,6 +32,7 @@
         <!-- stylesheets -->
         <link rel="stylesheet" href="{% static 'general/css/demo.css' %}">
         <link rel="stylesheet" href="{% static 'general/css/core.css' %}">
+        <link rel="stylesheet" href="{% static 'general/css/vendor/perfect-scrollbar.css' %}">
         
         <!-- scripts -->
         <script type="text/javascript" src="{% static 'general/js/base.js' %}"></script>
@@ -64,7 +65,7 @@
     
               <div class="menu-inner-shadow"></div>
     
-              <ul class="menu-inner py-1">
+              <ul class="menu-inner py-1" style="height: 80vh; overflow-y: auto;">
                 
                 <li class="menu-header small text-uppercase">
                     <span class="menu-header-text">General</span>
@@ -236,7 +237,7 @@
         <script type="text/javascript" src="{% static 'general/js/lib/popper.js' %}"></script> -->
         <!-- vendor -->
         <script type="text/javascript" src="{% static 'general/js/vendor/bootstrap.js' %}"></script>
-        <script type="text/javascript" src="{% static 'general/js/vendor/extended-ui-perfect-scrollbar.js' %}"></script>
+        <script type="text/javascript" src="{% static 'general/js/vendor/perfect-scrollbar.js' %}"></script>
         <script type="text/javascript" src="{% static 'general/js/vendor/menu.js' %}"></script>
         <script type="text/javascript" src="{% static 'general/js/vendor/main.js' %}"></script>
         <!-- <script type="text/javascript" src="{% static 'general/js/vendor/datatables.js' %}"></script> -->

@@ -316,7 +316,6 @@ def change_status(request, id):
                         date=datetime.now(),
                         prev_state=prev_status,
                         new_state=new_status,
-                        team=team_id,
                         reason=new_reason,
                     )
                 else:
@@ -333,7 +332,6 @@ def change_status(request, id):
                         request_id=curr_request.id,
                         date=datetime.now(),
                         prev_state=prev_status,
-                        new_state=new_status,
                         reason=new_reason,
                     )
             if curr_request.status == "POR APROBAR":
@@ -358,7 +356,7 @@ def change_status(request, id):
 
                 try:
                     curr_request.save()
-                    detail_request(request, id, pdf=True)
+                    detail_request(request, id, pdf=True, save_to_file=False, trace=True)
                 except Exception as e:
                     print(e)
                 curr_request = get_request_by_id(id)
@@ -581,7 +579,7 @@ def change_final_date(request, id):
 @never_cache
 @csrf_exempt
 @login_required
-def detail_request(request, id, pdf=False, save_to_file=False):
+def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
     # pdf = True
     # save_to_file = True
     """
@@ -727,14 +725,15 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                 ).leader
                 leader_email = leader.email
                 addresses.append(leader_email)
-                FillFormNotification.objects.create(
-                    user_target=leader,
-                    modified_by=request.user,
-                    request_id=id,
-                    date=datetime.now(),
-                    pdf_link=request_data.pdf_file.url,
-                    form_type=settings.FORM_TYPES[request_data.__class__.__name__],
-                )
+                if trace:
+                    FillFormNotification.objects.create(
+                        user_target=leader,
+                        modified_by=request.user,
+                        request_id=id,
+                        date=datetime.now(),
+                        pdf_link=request_data.pdf_file.url,
+                        form_type=settings.FORM_TYPES[request_data.__class__.__name__],
+                    )
             except:
                 pass
             # utils.send_verification_email(

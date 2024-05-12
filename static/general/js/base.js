@@ -23,6 +23,7 @@ const DataTableInit = (id, pageLength=4, columnDefs=[]) => {
         $(".dt-search").parent().parent().hide()
         setCardHeight()
     })
+    dataTable.draw();
 }
 
 const setCardHeight = () => {
@@ -33,6 +34,7 @@ const setCardHeight = () => {
     var htmlFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
     var marginInPixels = 1.5 * htmlFontSize;
     $(".card-fluid").height(newHeight-marginInPixels*2)
+    console.log("a")
 }
 
 $(window).on("load", setCardHeight)

@@ -8,12 +8,9 @@
 
 <form method="post">
     {% csrf_token %}
-    <div class="card-header">
-        <h2>Crear Equipo</h2>
-    </div>
     <div class="card-body card-fluid">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label for="name" class="mt-2">Nombre del equipo</label>
                     <input type="text" class="form-control" id="name" name="name" required>
@@ -39,27 +36,20 @@
                 <div class="form-group">
                     <label for="name" class="mt-2">Descripción</label>
                     <textarea type="text" class="form-control" id="description" name="description" required></textarea>
-                </div>
-                <ul class="list-group" id="selectedMembersList" style="height: 30vh; overflow-y: scroll;">
-                    Miembros seleccionados:
-                    {% for member in members %}
-                        <li class="list-group-item" style="display: none;" id="selected-member-{{member.id}}">{{member}}</li>
-                    {% endfor %}
-                </ul>       
+                </div>      
             </div>
-            <div class="col-md-6">
+            <div class="col-md-5">
             
-                <div class="card-header px-0">
-                    <p>Añadir miembro</p>
+                <div class="card-header">
+                </div>
                     <!-- <h2>Solicitudes</h2> -->
                     <div class="input-group mb-0">
                         <input type="text" id="memberSelectionTableSearch" class="form-control" aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-default" placeholder="Buscar">
+                        aria-describedby="inputGroup-sizing-default" placeholder="Añadir miembros">
                         <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa fa-search"></i></span>
                     </div>
-                </div>
                 
-                <div id="memberSelectionTableContainer" class="table-responsive" style="height:30vh; overflow-y: scroll;">
+                <div id="memberSelectionTableContainer" class="table-responsive">
                     <table id="memberSelectionTable" class="table border-top no-footer dtr-column ">
                         <thead>
                             <tr>
@@ -68,7 +58,7 @@
                                 <th>Añadir</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="height:15vh; overflow-y:scroll;">
                             {% for member in members %}
                             <tr id="member_{{ member.id }}">
                                 <td class="text-center">{{ member.id }}</td>
@@ -89,10 +79,18 @@
                 </div>
 
             </div>
+            <div class="col-md-3">
+                <ul class="list-group" id="selectedMembersList" >
+                    Miembros seleccionados:
+                    {% for member in members %}
+                        <li class="list-group-item" style="display: none;" id="selected-member-{{member.id}}">{{member}}</li>
+                    {% endfor %}
+                </ul> 
+            </div>
         </div>
     </div>
     <div class="card-footer">        
-        <div class="mt-4 mx-auto col-md-4 d-flex justify-content-center">
+        <div class="mx-auto col-md-4 d-flex justify-content-center">
             <div>
                 <a href="/teams" class="btn btn-danger">Cancelar<i class="ml-2 fa fa-times"></i></a>
             </div>
