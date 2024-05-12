@@ -15,6 +15,13 @@
         // Prevent the form from submitting
         event.preventDefault();
 
+        // Check form validation
+        var form = document.getElementById('myForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
         swal({
             title: "¿Estás seguro?",
             text: "Una vez enviado, no se podrá volver a editar el formulario. ¿Deseas continuar?",
@@ -37,7 +44,7 @@
                 const formId = document.getElementById('request_id').value;
 
                 // Send the data to the server
-                fetch(`/requests/update-request/${formId}`, {
+                fetch(`/requests/update-request/${formId}/`, {
                     method: 'POST',
                     body: formData
                 })
