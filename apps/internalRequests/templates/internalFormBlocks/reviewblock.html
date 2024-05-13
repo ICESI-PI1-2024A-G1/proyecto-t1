@@ -2,7 +2,7 @@
 
 <h3>Resultados de revisión</h3>
 <p id="uncheckedMessages" style="display: none;"></p>
-<textarea id="reason" class="form-control mt-3" rows="3" style="display: none;" name="reasonData" placeholder="Por favor, ingrese el motivo por el cual no marcó todas las casillas."></textarea>
+<textarea id="reason" class="form-control mt-3" rows="3" style="display: none;" maxlength="200" name="reasonData" placeholder="Por favor, ingrese el motivo por el cual no marcó todas las casillas."></textarea>
 
 <style>
     .swal-button--confirm {
@@ -93,7 +93,7 @@
                         reason = '<strong>Celdas afectadas:</strong><br>' + messages + '<br><strong>Motivo:</strong> ' + reason;
                     }
                     $.ajax({
-                        url: '/requests/change-status/' + id,
+                        url: '/requests/change-status/' + id + '/',
                         method: 'POST',
                         data: {
                             newStatus: newStatus,

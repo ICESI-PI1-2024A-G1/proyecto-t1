@@ -14,15 +14,14 @@
     </div>
     {% endif %}
 </div>
-{% if no_permission %}
 <div class="container">
+    {% if no_permission %}
     <div class="alert alert-warning" role="alert">
         Como líder, actualmente no perteneces a ningún equipo. Por favor, comunícate con el administrador del sistema.
     </div>
-</div>
-{% else %}
+    {% else %}
     <div class="table-responsive card-fluid">
-        <table id="requestsTable" class="table table-bordered">
+        <table id="requestsTable" class="table border-top">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -99,6 +98,11 @@
                                         </button>
                                     {% endif %}
                                 {% endif %}
+                                {% if request.pdf_url %}
+                                <a class="dropdown-item" href="{{request.pdf_url}}" target="_blank">
+                                    <i class='bx bxs-file-pdf'></i> Ver PDF diligenciado
+                                </a>
+                                {% endif %}
                             </div>
                         </div>
                     </td>
@@ -107,7 +111,8 @@
             </tbody>
         </table>
     </div>
-{% endif %}
+    {% endif %}
+</div>
 
 <div class="card-footer pb-2">
     <div id="requestsTablePagination" class="row">

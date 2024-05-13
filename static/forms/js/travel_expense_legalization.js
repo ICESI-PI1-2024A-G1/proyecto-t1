@@ -46,6 +46,7 @@ function addRow() {
         if (i >= 4) {
             input.placeholder = '0';
             input.min = 0; // To avoid negative values
+            input.max = 99999999;
             input.required = true;
             input.addEventListener('input', function () {
                 if (this.value < 0) {

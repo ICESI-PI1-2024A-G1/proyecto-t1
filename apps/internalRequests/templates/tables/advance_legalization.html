@@ -1,3 +1,7 @@
+<div class="mb-2 mt-3">
+    <h3 class="text-center mx-auto">Tabla de Relación de gastos</h1>
+</div>
+
 <div class="table-responsive">
     <table class="table table-bordered table-striped table-hover">
         <thead>
@@ -13,7 +17,7 @@
                 <tr>
                     <td><input type="text" class="form-control" name="category_{{ forloop.counter0 }}" value="{{ expense.category }}" disabled required></td>
                     <td><input type="text" class="form-control" name="provider_{{ forloop.counter0 }}" value="{{ expense.provider }}" disabled required></td>
-                    <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" disabled required></td>
+                    <td><input type="number" class="form-control" placeholder="0" name="pesos_{{ forloop.counter0 }}" value="{{ expense.pesos|floatformat:"-0" }}" min="0" max="99999999" disabled required></td>
                     <td><textarea class="form-control" name="concept_{{ forloop.counter0 }}" value="{{ expense.concept }}" disabled required>{{ expense.concept }}</textarea></td>
                 </tr>
             {% endfor %}
@@ -23,7 +27,7 @@
             </tr>
             <tr id="advance">
                 <td colspan="2" class="text-end">Valor del anticipo:</td>
-                <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" disabled required></td>
+                <td><input id="advanceTotal" name="advanceTotal" type="number" class="form-control" placeholder="0" value="{{ request.advance_total|floatformat:"-0" }}" min="0" max="99999999" disabled required></td>
             </tr>
             <tr id="employeeBalance">
                 <td colspan="2" class="text-end">Saldo a favor del empleado:</td>
