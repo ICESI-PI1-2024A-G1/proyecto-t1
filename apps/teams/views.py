@@ -231,8 +231,8 @@ def delete_team(request, team_id):
         requests = get_all_requests(team.typeForm)
         assigned_members = [r.member for r in requests]
         assigned_members_list = []
-        print(team.members.all())
-        print(assigned_members)
+        # print(team.members.all())
+        # print(assigned_members)
         for member in team.members.all():
             if member in assigned_members:
                 assigned_members_list.append(member)
@@ -243,7 +243,7 @@ def delete_team(request, team_id):
                 "Error al editar el equipo: Hay solicitudes pendientes para los miembros: "
                 + ", ".join([m.__str__() for m in assigned_members_list]),
             )
-            print("aa")
+            # print("aa")
             return JsonResponse({"error": "Error al editar el equipo"}, status=400)
 
         team.delete()
