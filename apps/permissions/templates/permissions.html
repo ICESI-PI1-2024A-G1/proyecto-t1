@@ -13,35 +13,38 @@
     </div>
 </div>
 
-<div class="table-responsive card-fluid">
-    <table id="usersTable" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Documento</th> 
-                <th>Apellido</th>
-                <th>Nombre</th>
-                <th>Correo electrónico</th>
-                <th class="fixed-width">Líder</th>
-                <th class="fixed-width">Miembro</th>
-                <th class="fixed-width">Solicitante</th>
-                <th class="fixed-width">Ninguno</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-                <tr id="user_{{ user.id }}">
-                    <td>{{ user.id }}{% if user.is_superuser %} (SU) {% endif %}</td>
-                    <td>{{ user.last_name }}</td>
-                    <td>{{ user.first_name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_leader" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_leader|yesno:"checked," }}></td>
-                    <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_member" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_member|yesno:"checked," }}></td>
-                    <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_applicant" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_applicant|yesno:"checked," }}></td>
-                    <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_none" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_none|yesno:"checked," }}></td>
+<div class="container">
+
+    <div class="table-responsive card-fluid">
+        <table id="usersTable" class="table border-top">
+            <thead>
+                <tr>
+                    <th>Documento</th> 
+                    <th>Apellido</th>
+                    <th>Nombre</th>
+                    <th>Correo electrónico</th>
+                    <th class="fixed-width">Líder</th>
+                    <th class="fixed-width">Miembro</th>
+                    <th class="fixed-width">Solicitante</th>
+                    <th class="fixed-width">Ninguno</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr id="user_{{ user.id }}">
+                        <td>{{ user.id }}{% if user.is_superuser %} (SU) {% endif %}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_leader" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_leader|yesno:"checked," }}></td>
+                        <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_member" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_member|yesno:"checked," }}></td>
+                        <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_applicant" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_applicant|yesno:"checked," }}></td>
+                        <td class="fixed-width"><input type="radio" name="permission_{{ user.id }}" value="is_none" {{ user.is_superuser|yesno:"disabled," }} {{ user.is_none|yesno:"checked," }}></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="card-footer pb-2">

@@ -1,3 +1,4 @@
+npm install
 pip install -r requirements.txt
 cat .env > tempenv.txt
 cat env_test.txt > .env
