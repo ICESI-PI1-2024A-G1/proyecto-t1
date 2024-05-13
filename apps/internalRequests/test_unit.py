@@ -704,7 +704,7 @@ class TestViews(TestCase): #pragma: no cover
 
     def test_assign_request_post(self):
         # Crear una solicitud ficticia
-        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7))
+        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7), signature_status=True)
         
         # Crear un equipo ficticio
         mock_team = Team.objects.create(name='Test Team', leader=self.user)
@@ -724,7 +724,7 @@ class TestViews(TestCase): #pragma: no cover
     @patch('apps.internalRequests.views.get_request_by_id')
     def test_assign_request_get(self, mock_get_request_by_id):
         # Crear una solicitud ficticia
-        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7))
+        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7), signature_status=True)
 
         # Crear un equipo ficticio
         mock_team = Team.objects.create(name='Test Team', leader=self.user)
@@ -780,7 +780,7 @@ class TestViews(TestCase): #pragma: no cover
     @patch('apps.internalRequests.views.get_request_by_id')
     def test_assign_request_get_bil(self, mock_get_request_by_id):
         # Crear una solicitud ficticia
-        mock_request = BillingAccount.objects.create(member=self.user, request_date=timezone.now())
+        mock_request = BillingAccount.objects.create(member=self.user, request_date=timezone.now(), signature_status=True)
 
         # Crear un equipo ficticio
         mock_team = Team.objects.create(name='Test Team', leader=self.user)
@@ -864,7 +864,7 @@ class TestViews(TestCase): #pragma: no cover
         
     def test_travel_advance_request(self):
         # Crear una solicitud ficticia
-        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7))
+        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7), signature_status=True)
 
         request = self.factory.post('/travel_advance_request', {'id': mock_request.id, 'dateCheck': 'on'})
         request.user = self.user
@@ -949,7 +949,7 @@ class TestViews(TestCase): #pragma: no cover
 
     def test_billing_account(self):
         # Crear una solicitud ficticia
-        mock_request = BillingAccount.objects.create(member=self.user, request_date=timezone.now())
+        mock_request = BillingAccount.objects.create(member=self.user, request_date=timezone.now(), signature_status=True)
         mock_request.user = self.user
 
         request = self.factory.post('/billing_account/', {'id': mock_request.id, 'dateCheck': 'on'})
@@ -972,7 +972,7 @@ class TestViews(TestCase): #pragma: no cover
     @patch('apps.forms.models.Requisition.objects.get')
     def test_update_request_travel_advance_request(self, mock_get):
         # Crear una solicitud ficticia
-        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7))
+        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7), signature_status=True)
         mock_request.user = self.user
 
         mock_get.return_value = mock_request
