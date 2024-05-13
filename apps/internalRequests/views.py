@@ -205,6 +205,9 @@ def show_requests(request):
     elif "changeFinalDateFailed" in request.GET:
         message = "No se pudo actualizar la fecha final de la solicitud."
         message_type = messages.ERROR
+    elif "assignRequestDone" in request.GET:
+        message = "La solicitud ha sido asignada correctamente."
+        message_type = messages.SUCCESS
 
     requests_data = get_all_requests()
     if request.user.is_leader:
