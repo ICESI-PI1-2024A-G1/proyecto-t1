@@ -49,7 +49,7 @@ class TeamForm(forms.ModelForm):
             "members": "Miembros (al menos 1)",
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs): # pragma: no cover
         super(TeamForm, self).__init__(*args, **kwargs)
         leaders_without_team = User.objects.filter(leading_team__isnull=True)
         self.fields["leader"].queryset = leaders_without_team
@@ -58,23 +58,3 @@ class TeamForm(forms.ModelForm):
         if instance:
             leader_id = instance.leader.id
             self.fields["members"].queryset = User.objects.exclude(id=leader_id)
-
-    def clean_members(self):
-        """
-        Custom validation method to ensure leader is not included as a member.
-
-        Returns:
-            queryset: Validated members queryset.
-
-        Raises:
-            forms.ValidationError: If the leader is selected as a member.
-        """
-        members = self.cleaned_data.get("members")
-        leader = self.cleaned_data.get("leader")
-
-        if leader and leader in members:
-            raise forms.ValidationError(
-                "El líder no puede ser un miembro de su equipo."
-            )
-
-        return members

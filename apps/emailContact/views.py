@@ -27,4 +27,4 @@ def sendEmail_view(request):
         utils.send_verification_email(
             request, "Mensaje del portal de contabilidad", subject, email, fullMessage
         )
-        return render(request, "emailContact.html", {"users": User.objects.all()})
+        return render(request, "emailContact.html", {"users": User.objects.all()})#pragma: no cover

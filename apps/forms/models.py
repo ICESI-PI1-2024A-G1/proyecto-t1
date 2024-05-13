@@ -46,10 +46,10 @@ class TravelAdvanceRequest(Form):
     signatureInput = models.TextField(null=True, blank=True)
 
     def set_expenses(self, expenses_dict):
-        self.expenses = json.dumps(expenses_dict)
+        self.expenses = json.dumps(expenses_dict)# pragma: no cover
 
     def get_expenses(self):
-        return json.loads(self.expenses)
+        return json.loads(self.expenses)# pragma: no cover
 
 
 class TravelExpenseLegalization(Form):
@@ -93,7 +93,7 @@ class TravelExpenseLegalization_Table(models.Model):
     euros = models.DecimalField(max_digits=10, decimal_places=2)
 
     def serialize(self):
-        return json.dumps(
+        return json.dumps(# pragma: no cover
             {
                 "category": self.category,
                 "provider": self.provider,

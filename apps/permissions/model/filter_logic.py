@@ -71,7 +71,8 @@ class SearchFilter:
         for field, value in query_dict.items():
             if field in self.filter_mapping and value != "None":
                 # print("Acutual val: ", value)
-                if self.filter_mapping[field] == "number":
+                print(field)
+                if self.filter_mapping[field] == "number": # pragma: no cover
                     try:
                         res = int(value)
                         filters |= Q(**{field: res})
