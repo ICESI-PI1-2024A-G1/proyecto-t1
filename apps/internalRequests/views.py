@@ -207,7 +207,6 @@ def show_requests(request):
         message_type = messages.ERROR
 
     requests_data = get_all_requests()
-    print(request.user.is_leader)
     if request.user.is_leader:
         if Team.objects.filter(leader_id=request.user.id).exists():
             team = Team.objects.get(leader_id=request.user.id)
@@ -236,7 +235,7 @@ def show_requests(request):
                 requests_data,
             )
         )
-
+    
     for r in requests_data:
         r.status_color = statusMap[r.status]
         r.pdf_url = r.pdf_file.url if r.pdf_file else None
