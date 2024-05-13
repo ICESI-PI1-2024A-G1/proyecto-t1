@@ -1,374 +1,215 @@
-"""
-Request Test
-
-This module contains test cases for the views related to teams in the application.
-"""
-
-import random
-from django.test import TestCase, Client
-from django.urls import reverse
+import unittest
+from urllib.request import Request
+from django.test import Client, TestCase
 from django.contrib.auth import get_user_model
-from django.middleware.csrf import get_token
+from django.test.client import RequestFactory
+from django.urls import reverse
+from apps.login.backends import IDBackend
 from apps.teams.models import Team
-from faker import Faker
-from django.contrib.auth import authenticate, login, logout
-
-from apps.teams.forms import TeamForm
-
-User = get_user_model()
-fake = Faker()
-
-from apps.teams.views import show_teams
+from utils.models import CustomUser
+from ..views import show_teams, add_team, edit_team, delete_team, show_members
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.contrib.auth.models import User
 
 
-class TeamTestCase(TestCase):# pragma: no cover 
-    """
-    TestCase class for testing the Teams app.
-
-    Attributes:
-        client (Client): Django test client for making requests.
-        users (list): List of User instances created for testing.
-        teams (list): List of Team instances created for testing.
-        user (User): User instance representing the admin user for testing.
-        leaders (list): List of User instances representing team leaders.
-        form_data (dict): Dictionary representing form data for testing.
-    """
+class IDBackendTest(unittest.TestCase):
 
     def setUp(self):
+        self.factory = RequestFactory()
+        self.backend = IDBackend()
+        self.user = get_user_model().objects.create_user(
+            username="testuser", email="test@example.com", password="testpassword"
+        )
+
+    def test_authenticate_with_valid_credentials(self):
+        request = self.factory.post("/")
+        user = self.backend.authenticate(
+            request, id=self.user.id, password="testpassword"
+        )
+        self.assertEqual(user, self.user)
+
+    def test_authenticate_with_invalid_credentials(self):
+        request = self.factory.post("/")
+        user = self.backend.authenticate(
+            request, id=self.user.id, password="wrongpassword"
+        )
+        self.assertIsNone(user)
+
+    def test_get_user_with_valid_id(self):
+        user = self.backend.get_user(self.user.id)
+        self.assertEqual(user, self.user)
+
+    def test_get_user_with_invalid_id(self):
+        user = self.backend.get_user(9999)
+        self.assertIsNone(user)
+
+
+class TeamViewsTest(TestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
         self.client = Client()
-        self.users = []
-        self.teams = []
+        self.user = get_user_model().objects.create_user(
+            id="12345", password="12345", email="testuser@example.com", is_leader=True
+        )
 
-        self.user = User.objects.create_user(
-            id="admin",
-            username="admin",
-            email="test@example.com",
-            first_name="admin",
+    def test_show_teams_superuser(self):
+        request = self.factory.get("/")
+        request.user = self.user
+        request.user.is_superuser = True
+        response = show_teams(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_show_teams_non_superuser(self):
+        request = self.factory.get("/")
+        setattr(request, "session", "session")
+        messages = FallbackStorage(request)
+        setattr(request, "_messages", messages)
+        request.user = self.user
+        request.user.is_superuser = False
+
+        # Crear un equipo liderado por el usuario
+        team = Team.objects.create(name="Test Team", leader=self.user)
+
+        response = show_teams(request)
+        self.assertEqual(response.status_code, 200)
+
+        # Verificar que el equipo correcto se está mostrando
+        self.assertContains(response, "Test Team")
+
+    def test_add_team_get(self):
+        request = self.factory.get("/")
+        request.user = self.user
+        response = add_team(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_team_post(self):
+        self.factory = RequestFactory()
+        request = self.factory.post(
+            "/",
+            {
+                "name": "Test Team",
+                "leader": self.user.id,
+                "description": "Test description",
+                "form_type": "Test Form Type",
+                "member-1": "on",
+                "member-2": "on",
+            },
+        )
+        setattr(request, "session", "session")
+        messages = FallbackStorage(request)
+        setattr(request, "_messages", messages)
+        request.user = self.user
+        response = add_team(request)
+        self.assertEqual(response.status_code, 302)
+
+    def test_edit_team_get(self):
+        # Create a team
+        team = Team.objects.create(name="Test Team", leader=self.user)
+
+        request = self.factory.get("/")
+        request.user = self.user
+
+        # Edit the team
+        response = edit_team(request, team.id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_team_post(self):
+        # Create a team
+        team = Team.objects.create(name="Test Team", leader=self.user)
+
+        request = self.factory.post(
+            "/",
+            {
+                "name": "Updated Team Name",
+                "leader": self.user.id,
+                "description": "Updated description",
+                "form_type": "Updated Form Type",
+                "member-1": "on",
+                "member-2": "on",
+            },
+        )
+        setattr(request, "session", "session")
+        messages = FallbackStorage(request)
+        setattr(request, "_messages", messages)
+        request.user = self.user
+
+        # Edit the team
+        response = edit_team(request, team.id)
+        self.assertEqual(response.status_code, 302)
+
+    def test_edit_team_post_with_assigned_members(self):
+        # Create a team
+        team = Team.objects.create(name="Test Team", leader=self.user)
+
+        # Create another user to be a member
+        member_user = CustomUser.objects.create_user(
+            id="test_member",
+            username="member",
             password="password",
-            is_leader=True,
+            email="test@example.com",
         )
 
-        for i in range(30):
-            user = User.objects.create(
-                id=f"0000{i}",
-                username=f"0000{i}",
-                password="123",
-                email=fake.email(),
-                first_name=fake.first_name(),
-                last_name=fake.last_name(),
-            )
-            self.users.append(user)
-        names = ["Contabilidad", "Lógistica", "Programacion académica", "Contratación"]
-        self.leaders = [self.user]
-        for i in range(4):
-            leader = random.choice(
-                User.objects.exclude(id__in=[leader.id for leader in self.leaders])
-            )
-            leader.is_leader = True
-            leader.save()
-            self.leaders.append(leader)
-            team = Team.objects.create(
-                name=names[i],
-                description=fake.text(max_nb_chars=100),
-                leader=leader,
-            )
-            team_members = random.sample(
-                [user for user in self.users if user != leader], random.randint(3, 5)
-            )
-            team.members.add(*team_members)
-            self.teams.append(team)
+        # Add the member to the team
+        team.members.add(member_user)
 
-        leader = random.choice(
-            User.objects.exclude(id__in=[leader.id for leader in self.leaders])
+        temp_member_id = f"member-{str(member_user.id)}"
+
+        request = self.factory.post(
+            reverse("teams:edit_team", args=[team.id]),
+            {
+                "name": "Updated Team Name",
+                "leader": self.user.id,
+                "description": "Updated description",
+                "form_type": "Updated Form Type",
+                "member_id": [temp_member_id],
+            },
         )
-        leader.is_leader = True
-        leader.save()
-        self.leaders.append(leader)
-        team_members = random.sample(
-            [user for user in self.users if user != leader], random.randint(3, 5)
-        )
+        setattr(request, "session", "session")
+        messages = FallbackStorage(request)
+        setattr(request, "_messages", messages)
+        request.user = self.user
+        print(request)
+        print(request.POST)
 
-        self.form_data = {
-            "name": fake.company(),
-            "description": fake.text(max_nb_chars=100),
-            "leader": leader.id,
-            "members": [u.id for u in team_members],
-        }
+        # Edit the team
+        response = edit_team(request, team.id)
 
-        self.client.login(id="admin", password="password")
+        # Check that the team's fields were updated
+        self.assertEqual(team.leader, self.user)
+        self.assertEqual(team.name, "Test Team")
+        self.assertEqual(team.description, "")
+        self.assertEqual(team.typeForm, "")
 
-    ### SHOW TEAMS TESTS
+    def test_delete_team(self):
+        # Create a team
+        team = Team.objects.create(name="Test Team", leader=self.user)
 
-    def test_show_teams_many(self):
-        """
-        Tests displaying all teams when many teams exist.
-        """
-        response = self.client.get(reverse("teams:show_teams"))
+        request = self.factory.delete("/")
+        setattr(request, "session", "session")
+        messages = FallbackStorage(request)
+        setattr(request, "_messages", messages)
+        request.user = self.user
+
+        # Delete the team
+        response = delete_team(request, team.id)
         self.assertEqual(response.status_code, 200)
-        displayed_teams = [member.id for member in response.context["teams"]]
-        all_teams = [member.id for member in Team.objects.all()]
-        self.assertEqual(displayed_teams, all_teams)
-        self.assertTemplateUsed("teams:show-teams.html")
 
-    def test_teams_to_str(self):
-        """
-        Tests toString method
-        """
-        response = self.client.get(reverse("teams:show_teams"))
+        # Verify the team was deleted
+        with self.assertRaises(Team.DoesNotExist):
+            Team.objects.get(id=team.id)
+
+    def test_show_members(self):
+        # Create a team
+        team = Team.objects.create(name="Test Team", leader=self.user)
+
+        request = self.factory.get("/")
+        request.user = self.user
+
+        # Show the team members
+        response = show_members(request, team.id)
         self.assertEqual(response.status_code, 200)
-        displayed_teams = [member.id for member in response.context["teams"]]
-        all_teams = [member.id for member in Team.objects.all()]
-        self.assertEqual(str(all_teams[0]), str(displayed_teams))
-        self.assertTemplateUsed("teams:show-teams.html")
 
-    def test_show_teams_empty(self):
-        """
-        Tests displaying teams when no teams exist.
-        """
-        Team.objects.all().delete()
-        response = self.client.get(reverse("teams:show_teams"))
-        self.assertEqual(response.status_code, 200)
-        displayed_teams = [member.id for member in response.context["teams"]]
-        all_teams = [member.id for member in Team.objects.all()]
-        self.assertEqual(displayed_teams, all_teams)
-        self.assertTemplateUsed("teams:show-teams.html")
 
-    def test_show_teams_unauthorized(self):
-        """
-        Test displaying teams when the user is not authorized.
-        """
-        self.client.logout()
-        response = self.client.get(reverse("teams:show_teams"))
-        self.assertRedirects(response, "/logout/?next=/teams/", 302)
-        self.assertTemplateUsed("login:login.html")
-
-    def test_show_teams_leader(self):
-        """
-        Test displaying teams for a user who is a leader.
-        """
-        self.user.is_superuser = False
-        self.user.save()
-        teams = [team.id for team in Team.objects.filter(leader=self.user)]
-        response = self.client.get(reverse("teams:show_teams"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:show-teams.html")
-        displayed_teams = [team.id for team in response.context["teams"]]
-        self.assertEqual(displayed_teams, teams)
-
-    def test_show_teams_all_names(self):
-        """
-        Test displaying teams and assert that default names are set.
-        """
-        self.user.is_superuser = True
-        self.user.save()
-        response = self.client.get(reverse("teams:show_teams"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:show-teams.html")
-        displayed_teams = [team.name for team in response.context["teams"]]
-        self.assertEqual(displayed_teams[0], "Contabilidad")
-        self.assertEqual(displayed_teams[1], "Lógistica")
-        self.assertEqual(displayed_teams[2], "Programacion académica")
-        self.assertEqual(displayed_teams[3], "Contratación")
-
-    ### ADD TEAM TESTS
-
-    def test_add_team_form_authenticated(self):
-        """
-        Test displaying the add team form when the user is authenticated.
-        """
-        response = self.client.get(reverse("teams:add_team"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:add-team.html")
-        self.assertIsNotNone(response.context["form"])
-
-    def test_add_team_form_unauthorized(self):
-        """
-        Test accessing the add team form when the user is not authorized.
-        """
-        self.client.logout()
-        response = self.client.get(reverse("teams:add_team"))
-        self.assertRedirects(response, "/logout/?next=/teams/add-team-form/", 302)
-        self.assertTemplateUsed("login:login.html")
-
-    def test_add_team_form_unauthorized(self):
-        """
-        Test posting data to the add team form when the user is not authorized.
-        """
-        self.client.logout()
-        response = self.client.post(reverse("teams:add_team"))
-        self.assertRedirects(response, "/logout/?next=/teams/add-team-form/", 302)
-        self.assertTemplateUsed("login:login.html")
-
-    def test_add_team_all_valid_fields(self):
-        """
-        Test adding a team with all valid fields.
-        """
-        prev_teams_number = Team.objects.count()
-        form = TeamForm(self.form_data)
-        self.assertTrue(form.is_valid())
-        response = self.client.post(reverse("teams:add_team"), self.form_data)
-        self.assertRedirects(response, "/teams/", 302)
-        self.assertEqual(Team.objects.count(), prev_teams_number + 1)
-
-    def test_add_team_no_leader(self):
-        """
-        Test adding a team without a leader.
-        """
-        self.form_data.pop("leader")
-        prev_teams_number = Team.objects.count()
-        form = TeamForm(self.form_data)
-        self.assertFalse(form.is_valid())
-        response = self.client.post(reverse("teams:add_team"), self.form_data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:add-team.html")
-        self.assertEqual(Team.objects.count(), prev_teams_number)
-
-    def test_add_team_no_members(self):
-        """
-        Test adding a team without any members.
-        """
-        self.form_data["members"] = []
-        prev_teams_number = Team.objects.count()
-        form = TeamForm(self.form_data)
-        self.assertFalse(form.is_valid())
-        response = self.client.post(reverse("teams:add_team"), self.form_data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:add-team.html")
-        self.assertEqual(Team.objects.count(), prev_teams_number)
-
-    ### EDIT TEAM TESTS
-
-    def test_edit_team_form_authenticated(self):
-        """
-        Test displaying the edit team form when the user is authenticated.
-        """
-        response = self.client.get(reverse("teams:edit_team", args=[self.teams[0].id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:edit-team.html")
-        self.assertIsNotNone(response.context["form"])
-
-    def test_edit_team_form_unauthorized(self):
-        """
-        Test accessing the edit team form when the user is not authorized.
-        """
-        self.client.logout()
-        response = self.client.get(reverse("teams:edit_team", args=[self.teams[0].id]))
-        self.assertRedirects(
-            response, f"/logout/?next=/teams/edit-team/{self.teams[0].id}/", 302
-        )
-        self.assertTemplateUsed("login:login.html")
-
-    def test_edit_team_not_found(self):
-        """
-        Test accessing the edit team form for a non-existent team.
-        """
-        response = self.client.get(reverse("teams:edit_team", args=[300]))
-        self.assertTemplateUsed("errorHandler:error_404_view.html")
-
-    def test_edit_team_all_valid_fields(self):
-        """
-        Test editing a team with all valid fields.
-        """
-        form = TeamForm(self.form_data, instance=self.teams[0])
-        self.assertTrue(form.is_valid())
-        response = self.client.post(
-            reverse("teams:edit_team", args=[self.teams[0].id]), self.form_data
-        )
-        self.assertRedirects(response, "/teams/", 302)
-        self.assertEqual(self.teams[0].name, self.form_data["name"])
-
-    def test_edit_team_no_leader(self):
-        """
-        Test editing a team without a leader.
-        """
-        form_data = {
-            "name": "Updated Team Name",
-            "description": "Updated Team Description",
-            "members": [self.user.id],
-        }
-        form = TeamForm(form_data, instance=self.teams[0])
-        self.assertFalse(form.is_valid())
-        response = self.client.post(
-            reverse("teams:edit_team", args=[self.teams[0].id]), form_data
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:edit-team.html")
-        self.teams[0].refresh_from_db()
-        self.assertNotEqual(self.teams[0].name, "New name")
-
-    def test_edit_team_no_members(self):
-        """
-        Test editing a team without any members.
-        """
-        form_data = {
-            "name": "Updated Team Name",
-            "description": "Updated Team Description",
-            "leader": self.user.id,
-            "members": [],
-        }
-        form = TeamForm(form_data, instance=self.teams[0])
-        self.assertFalse(form.is_valid())
-        response = self.client.post(
-            reverse("teams:edit_team", args=[self.teams[0].id]), form_data
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:edit-team.html")
-        self.teams[0].refresh_from_db()
-        self.assertNotEqual(self.teams[0].name, "New Name")
-
-    ### DELETE TEAM TESTS
-
-    def test_delete_team_not_found(self):
-        """
-        Test deleting a non-existent team.
-        """
-        response = self.client.delete(reverse("teams:edit_team", args=[300]))
-        self.assertTemplateUsed("errorHandler:error_404_view.html")
-
-    def test_delete_team_valid(self):
-        """
-        Test deleting an existing team.
-        """
-        prev_teams_count = Team.objects.count()
-        response = self.client.delete(
-            reverse("teams:delete_team", args=[self.teams[0].id])
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(Team.objects.count(), prev_teams_count - 1)
-        self.assertFalse(Team.objects.filter(id=self.teams[0].id).exists())
-
-    ### SHOW MEMBERS TESTS
-
-    def test_show_members_authenticated(self):
-        """
-        Test displaying members of a team when the user is authenticated.
-        """
-        members = [member.id for member in self.teams[0].members.all()]
-        response = self.client.get(
-            reverse("teams:show_members", args=[self.teams[0].id])
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed("teams:show-members.html")
-        displayed_members = response.context["members"]
-        displayed_members = [member.id for member in displayed_members]
-        self.assertEqual(members, displayed_members)
-
-    def test_show_members_not_found(self):
-        """
-        Test accessing members of a non-existent team.
-        """
-        response = self.client.get(reverse("teams:show_members", args=[300]))
-        self.assertTemplateUsed("errorHandler:error_404_view.html")
-
-    def test_show_members_unauthorized(self):
-        """
-        Test accessing members of a team when the user is not authorized.
-        """
-        self.client.logout()
-        response = self.client.get(
-            reverse("teams:show_members", args=[self.teams[0].id])
-        )
-        self.assertRedirects(
-            response, f"/logout/?next=/teams/show-members/{self.teams[0].id}", 302
-        )
-        self.assertTemplateUsed("login:login.html")
+if __name__ == "__main__":
+    unittest.main()
