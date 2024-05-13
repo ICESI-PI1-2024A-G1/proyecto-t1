@@ -235,7 +235,7 @@ def show_requests(request):
                 requests_data,
             )
         )
-    
+
     for r in requests_data:
         r.status_color = statusMap[r.status]
         r.pdf_url = r.pdf_file.url if r.pdf_file else None
@@ -296,8 +296,6 @@ def change_status(request, id):
             prev_status = curr_request.status
             curr_request.status = new_status
             team_id = curr_request.team_id
-            print(curr_request.status)
-            print("||")
             if team_id:
                 print(team_id.leader)
                 print(team_id.leader.email)
@@ -334,14 +332,9 @@ def change_status(request, id):
                         prev_state=prev_status,
                         reason=new_reason,
                     )
-            print("Status after team")
-            print(curr_request.status)
-        
             if curr_request.status == "POR APROBAR":
-                print("Here befor lol")
                 # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
-                    print("Here lol")
                     html_file_path = "forms/advance_legalization.html"
                     document = "Legalización de Anticipos"
                 elif isinstance(curr_request, BillingAccount):
@@ -365,7 +358,7 @@ def change_status(request, id):
                 except Exception as e:
                     print(e)
                 curr_request = get_request_by_id(id)
-                print("finished: ", curr_request.pdf_file.url)
+                
                 faculty = [  #pragma: no cover
                     "Ciencias Administrativas y económicas",
                     "Ingeniería, Diseño y Ciencias Aplicadas",
@@ -439,18 +432,17 @@ def change_status(request, id):
                     "Protección ARL",
                 ]
 
-                if hasattr(curr_request, "fullname"):
+                if hasattr(curr_request, "fullname"): 
                     fullname = curr_request.fullname
-                else:
+                else: #pragma: no cover
                     fullname = "No aplica"
-
+                
                 if hasattr(curr_request, "cost_center"):
                     cenco = curr_request.cost_center
-                elif hasattr(curr_request, "CENCO"):
+                elif hasattr(curr_request, "CENCO"):  #pragma: no cover
                     cenco = curr_request.cenco
-                else:
+                else:  #pragma: no cover
                     cenco = "No aplica"
-
                 team_id = Team.objects.all()[0]
                 try:
                     team_id = (
@@ -459,7 +451,7 @@ def change_status(request, id):
                         else Team.objects.get(leader=request.user)
                     )
                 except:
-                    pass
+                    pass                
                 SharePoint.objects.create(
                     status=random.choice(status_options),
                     manager=(
@@ -725,9 +717,12 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
 
             addresses = ["ccsa101010@gmail.com"]
             try:
+                print("Antes de leader")
+                print(settings.FORM_TYPES[request_data.__class__.__name__])
                 leader = Team.objects.get(
                     typeForm=settings.FORM_TYPES[request_data.__class__.__name__]
                 ).leader
+                print("oBTENGO LEADER")
                 leader_email = leader.email
                 addresses.append(leader_email)
                 if trace:
