@@ -24,9 +24,9 @@ STATIC_DIR = BASE_DIR / "static"
 
 import environ
 
-env = environ.Env()# pragma: no cover
+env = environ.Env()  # pragma: no cover
 
-environ.Env.read_env()# pragma: no cover
+environ.Env.read_env()  # pragma: no cover
 
 
 # Quick-start development settings - unsuitable for production
@@ -132,7 +132,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
 import dj_database_url
 
 
-if DEBUG:# pragma: no cover
+if DEBUG:  # pragma: no cover
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -143,7 +143,7 @@ if DEBUG:# pragma: no cover
             "NAME": BASE_DIR / "test_db.sqlite3",
         },
     }
-else:# pragma: no cover
+else:  # pragma: no cover
     DATABASES = {"default": dj_database_url.parse(env("POSTGRE_DATABASE_URL"))}
 
 # Password validation
