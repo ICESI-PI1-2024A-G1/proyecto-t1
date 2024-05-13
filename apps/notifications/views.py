@@ -15,18 +15,19 @@ statusMap = {
 @login_required
 def show_notifications(request):
     if request.user.is_superuser:
-        status_notifications = StatusNotification.objects.all()
-        assign_notifications = AssignNotification.objects.all()
-        fill_notifications = FillFormNotification.objects.all()
-        date_notifications = DateChangeNotification.objects.all()
+        status_notifications = StatusNotification.objects.all().order_by("-id")
+        assign_notifications = AssignNotification.objects.all().order_by("-id")
+        fill_notifications = FillFormNotification.objects.all().order_by("-id")
+        date_notifications = DateChangeNotification.objects.all().order_by("-id")
     else:
-        status_notifications = StatusNotification.objects.filter(user_target=request.user)
-        assign_notifications = AssignNotification.objects.filter(user_target=request.user)
-        fill_notifications = FillFormNotification.objects.filter(user_target=request.user)
-        date_notifications = DateChangeNotification.objects.filter(user_target=request.user)
+        status_notifications = StatusNotification.objects.filter(user_target=request.user).order_by("-id")
+        assign_notifications = AssignNotification.objects.filter(user_target=request.user).order_by("-id")
+        fill_notifications = FillFormNotification.objects.filter(user_target=request.user).order_by("-id")
+        date_notifications = DateChangeNotification.objects.filter(user_target=request.user).order_by("-id")
     for notification in status_notifications:
         notification.prev_color = statusMap[notification.prev_state]
         notification.new_color = statusMap[notification.new_state]
+
     context = {
         "status_notifications": status_notifications,
         "assign_notifications": assign_notifications,
