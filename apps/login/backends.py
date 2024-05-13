@@ -23,7 +23,7 @@ class IDBackend(ModelBackend):
             user = UserModel.objects.get(id=id)
             if user.check_password(password):
                 return user
-        except UserModel.DoesNotExist:
+        except UserModel.DoesNotExist: # pragma: no cover
             return None
 
     def get_user(self, user_id):

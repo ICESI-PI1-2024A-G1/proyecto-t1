@@ -3,7 +3,7 @@ import os
 import sys
 
 
-def main():
+def main():# pragma: no cover
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "accounting_system.settings")
     try:
@@ -17,5 +17,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":# pragma: no cover
     main()

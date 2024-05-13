@@ -21,6 +21,19 @@ class TestCustomUser(unittest.TestCase):
             "is_applicant": False,
             "is_none": False,
         }
+        self.user_data2 = {
+            "id": "123456",
+            "username": "john_doe",
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "",
+            "password": "testpassword",
+            "is_member": True,
+            "is_leader": False,
+            "is_superuser": True,
+            "is_applicant": False,
+            "is_none": False,
+        }
 
     def test_create_user(self):
         # Crear un nuevo usuario
@@ -33,6 +46,11 @@ class TestCustomUser(unittest.TestCase):
         self.assertEqual(user.last_name, self.user_data["last_name"])
         self.assertEqual(user.email, self.user_data["email"])
         self.assertTrue(user.check_password(self.user_data["password"]))
+
+    def test_create_user_error(self):
+        # Crear un nuevo usuario
+        with self.assertRaises(ValueError):
+            CustomUser.objects.create_user(**self.user_data2)
 
     def test_create_superuser(self):
         # Crear un nuevo superusuario
@@ -133,5 +151,5 @@ class TestCustomUser(unittest.TestCase):
         app_label = "some_app_label"
         self.assertEqual(user.has_module_perms(app_label), self.user_data['is_superuser'])
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     unittest.main()

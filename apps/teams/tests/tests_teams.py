@@ -21,7 +21,7 @@ fake = Faker()
 from apps.teams.views import show_teams
 
 
-class TeamTestCase(TestCase):
+class TeamTestCase(TestCase):# pragma: no cover 
     """
     TestCase class for testing the Teams app.
 
@@ -108,6 +108,17 @@ class TeamTestCase(TestCase):
         displayed_teams = [member.id for member in response.context["teams"]]
         all_teams = [member.id for member in Team.objects.all()]
         self.assertEqual(displayed_teams, all_teams)
+        self.assertTemplateUsed("teams:show-teams.html")
+
+    def test_teams_to_str(self):
+        """
+        Tests toString method
+        """
+        response = self.client.get(reverse("teams:show_teams"))
+        self.assertEqual(response.status_code, 200)
+        displayed_teams = [member.id for member in response.context["teams"]]
+        all_teams = [member.id for member in Team.objects.all()]
+        self.assertEqual(str(all_teams[0]), str(displayed_teams))
         self.assertTemplateUsed("teams:show-teams.html")
 
     def test_show_teams_empty(self):

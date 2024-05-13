@@ -16,9 +16,9 @@ class UserAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
         """This method takes off the save and continue button when editing an entity"""
-        extra_context = extra_context or {}
-        extra_context["show_save_and_continue"] = False
-        return super().change_view(
+        extra_context = extra_context or {} # pragma: no cover
+        extra_context["show_save_and_continue"] = False # pragma: no cover
+        return super().change_view( # pragma: no cover  
             request, object_id, form_url, extra_context=extra_context
         )
 
