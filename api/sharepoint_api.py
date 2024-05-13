@@ -45,13 +45,14 @@ class SharePointAPI:
             "is_one_time_payment",
         ]
 
-    def clear_db(self):
+    def clear_db(self, showLog = True):
         """
         Clears the database by removing the Excel file and creating a new one.
         """
         try:
             os.remove(self.excel_path)
-            print("Database clear")
+            if showLog:
+                print("Database clear")
         except:
             pass
         if not os.path.exists(os.path.dirname(self.excel_path)):

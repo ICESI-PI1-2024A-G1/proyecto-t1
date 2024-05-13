@@ -173,7 +173,7 @@ def edit_team(request, team_id):
             items = request.POST.items()
             members = []
             for key, value in items:
-                print(key, value)
+                # print(key, value)
                 if key.startswith("member-") and value == "on":
                     member_id = key.split("-")[1]
                     member = get_object_or_404(User, pk=member_id)
