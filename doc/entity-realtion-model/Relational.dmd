@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="Modelo relacional" id="EA571226-7A84-B321-9106-538782BB0E39" version="3.5">
+<createdBy>Semillero</createdBy>
+<createdTime>2024-05-13 21:17:09 UTC</createdTime>
+<ownerDesignName>Modelo relacional</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>EA571226-7A84-B321-9106-538782BB0E39</designId>
+<usedDesignStorageDescriptors>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="D6E4505A-0DF0-65DD-FDDC-C817CEF39D7C">
+<designStoragePath>D:\generate</designStoragePath>
+</designDescr>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="C32AE504-422D-5CF5-4453-B8CECCE5BF18">
+<designStoragePath>D:\generate</designStoragePath>
+</designDescr>
+</usedDesignStorageDescriptors>
+</OSDM_Design>
