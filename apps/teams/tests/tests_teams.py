@@ -1,11 +1,15 @@
 import unittest
+from urllib.request import Request
 from django.test import Client, TestCase
 from django.contrib.auth import get_user_model
 from django.test.client import RequestFactory
+from django.urls import reverse
 from apps.login.backends import IDBackend
 from apps.teams.models import Team
+from utils.models import CustomUser
 from ..views import show_teams, add_team, edit_team, delete_team, show_members
 from django.contrib.messages.storage.fallback import FallbackStorage
+from django.contrib.auth.models import User
 
 
 class IDBackendTest(unittest.TestCase):
@@ -133,6 +137,49 @@ class TeamViewsTest(TestCase):
         # Edit the team
         response = edit_team(request, team.id)
         self.assertEqual(response.status_code, 302)
+
+    def test_edit_team_post_with_assigned_members(self):
+        # Create a team
+        team = Team.objects.create(name="Test Team", leader=self.user)
+
+        # Create another user to be a member
+        member_user = CustomUser.objects.create_user(
+            id="test_member",
+            username="member",
+            password="password",
+            email="test@example.com",
+        )
+
+        # Add the member to the team
+        team.members.add(member_user)
+
+        temp_member_id = f"member-{str(member_user.id)}"
+
+        request = self.factory.post(
+            reverse("teams:edit_team", args=[team.id]),
+            {
+                "name": "Updated Team Name",
+                "leader": self.user.id,
+                "description": "Updated description",
+                "form_type": "Updated Form Type",
+                "member_id": [temp_member_id],
+            },
+        )
+        setattr(request, "session", "session")
+        messages = FallbackStorage(request)
+        setattr(request, "_messages", messages)
+        request.user = self.user
+        print(request)
+        print(request.POST)
+
+        # Edit the team
+        response = edit_team(request, team.id)
+
+        # Check that the team's fields were updated
+        self.assertEqual(team.leader, self.user)
+        self.assertEqual(team.name, "Test Team")
+        self.assertEqual(team.description, "")
+        self.assertEqual(team.typeForm, "")
 
     def test_delete_team(self):
         # Create a team
