@@ -98,7 +98,7 @@
                                         </button>
                                     {% endif %}
                                 {% endif %}
-                                {% if request.pdf_url %}
+                                {% if request.pdf_url and request.status != "DEVUELTO" %}
                                 <a class="dropdown-item" href="{{request.pdf_url}}" target="_blank">
                                     <i class='bx bxs-file-pdf'></i> Ver PDF diligenciado
                                 </a>
