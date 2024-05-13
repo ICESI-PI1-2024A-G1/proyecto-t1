@@ -91,11 +91,13 @@
                                                 Cambiar Estado
                                             </button>
                                         {% endif %}
+                                        {% if request.team_id is not None %}
                                         <button onclick="showModal('Cambiar fecha estimada de finalización', '/requests/change-final-date/{{request.id}}/')"
                                             class="dropdown-item" data-request-id="{{ request.id }}">
                                             <i class="mr-2 fa fa-calendar"></i>
                                             Cambiar Fecha Final
                                         </button>
+                                        {% endif %}
                                     {% endif %}
                                 {% endif %}
                                 {% if request.pdf_url and request.status != "DEVUELTO" %}

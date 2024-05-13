@@ -71,7 +71,7 @@
                     <span class="menu-header-text">General</span>
                 </li>
 
-                {% if user.is_superuser or user.is_leader %}
+                {% if user.is_superuser or user.is_leader or user.is_member %}
                   <li class="menu-item {% if "requests" in request.path or "sharepoint" in request.path %}active open{% endif %}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                       <i class='menu-icon bx bxs-wallet'></i>
@@ -91,7 +91,7 @@
                   </li>
                 {% endif %}
                 
-                {%if user.is_superuser or user.is_leader %}
+                {%if user.is_superuser %}
                 <li class="menu-item {% if "teams" in request.path %}active open{% endif %}">
                   <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon fa fa-users"></i>
@@ -102,6 +102,13 @@
                     {% include 'components/nav-item.html' with text="Ver equipos" link="/teams/" %}
                     {% include 'components/nav-item.html' with text="Añadir equipo" link="/teams/add-team-form/" %}
                   </ul>
+                </li>
+                {% elif user.is_leader %}
+                <li class="menu-item {% if "teams" in request.path %}active open{% endif %}">
+                  <a href="/teams/" class="menu-link">
+                    <i class="menu-icon fa fa-users"></i>
+                    <div data-i18n="Layouts">Ver equipo</div>
+                  </a>
                 </li>
                 {% endif %}
 

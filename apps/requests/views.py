@@ -118,7 +118,10 @@ def show_requests(request):
             requests_data = SharePoint.objects.all()
             user_str = request.user.__str__()
             if not request.user.is_superuser:
-                requests_data = [r for r in requests_data if r.manager == user_str]
+                if request.user.is_leader:
+                    requests_data = [r for r in requests_data if r.team == Team.objects.get(leader_id=request.user.id).id]
+                elif request.user.is_member:
+                    requests_data = [r for r in requests_data if r.manager == user_str]
             for r in requests_data:
                 r.team = "" if math.isnan(r.team) else int(r.team)
                 r.status_color = status_colors[r.status]

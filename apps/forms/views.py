@@ -182,7 +182,9 @@ def travel_advance_request(request):
                 }
                 travel_request.set_expenses(expenses)
 
-                travel_request.signature_status = form_data["signatureStatus"]
+                travel_request.signature_status = (
+                    form_data["signatureStatus"] == "Yes"
+                )
                 travel_request.bank = form_data["bank"]
                 travel_request.account_type = form_data["accountType"]
                 travel_request.account_number = form_data["accountNumber"]
@@ -443,7 +445,9 @@ def billing_account(request):
                 billing_account.request_city = form_data["requestCity"]
                 billing_account.address = form_data["address"]
                 billing_account.phone_number = form_data["phoneNumber"]
-                billing_account.signature_status = form_data["signatureStatus"] == "Yes"
+                billing_account.signature_status = (
+                    form_data["signatureStatus"] == "Yes"
+                )
                 billing_account.bank = form_data["bank"]
                 billing_account.account_type = form_data["accountType"]
                 billing_account.account_number = form_data["accountNumber"]
@@ -506,7 +510,9 @@ def requisition(request):
                 requisition.cenco = form_data["cenco"]
                 requisition.id_value = form_data["idValue"]
                 requisition.description = form_data["description"]
-                requisition.signature_status = form_data["signatureStatus"] == "Yes"
+                requisition.signature_status = (
+                    form_data["signatureStatus"] == "Yes"
+                )
                 requisition.bank = form_data["bank"]
                 requisition.account_type = form_data["accountType"]
                 requisition.account_number = form_data["accountNumber"]
