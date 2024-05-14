@@ -22,6 +22,9 @@ class SendEmailViewTest(TestCase):
         """
         request = self.factory.get(reverse('contact:email_contact'))
         request.user = self.user
+        setattr(request, 'session', 'session')
+        messages = FallbackStorage(request)
+        setattr(request, '_messages', messages)
         response = sendEmail_view(request)
         self.assertIn('emailContact', response.content.decode())
     def test_send_email_view_post(self):
@@ -30,5 +33,8 @@ class SendEmailViewTest(TestCase):
         """
         request = self.factory.post(reverse('contact:email_contact'), data={'email': 'recipient@example.com', 'subject': 'Test Subject', 'message': 'Test Message'})
         request.user = self.user
+        setattr(request, 'session', 'session')
+        messages = FallbackStorage(request)
+        setattr(request, '_messages', messages)
         response = sendEmail_view(request)
         self.assertIn('Correo enviado exitosamente', response.content.decode())

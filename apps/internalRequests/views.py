@@ -380,10 +380,11 @@ def change_status(request, id):
                         request_id=curr_request.id,
                         date=datetime.now(),
                         prev_state=prev_status,
+                        new_state=new_status,
                         reason=new_reason,
                     )
-            if curr_request.status == "POR APROBAR":
-
+            if new_status == "POR APROBAR":
+                # Put info of curr_request in a PDF
                 if isinstance(curr_request, AdvanceLegalization):
                     html_file_path = "forms/advance_legalization.html"
                     document = "Legalización de Anticipos"
@@ -403,12 +404,9 @@ def change_status(request, id):
                     form_type = None
 
                 try:
-                    curr_request.save()
                     detail_request(request, id, pdf=True, save_to_file=False, trace=True)
                 except Exception as e:
                     print(e)
-                curr_request = get_request_by_id(id)
-                
                 faculty = [  #pragma: no cover
                     "Ciencias Administrativas y económicas",
                     "Ingeniería, Diseño y Ciencias Aplicadas",
@@ -526,7 +524,11 @@ def change_status(request, id):
                     ),
                     is_one_time_payment=random.choice([True, False]),
                 )
-
+            # if curr_request.status in ["DEVUELTO", "RECHAZADO", "RESUELTO"]:
+            #     curr_request.member = None
+            curr_request = get_request_by_id(id)
+            curr_request.status = new_status
+            print(new_status)
             curr_request.save()
             Traceability.objects.create(
                 modified_by=request.user,
@@ -589,7 +591,7 @@ def change_final_date(request, id):
             Traceability.objects.create(
                 modified_by=request.user,
                 prev_state=prev_state,
-                new_state=prev_state,
+                new_state=prev_state,   
                 reason="Hubo un cambio de fecha: "
                 + prev_date.strftime("%Y-%m-%d")
                 + " -> "
@@ -741,7 +743,7 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
             combined_pdf_bytes = combined_pdf_bytes.getvalue()
             from django.core.files.base import ContentFile
             pdf_file = ContentFile(combined_pdf_bytes, name=f'Solicitud-{id}.pdf')
-
+            # Asigna el objeto File al campo pdf_file de tu solicitud
             request_data.pdf_file = pdf_file
             request_data.save()
 
@@ -755,6 +757,8 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
                 # print("oBTENGO LEADER")
                 leader_email = leader.email
                 addresses.append(leader_email)
+                print(trace)
+                print(leader)
                 if trace:
                     FillFormNotification.objects.create(
                         user_target=leader,
