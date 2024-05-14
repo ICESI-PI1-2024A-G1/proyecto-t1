@@ -39,8 +39,13 @@ statusMap = {
 User = get_user_model()
 
 
-# Get cities with countries
 def get_cities_with_countries():
+    """
+    Get cities with associated countries.
+
+    Returns:
+        List of dictionaries containing city and country information.
+    """
     cities_with_countries = (
         City.objects.select_related("country").order_by("country_id").all()
     )
@@ -58,8 +63,14 @@ def get_cities_with_countries():
     return cities_data
 
 
-# Get bank data
+
 def get_bank_data():
+    """
+    Get bank data.
+
+    Returns:
+        List of dictionaries containing bank information.
+    """
     banks = Bank.objects.all()
 
     bank_data = [
@@ -73,8 +84,14 @@ def get_bank_data():
     return bank_data
 
 
-# Get account types
+
 def get_account_types():
+    """
+    Get account types.
+
+    Returns:
+        List of dictionaries containing account type information.
+    """
     account_types = AccountType.objects.all()
 
     account_types = [
@@ -88,8 +105,14 @@ def get_account_types():
     return account_types
 
 
-# Get dependence data
+
 def get_dependence_data():
+    """
+    Get dependence data.
+
+    Returns:
+        List of dictionaries containing dependence information.
+    """
     dependences = Dependency.objects.all()
 
     dependence_data = [
@@ -103,8 +126,14 @@ def get_dependence_data():
     return dependence_data
 
 
-# Get cost center data
+
 def get_cost_center_data():
+    """
+    Get cost center data.
+
+    Returns:
+        List of dictionaries containing cost center information.
+    """
     cost_centers = CostCenter.objects.all()
 
     cost_center_data = [
@@ -118,8 +147,13 @@ def get_cost_center_data():
     return cost_center_data
 
 
-# Create context for the form
 def create_context(): #pragma: no cover
+    """
+    Create context for the form.
+
+    Returns:
+        Dictionary containing context data.
+    """
     cities_data = get_cities_with_countries()
     bank_data = get_bank_data()
     account_types = get_account_types()
@@ -136,9 +170,19 @@ def create_context(): #pragma: no cover
 
     return context
 
-
-# This function is used to get the request by its id
 def get_request_by_id(id):
+    """
+    Get a request by its ID.
+
+    Args:
+        id (int): The ID of the request.
+
+    Returns:
+        Request object corresponding to the ID.
+    
+    Raises:
+        Http404: If the request with the specified ID is not found.
+    """
     models = [
         TravelAdvanceRequest,
         AdvanceLegalization,
@@ -155,6 +199,15 @@ def get_request_by_id(id):
 
 
 def get_all_requests(formType=None):
+    """
+    Get all requests.
+
+    Args:
+        formType (str, optional): The type of form. Defaults to None.
+
+    Returns:
+        List of request instances.
+    """
     models = [ #pragma: no cover
         TravelAdvanceRequest,
         AdvanceLegalization,
@@ -179,7 +232,13 @@ def get_all_requests(formType=None):
 @csrf_exempt
 def show_requests(request):
     """
-    Show requests
+    Show requests view.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HTTP response containing the requests view.
     """
     message = None
     message_type = None
@@ -303,13 +362,7 @@ def change_status(request, id):
                 # print(team_id.leader)
                 # print(team_id.leader.email)
                 if request.user.is_superuser:
-                    # utils.send_verification_email(
-                    #     request,
-                    #     f"Actualización del estado de la solicitud {curr_request.id}",
-                    #     "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                    #     team_id.leader.email,
-                    #     f"Hola, el Administrador del Sistema ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
-                    # )
+
                     StatusNotification.objects.create(
                         user_target=team_id.leader,
                         modified_by=request.user,
@@ -320,13 +373,7 @@ def change_status(request, id):
                         reason=new_reason,
                     )
                 else:
-                    # utils.send_verification_email(
-                    #     request,
-                    #     f"Actualización del estado de la solicitud {curr_request.id}",
-                    #     "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                    #     team_id.leader.email,
-                    #     f"Hola, el usuario identificado como {request.user} del equipo {team_id} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
-                    # )
+   
                     StatusNotification.objects.create(
                         user_target=team_id.leader,
                         modified_by=request.user,
@@ -336,7 +383,7 @@ def change_status(request, id):
                         reason=new_reason,
                     )
             if curr_request.status == "POR APROBAR":
-                # Put info of curr_request in a PDF
+
                 if isinstance(curr_request, AdvanceLegalization):
                     html_file_path = "forms/advance_legalization.html"
                     document = "Legalización de Anticipos"
@@ -476,11 +523,10 @@ def change_status(request, id):
                     arl=random.choice(arls),
                     contract_value=random.randint(
                         100000, 10000000
-                    ),  # Random value between 100,000 and 10,000,000
+                    ),
                     is_one_time_payment=random.choice([True, False]),
                 )
-            # if curr_request.status in ["DEVUELTO", "RECHAZADO", "RESUELTO"]:
-            #     curr_request.member = None
+
             curr_request.save()
             Traceability.objects.create(
                 modified_by=request.user,
@@ -538,7 +584,6 @@ def change_final_date(request, id):
             curr_request.final_date = new_final_date_str
             curr_request.save()
 
-            # Convertir new_final_date a un objeto datetime.date
             new_final_date = datetime.strptime(new_final_date_str, "%Y-%m-%d").date()
 
             Traceability.objects.create(
@@ -580,8 +625,7 @@ def change_final_date(request, id):
 @csrf_exempt
 @login_required
 def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
-    # pdf = True
-    # save_to_file = True
+
     """
     Renders a page displaying details of a specific request.
 
@@ -601,10 +645,10 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
     request_data = get_request_by_id(id)
     context = {"request": request_data}
     table = None
-    # Obtain bank, account type, city, dependence, and cost center data
+
     context.update(create_context())
     context["showTable"] = not pdf
-    # Use the request type to determine which template to render
+
     if isinstance(request_data, AdvanceLegalization):
         expenses = AdvanceLegalization_Table.objects.filter(
             general_data_id=request_data.id
@@ -648,21 +692,19 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
         css_horizontal = os.path.join(
             settings.BASE_DIR, "static", "general", "css", "horizontal.css"
         )
-        # print(css_horizontal)
-
         template_r = get_template(template)
         html = template_r.render(context)
         if save_to_file:
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 out_pdf = tmp_file.name
-                # Convierte la plantilla HTML en PDF usando weasyprint
+  
                 pdf_bytes = HTML(string=html).write_pdf(
                     out_pdf,
                     stylesheets=[css_file_path],
                     presentational_hints=True,
                     page_size="letter",
                 )
-                # Lee el PDF generado y envíalo como respuesta HTTP
+
                 with open(out_pdf, "rb") as pdf_file:
                     response = HttpResponse(
                         pdf_file.read(), content_type="application/pdf"
@@ -673,7 +715,6 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
                     return response
         else:
             pdfs = []
-            # render table
             template_r = get_template(template)
             html = template_r.render(context)
             pdf_bytes = HTML(string=html).write_pdf(
@@ -681,13 +722,7 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
                 presentational_hints=True,
                 page_size="letter",
             )
-            # pdfs.append(
-            #     {
-            #         "name": f"Solicitud {id}.pdf",
-            #         "content": pdf_bytes,
-            #         "type": "application/pdf",
-            #     }
-            # )
+
             merger = PdfMerger()
             merger.append(io.BytesIO(pdf_bytes))
             if table:
@@ -698,13 +733,6 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
                     presentational_hints=True,
                     page_size="letter",
                 )
-                # pdfs.append(
-                #     {
-                #         "name": f"Tabla {id}.pdf",
-                #         "content": pdf_bytes,
-                #         "type": "application/pdf",
-                #     }
-                # )
                 merger.append(io.BytesIO(pdf_bytes))
             
             combined_pdf_bytes = io.BytesIO()
@@ -714,7 +742,6 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
             from django.core.files.base import ContentFile
             pdf_file = ContentFile(combined_pdf_bytes, name=f'Solicitud-{id}.pdf')
 
-            # Asigna el objeto File al campo pdf_file de tu solicitud
             request_data.pdf_file = pdf_file
             request_data.save()
 
@@ -845,13 +872,7 @@ def assign_request(request, request_id):
             curr_request.save()
             teams = Team.objects.filter(typeForm=form_type)
             try:
-                # utils.send_verification_email(
-                #     request,
-                #     "Solicitud Asignada",
-                #     "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                #     manager.email,
-                #     f"Hola, como miembro del equipo {teams[0].name}, el líder {manager.first_name} {manager.last_name} le ha asignado una nueva solicitud en el Sistema de Contabilidad",
-                # )
+
                 AssignNotification.objects.create(
                     user_target=manager,
                     modified_by=request.user,
@@ -884,7 +905,6 @@ def travel_advance_request(request):
         review_data = request.POST.dict()
         request = TravelAdvanceRequest.objects.get(id=request_id)
 
-        # Mapping of field names to data-message
         field_to_message = { #pragma: no cover
             "dateCheck": "Fecha",
             "nameCheck": "Nombre",
@@ -904,13 +924,11 @@ def travel_advance_request(request):
             "reasonData": "Razón",
         }
 
-        # Initialize review_data_list with all checkboxes with a value of 'off'
         review_data_list = [
             {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
             for key in field_to_message.keys()
         ]
 
-        # Update the values of the checkboxes that are checked
         for item in review_data_list:
             if item["id"] in review_data:
                 item["value"] = review_data[item["id"]]
@@ -943,7 +961,6 @@ def travel_expense_legalization(request):
         review_data = request.POST.dict()
         request = TravelExpenseLegalization.objects.get(id=request_id)
 
-        # Mapping of field names to data-message
         field_to_message = {  #pragma: no cover
             "dateCheck": "Fecha",
             "nameCheck": "Nombre",
@@ -963,13 +980,11 @@ def travel_expense_legalization(request):
             "reasonData": "Razón",
         }
 
-        # Initialize review_data_list with all checkboxes with a value of 'off'
         review_data_list = [
             {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
             for key in field_to_message.keys()
         ]
 
-        # Update the values of the checkboxes that are checked
         for item in review_data_list:
             if item["id"] in review_data:
                 item["value"] = review_data[item["id"]]
@@ -1002,7 +1017,6 @@ def advance_legalization(request):
         review_data = request.POST.dict()
         request = AdvanceLegalization.objects.get(id=request_id)
 
-        # Mapping of field names to data-message
         field_to_message = {  #pragma: no cover
             "dateCheck": "Fecha",
             "nameCheck": "Nombre",
@@ -1019,13 +1033,11 @@ def advance_legalization(request):
             "reasonData": "Razón",
         }
 
-        # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
         review_data_list = [
             {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
             for key in field_to_message.keys()
         ]
 
-        # Actualizar los valores de los checkboxes que están marcados
         for item in review_data_list:
             if item["id"] in review_data:
                 item["value"] = review_data[item["id"]]
@@ -1057,7 +1069,6 @@ def billing_account(request):
         review_data = request.POST.dict()
         request = BillingAccount.objects.get(id=request_id)
 
-        # Mapping of field names to data-message
         field_to_message = { #pragma: no cover
             "dateCheck": "Fecha",
             "nameCheck": "Nombre",
@@ -1078,13 +1089,10 @@ def billing_account(request):
             "reasonData": "Razón",
         }
 
-        # Initialize review_data_list with all checkboxes with a value of 'off'
         review_data_list = [
             {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
             for key in field_to_message.keys()
         ]
-
-        # Update the values of the checkboxes that are checked
         for item in review_data_list:
             if item["id"] in review_data:
                 item["value"] = review_data[item["id"]]
@@ -1117,7 +1125,6 @@ def requisition(request):
         review_data = request.POST.dict()
         request = Requisition.objects.get(id=request_id)
 
-        # Mapeo de los nombres de los campos a los data-message
         field_to_message = { #pragma: no cover
             "dateCheck": "Fecha",
             "nameCheck": "Nombre",
@@ -1136,13 +1143,11 @@ def requisition(request):
             "reasonData": "Razón",
         }
 
-        # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
         review_data_list = [
             {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
             for key in field_to_message.keys()
         ]
 
-        # Actualizar los valores de los checkboxes que están marcados
         for item in review_data_list:
             if item["id"] in review_data:
                 item["value"] = review_data[item["id"]]
@@ -1161,16 +1166,25 @@ def requisition(request):
 @csrf_exempt
 @login_required
 def update_request(request, request_id):
-    # Get the request object
+    """
+    Update request view.
+
+    Args:
+        request: The HTTP request object.
+        request_id (int): The ID of the request to update.
+
+    Returns:
+        JsonResponse: JSON response indicating the success of the update.
+    """
+
     curr_request = get_request_by_id(request_id)
 
-    # Update the status and is_reviewed fields
+
     with transaction.atomic():
         curr_request.status = "EN REVISIÓN"
         curr_request.is_reviewed = False
         # print(request.POST.dict())
 
-        # Update the request with the data from the method's request
         for key, value in request.POST.items():
             if hasattr(curr_request, key):
                 setattr(curr_request, key, value)
