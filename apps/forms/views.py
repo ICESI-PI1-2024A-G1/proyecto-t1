@@ -125,7 +125,7 @@ def create_context():
 
 @login_required
 @csrf_exempt
-def travel_advance_request(request):
+def travel_advance_request(request, showLog=True):
     try:
 
         context = create_context()
@@ -216,7 +216,7 @@ def travel_advance_request(request):
 
 @login_required
 @csrf_exempt
-def travel_expense_legalization(request):
+def travel_expense_legalization(request, showLog=True):
     try:
         context = create_context()
 
@@ -322,7 +322,7 @@ def travel_expense_legalization(request):
 
 @login_required
 @csrf_exempt
-def advance_legalization(request):
+def advance_legalization(request, showLog=True):
     try:
         context = create_context()
 
@@ -406,7 +406,7 @@ def advance_legalization(request):
 
 @login_required
 @csrf_exempt
-def billing_account(request):
+def billing_account(request, showLog=True):
     try:
         context = create_context()
         context["include_cex"] = True
@@ -479,7 +479,7 @@ def billing_account(request):
 
 @login_required
 @csrf_exempt
-def requisition(request):
+def requisition(request, showLog=True):
     try:
 
         context = create_context()
