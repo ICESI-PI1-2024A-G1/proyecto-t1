@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from .views import sendEmail_view
 from django.contrib.messages.storage.base import BaseStorage
+from django.contrib.messages.storage.fallback import FallbackStorage
+
 class SendEmailViewTest(TestCase):
     """
     Test cases for the sendEmail_view function.

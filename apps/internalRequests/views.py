@@ -359,8 +359,8 @@ def change_status(request, id):
             curr_request.status = new_status
             team_id = curr_request.team_id
             if team_id:
-                print(team_id.leader)
-                print(team_id.leader.email)
+                # print(team_id.leader)
+                # print(team_id.leader.email)
                 if request.user.is_superuser:
 
                     StatusNotification.objects.create(
@@ -747,12 +747,12 @@ def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
 
             addresses = ["ccsa101010@gmail.com"]
             try:
-                print("Antes de leader")
-                print(settings.FORM_TYPES[request_data.__class__.__name__])
+                # print("Antes de leader")
+                # print(settings.FORM_TYPES[request_data.__class__.__name__])
                 leader = Team.objects.get(
                     typeForm=settings.FORM_TYPES[request_data.__class__.__name__]
                 ).leader
-                print("oBTENGO LEADER")
+                # print("oBTENGO LEADER")
                 leader_email = leader.email
                 addresses.append(leader_email)
                 if trace:
@@ -1183,7 +1183,7 @@ def update_request(request, request_id):
     with transaction.atomic():
         curr_request.status = "EN REVISIÓN"
         curr_request.is_reviewed = False
-        print(request.POST.dict())
+        # print(request.POST.dict())
 
         for key, value in request.POST.items():
             if hasattr(curr_request, key):

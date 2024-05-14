@@ -200,8 +200,8 @@ class TeamViewsTest(TestCase):
         messages = FallbackStorage(request)
         setattr(request, "_messages", messages)
         request.user = self.user
-        print(request)
-        print(request.POST)
+        # print(request)
+        # print(request.POST)
 
         response = edit_team(request, team.id)
 
