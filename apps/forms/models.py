@@ -9,6 +9,11 @@ User = get_user_model()
 
 
 class Form(models.Model):
+    """
+    Abstract base class for various forms.
+
+    This class defines common fields and behavior shared by multiple form models.
+    """
     id = models.AutoField(primary_key=True)
     request_date = models.DateField()
     final_date = models.DateField(null=True, default=timezone.now)
@@ -34,6 +39,13 @@ class Form(models.Model):
 
 
 class TravelAdvanceRequest(Form):
+    """
+    Model for travel advance requests.
+
+    This class represents the model for travel advance requests,
+    which includes fields specific to this type of form.
+    """
+
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -45,13 +57,20 @@ class TravelAdvanceRequest(Form):
     observations = models.TextField(default="Ninguna")
 
     def set_expenses(self, expenses_dict):
+        """Set expenses as a JSON string."""
         self.expenses = json.dumps(expenses_dict)
 
     def get_expenses(self):
+        """Get expenses as a Python dictionary."""
         return json.loads(self.expenses)
 
 
 class TravelExpenseLegalization(Form):
+    """
+    Model for travel expense legalization.
+
+    This class represents the model for travel expense legalization forms.
+    """
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     destination_city = models.CharField(max_length=200)
@@ -74,6 +93,11 @@ class TravelExpenseLegalization(Form):
 
 
 class TravelExpenseLegalization_Table(models.Model):
+    """
+    Model for travel expense legalization table entries.
+
+    This class represents the model for individual entries in the travel expense legalization table.
+    """
     travel_info = models.ForeignKey(
         TravelExpenseLegalization,
         on_delete=models.CASCADE,
@@ -87,6 +111,7 @@ class TravelExpenseLegalization_Table(models.Model):
     euros = models.DecimalField(max_digits=10, decimal_places=2)
 
     def serialize(self):
+        """Serialize the model instance into a JSON string."""
         return json.dumps(
             {
                 "category": self.category,
@@ -101,6 +126,11 @@ class TravelExpenseLegalization_Table(models.Model):
 
 
 class AdvanceLegalization(Form):
+    """
+    Model for advance legalization.
+
+    This class represents the model for advance legalization forms.
+    """
     dependence = models.CharField(max_length=200)
     cost_center = models.CharField(max_length=200)
     purchase_reason = models.TextField()
@@ -112,6 +142,11 @@ class AdvanceLegalization(Form):
 
 
 class AdvanceLegalization_Table(models.Model):
+    """
+    Model for entries in advance legalization tables.
+
+    This class represents individual entries in the advance legalization tables.
+    """
     general_data = models.ForeignKey(
         AdvanceLegalization,
         on_delete=models.CASCADE,
@@ -123,6 +158,11 @@ class AdvanceLegalization_Table(models.Model):
 
 
 class BillingAccount(Form):
+    """
+    Model for billing accounts.
+
+    This class represents billing accounts, which are used for billing purposes.
+    """
     value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     concept_reason = models.CharField(max_length=200)
     retention = models.CharField(max_length=200)
@@ -135,6 +175,11 @@ class BillingAccount(Form):
 
 
 class Requisition(Form):
+    """
+    Model for requisitions.
+
+    This class represents requisitions, which are formal requests for items or services.
+    """
     work = models.CharField(max_length=200)
     dependence = models.CharField(max_length=200)
     cenco = models.CharField(max_length=200)
@@ -144,31 +189,61 @@ class Requisition(Form):
 
 
 class Country(models.Model):
+    """
+    Model for countries.
+
+    This class represents countries, with a code and name as attributes.
+    """
     code = models.CharField(max_length=200, primary_key=True)
     name = models.CharField(max_length=200)
 
 
 class City(models.Model):
+    """
+    Model for cities.
+
+    This class represents cities, with a country foreign key and a name attribute.
+    """
     id = models.AutoField(primary_key=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
 
 
 class Bank(models.Model):
+    """
+    Model for banks.
+
+    This class represents banks, with a name attribute.
+    """
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
 
 
 class AccountType(models.Model):
+    """
+    Model for account types.
+
+    This class represents account types, with a name attribute.
+    """
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
 
 
 class Dependency(models.Model):
+    """
+    Model for dependencies.
+
+    This class represents dependencies, with a name attribute.
+    """
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
 
 
 class CostCenter(models.Model):
+    """
+    Model for cost centers.
+
+    This class represents cost centers, with a name attribute.
+    """
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
