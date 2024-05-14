@@ -1,6 +1,6 @@
-# Bitácora de la Semana 7 con Metodología Scrum: Desarrollo del Módulo de Contabilidad CCSA
+**Bitácora de la Semana 7 con Metodología Scrum: Desarrollo del Módulo de Contabilidad CCSA**
 
-## Roles:
+Roles:
 
 - Scrum Master: Cristian Eduardo Botina
 - Product Owner: Cristian Eduardo Botina
@@ -9,9 +9,9 @@
 - Dev. Team: Juan Manuel Marín
 - Dev. Team: Óscar Andrés Gómez
 
-## Día 1 - Lunes
+Día 1 - Lunes
 
-### Integrantes:
+Integrantes:
 
 - Cristian Eduardo Botina (A00395008)
 
@@ -37,9 +37,9 @@
 2. Qué haré hoy: Nada por falta de tiempo 
 3. Qué dificultades tuve: Ninguna
 
-## Día 2 - Martes
+Día 2 - Martes
 
-### Integrantes:
+Integrantes:
 
 - Cristian Eduardo Botina (A00395008)
 
@@ -65,9 +65,9 @@
 2. Qué haré hoy: Repartir historias de usuario para el diseño de interfaz gráfica
 3. Qué dificultades tuve: No tengo conocimiento de framework usado
 
-## Día 3 - Miércoles
+Día 3 - Miércoles
 
-### Integrantes:
+Integrantes:
 
 - Cristian Eduardo Botina (A00395008)
 
@@ -93,9 +93,9 @@
 2. Qué haré hoy: Definir parámetros y paleta de colores
 3. Qué dificultades tuve: Ninguna
 
-## Día 4 - Jueves
+Día 4 - Jueves
 
-### Integrantes:
+Integrantes:
 
 - Cristian Eduardo Botina (A00395008)
 
@@ -121,9 +121,9 @@
 2. Qué haré hoy: Implementar primeros cambios de interfaz a equipos
 3. Qué dificultades tuve: El framework no permite los cambios
 
-## Día 5 - Viernes
+Día 5 - Viernes
 
-### Integrantes:
+Integrantes:
 
 - Cristian Eduardo Botina (A00395008)
 
@@ -149,9 +149,9 @@
 2. Qué haré hoy: Investigar sobre el framework utilizado
 3. Qué dificultades tuve: La información es complicada
 
-## Día 6 - Sábado
+Día 6 - Sábado
 
-### Integrantes:
+Integrantes:
 
 - Cristian Eduardo Botina (A00395008)
 
@@ -177,9 +177,9 @@
 2. Qué haré hoy: Seguir implementando interfaz y actualizar jira
 3. Qué dificultades tuve: Hay muchas historias que deberían salir del sprint
 
-## Día 7 - Domingo
+Día 7 - Domingo
 
-### Integrantes:
+Integrantes:
 
 - Cristian Eduardo Botina (A00395008)
 
@@ -204,23 +204,3 @@
 1. Qué hice ayer: Implementar interfaz y actualizar jira
 2. Qué haré hoy: Limpiar jira
 3. Qué dificultades tuve: Ninguna
-
-## Sprint Retrospective - Semana 5 con Metodología Scrum
-
-### Aspectos Positivos:
-
-- Comunicación y colaboración: Hubo una comunicación fluida y una buena colaboración entre los miembros del equipo, especialmente en la resolución de problemas técnicos.
-- Adaptación a cambios: El equipo mostró flexibilidad al adaptarse a los cambios en los requerimientos y tecnologías utilizadas durante el sprint.
-- Progreso en múltiples partes: A pesar de algunas dificultades, se logró avanzar en el desarrollo de diferentes aspectos del proyecto, desde la integración de Excel hasta el diseño de la interfaz gráfica.
-
-### Aspectos a Mejorar:
-
-- Gestión del tiempo: Algunos miembros del equipo mencionaron dificultades para completar sus tareas debido a la falta de tiempo. Es necesario revisar la planificación y la distribución de tareas para mejorar la eficiencia.
-- Conocimiento del framework: Un miembro del equipo expresó dificultades debido a la falta de conocimiento del framework utilizado. Esto destaca la importancia de la capacitación y la familiarización con las herramientas utilizadas en el proyecto.
-- Validación de requerimientos: Se experimentaron cambios en los requerimientos durante el sprint, lo que afectó la dirección de algunas tareas. Sería útil establecer un proceso más efectivo para prevenir estos cambios tan repentinos.
-
-### Acciones Propuestas:
-
-- Revisión de la distribución de tareas: El Scrum Master debe revisar la distribución de tareas para garantizar que sean alcanzables dentro del tiempo asignado a cada sprint.
-- Capacitación adicional: Se deben organizar sesiones de capacitación o brindar recursos adicionales para mejorar el conocimiento del framework entre los miembros del equipo.
-- Mejora en la gestión de cambios: Establecer un proceso claro para gestionar cambios en los requerimientos, incluyendo una evaluación de su impacto y una comunicación efectiva dentro del equipo.
