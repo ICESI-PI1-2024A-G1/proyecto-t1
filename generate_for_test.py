@@ -393,6 +393,15 @@ for i in range(len(t_request)):
 
 
 def generate_traceability(id):
+    """
+    Generate traceability entries for a given ID.
+
+    Args:
+        id (int): The ID for which traceability entries are generated.
+
+    Returns:
+        None
+    """
     for _ in range(fake.random_int(min=3, max=10)):
         Traceability.objects.create(
             modified_by=random.choice(User.objects.all()),
@@ -405,6 +414,12 @@ def generate_traceability(id):
 
 
 def create_fake_travel_request():
+    """
+    Create a fake travel request.
+
+    Returns:
+        TravelAdvanceRequest: The created travel request.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelAdvanceRequest"])
     expenses_dict = {
         "airportTransport": fake.random_int(min=50, max=500),
@@ -445,6 +460,12 @@ def create_fake_travel_request():
 
 
 def create_fake_travel_expense_legalization():
+    """
+    Create a fake travel expense legalization.
+
+    Returns:
+        TravelExpenseLegalization: The created travel expense legalization.
+    """
     person = random.choice(applicants)
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelExpenseLegalization"])
     travel_expense = TravelExpenseLegalization(
@@ -503,6 +524,12 @@ def create_fake_travel_expense_legalization():
 
 
 def create_fake_advance_legalization():
+    """
+    Create a fake advance legalization.
+
+    Returns:
+        AdvanceLegalization: The created advance legalization.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["AdvanceLegalization"])
     person = random.choice(applicants)
     advance_legalization = AdvanceLegalization(
@@ -546,6 +573,12 @@ def create_fake_advance_legalization():
 
 
 def create_fake_billing_account():
+    """
+    Create a fake billing account.
+
+    Returns:
+        BillingAccount: The created billing account.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["BillingAccount"])
     person = random.choice(applicants)
     billing_account = BillingAccount(
@@ -578,6 +611,12 @@ def create_fake_billing_account():
 
 
 def create_fake_requisition():
+    """
+    Create a fake requisition.
+
+    Returns:
+        Requisition: The created requisition.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["Requisition"])
     person = random.choice(applicants)
     requisition = Requisition(

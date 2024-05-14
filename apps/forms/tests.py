@@ -11,16 +11,39 @@ import re
 
 
 class Requests(TestCase):
-    def setUp(self):
+    """
+    Test case for form filling functionality.
 
+    This class contains test methods for filling different types of forms
+    with happy path scenarios.
+    """
+    def setUp(self):
+        """
+        Set up the WebDriver before each test.
+
+        This method initializes the WebDriver, maximizes the window,
+        and sets an implicit wait of 5 seconds.
+        """
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(5)
 
     def tearDown(self):
+        """
+        Clean up after each test.
+
+        This method quits the WebDriver after each test.
+        """
         self.driver.quit()
 
     def test_fill_form_happy_req(self):
+        """
+        Test filling a request form with happy path scenario.
+
+        This method tests filling a request form with valid input data.
+        It verifies that the form submission is successful and the correct
+        alert message is displayed.
+        """
         self.login("99685182")
         self.click_form("5")
 
@@ -63,6 +86,13 @@ class Requests(TestCase):
         )
 
     def test_fill_form_happy_cc(self):
+        """
+        Test filling a billing account form with happy path scenario.
+
+        This method tests filling a billing account form with valid input data.
+        It verifies that the form submission is successful and the correct
+        alert message is displayed.
+        """
         self.login("99685182")
         self.click_form("4")
 
@@ -113,6 +143,13 @@ class Requests(TestCase):
         )
 
     def test_fill_form_happy_legan(self):
+        """
+        Test filling a travel expense legalization form with happy path scenario.
+
+        This method tests filling a travel expense legalization form with valid input data.
+        It verifies that the form submission is successful and the correct
+        alert message is displayed.
+        """
         self.login("99685182")
         self.click_form("3")
 
@@ -160,6 +197,11 @@ class Requests(TestCase):
         )
 
     def test_fill_form_happy_legv(self):
+        """
+        Test filling out a form with legalizations.
+
+        This test fills out a form with legalization fields and submits it.
+        """
         self.login("99685182")
         self.click_form("2")
 
@@ -208,11 +250,21 @@ class Requests(TestCase):
         )
 
     def fill_advance(self):
+        """
+        Helper function to fill out advance fields.
+
+        This function fills out the advance fields in the form.
+        """
         self.driver.find_element(By.ID, "advanceTotal1").send_keys("100000")
         self.driver.find_element(By.ID, "advanceTotal2").send_keys("100")
         self.driver.find_element(By.ID, "advanceTotal3").send_keys("80")
 
     def fill_rows(self):
+        """
+        Helper function to fill out advance rows in the form.
+
+        This function fills out advance rows in the form.
+        """
         i = 0
         while True:
             try:
@@ -235,6 +287,11 @@ class Requests(TestCase):
                 break
 
     def fill_rowsadv(self):
+        """
+        Test filling out a form with specific parameters.
+
+        This test fills out a form with specific parameters and submits it.
+        """
         i = 0
         while True:
             try:
@@ -256,7 +313,13 @@ class Requests(TestCase):
 
                 break
 
-    def tesst_fill_form_happy_1(self):
+    def tesst_fill_form_happy_1(self):  
+        """
+        Test filling out a form and signing it.
+
+        This test fills out a form, signs it, and submits it.
+        """
+
         self.login("99685182")
         self.click_form("1")
 
@@ -308,6 +371,11 @@ class Requests(TestCase):
         )
 
     def tesst_fill_form_happy_sign2(self):
+        """
+        Test filling out a form with signing option 2.
+
+        This test fills out a form, selects signing option 2, and submits it.
+        """
         self.login("99685182")
         self.click_form("1")
 
@@ -358,6 +426,11 @@ class Requests(TestCase):
         )
 
     def tesst_fill_form_happy_sign3(self):
+        """
+        Test filling out a form with signing option 3.
+
+        This test fills out a form, selects signing option 3, and submits it.
+        """
         self.login("99685182")
         self.click_form("1")
 
@@ -408,6 +481,11 @@ class Requests(TestCase):
         )
 
     def tesst_fill_form_bad_dates(self):
+        """
+        Test filling out a form with bad dates.
+
+        This test fills out a form with incorrect date order and checks for the expected error message.
+        """
         self.login("99685182")
         self.click_form("1")
 
@@ -458,10 +536,20 @@ class Requests(TestCase):
         )
 
     def inputDates(self, init, end):
+        """
+        Helper function to input dates in the form.
+
+        This function inputs start and end dates in the form.
+        """
         self.driver.find_element(By.ID, "returnDate").send_keys(end)
         self.driver.find_element(By.ID, "departureDate").send_keys(init)
 
     def sign(self, sign):
+        """
+        Helper function to sign the form.
+
+        This function simulates the signing (writing) process in the form.
+        """
         self.driver.find_element(By.ID, "signButton").click()
         self.select_option("#swal2-select")
 
@@ -475,6 +563,11 @@ class Requests(TestCase):
         ).click()
 
     def sign2(self):
+        """
+        Helper function to sign the form with a specific method.
+
+        This function simulates the signing process with method 2 (drawing) in the form.
+        """
         self.driver.find_element(By.ID, "signButton").click()
         self.select_optionz("#swal2-select", "3")
 
@@ -497,6 +590,11 @@ class Requests(TestCase):
         ).click()
 
     def sign3(self):
+        """
+        Helper function to sign the form with a specific method.
+
+        This function simulates the signing process with method 3 (upload image) in the form.
+        """
         self.driver.find_element(By.ID, "signButton").click()
         self.select_optionz("#swal2-select", "4")
 
@@ -514,23 +612,43 @@ class Requests(TestCase):
         ).click()
 
     def get_alert(self):
+        """
+        Helper function to retrieve alert messages.
+
+        This function retrieves alert messages displayed in the form.
+        """
         return WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.ID, "toast-body"))
         )
 
     def select_option(self, selector):
+        """
+        Helper function to select an option in the table.
+
+        This function selects an option in a dropdown menu in the form.
+        """
         self.driver.find_element(By.CSS_SELECTOR, selector).click()
         self.driver.find_element(
             By.CSS_SELECTOR, selector + " option:nth-child(2)"
         ).click()
 
     def select_optionz(self, selector, opt):
+        """
+        Helper function to select an option in the select with a specific option.
+
+        This function selects an specific option in a dropdown menu}.
+        """
         self.driver.find_element(By.CSS_SELECTOR, selector).click()
         self.driver.find_element(
             By.CSS_SELECTOR, selector + " option:nth-child(" + opt + ")"
         ).click()
 
     def fill_prices(self, init, end, step):
+        """
+        Helper function to fill out prices in the form.
+
+        This function fills out prices in the form for a specific range.
+        """
         for i in range(init, end + 1, step):
             self.driver.find_element(
                 By.XPATH,
@@ -540,18 +658,34 @@ class Requests(TestCase):
             ).send_keys("1")
 
     def scroll_element(self, element):
+        """
+        Helper function to scroll an element.
+
+        This function scrolls a specific element in the form.
+        """
+
         scroll_height = 10000000000000
         self.driver.execute_script(
             "arguments[0].scrollTop = {}", element, scroll_height
         )
 
     def click_form(self, number):
+        """
+        Helper function to click on a form.
+
+        This function clicks on a specific form in the application.
+        """
         self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/a').click()
         self.driver.find_element(
             By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/ul/li[' + number + "]"
         ).click()
 
     def login(self, user):
+        """
+        Helper function to log in to the application.
+
+        This function simulates the login process in the application.
+        """
         client = Client()
         self.driver.get("http://127.0.0.1:8000/")
         user_input = self.driver.find_element(By.ID, "usuario")
@@ -581,6 +715,11 @@ class Requests(TestCase):
         code_btn.click()
 
     def extraer_texto(self, texto):
+        """
+        Helper function to extract text from a string.
+
+        This function extracts specific text from a given string using a regular expression.
+        """
         # Define el patrón de búsqueda utilizando una expresión regular
         patron = r"@([^)]+)"
         # Busca todas las ocurrencias del patrón en el texto

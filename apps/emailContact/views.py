@@ -7,7 +7,26 @@ User = get_user_model()
 
 
 def sendEmail_view(request):
-    """View function for sending email."""
+    """
+    View function for sending email.
+
+    Handles both GET and POST requests for sending an email.
+
+    GET request:
+    - Renders the 'emailContact.html' template with all users.
+
+    POST request:
+    - Extracts email, subject, and message from the request.
+    - Constructs the full message including sender information.
+    - Sends the email using a utility function.
+    - Renders the 'emailContact.html' template with all users again.
+
+    Parameters:
+    - request: HttpRequest object representing the request.
+
+    Returns:
+    - HttpResponse object rendering the 'emailContact.html' template.
+    """
     if request.method == "GET":
         return render(request, "emailContact.html", {"users": User.objects.all()})
     else:

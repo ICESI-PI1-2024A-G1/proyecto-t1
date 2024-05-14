@@ -13,8 +13,14 @@ from django.contrib.auth.models import User
 
 
 class IDBackendTest(unittest.TestCase):
+    """
+    Test cases for the IDBackend authentication backend.
+    """
 
     def setUp(self):
+        """
+        Setup method to create necessary objects before each test case.
+        """
         self.factory = RequestFactory()
         self.backend = IDBackend()
         self.user = get_user_model().objects.create_user(
@@ -22,6 +28,9 @@ class IDBackendTest(unittest.TestCase):
         )
 
     def test_authenticate_with_valid_credentials(self):
+        """
+        Test case to authenticate with valid credentials.
+        """
         request = self.factory.post("/")
         user = self.backend.authenticate(
             request, id=self.user.id, password="testpassword"
@@ -29,6 +38,9 @@ class IDBackendTest(unittest.TestCase):
         self.assertEqual(user, self.user)
 
     def test_authenticate_with_invalid_credentials(self):
+        """
+        Test case to authenticate with invalid credentials.
+        """
         request = self.factory.post("/")
         user = self.backend.authenticate(
             request, id=self.user.id, password="wrongpassword"
@@ -36,17 +48,29 @@ class IDBackendTest(unittest.TestCase):
         self.assertIsNone(user)
 
     def test_get_user_with_valid_id(self):
+        """
+        Test case to get a user with a valid ID.
+        """
         user = self.backend.get_user(self.user.id)
         self.assertEqual(user, self.user)
 
     def test_get_user_with_invalid_id(self):
+        """
+        Test case to get a user with an invalid ID.
+        """
         user = self.backend.get_user(9999)
         self.assertIsNone(user)
 
 
 class TeamViewsTest(TestCase):
+    """
+    Test cases for the Team views.
+    """
 
     def setUp(self):
+        """
+        Setup method to create necessary objects before each test case.
+        """
         self.factory = RequestFactory()
         self.client = Client()
         self.user = get_user_model().objects.create_user(
@@ -54,6 +78,9 @@ class TeamViewsTest(TestCase):
         )
 
     def test_show_teams_superuser(self):
+        """
+        Test case for showing teams by a superuser.
+        """
         request = self.factory.get("/")
         request.user = self.user
         request.user.is_superuser = True
@@ -61,6 +88,9 @@ class TeamViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_show_teams_non_superuser(self):
+        """
+        Test case for showing teams by a non-superuser.
+        """
         request = self.factory.get("/")
         setattr(request, "session", "session")
         messages = FallbackStorage(request)
@@ -68,13 +98,11 @@ class TeamViewsTest(TestCase):
         request.user = self.user
         request.user.is_superuser = False
 
-        # Crear un equipo liderado por el usuario
         team = Team.objects.create(name="Test Team", leader=self.user)
 
         response = show_teams(request)
         self.assertEqual(response.status_code, 200)
 
-        # Verificar que el equipo correcto se está mostrando
         self.assertContains(response, "Test Team")
 
     def test_add_team_get(self):
@@ -104,18 +132,22 @@ class TeamViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_edit_team_get(self):
-        # Create a team
+        """
+        Test the GET request for adding a new team.
+        """
+
         team = Team.objects.create(name="Test Team", leader=self.user)
 
         request = self.factory.get("/")
         request.user = self.user
 
-        # Edit the team
         response = edit_team(request, team.id)
         self.assertEqual(response.status_code, 200)
 
     def test_edit_team_post(self):
-        # Create a team
+        """
+        Test the POST request for adding a new team.
+        """
         team = Team.objects.create(name="Test Team", leader=self.user)
 
         request = self.factory.post(
@@ -134,15 +166,15 @@ class TeamViewsTest(TestCase):
         setattr(request, "_messages", messages)
         request.user = self.user
 
-        # Edit the team
         response = edit_team(request, team.id)
         self.assertEqual(response.status_code, 302)
 
     def test_edit_team_post_with_assigned_members(self):
-        # Create a team
+        """
+        Test the POST request for editing a team with assigned members.
+        """
         team = Team.objects.create(name="Test Team", leader=self.user)
 
-        # Create another user to be a member
         member_user = CustomUser.objects.create_user(
             id="test_member",
             username="member",
@@ -150,7 +182,6 @@ class TeamViewsTest(TestCase):
             email="test@example.com",
         )
 
-        # Add the member to the team
         team.members.add(member_user)
 
         temp_member_id = f"member-{str(member_user.id)}"
@@ -172,17 +203,17 @@ class TeamViewsTest(TestCase):
         # print(request)
         # print(request.POST)
 
-        # Edit the team
         response = edit_team(request, team.id)
 
-        # Check that the team's fields were updated
         self.assertEqual(team.leader, self.user)
         self.assertEqual(team.name, "Test Team")
         self.assertEqual(team.description, "")
         self.assertEqual(team.typeForm, "")
 
     def test_delete_team(self):
-        # Create a team
+        """
+        Test the deletion of a team.
+        """
         team = Team.objects.create(name="Test Team", leader=self.user)
 
         request = self.factory.delete("/")
@@ -191,25 +222,23 @@ class TeamViewsTest(TestCase):
         setattr(request, "_messages", messages)
         request.user = self.user
 
-        # Delete the team
         response = delete_team(request, team.id)
         self.assertEqual(response.status_code, 200)
 
-        # Verify the team was deleted
         with self.assertRaises(Team.DoesNotExist):
             Team.objects.get(id=team.id)
 
     def test_show_members(self):
-        # Create a team
+        """
+        Test displaying team members.
+        """
         team = Team.objects.create(name="Test Team", leader=self.user)
 
         request = self.factory.get("/")
         request.user = self.user
 
-        # Show the team members
         response = show_members(request, team.id)
         self.assertEqual(response.status_code, 200)
 
-
-if __name__ == "__main__":
-    unittest.main()
+    if __name__ == "__main__":
+        unittest.main()
