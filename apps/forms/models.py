@@ -3,6 +3,7 @@ import json
 from django.contrib.auth import get_user_model
 from django.apps import apps
 from apps.teams.models import Team
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -10,9 +11,13 @@ User = get_user_model()
 class Form(models.Model):
     id = models.AutoField(primary_key=True)
     request_date = models.DateField()
-    final_date = models.DateField(null=True, default=None)
+    final_date = models.DateField(null=True, default=timezone.now)
+    signatureInput = models.TextField(null=True, blank=True)
+    signature_status = models.BooleanField()
+    bank = models.CharField(max_length=200)
+    account_type = models.CharField(max_length=200)
+    account_number = models.CharField(max_length=200)
     member = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
-
     status = models.CharField(max_length=200, default="PENDIENTE")
     team_id = models.ForeignKey(
         Team, on_delete=models.SET_NULL, null=True, default=None
@@ -21,6 +26,8 @@ class Form(models.Model):
     review_data = models.TextField(null=True, blank=True)
     id_person = models.CharField(max_length=200, default="")
     fullname = models.CharField(max_length=200, default="")
+    pdf_file = models.FileField(upload_to="filled_forms/", null=True, blank=True, default=None)
+
 
     class Meta:
         abstract = True
@@ -35,12 +42,7 @@ class TravelAdvanceRequest(Form):
     travel_reason = models.CharField(max_length=200)
     currency = models.CharField(max_length=200)
     expenses = models.TextField()
-    signature_status = models.CharField(max_length=200)
-    bank = models.CharField(max_length=200)
-    account_type = models.CharField(max_length=200)
-    account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
-    signatureInput = models.TextField(null=True, blank=True)
 
     def set_expenses(self, expenses_dict):
         self.expenses = json.dumps(expenses_dict)
@@ -68,12 +70,7 @@ class TravelExpenseLegalization(Form):
     icesi_balance1 = models.DecimalField(max_digits=10, decimal_places=2)
     icesi_balance2 = models.DecimalField(max_digits=10, decimal_places=2)
     icesi_balance3 = models.DecimalField(max_digits=10, decimal_places=2)
-    signature_status = models.BooleanField()
-    bank = models.CharField(max_length=200)
-    account_type = models.CharField(max_length=200)
-    account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
-    signatureInput = models.TextField(null=True, blank=True)
 
 
 class TravelExpenseLegalization_Table(models.Model):
@@ -111,12 +108,7 @@ class AdvanceLegalization(Form):
     advance_total = models.DecimalField(max_digits=10, decimal_places=2)
     employee_balance_value = models.DecimalField(max_digits=10, decimal_places=2)
     icesi_balance_value = models.DecimalField(max_digits=10, decimal_places=2)
-    signature_status = models.BooleanField()
-    bank = models.CharField(max_length=200)
-    account_type = models.CharField(max_length=200)
-    account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
-    signatureInput = models.TextField(null=True, blank=True)
 
 
 class AdvanceLegalization_Table(models.Model):
@@ -139,12 +131,7 @@ class BillingAccount(Form):
     request_city = models.CharField(max_length=200)
     address = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=200)
-    signature_status = models.CharField(max_length=200)
-    bank = models.CharField(max_length=200)
-    account_type = models.CharField(max_length=200)
-    account_number = models.CharField(max_length=200)
     cex_number = models.CharField(max_length=200)
-    signatureInput = models.TextField(null=True, blank=True)
 
 
 class Requisition(Form):
@@ -153,12 +140,7 @@ class Requisition(Form):
     cenco = models.CharField(max_length=200)
     id_value = models.CharField(max_length=200)
     description = models.TextField()
-    signature_status = models.BooleanField()
-    bank = models.CharField(max_length=200)
-    account_type = models.CharField(max_length=200)
-    account_number = models.CharField(max_length=200)
     observations = models.TextField(default="Ninguna")
-    signatureInput = models.TextField(null=True, blank=True)
 
 
 class Country(models.Model):

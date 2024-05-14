@@ -36,7 +36,7 @@
     <div class="col-md-6 mb-1">
         <label>N° de cuenta:</label>
         <div class="d-flex justify-content-between">
-            <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ request.account_number }}" min="0" required disabled>
+            <input type="number" class="form-control" id="idBank" name="accountNumber" value="{{ request.account_number }}" min="0" max="999999999999999" required disabled>
             {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                 <input type="checkbox" class="btn-check" id="btncheckAccountNumber" name="idBankCheck" data-message="N° de cuenta">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckAccountNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
@@ -47,7 +47,7 @@
     <div class="col-md-6 mb-1">
         <label>N° CEX:</label>
         <div class="d-flex justify-content-between">
-            <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ request.cex_number }}" min="0" required disabled>
+            <input type="number" class="form-control" id="idCex" name="cexNumber" value="{{ request.cex_number }}" min="0" max="999999999999999" required disabled>
             {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                 <input type="checkbox" class="btn-check" id="btncheckCexNumber" name="cexCheck" data-message="N° Cex">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckCexNumber" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>

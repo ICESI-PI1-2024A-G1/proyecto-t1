@@ -2,9 +2,9 @@ const DataTableInit = (id, pageLength=4, columnDefs=[]) => {
     let dataTable = $(`#${id}`).DataTable({
         "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Todos"]],
         "pageLength":pageLength,
-        "language": {
-            "url": "/static/general/json/datatables-ES.json"
-        },
+        // "language": {
+        //     "url": "/static/general/json/datatables-ES.json"
+        // },
         "columnDefs": columnDefs,
         // "searching": false,
         // dom: '<"table-wrapper"f>tip'
@@ -23,6 +23,7 @@ const DataTableInit = (id, pageLength=4, columnDefs=[]) => {
         $(".dt-search").parent().parent().hide()
         setCardHeight()
     })
+    dataTable.draw();
 }
 
 const setCardHeight = () => {
@@ -33,6 +34,7 @@ const setCardHeight = () => {
     var htmlFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
     var marginInPixels = 1.5 * htmlFontSize;
     $(".card-fluid").height(newHeight-marginInPixels*2)
+    console.log("a")
 }
 
 $(window).on("load", setCardHeight)

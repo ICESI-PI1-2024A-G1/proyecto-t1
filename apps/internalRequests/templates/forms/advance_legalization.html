@@ -35,7 +35,7 @@
 
 <!-- User data -->
 
-<form id="myForm" action="/requests/advance_legalization_review" method="POST">
+<form id="myForm" action="/requests/advance_legalization_review/" method="POST">
     {{ form.csrf_token }}
 
     <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
@@ -45,7 +45,7 @@
     <div class="form-group">
         <label for="purchaseReason">Motivo de compra o servicio</label>
         <div class="d-flex justify-content-between">
-            <textarea class="form-control" id="purchaseReason" name="purchaseReason" rows="3" disabled>{{ request.purchase_reason }}</textarea>
+            <textarea class="form-control" id="purchaseReason" name="purchaseReason" maxlength="200" rows="3" required disabled>{{ request.purchase_reason }}</textarea>
             {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                 <input type="checkbox" class="btn-check" id="btncheckPurchaseReason" name="purchaseReasonCheck" data-message="Motivo de compra o servicio">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckPurchaseReason" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
@@ -56,10 +56,6 @@
     <div class="my-2 mx-2 border-bottom border-3"></div>
 
     <!--Spend data-->
-
-    <div class="mb-2 mt-3">
-        <label class="h5"><strong>Relación de gastos</strong></label>
-    </div>
 
     <style>
         th {
@@ -95,7 +91,7 @@
     </div>
 
     <div class="d-flex justify-content-between">
-        <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
+        <textarea class="form-control" id="observations" name="observations" maxlength="200" rows="3" maxlength="200" required disabled>{{ request.observations }}</textarea>
         {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
             <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>

@@ -4,6 +4,8 @@
 {%block main_route %}Formularios{% endblock %}
 {%block secondary_route %}Solicitudes de viaje{% endblock %}
 
+{% load static %}
+
 {% block content %}
 <form action="/forms/travel_advance_request" method="POST">
     <!--Title-->
@@ -94,6 +96,7 @@
                             placeholder="0"
                             value="{{ form_data.airportTransport }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -106,6 +109,7 @@
                             placeholder="0"
                             value="{{ form_data.localTransport }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -118,6 +122,7 @@
                             placeholder="0"
                             value="{{ form_data.food }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -130,6 +135,7 @@
                             placeholder="0"
                             value="{{ form_data.accommodation }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -142,6 +148,7 @@
                             placeholder="0"
                             value="{{ form_data.exitTaxes }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -154,6 +161,7 @@
                             placeholder="0"
                             value="{{ form_data.others }}"
                             min="0"
+                            max="99999999"
                             required>
                 </div>
                 <div class="col-md-6 mb-1">
@@ -191,7 +199,7 @@
                 </label>
             </div>
             <div>
-                <textarea class="form-control" id="observations" name="observations" rows="3">{{ form_data.observations }}</textarea>
+                <textarea class="form-control" id="observations" name="observations" rows="3" maxlength="200">{{ form_data.observations }}</textarea>
             </div>
     </div>
     <div class="card-footer">        
@@ -200,5 +208,5 @@
         </div>
     </div>
 </form>
-<script src="../../static/forms/js/travel_advance_request.js"></script>
+<script type="text/javascript" src="{% static 'forms/js/travel_advance_request.js' %}"></script>
 {% endblock %}

@@ -1,36 +1,19 @@
 <div class="mb-2">
-    <label class="h5">
-        <strong>Identificación</strong>
-    </label>
+    <label class="h5"><strong>Identificación</strong></label>
 </div>
 <div class="row mb-4">
     <div class="col-md-6 col-sm-12">
         <div class="form-group">
             <label for="requestDate">Fecha de solicitud</label>
-            <input type="date"
-                   class="form-control"
-                   id="requestDate"
-                   name="requestDate"
-                   value="{{ today }}"
-                   readonly>
+            <input type="date" class="form-control" id="requestDate" name="requestDate" value="{{ today }}" readonly>
         </div>
         <div class="form-group">
             <label for="fullName">Nombre completo</label>
-            <input type="text"
-                   class="form-control"
-                   id="fullName"
-                   name="fullName"
-                   value="{{ request.user.first_name }} {{ request.user.last_name }}"
-                   readonly>
+            <input type="text" class="form-control" id="fullName" name="fullName" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
         </div>
         <div class="form-group">
             <label for="idNumber">No. de identificación</label>
-            <input type="number"
-                   class="form-control"
-                   id="idNumber"
-                   name="idNumber"
-                   value="{{ request.user.id }}"
-                   readonly>
+            <input type="number" class="form-control" id="idNumber" name="idNumber" value="{{ request.user.id }}" readonly>
         </div>
     </div>
     <div class="col-md-6 col-sm-12">

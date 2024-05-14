@@ -36,7 +36,7 @@ class SharePointAPITestCase(TestCase):
         """
         self.excel_path = settings.EXCEL_FILE_PATH
         self.api = SharePointAPI(settings.EXCEL_FILE_PATH)
-        self.api.clear_db()
+        self.api.clear_db(False)
         for i in range(10):
             status_options = [
                 "EN PROCESO",

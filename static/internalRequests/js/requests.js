@@ -25,7 +25,7 @@ const changeStatus = id => {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/requests/change-status/' + id,
+                url: '/requests/change-status/' + id + "/",
                 method: 'POST',
                 data: {
                     newStatus: newStatus,

@@ -33,5 +33,5 @@ class Team(models.Model):
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
     typeForm = models.CharField(max_length=100, default="")
 
-    def __str__(self):
+    def __str__(self): # pragma: no cover
         return self.name

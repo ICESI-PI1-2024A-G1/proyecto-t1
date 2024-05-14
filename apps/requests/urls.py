@@ -3,6 +3,7 @@ Request urls
 
 This module defines URL patterns for the requests application.
 """
+
 from django.urls import path
 
 from apps.requests import views

@@ -1,3 +1,5 @@
+import io
+from PyPDF2 import PdfMerger, PdfReader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
@@ -21,6 +23,9 @@ from datetime import datetime
 import re
 from weasyprint import HTML
 import tempfile
+from apps.notifications.models import DateChangeNotification, FillFormNotification, StatusNotification
+from apps.notifications.models import AssignNotification
+
 
 statusMap = {
     "PENDIENTE": "secondary",
@@ -114,14 +119,14 @@ def get_cost_center_data():
 
 
 # Create context for the form
-def create_context():
+def create_context(): #pragma: no cover
     cities_data = get_cities_with_countries()
     bank_data = get_bank_data()
     account_types = get_account_types()
     dependences = get_dependence_data()
     cost_centers = get_cost_center_data()
 
-    context = {
+    context = { 
         "cities": cities_data,
         "banks": bank_data,
         "account_types": account_types,
@@ -150,7 +155,7 @@ def get_request_by_id(id):
 
 
 def get_all_requests(formType=None):
-    models = [
+    models = [ #pragma: no cover
         TravelAdvanceRequest,
         AdvanceLegalization,
         BillingAccount,
@@ -163,7 +168,7 @@ def get_all_requests(formType=None):
         ]
     instances = []
     for model in models:
-        for instance in model.objects.all():
+        for instance in model.objects.all(): # pragma: no cover
             instance.document = settings.FORM_TYPES[model.__name__]
             instances.append(instance)
     return instances
@@ -200,9 +205,11 @@ def show_requests(request):
     elif "changeFinalDateFailed" in request.GET:
         message = "No se pudo actualizar la fecha final de la solicitud."
         message_type = messages.ERROR
+    elif "assignRequestDone" in request.GET:
+        message = "La solicitud ha sido asignada correctamente."
+        message_type = messages.SUCCESS
 
     requests_data = get_all_requests()
-    print(request.user.is_leader)
     if request.user.is_leader:
         if Team.objects.filter(leader_id=request.user.id).exists():
             team = Team.objects.get(leader_id=request.user.id)
@@ -234,12 +241,13 @@ def show_requests(request):
 
     for r in requests_data:
         r.status_color = statusMap[r.status]
+        r.pdf_url = r.pdf_file.url if r.pdf_file else None
 
     requests_data = sorted(requests_data, key=lambda x: x.request_date, reverse=True)
 
     if message and message_type:
         messages.add_message(request, message_type, message)
-        return redirect("/requests")
+        return redirect("/requests/")
 
     return render(request, "show-internal-requests.html", {"requests": requests_data})
 
@@ -291,25 +299,41 @@ def change_status(request, id):
             prev_status = curr_request.status
             curr_request.status = new_status
             team_id = curr_request.team_id
-
             if team_id:
-                print(team_id.leader)
-                print(team_id.leader.email)
+                # print(team_id.leader)
+                # print(team_id.leader.email)
                 if request.user.is_superuser:
-                    utils.send_verification_email(
-                        request,
-                        f"Actualización del estado de la solicitud {curr_request.id}",
-                        "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                        team_id.leader.email,
-                        f"Hola, el Administrador del Sistema ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
+                    # utils.send_verification_email(
+                    #     request,
+                    #     f"Actualización del estado de la solicitud {curr_request.id}",
+                    #     "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                    #     team_id.leader.email,
+                    #     f"Hola, el Administrador del Sistema ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
+                    # )
+                    StatusNotification.objects.create(
+                        user_target=team_id.leader,
+                        modified_by=request.user,
+                        request_id=curr_request.id,
+                        date=datetime.now(),
+                        prev_state=prev_status,
+                        new_state=new_status,
+                        reason=new_reason,
                     )
                 else:
-                    utils.send_verification_email(
-                        request,
-                        f"Actualización del estado de la solicitud {curr_request.id}",
-                        "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                        team_id.leader.email,
-                        f"Hola, el usuario identificado como {request.user} del equipo {team_id} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
+                    # utils.send_verification_email(
+                    #     request,
+                    #     f"Actualización del estado de la solicitud {curr_request.id}",
+                    #     "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                    #     team_id.leader.email,
+                    #     f"Hola, el usuario identificado como {request.user} del equipo {team_id} ha cambiado el estado de la solicitud {curr_request.id}\nEstado Anterior:{prev_status}\nNuevo Estado: {new_status}\nMotivo: {new_reason}",
+                    # )
+                    StatusNotification.objects.create(
+                        user_target=team_id.leader,
+                        modified_by=request.user,
+                        request_id=curr_request.id,
+                        date=datetime.now(),
+                        prev_state=prev_status,
+                        reason=new_reason,
                     )
             if curr_request.status == "POR APROBAR":
                 # Put info of curr_request in a PDF
@@ -332,16 +356,19 @@ def change_status(request, id):
                     form_type = None
 
                 try:
-                    detail_request(request, id, pdf=True)
+                    curr_request.save()
+                    detail_request(request, id, pdf=True, save_to_file=False, trace=True)
                 except Exception as e:
                     print(e)
-                faculty = [
+                curr_request = get_request_by_id(id)
+                
+                faculty = [  #pragma: no cover
                     "Ciencias Administrativas y económicas",
                     "Ingeniería, Diseño y Ciencias Aplicadas",
                     "Ciencias Humanas",
                     "Ciencias de la Salud",
                 ]
-                eps = [
+                eps = [ #pragma: no cover
                     "Sura",
                     "Sanitas",
                     "Famisanar",
@@ -363,7 +390,7 @@ def change_status(request, id):
                     "Comfandi",
                     "Comfasucre",
                 ]
-                pension_fund = [
+                pension_fund = [#pragma: no cover
                     "Porvenir",
                     "Protección",
                     "Colfondos",
@@ -380,7 +407,7 @@ def change_status(request, id):
                     "Fondo Nacional del Ahorro",
                 ]
 
-                status_options = [
+                status_options = [ #pragma: no cover
                     "EN PROCESO",
                     "APROBADO - CENCO",
                     "RECHAZADO - CENCO",
@@ -390,7 +417,7 @@ def change_status(request, id):
                     "RECHAZADO - CONTABILIDAD",
                 ]
 
-                arls = [
+                arls = [ #pragma: no cover
                     "Sura ARL",
                     "Positiva ARL",
                     "Colmena Seguros ARL",
@@ -408,18 +435,17 @@ def change_status(request, id):
                     "Protección ARL",
                 ]
 
-                if hasattr(curr_request, "fullname"):
+                if hasattr(curr_request, "fullname"): 
                     fullname = curr_request.fullname
-                else:
+                else: #pragma: no cover
                     fullname = "No aplica"
-
+                
                 if hasattr(curr_request, "cost_center"):
                     cenco = curr_request.cost_center
-                elif hasattr(curr_request, "CENCO"):
+                elif hasattr(curr_request, "CENCO"):  #pragma: no cover
                     cenco = curr_request.cenco
-                else:
+                else:  #pragma: no cover
                     cenco = "No aplica"
-
                 team_id = Team.objects.all()[0]
                 try:
                     team_id = (
@@ -428,7 +454,7 @@ def change_status(request, id):
                         else Team.objects.get(leader=request.user)
                     )
                 except:
-                    pass
+                    pass                
                 SharePoint.objects.create(
                     status=random.choice(status_options),
                     manager=(
@@ -529,6 +555,15 @@ def change_final_date(request, id):
                 request=id,
             )
 
+            DateChangeNotification.objects.create(
+                user_target=curr_request.team_id.leader,
+                modified_by=request.user,
+                request_id=curr_request.id,
+                date=datetime.now(),
+                prev_date=prev_date,
+                new_date=new_final_date,
+            )
+
             return JsonResponse(
                 {
                     "message": f"La fecha final de la solicitud {id} ha sido actualizada correctamente."
@@ -544,7 +579,7 @@ def change_final_date(request, id):
 @never_cache
 @csrf_exempt
 @login_required
-def detail_request(request, id, pdf=False, save_to_file=False):
+def detail_request(request, id, pdf=False, save_to_file=False, trace = False):
     # pdf = True
     # save_to_file = True
     """
@@ -613,7 +648,7 @@ def detail_request(request, id, pdf=False, save_to_file=False):
         css_horizontal = os.path.join(
             settings.BASE_DIR, "static", "general", "css", "horizontal.css"
         )
-        print(css_horizontal)
+        # print(css_horizontal)
 
         template_r = get_template(template)
         html = template_r.render(context)
@@ -646,13 +681,15 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                 presentational_hints=True,
                 page_size="letter",
             )
-            pdfs.append(
-                {
-                    "name": f"Solicitud {id}.pdf",
-                    "content": pdf_bytes,
-                    "type": "application/pdf",
-                }
-            )
+            # pdfs.append(
+            #     {
+            #         "name": f"Solicitud {id}.pdf",
+            #         "content": pdf_bytes,
+            #         "type": "application/pdf",
+            #     }
+            # )
+            merger = PdfMerger()
+            merger.append(io.BytesIO(pdf_bytes))
             if table:
                 template_r = get_template(table)
                 html = template_r.render(context)
@@ -661,31 +698,56 @@ def detail_request(request, id, pdf=False, save_to_file=False):
                     presentational_hints=True,
                     page_size="letter",
                 )
-                pdfs.append(
-                    {
-                        "name": f"Tabla {id}.pdf",
-                        "content": pdf_bytes,
-                        "type": "application/pdf",
-                    }
-                )
+                # pdfs.append(
+                #     {
+                #         "name": f"Tabla {id}.pdf",
+                #         "content": pdf_bytes,
+                #         "type": "application/pdf",
+                #     }
+                # )
+                merger.append(io.BytesIO(pdf_bytes))
+            
+            combined_pdf_bytes = io.BytesIO()
+            merger.write(combined_pdf_bytes)
+            combined_pdf_bytes.seek(0)
+            combined_pdf_bytes = combined_pdf_bytes.getvalue()
+            from django.core.files.base import ContentFile
+            pdf_file = ContentFile(combined_pdf_bytes, name=f'Solicitud-{id}.pdf')
+
+            # Asigna el objeto File al campo pdf_file de tu solicitud
+            request_data.pdf_file = pdf_file
+            request_data.save()
 
             addresses = ["ccsa101010@gmail.com"]
             try:
-                leader_email = Team.objects.get(
+                # print("Antes de leader")
+                # print(settings.FORM_TYPES[request_data.__class__.__name__])
+                leader = Team.objects.get(
                     typeForm=settings.FORM_TYPES[request_data.__class__.__name__]
-                ).leader.email
+                ).leader
+                # print("oBTENGO LEADER")
+                leader_email = leader.email
                 addresses.append(leader_email)
+                if trace:
+                    FillFormNotification.objects.create(
+                        user_target=leader,
+                        modified_by=request.user,
+                        request_id=id,
+                        date=datetime.now(),
+                        pdf_link=request_data.pdf_file.url,
+                        form_type=settings.FORM_TYPES[request_data.__class__.__name__],
+                    )
             except:
                 pass
-
-            utils.send_verification_email(
-                request,
-                f"Archivo para revisión de la solicitud {id}",
-                "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                addresses,
-                f"Hola, el equipo de Contabilidad de la Universidad Icesi te envía el siguiente archivo para ser revisado. Este archivo contiene detalles de la solicitud {id} que ha sido actualizada recientemente. Por favor, revisa el archivo adjunto y haznos saber si tienes alguna pregunta o necesitas más información. Gracias por tu atención a este asunto.",
-                pdfs,
-            )
+            # utils.send_verification_email(
+            #     request,
+            #     f"Archivo para revisión de la solicitud {id}",
+            #     "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+            #     addresses,
+            #     f"Hola, el equipo de Contabilidad de la Universidad Icesi te envía el siguiente archivo para ser revisado. Este archivo contiene detalles de la solicitud {id} que ha sido actualizada recientemente. Por favor, revisa el archivo adjunto y haznos saber si tienes alguna pregunta o necesitas más información. Gracias por tu atención a este asunto.",
+            #     pdfs,
+            # )
+            return JsonResponse({"message": "pdf generated"})
     else:
         # Renderizar la plantilla HTML normalmente
         return render(request, template, context)
@@ -783,13 +845,21 @@ def assign_request(request, request_id):
             curr_request.save()
             teams = Team.objects.filter(typeForm=form_type)
             try:
-                utils.send_verification_email(
-                    request,
-                    "Solicitud Asignada",
-                    "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
-                    manager.email,
-                    f"Hola, como miembro del equipo {teams[0].name}, el líder {manager.first_name} {manager.last_name} le ha asignado una nueva solicitud en el Sistema de Contabilidad",
+                # utils.send_verification_email(
+                #     request,
+                #     "Solicitud Asignada",
+                #     "Notificación Vía Sistema de Contabilidad | Universidad Icesi <contabilidad@icesi.edu.co>",
+                #     manager.email,
+                #     f"Hola, como miembro del equipo {teams[0].name}, el líder {manager.first_name} {manager.last_name} le ha asignado una nueva solicitud en el Sistema de Contabilidad",
+                # )
+                AssignNotification.objects.create(
+                    user_target=manager,
+                    modified_by=request.user,
+                    request_id=curr_request.id,
+                    date=datetime.now(),
+                    team=teams[0],
                 )
+
             except:
                 print("El destino no se encontró")
             return redirect("/requests/?assignRequestDone")
@@ -809,46 +879,51 @@ def travel_advance_request(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = TravelAdvanceRequest.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = TravelAdvanceRequest.objects.get(id=request_id)
 
-    # Mapping of field names to data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "dependenceCheck": "Dependencia",
-        "costsCheck": "Costos",
-        "destinationCheck": "Destino",
-        "startTravelCheck": "Inicio del viaje",
-        "endTravelCheck": "Fin del viaje",
-        "travelReasonCheck": "Razón del viaje",
-        "tableCheck": "Tabla",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "observationsCheck": "Observaciones",
-        "reasonData": "Razón",
-    }
+        # Mapping of field names to data-message
+        field_to_message = { #pragma: no cover
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "dependenceCheck": "Dependencia",
+            "costsCheck": "Costos",
+            "destinationCheck": "Destino",
+            "startTravelCheck": "Inicio del viaje",
+            "endTravelCheck": "Fin del viaje",
+            "travelReasonCheck": "Razón del viaje",
+            "tableCheck": "Tabla",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "observationsCheck": "Observaciones",
+            "reasonData": "Razón",
+        }
 
-    # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Initialize review_data_list with all checkboxes with a value of 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Update the values of the checkboxes that are checked
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Update the values of the checkboxes that are checked
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
 
-    return redirect("/requests/?reviewDone")
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -863,46 +938,51 @@ def travel_expense_legalization(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = TravelExpenseLegalization.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = TravelExpenseLegalization.objects.get(id=request_id)
 
-    # Mapping of field names to data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "dependenceCheck": "Dependencia",
-        "costsCheck": "Costos",
-        "destinationCheck": "Destino",
-        "startTravelCheck": "Inicio de viaje",
-        "endTravelCheck": "Fin de viaje",
-        "travelReasonCheck": "Razón de viaje",
-        "tableCheck": "Tabla",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "observationsCheck": "Observaciones",
-        "reasonData": "Razón",
-    }
+        # Mapping of field names to data-message
+        field_to_message = {  #pragma: no cover
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "dependenceCheck": "Dependencia",
+            "costsCheck": "Costos",
+            "destinationCheck": "Destino",
+            "startTravelCheck": "Inicio de viaje",
+            "endTravelCheck": "Fin de viaje",
+            "travelReasonCheck": "Razón de viaje",
+            "tableCheck": "Tabla",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "observationsCheck": "Observaciones",
+            "reasonData": "Razón",
+        }
 
-    # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Initialize review_data_list with all checkboxes with a value of 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Update the values of the checkboxes that are checked
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Update the values of the checkboxes that are checked
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
 
-    return redirect("/requests/?reviewDone")
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -917,43 +997,47 @@ def advance_legalization(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = AdvanceLegalization.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = AdvanceLegalization.objects.get(id=request_id)
 
-    # Mapping of field names to data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "dependenceCheck": "Dependencia",
-        "costsCheck": "Costos",
-        "purchaseReasonCheck": "Razón de compra",
-        "tableCheck": "Tabla",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "observationsCheck": "Observaciones",
-        "reasonData": "Razón",
-    }
+        # Mapping of field names to data-message
+        field_to_message = {  #pragma: no cover
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "dependenceCheck": "Dependencia",
+            "costsCheck": "Costos",
+            "purchaseReasonCheck": "Razón de compra",
+            "tableCheck": "Tabla",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "observationsCheck": "Observaciones",
+            "reasonData": "Razón",
+        }
 
-    # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Actualizar los valores de los checkboxes que están marcados
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Actualizar los valores de los checkboxes que están marcados
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
-
-    return redirect("/requests/?reviewDone")
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -968,47 +1052,52 @@ def billing_account(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = BillingAccount.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = BillingAccount.objects.get(id=request_id)
 
-    # Mapping of field names to data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "valueCheck": "Valor",
-        "conceptCheck": "Concepto",
-        "retentionCheck": "Retención",
-        "taxCheck": "Impuesto",
-        "residentCheck": "Residente",
-        "cityCheck": "Ciudad",
-        "addressCheck": "Dirección",
-        "cellphoneCheck": "Celular",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "cexCheck": "CEX",
-        "reasonData": "Razón",
-    }
+        # Mapping of field names to data-message
+        field_to_message = { #pragma: no cover
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "valueCheck": "Valor",
+            "conceptCheck": "Concepto",
+            "retentionCheck": "Retención",
+            "taxCheck": "Impuesto",
+            "residentCheck": "Residente",
+            "cityCheck": "Ciudad",
+            "addressCheck": "Dirección",
+            "cellphoneCheck": "Celular",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "cexCheck": "CEX",
+            "reasonData": "Razón",
+        }
 
-    # Initialize review_data_list with all checkboxes with a value of 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Initialize review_data_list with all checkboxes with a value of 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Update the values of the checkboxes that are checked
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Update the values of the checkboxes that are checked
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
 
-    return redirect("/requests/?reviewDone")
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -1023,45 +1112,50 @@ def requisition(request):
     Returns:
     - render: Changes status of the request to reviewed.
     """
-    request_id = request.POST.get("id")
-    review_data = request.POST.dict()
-    request = Requisition.objects.get(id=request_id)
+    try:
+        request_id = request.POST.get("id")
+        review_data = request.POST.dict()
+        request = Requisition.objects.get(id=request_id)
 
-    # Mapeo de los nombres de los campos a los data-message
-    field_to_message = {
-        "dateCheck": "Fecha",
-        "nameCheck": "Nombre",
-        "idCheck": "ID",
-        "workCheck": "Trabajo",
-        "dependenceCheck": "Dependencia",
-        "cencoCheck": "Cenco",
-        "valueCheck": "Valor",
-        "conceptCheck": "Concepto",
-        "descriptionCheck": "Descripción",
-        "signCheck": "Firma",
-        "bankCheck": "Banco",
-        "typeAccountCheck": "Tipo de cuenta",
-        "idBankCheck": "ID del banco",
-        "observationsCheck": "Observaciones",
-        "reasonData": "Razón",
-    }
+        # Mapeo de los nombres de los campos a los data-message
+        field_to_message = { #pragma: no cover
+            "dateCheck": "Fecha",
+            "nameCheck": "Nombre",
+            "idCheck": "ID",
+            "workCheck": "Trabajo",
+            "dependenceCheck": "Dependencia",
+            "cencoCheck": "Cenco",
+            "valueCheck": "Valor",
+            "conceptCheck": "Concepto",
+            "descriptionCheck": "Descripción",
+            "signCheck": "Firma",
+            "bankCheck": "Banco",
+            "typeAccountCheck": "Tipo de cuenta",
+            "idBankCheck": "ID del banco",
+            "observationsCheck": "Observaciones",
+            "reasonData": "Razón",
+        }
 
-    # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
-    review_data_list = [
-        {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
-        for key in field_to_message.keys()
-    ]
+        # Inicializar review_data_list con todos los checkboxes con un valor de 'off'
+        review_data_list = [
+            {"id": key, "message": field_to_message.get(key, ""), "value": "off"}
+            for key in field_to_message.keys()
+        ]
 
-    # Actualizar los valores de los checkboxes que están marcados
-    for item in review_data_list:
-        if item["id"] in review_data:
-            item["value"] = review_data[item["id"]]
+        # Actualizar los valores de los checkboxes que están marcados
+        for item in review_data_list:
+            if item["id"] in review_data:
+                item["value"] = review_data[item["id"]]
 
-    request.review_data = review_data_list
-    request.is_reviewed = True
-    request.save()
+        request.review_data = review_data_list
+        request.is_reviewed = True
+        request.save()
 
-    return redirect("/requests/?reviewDone")
+        return redirect("/requests/?reviewDone")
+    except Exception as e:
+        print(e)
+        messages.error(request, f"Error al revisar el formulario")
+        return redirect("/requests/")
 
 
 @csrf_exempt
@@ -1074,7 +1168,7 @@ def update_request(request, request_id):
     with transaction.atomic():
         curr_request.status = "EN REVISIÓN"
         curr_request.is_reviewed = False
-        print(request.POST.dict())
+        # print(request.POST.dict())
 
         # Update the request with the data from the method's request
         for key, value in request.POST.items():

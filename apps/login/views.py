@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 import utils.utils as utils
 import subprocess
+
 User = get_user_model()
 
 
@@ -30,9 +31,9 @@ def login_view(request):
         request.session["has_requested_password"] = False
         if request.user.is_authenticated and request.GET.get("logout") != "true":
             if request.user.is_superuser or request.user.is_leader:
-                return redirect("/sharepoint")
+                return redirect("/sharepoint/")
             else:
-                return redirect("/requests")
+                return redirect("/requests/")
         else:
             if request.GET.get("logout") == "true":
                 logout(request)
@@ -50,7 +51,9 @@ def login_view(request):
                     return render(
                         request,
                         "login.html",
-                        {"message": "Usuario no autorizado. Comuníquese con el administrador."},
+                        {
+                            "message": "Usuario no autorizado. Comuníquese con el administrador."
+                        },
                     )
                 request.session["user_id"] = user.id
 
@@ -60,7 +63,6 @@ def login_view(request):
                 ruta_script = "apps/login/write.py"
                 comando = f"python {ruta_script} {random_code}"
                 subprocess.call(comando, shell=True)
-            
 
                 # Send verification email
                 utils.send_verification_email(
@@ -112,11 +114,11 @@ def verify_email_view(request):
             if request.user.is_authenticated:
                 if request.user.is_superuser or request.user.is_leader:
                     if request.user.is_superuser or request.user.is_leader:
-                        return redirect("/sharepoint")
+                        return redirect("/sharepoint/")
                     else:
-                        return redirect("/requests")
+                        return redirect("/requests/")
                 else:
-                    return redirect("/requests")
+                    return redirect("/requests/")
             else:
                 return redirect("login:login_view")
     else:
@@ -127,9 +129,9 @@ def verify_email_view(request):
             user.backend = backend
             login(request, user)
             if request.user.is_superuser or request.user.is_leader:
-                return redirect("/sharepoint")
+                return redirect("/sharepoint/")
             else:
-                return redirect("/requests")
+                return redirect("/requests/")
         else:
             messages.error(request, "Código de verificación incorrecto.")
             return render(request, "verifyEmailLog.html", context)
@@ -170,7 +172,7 @@ def reset_password_view(request):
             ruta_script = "apps/login/write.py"
             comando = f"python {ruta_script} {random_code}"
             subprocess.call(comando, shell=True)
-                
+
             request.session["random_code"] = random_code
             # print("Code: " + random_code)
             user = User.objects.get(id=id)
@@ -213,9 +215,9 @@ def verify_email_reset_view(request):
         else:
             if request.user.is_authenticated:
                 if request.user.is_superuser or request.user.is_leader:
-                    return redirect("/sharepoint")
+                    return redirect("/sharepoint/")
                 else:
-                    return redirect("/requests")
+                    return redirect("/requests/")
             else:
                 return redirect("login:login_view")
     else:
@@ -246,9 +248,9 @@ def change_password_view(request):
         else:
             if request.user.is_authenticated:
                 if request.user.is_superuser or request.user.is_leader:
-                    return redirect("/sharepoint")
+                    return redirect("/sharepoint/")
                 else:
-                    return redirect("/requests")
+                    return redirect("/requests/")
             else:
                 return redirect("login:login_view")
     else:

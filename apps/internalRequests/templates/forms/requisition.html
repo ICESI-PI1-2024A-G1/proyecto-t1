@@ -27,7 +27,7 @@
 
 <!-- User data -->
 
-<form action="/requests/requisition_review" method="POST">
+<form id="myForm" action="/requests/requisition_review/" method="POST">
     {{ form.csrf_token }}
 
     <input type="hidden" id="request_id" name="id" value="{{ request.id }}">
@@ -72,7 +72,7 @@
             <div class="form-group">
                 <label for="work">Cargo</label>
                 <div class="d-flex justify-content-between">
-                    <input type="text" class="form-control" id="work" name="work" value="{{ request.work }}" disabled>
+                    <input type="text" class="form-control" id="work" name="work" maxlength="50" value="{{ request.work }}" required disabled>
                     {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                         <input type="checkbox" class="btn-check" id="btncheckWork" name="workCheck" data-message="Cargo">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckWork" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
@@ -112,7 +112,7 @@
             <div class="form-group">
                 <label for="idValue">Valor</label>
                 <div class="d-flex justify-content-between">
-                    <input type="number" class="form-control" id="idValue" name="idValue" value="{{ request.id_value }}" disabled>
+                    <input type="number" class="form-control" id="idValue" name="idValue" min="0" max="99999999" value="{{ request.id_value }}" required disabled>
                     {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                         <input type="checkbox" class="btn-check" id="btncheckIdValue" name="valueCheck" data-message="Valor">
                         <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckIdValue" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
@@ -143,7 +143,7 @@
     <div class="form-group">
         <label for="description">Descripción</label>
         <div class="d-flex justify-content-between">
-            <textarea class="form-control" id="description" name="description" rows="5" disabled>{{ request.description }}</textarea>
+            <textarea class="form-control" id="description" name="description" rows="5" maxlength="200" required disabled>{{ request.description }}</textarea>
             {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
                 <input type="checkbox" class="btn-check" id="btncheckDescription" name="descriptionCheck" data-message="Descripción">
                 <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckDescription" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
@@ -172,7 +172,7 @@
     </div>
 
     <div class="d-flex justify-content-between">
-        <textarea class="form-control" id="observations" name="observations" rows="3" disabled>{{ request.observations }}</textarea>
+        <textarea class="form-control" id="observations" name="observations" maxlength="200" rows="3" required disabled>{{ request.observations }}</textarea>
         {% if not user.is_applicant and not user.is_superuser and request.status == "EN REVISIÓN" %}
             <input type="checkbox" class="btn-check" id="btncheckObservations" name="observationsCheck" data-message="Observaciones">
             <label class="btn btn-outline-primary col-1 d-flex align-items-center" for="btncheckObservations" style="margin-left: 5px;"><i class="bi bi-check" style="transform: scale(1.5)"></i></label>
