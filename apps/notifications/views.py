@@ -14,6 +14,20 @@ statusMap = {
 # Create your views here.
 @login_required
 def show_notifications(request):
+    """
+    Render the notifications page.
+    
+    This view function displays notifications based on the user's role:
+    - If the user is a superuser, it displays all notifications.
+    - If the user is not a superuser, it displays notifications relevant to that user.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        HttpResponse: The rendered notifications page.
+    """
+
     if request.user.is_superuser:
         status_notifications = StatusNotification.objects.all().order_by("-id")
         assign_notifications = AssignNotification.objects.all().order_by("-id")

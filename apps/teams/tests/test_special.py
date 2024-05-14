@@ -10,15 +10,27 @@ import time
 
 
 class teams_test(TestCase):
+    """
+    Test case for team management functionality using Selenium WebDriver.
+    """
     def setUp(self):
+        """
+        Set up the WebDriver before each test.
+        """
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(5)
 
     def tearDown(self):
+        """
+        Clean up resources after each test.
+        """
         self.driver.quit()
 
     def test_change_leader_and_delete_team_succesful(self):
+        """
+        Test changing the leader of a team and then deleting the team.
+        """
         ruta_script = "generate_for_teams.py"
         comando = f"python {ruta_script}"
         subprocess.call(comando, shell=True)
@@ -43,6 +55,15 @@ class teams_test(TestCase):
         self.assertEqual(alert.text, "Equipo eliminado con éxito")
 
     def click_opt_first(self, opt):
+        """
+        Clicks on the first option within a specific element based on the provided criteria.
+
+        Args:
+            opt (str): The option to be clicked. Can be '1' for the first option or '2' for the second.
+
+        Returns:
+            None
+        """
         son = ""
         if opt == "1":
             son = "button"
@@ -62,6 +83,16 @@ class teams_test(TestCase):
         table2.click()
 
     def select_opt_teams(self, num):
+        """
+        Selects an option related to team management based on the provided number.
+
+        Args:
+            num (str): The number of the option to be selected.
+
+        Returns:
+            None
+        """
+
         teambtn = self.driver.find_element(
             By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/a'
         )
@@ -72,12 +103,27 @@ class teams_test(TestCase):
         addbtn.click()
 
     def select_option(self, selector):
+        """
+        Selects an option from a dropdown menu based on the provided CSS selector.
+
+        Args:
+            selector (str): The CSS selector of the dropdown menu.
+
+        Returns:
+            None
+        """
         self.driver.find_element(By.CSS_SELECTOR, selector).click()
         self.driver.find_element(
             By.CSS_SELECTOR, selector + " option:nth-child(2)"
         ).click()
 
     def fill_req(self):
+        """
+        Fills out a request form with predefined values.
+
+        Returns:
+            None
+        """
         self.login("99685182")
         self.click_form("5")
 
@@ -114,12 +160,30 @@ class teams_test(TestCase):
         ).click()
 
     def click_form(self, number):
+        """
+        Clicks on a form specified by its number.
+
+        Args:
+            number (str): The number of the form to be clicked.
+
+        Returns:
+            None
+        """
         self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/a').click()
         self.driver.find_element(
             By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/ul/li[' + number + "]"
         ).click()
 
     def sign(self, sign):
+        """
+        Signs a document with a provided signature.
+
+        Args:
+            sign (str): The signature to be used.
+
+        Returns:
+            None
+        """
         self.driver.find_element(By.ID, "signButton").click()
         self.select_option("#swal2-select")
 
@@ -133,12 +197,24 @@ class teams_test(TestCase):
         ).click()
 
     def check_all_fields(self):
+        """
+        Checks all fields in a form.
+
+        Returns:
+            None
+        """
         reason_fl = self.driver.find_element(By.ID, "reason").send_keys("Razon válida")
 
         checkAll = self.driver.find_element(By.ID, "markAll")
         checkAll.click()
 
     def accept_all_fields(self):
+        """
+        Checks all fields in a form.
+
+        Returns:
+            None
+        """
         reason_fl = self.driver.find_element(By.ID, "reason").send_keys("Razon válida")
 
         checkAll = self.driver.find_element(By.ID, "markAll")
@@ -147,7 +223,15 @@ class teams_test(TestCase):
         self.accept_alert((By.ID, "completeReview"))
 
     def accept_alert(self, selector):
+        """
+        Accepts an alert message.
 
+        Args:
+            selector (tuple): A tuple containing the identifier and value of the alert element.
+
+        Returns:
+            None
+        """
         WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable(selector)
         ).click()
@@ -164,22 +248,49 @@ class teams_test(TestCase):
         )
 
     def scroll_element(self, element):
+        """
+        Scrolls a specific element to its bottom.
+
+        Args:
+            element: The element to be scrolled.
+
+        Returns:
+            None
+        """
         scroll_height = element.size["height"]
         self.driver.execute_script(
             "arguments[0].scrollTop = arguments[0].scrollHeight", element
         )
 
     def extract_gestor(self):
+        """
+        Extracts text from a specific element.
+
+        Returns:
+            list: A list of extracted text.
+        """
         tableUser = self.driver.find_element(
             By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(6)"
         )
         return self.extraer_texto(tableUser.text)
 
     def logout(self):
+        """
+        Logs out from the current session.
+
+        Returns:
+            None
+        """
         logout = self.driver.find_element(By.XPATH, '//*[@id="layout-navbar"]/div[3]')
         logout.click()
 
     def get_status(self):
+        """
+        Gets the status of a specific element.
+
+        Returns:
+            str: The status text.
+        """
         return WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(
                 (By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
@@ -187,11 +298,24 @@ class teams_test(TestCase):
         )
 
     def get_alert(self):
+        """
+        Gets the alert message.
+
+        Returns:
+            WebElement: The alert message element.
+        """
         return WebDriverWait(self.driver, 15).until(
             EC.visibility_of_element_located((By.ID, "toast-body"))
         )
 
     def click_change_state(self):
+        """
+        Clicks to change the state of an element.
+
+        Returns:
+            None
+        """
+
         table1 = self.driver.find_element(
             By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button"
         )
@@ -203,12 +327,30 @@ class teams_test(TestCase):
         table2.click()
 
     def search(self, criteria):
+        """
+        Searches for a specific criteria.
+
+        Args:
+            criteria (str): The search criteria.
+
+        Returns:
+            None
+        """
         input_search = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.ID, "requestsTableSearch"))
         )
         input_search.send_keys(criteria)
 
     def input_change_reason(self, reason):
+        """
+        Inputs the reason for a change.
+
+        Args:
+            reason (str): The reason for the change.
+
+        Returns:
+            None
+        """
         reasonTxt = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.ID, "reasonTextarea"))
         )
@@ -224,12 +366,24 @@ class teams_test(TestCase):
         confirmBtn.click()
 
     def click_inner_requests(self):
+        """
+        Clicks on inner requests.
+
+        Returns:
+            None
+        """
         intern = self.driver.find_element(
             By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a'
         )
         intern.click()
 
     def click_review_first(self):
+        """
+        Clicks to review the first element.
+
+        Returns:
+            None
+        """
         table1 = self.driver.find_element(
             By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button"
         )
@@ -241,6 +395,15 @@ class teams_test(TestCase):
         table2.click()
 
     def click_first(self, num):
+        """
+        Clicks on the first element based on the provided number.
+
+        Args:
+            num (str): The number of the element to be clicked.
+
+        Returns:
+            None
+        """
         table1 = self.driver.find_element(
             By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button"
         )
@@ -254,6 +417,9 @@ class teams_test(TestCase):
         table2.click()
 
     def login(self, user):
+        """
+        Log in with a specified user.
+        """
         client = Client()
         self.driver.get("http://127.0.0.1:8000/")
         user_input = self.driver.find_element(By.ID, "usuario")
@@ -283,9 +449,17 @@ class teams_test(TestCase):
         code_btn.click()
 
     def extraer_texto(self, texto):
-        # Define el patrón de búsqueda utilizando una expresión regular
+        """
+        Extracts text using a specific pattern.
+
+        Args:
+            texto (str): The text to be extracted from.
+
+        Returns:
+            list: A list of extracted text.
+        """
         patron = r"@([^)]+)"
-        # Busca todas las ocurrencias del patrón en el texto
+
         coincidencias = re.findall(patron, texto)
-        # Retorna la lista de coincidencias encontradas
+
         return coincidencias

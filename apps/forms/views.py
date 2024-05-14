@@ -13,6 +13,11 @@ import json
 
 # Calculate the next ID for the forms
 def get_next_id():
+    """
+    Calculate the next ID for the forms.
+
+    This function calculates the next available ID for various form submissions.
+    """
     max_id1 = TravelAdvanceRequest.objects.all().aggregate(Max("id"))["id__max"] or 0
     max_id2 = AdvanceLegalization.objects.all().aggregate(Max("id"))["id__max"] or 0
     max_id3 = BillingAccount.objects.all().aggregate(Max("id"))["id__max"] or 0
@@ -25,6 +30,11 @@ def get_next_id():
 
 # Get cities with countries
 def get_cities_with_countries():
+    """
+    Get cities with countries.
+
+    This function retrieves a list of cities with their associated countries.
+    """
     cities_with_countries = (
         City.objects.select_related("country").order_by("country_id").all()
     )
@@ -44,6 +54,11 @@ def get_cities_with_countries():
 
 # Get bank data
 def get_bank_data():
+    """
+    Get bank data.
+
+    This function retrieves data about banks.
+    """
     banks = Bank.objects.all()
 
     bank_data = [
@@ -59,6 +74,11 @@ def get_bank_data():
 
 # Get account types
 def get_account_types():
+    """
+    Get account types.
+
+    This function retrieves data about account types.
+    """
     account_types = AccountType.objects.all()
 
     account_types = [
@@ -74,6 +94,11 @@ def get_account_types():
 
 # Get dependence data
 def get_dependence_data():
+    """
+    Get dependence data.
+
+    This function retrieves data about dependences.
+    """
     dependences = Dependency.objects.all()
 
     dependence_data = [
@@ -89,6 +114,11 @@ def get_dependence_data():
 
 # Get cost center data
 def get_cost_center_data():
+    """
+    Get cost center data.
+
+    This function retrieves data about cost centers.
+    """
     cost_centers = CostCenter.objects.all()
 
     cost_center_data = [
@@ -104,6 +134,11 @@ def get_cost_center_data():
 
 # Create context for the form
 def create_context():
+    """
+    Create context for the form.
+
+    This function creates context data required for rendering the form.
+    """
     today = date.today().isoformat()
     cities_data = get_cities_with_countries()
     bank_data = get_bank_data()
@@ -126,6 +161,11 @@ def create_context():
 @login_required
 @csrf_exempt
 def travel_advance_request(request):
+    """
+    View function for handling travel advance request form submissions.
+
+    This function handles GET and POST requests for submitting travel advance request forms.
+    """
     try:
 
         context = create_context()
@@ -217,6 +257,11 @@ def travel_advance_request(request):
 @login_required
 @csrf_exempt
 def travel_expense_legalization(request):
+    """
+    View function for handling travel expense legalization form submissions.
+
+    This function handles GET and POST requests for submitting travel expense legalization forms.
+    """
     try:
         context = create_context()
 
@@ -323,6 +368,11 @@ def travel_expense_legalization(request):
 @login_required
 @csrf_exempt
 def advance_legalization(request):
+    """
+    View function for handling advance legalization form submissions.
+
+    This function handles GET and POST requests for submitting advance legalization forms.
+    """
     try:
         context = create_context()
 
@@ -407,6 +457,11 @@ def advance_legalization(request):
 @login_required
 @csrf_exempt
 def billing_account(request):
+    """
+    View function for handling billing account form submissions.
+
+    This function handles GET and POST requests for submitting billing account forms.
+    """
     try:
         context = create_context()
         context["include_cex"] = True
@@ -480,6 +535,11 @@ def billing_account(request):
 @login_required
 @csrf_exempt
 def requisition(request):
+    """
+    View function for handling requisition form submissions.
+
+    This function handles GET and POST requests for submitting requisition forms.
+    """
     try:
 
         context = create_context()
