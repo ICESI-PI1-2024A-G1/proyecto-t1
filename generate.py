@@ -739,6 +739,7 @@ for i in range(notification_number):
 print("Generating FillFormNotifications")
 client = Client()
 client.login(id=os.getenv("ADMIN_PASSWORD"), password=os.getenv("ADMIN_PASSWORD"))
+print("Generating PDFs")
 for form_type in settings.FORM_TYPES:
     data = generate_notification_data()
     ready_forms = [ form for form in filled_forms if form.team_id.typeForm == settings.FORM_TYPES[form_type]]
@@ -763,4 +764,8 @@ for i in range(notification_number):
     data["new_date"] = fake.date_between(start_date="+1d", end_date="+30d")
     DateChangeNotification.objects.create(**data)
 
+for form in filled_forms:
+    if form.pdf_file == None:
+        form.status = random.choice(["PENDIENTE", "EN REVISIÓN", "DEVUELTO"])
+        form.save()
 print("Done")
