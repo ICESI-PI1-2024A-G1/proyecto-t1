@@ -75,6 +75,7 @@
                 dangerMode: true,
             })
             .then((willConfirm) => {
+                Swal.showLoading();
                 if (willConfirm) {
                     var csrftoken = $('[name=csrfmiddlewaretoken]').val();
                     var id = $('#request_id').val();

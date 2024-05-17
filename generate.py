@@ -45,12 +45,28 @@ User = get_user_model()
 
 """
 README:
-- Add to the .env file the ADMIN_PASSWORD and ADMIN_EMAIL fields
-- Delete the current database sqlite3
+Make sure to follow these steps before executing the script:
+- Create a virtual environment and install the requirements.txt file
+
+    py -m venv venv
+    ./venv/Scripts/activate
+    pip install -r requirements.txt
+
+- Delete the current database sqlite3 file (if it exists)
+- Add to the .env file the ADMIN_PASSWORD, ADMIN_EMAIL, EMAIL_HOST_PASSWORD, EMAIL_HOST_ADDRESS fields:
+
+    ADMIN_PASSWORD=123456789
+    ADMIN_EMAIL=youremail@domain.com
+    EMAIL_HOST_PASSWORD=njbt qgre zevu ohwi
+    EMAIL_HOST_ADDRESS=ccsa101010@gmail.com 
+
+- Add the .env provided by the project manager to the accounting_system folder
 - Make migrations with 'py manage.py makemigrations' and 'py manage.py migrate' commands
 - Execute the python script with 'py generate.py shell'
     - If you do not have permissions to execute scripts, open PowerShell as administrator and execute 'Set-ExecutionPolicy Unrestricted'
     - Now execute the command, this will generate sample data for the current models
+- Execute the command 'npm install' to install the node modules
+- Initialize the server with 'py manage.py runserver'
 - Select all code written by Playermast86, delete it and add it to the gitignore file.
 """
 
@@ -99,7 +115,7 @@ for _ in range(users_amount):
     last_name = fake.last_name()
     username = id
     email = fake.email()
-    password = "12345678"
+    password = id
     user = User.objects.create_user(
         id=id,
         username=username,
@@ -622,23 +638,23 @@ def create_fake_requisition():
 filled_forms = []
 
 form_amount = 10
-print(f"Generateing {form_amount} billing account forms")
+print(f"Generating {form_amount} billing account forms")
 for _ in range(form_amount):
     billing_account = create_fake_billing_account()
     filled_forms.append(billing_account)
-print(f"Generateing {form_amount} requisition forms")
+print(f"Generating {form_amount} requisition forms")
 for _ in range(form_amount):
     requisition = create_fake_requisition()
     filled_forms.append(requisition)
-print(f"Generateing {form_amount} advance legalization forms")
+print(f"Generating {form_amount} advance legalization forms")
 for _ in range(form_amount):
     advance_legalization = create_fake_advance_legalization()
     filled_forms.append(advance_legalization)
-print(f"Generateing {form_amount} travel expense legalization forms")
+print(f"Generating {form_amount} travel expense legalization forms")
 for _ in range(form_amount):
     travel_expense = create_fake_travel_expense_legalization()
     filled_forms.append(travel_expense)
-print(f"Generateing {form_amount} travel forms")
+print(f"Generating {form_amount} travel forms")
 for _ in range(form_amount):
     travel_request = create_fake_travel_request()
     filled_forms.append(travel_request)

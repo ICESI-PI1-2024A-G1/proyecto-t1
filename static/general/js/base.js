@@ -34,18 +34,27 @@ const setCardHeight = () => {
     var htmlFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
     var marginInPixels = 1.5 * htmlFontSize;
     $(".card-fluid").height(newHeight-marginInPixels*2)
-    console.log("a")
 }
 
 $(window).on("load", setCardHeight)
 $(window).on("resize", setCardHeight)
 
 const showModal = (title, url, size="") => {
+    console.log("Mostrando modal")
     $.get(url, function (data) {
         $('#detailsContent').html(data);
-        $('#detailsModal .modal-dialog').addClass('modal-lg');
+        $('#detailsModal .modal-dialog').removeClass().addClass('modal-dialog');
+        $('#detailsModal .modal-dialog').css('max-width', '');
+        if(size) {
+            console.log("Agregando clase: ", `modal-${size}`)
+            $('#detailsModal .modal-dialog').addClass(`modal-${size}`)
+            if(size === 'xxl') {
+                $('#detailsModal .modal-dialog').css('max-width', '90%');
+            }
+        } else {
+            $('#detailsModal .modal-dialog').addClass('modal-lg');
+        }
         $('#detailsModal').modal('show');
-        if(size) $('#detailsModal .modal-dialog').addClass(`modal-${size}`)
         $('#detailsModalLabel').text(title);
     });
 }

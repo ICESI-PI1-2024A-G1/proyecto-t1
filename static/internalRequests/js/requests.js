@@ -24,6 +24,7 @@ const changeStatus = id => {
         cancelButtonText: 'No, cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
+            Swal.showLoading();
             $.ajax({
                 url: '/requests/change-status/' + id + "/",
                 method: 'POST',
