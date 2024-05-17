@@ -10,17 +10,29 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class Login(unittest.TestCase):
+    """
+    Test case for user login functionality.
+    """
     def setUp(self):
+        """
+        Set up method to initialize the WebDriver and other resources before each test.
+        """
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.psw = "123456789"
         self.driver.implicitly_wait(5)
 
     def tearDown(self):
+        """
+        Tear down method to clean up after each test.
+        """
         self.driver.quit()
 
 
     def test_login_happy_path(self):
+        """
+        Test the happy path scenario for user login.
+        """
         self.driver.get("http://127.0.0.1:8000/")
         user_input = self.driver.find_element(By.ID,"usuario")
         pass_input = self.driver.find_element(By.ID,"contrasena")
@@ -52,6 +64,9 @@ class Login(unittest.TestCase):
         self.assertEqual(welcome_text.text, "¡Bienvenid@, \nAccounting Admin!")
 
     def test_login_wrong_credentials(self):
+        """
+        Test login with wrong credentials.
+        """
         self.driver.get("http://127.0.0.1:8000/")
         user_input = self.driver.find_element(By.ID,"usuario")
         pass_input = self.driver.find_element(By.ID,"contrasena")
@@ -67,6 +82,9 @@ class Login(unittest.TestCase):
         self.assertEqual(error_msg.text, "Por favor, revisa las credenciales.")
 
     def test_login_wrong_code(self):
+        """
+        Test login with wrong verification code.
+        """
         self.driver.get("http://127.0.0.1:8000/")
         user_input = self.driver.find_element(By.ID,"usuario")
         pass_input = self.driver.find_element(By.ID,"contrasena")
@@ -88,6 +106,9 @@ class Login(unittest.TestCase):
         self.assertEqual(error_msg.text, "Código de verificación incorrecto.")
 
     def test_recover_password_happy_path(self):
+        """
+        Test password recovery with correct verification code.
+        """
         self.driver.get("http://127.0.0.1:8000/")
         frg_pass_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/a[2]")
 
@@ -118,6 +139,9 @@ class Login(unittest.TestCase):
         self.test_login_happy_path()
 
     def test_recover_password_wrong_code(self):
+        """
+        Test password recovery with wrong verification code.
+        """
         self.driver.get("http://127.0.0.1:8000/")
         frg_pass_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/a[2]")
 
@@ -141,6 +165,9 @@ class Login(unittest.TestCase):
         self.assertEqual(error_msg.text, "Código de verificación incorrecto.")
 
     def test_recover_password_diff_pass(self):
+        """
+        Test password recovery with passwords that do not match.
+        """
         self.driver.get("http://127.0.0.1:8000/")
         frg_pass_btn = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div/div/div/div[3]/a[2]")
 

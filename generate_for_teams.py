@@ -28,6 +28,14 @@ from apps.internalRequests.views import get_all_requests
 
 
 def get_next_id():
+    """
+    Get the next available ID for various models.
+
+    This function queries multiple models to find the maximum ID and returns the next available ID by incrementing the maximum ID by 1.
+
+    Returns:
+        int: The next available ID.
+    """
     max_id1 = TravelAdvanceRequest.objects.all().aggregate(Max("id"))["id__max"] or 0
     max_id2 = AdvanceLegalization.objects.all().aggregate(Max("id"))["id__max"] or 0
     max_id3 = BillingAccount.objects.all().aggregate(Max("id"))["id__max"] or 0
@@ -393,6 +401,15 @@ for i in range(len(t_request)):
 
 
 def generate_traceability(id):
+    """
+    Generate traceability entries for a given ID.
+
+    Args:
+        id (int): The ID for which traceability entries are generated.
+
+    Returns:
+        None
+    """
     for _ in range(fake.random_int(min=3, max=10)):
         Traceability.objects.create(
             modified_by=random.choice(User.objects.all()),
@@ -405,6 +422,12 @@ def generate_traceability(id):
 
 
 def create_fake_travel_request():
+    """
+    Create a fake travel request.
+
+    Returns:
+        TravelAdvanceRequest: The created travel request.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelAdvanceRequest"])
     expenses_dict = {
         "airportTransport": fake.random_int(min=50, max=500),
@@ -445,6 +468,12 @@ def create_fake_travel_request():
 
 
 def create_fake_travel_expense_legalization():
+    """
+    Create a fake travel expense legalization.
+
+    Returns:
+        TravelExpenseLegalization: The created travel expense legalization.
+    """
     person = random.choice(applicants)
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelExpenseLegalization"])
     travel_expense = TravelExpenseLegalization(
@@ -501,51 +530,13 @@ def create_fake_travel_expense_legalization():
         travel_info.save()
         generate_traceability(travel_info.id)
 
-
-"""def create_fake_advance_legalization():
-    team = Team.objects.get(typeForm=settings.FORM_TYPES["AdvanceLegalization"])
-    person = random.choice(applicants)
-    advance_legalization = AdvanceLegalization(
-        request_date=fake.date_between(start_date="-30d", end_date="today"),
-        final_date=fake.date_between(start_date="today", end_date="+30d"),
-        fullname=person.get_fullname(),
-        id_person=person.id,
-        member=random.choice(team.members.all()),
-        dependence=fake.company(),
-        cost_center=fake.random_int(min=1000, max=9999),
-        purchase_reason=fake.text(max_nb_chars=100),
-        total=fake.random_int(min=100, max=1000),
-        advance_total=fake.random_int(min=50, max=500),
-        employee_balance_value=fake.random_int(min=0, max=500),
-        icesi_balance_value=fake.random_int(min=0, max=500),
-        signature_status=True,
-        bank=random.choice(banks),
-        account_type=fake.random_element(elements=("Savings", "Checking")),
-        account_number=fake.random_int(min=100000000, max=9999999999),
-        observations=fake.text(max_nb_chars=100),
-        team_id=team,
-        signatureInput="1---" + person.get_fullname(),
-    )
-    with transaction.atomic():
-        advance_legalization.id = get_next_id()
-    advance_legalization.save()
-    generate_traceability(advance_legalization.id)
-
-    # Crear varias entradas de ejemplo para AdvanceLegalization_Table asociadas
-    for _ in range(
-        fake.random_int(min=1, max=5)
-    ):  # Puedes ajustar el rango según tus necesidades
-        advance_table = AdvanceLegalization_Table(
-            general_data=advance_legalization,
-            category=fake.word(),
-            provider=fake.company(),
-            pesos=fake.random_int(min=100, max=1000),
-            concept=fake.text(max_nb_chars=100),
-        )
-        advance_table.save()
-"""
-
 def create_fake_billing_account():
+    """
+    Create a fake billing account.
+
+    Returns:
+        BillingAccount: The created billing account.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["BillingAccount"])
     person = random.choice(applicants)
     billing_account = BillingAccount(
@@ -578,6 +569,12 @@ def create_fake_billing_account():
 
 
 def create_fake_requisition():
+    """
+    Create a fake requisition.
+
+    Returns:
+        Requisition: The created requisition.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["Requisition"])
     person = random.choice(applicants)
     requisition = Requisition(
@@ -615,13 +612,6 @@ for _ in range(form_amount):
         create_fake_travel_expense_legalization()
         create_fake_travel_request()
 
-"""
-for r in get_all_requests():
-    if r.status in ["RECHAZADO", "DEVUELTO", "RESUELTO"]:
-        r.member = None
-        r.save()
-"""
-
 admin = User.objects.create_user(
     id=os.getenv("ADMIN_PASSWORD"),
     username="admin",
@@ -646,17 +636,12 @@ for city in cities:
     city_instance = City(name=city["name"], country=country_instance)
     city_instance.save()
 
-
-# Generar bancos
-
 print("Generating banks...")
 
 for bank in banks:
     bank_instance = Bank(name=bank)
     bank_instance.save()
 
-
-# Generar tipos de cuenta
 
 print("Generating account types...")
 
@@ -665,16 +650,11 @@ for account_type in account_types:
     account_type_instance.save()
 
 
-# Generar dependencias
-
 print("Generating dependencies...")
 
 for dependency in dependencies:
     dependency_instance = Dependency(name=dependency)
     dependency_instance.save()
-
-
-# Generar centros de costo
 
 print("Generating cost centers...")
 

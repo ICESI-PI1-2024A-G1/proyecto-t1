@@ -50,6 +50,18 @@ class TeamForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs): # pragma: no cover
+        """
+        Constructor method for TeamForm.
+
+        Initializes the form with custom querysets for leader and members fields.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            None
+        """
         super(TeamForm, self).__init__(*args, **kwargs)
         leaders_without_team = User.objects.filter(leading_team__isnull=True)
         self.fields["leader"].queryset = leaders_without_team

@@ -7,12 +7,8 @@ import subprocess
 
 User = get_user_model()
 
-
-# Global variable to store the random code
 global random_code
 
-
-# Create your views here.
 def login_view(request):
     """Handles user login and session management.
 
@@ -57,14 +53,12 @@ def login_view(request):
                     )
                 request.session["user_id"] = user.id
 
-                # Generate random code
                 random_code = utils.generate_random_code()
                 request.session["random_code"] = random_code
                 ruta_script = "apps/login/write.py"
                 comando = f"python {ruta_script} {random_code}"
                 subprocess.call(comando, shell=True)
 
-                # Send verification email
                 utils.send_verification_email(
                     request,
                     "Verificación de correo",
@@ -91,8 +85,6 @@ def login_view(request):
                 {"message": "Ingrese un usuario válido."},
             )
 
-
-# Verification after login
 def verify_email_view(request):
     """Handles verification after login using a verification code.
 
@@ -146,8 +138,6 @@ Change password methods
 4. Return to login_view after changing password
 """
 
-
-# Request id after clicking "Forgot password?"
 def reset_password_view(request):
     """Handles the request to reset the password.
 
@@ -167,17 +157,14 @@ def reset_password_view(request):
         id = request.POST["userId"]
         if User.objects.filter(id=id).exists():
             request.session["user_id"] = id
-            # Generate random code
             random_code = utils.generate_random_code()
             ruta_script = "apps/login/write.py"
             comando = f"python {ruta_script} {random_code}"
             subprocess.call(comando, shell=True)
 
             request.session["random_code"] = random_code
-            # print("Code: " + random_code)
             user = User.objects.get(id=id)
             email = user.email
-            # Send verification email
             utils.send_verification_email(
                 request,
                 "Verificación de correo",
@@ -193,8 +180,6 @@ def reset_password_view(request):
             messages.error(request, "Usuario no encontrado.")
             return render(request, "reset_password.html")
 
-
-# Verification after putting id in "Forgot password?" to verify identity
 def verify_email_reset_view(request):
     """Handles verification after requesting a password reset.
 
@@ -228,7 +213,6 @@ def verify_email_reset_view(request):
             return render(request, "verifyEmailLog.html", context)
 
 
-# Change password after verifying identity
 def change_password_view(request):
     """Handles password change after verifying identity.
 
