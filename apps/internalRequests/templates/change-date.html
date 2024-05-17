@@ -40,9 +40,11 @@
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, cambiar',
-            cancelButtonText: 'No, cancelar'
+            cancelButtonText: 'No, cancelar',
+            allowOutsideClick: false,
         }).then((result) => {
             if (result.isConfirmed) {
+                Swal.showLoading();
                 $.ajax({
                     url: '/requests/change-final-date/' + id + '/',
                     method: 'POST',
@@ -58,7 +60,6 @@
                         window.location.href = "/requests/?changeFinalDateFailed";
                     }
                 });
-                $('#detailsModal').modal('hide');
             }
         });
     }
