@@ -7,7 +7,7 @@ django.setup()
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-user = User.objects.get(email="ccsa101010@gmail.com")
+user = User.objects.filter(email="ccsa101010@gmail.com")
 user.delete()
 admin = User.objects.create_user(
     id="1010101010",

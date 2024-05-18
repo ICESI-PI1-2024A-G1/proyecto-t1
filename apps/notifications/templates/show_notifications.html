@@ -64,6 +64,11 @@
                                 {% else %}
                                 Sin motivo
                                 {% endif %}
+                                <br>
+                                {% if notification.affected_fields %}
+                                <span><strong>Campos afectados:</strong></span>
+                                {{notification.affected_fields}}
+                                {% endif %}
                             </p>
                         </div>
                         <div class="col-md-3 float-right">

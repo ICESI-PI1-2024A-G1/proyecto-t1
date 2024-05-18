@@ -1206,7 +1206,11 @@ class TestViews(TestCase): #pragma: no cover
         Returns:
             None
         """
-        mock_request = Requisition.objects.create(member=self.user, request_date=timezone.now(), signature_status=True)
+        mock_request = Requisition.objects.create(
+            member=self.user, 
+            request_date=timezone.now(), 
+            signature_status=True
+        )
         mock_request.user = self.user
 
         request = self.factory.post('/requisition/', {'id': '1', 'dateCheck': 'on'})
@@ -1228,7 +1232,18 @@ class TestViews(TestCase): #pragma: no cover
         Returns:
             None
         """
-        mock_request = TravelAdvanceRequest.objects.create(member=self.user, request_date=timezone.now(), departure_date=timezone.now(), return_date=timezone.now() + timedelta(days=7), signature_status=True)
+        user = CustomUser(id='1')
+        user.save()
+        team = Team(leader=user)
+        team.save()
+        mock_request = TravelAdvanceRequest.objects.create(
+            team_id=team,
+            member=self.user,
+            request_date=timezone.now(),
+            departure_date=timezone.now(),
+            return_date=timezone.now() + timedelta(days=7),
+            signature_status=True
+        )
         mock_request.user = self.user
 
         mock_get.return_value = mock_request
@@ -1252,20 +1267,25 @@ class TestViews(TestCase): #pragma: no cover
         Returns:
             None
         """
+        user = CustomUser(id='1')
+        user.save()
+        team = Team(leader=user)
+        team.save()
         mock_request = AdvanceLegalization.objects.create(
+            team_id=team,
             member=self.user, request_date=timezone.now(),
-              total=2, 
-              advance_total=2,  
-              employee_balance_value= 2,
-              icesi_balance_value=2, 
-              signature_status=True,
-                dependence = "8465",
-                cost_center = "010202",
-                purchase_reason = "lol",
-                bank = "Bancolombia",
-                account_type = "Ahorros",
-                account_number = "5851645"
-              )
+            total=2, 
+            advance_total=2,  
+            employee_balance_value= 2,
+            icesi_balance_value=2, 
+            signature_status=True,
+            dependence = "8465",
+            cost_center = "010202",
+            purchase_reason = "lol",
+            bank = "Bancolombia",
+            account_type = "Ahorros",
+            account_number = "5851645"
+        )
     
         mock_request.user = self.user
 
@@ -1297,7 +1317,12 @@ class TestViews(TestCase): #pragma: no cover
         Returns:
             None
         """
+        user = CustomUser(id='1')
+        user.save()
+        team = Team(leader=user)
+        team.save()
         mock_request = TravelExpenseLegalization.objects.create(
+            team_id=team,
             member=self.user, 
             request_date=timezone.now(), 
             departure_date=timezone.now(), 
