@@ -5,8 +5,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.test import TestCase, Client
 import re
+import time
 class Internal_requests_test(TestCase):
+    """
+    Test case for internal requests functionality.
+
+    This test suite covers various aspects of handling internal requests, including showing request tables,
+    searching for requests, changing request states, and reviewing requests.
+
+    Attributes:
+        driver: WebDriver object for Selenium interactions.
+    """
     def setUp(self):
+        """
+        Set up the test environment before each test case execution.
+
+        This method initializes the WebDriver and sets up necessary configurations.
+        """
         
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
@@ -14,9 +29,19 @@ class Internal_requests_test(TestCase):
         
 
     def tearDown(self):
+        """
+        Clean up the test environment after each test case execution.
+
+        This method quits the WebDriver instance to release resources.
+        """
         self.driver.quit()
 
     def tesst_show_request_table(self):
+        """
+        Test case for displaying the request table.
+
+        This test ensures that the request table is displayed correctly with the expected columns and data.
+        """
         self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
@@ -42,22 +67,32 @@ class Internal_requests_test(TestCase):
         self.assertEqual(first_child_element, 'bx bx-dots-vertical-rounded')
 
     def tesst_search_request_inner(self):
-            self.login("123456789")
-            intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
-            intern.click()
-            search = "11"
-            input_search = self.driver.find_element(By.ID, "requestsTableSearch")
-            input_search.send_keys(search)
-            table = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(1)")
-            table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(2)")
-            table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(3)")
-            table3 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(4)")
-            table4 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(5)")
-            table5 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(6)")
-            table6 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
-            self.assertTrue(table.text.__contains__(search) or table1.text.__contains__(search) or table2.text.__contains__(search) or table3.text.__contains__(search) or table4.text.__contains__(search) or table5.text.__contains__(search) or table6.text.__contains__(search))
+        """
+        Test case for searching for an internal request.
+
+        This test ensures that the search functionality for internal requests works as expected.
+        """
+        self.login("123456789")
+        intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
+        intern.click()
+        search = "11"
+        input_search = self.driver.find_element(By.ID, "requestsTableSearch")
+        input_search.send_keys(search)
+        table = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(1)")
+        table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(2)")
+        table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(3)")
+        table3 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(4)")
+        table4 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(5)")
+        table5 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(6)")
+        table6 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)")
+        self.assertTrue(table.text.__contains__(search) or table1.text.__contains__(search) or table2.text.__contains__(search) or table3.text.__contains__(search) or table4.text.__contains__(search) or table5.text.__contains__(search) or table6.text.__contains__(search))
 
     def tesst_assert_inner_state_labels(self):
+        """
+        Test case for verifying the state labels of internal requests.
+
+        This test ensures that the state labels of internal requests are displayed correctly.
+        """
         self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
@@ -65,6 +100,11 @@ class Internal_requests_test(TestCase):
         self.assertTrue(table1.text == "EN REVISIÓN" or table1.text == "DEVUELTO" or table1.text == "PENDIENTE" or table1.text == "RESUELTO" or table1.text == "RECHAZADO" or table1.text == "POR APROBAR")
 
     def tesst_search_request_inner_notFound(self):
+        """
+        Test case for searching for a non-existent internal request.
+
+        This test ensures that the appropriate message is displayed when no matching request is found.
+        """
         self.login("123456789")
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
@@ -74,6 +114,11 @@ class Internal_requests_test(TestCase):
         self.assertEqual(result.text, "No se encontraron resultados")
 
     def tesst_review_request_happy_path(self):
+        """
+        Test case for the happy path of reviewing an internal request.
+
+        This test covers the entire process of reviewing an internal request, including state changes and notifications.
+        """
         self.login("123456789")
 
         self.click_inner_requests()
@@ -112,6 +157,11 @@ class Internal_requests_test(TestCase):
         self.assertEqual(table1.text, "POR APROBAR")
 
     def tesst_review_request_return(self):
+        """
+        Test case for returning an internal request for review.
+
+        This test verifies the process of returning an internal request for further review.
+        """
         self.login("56843806")
 
         self.search("en revisi")
@@ -145,6 +195,11 @@ class Internal_requests_test(TestCase):
         self.assertEqual(table1.text, "DEVUELTO")
 
     def test_integration_review_request_return(self):
+        """
+        Integration test case for reviewing an internal request with return action.
+
+        This test covers the end-to-end scenario of reviewing an internal request, including multiple user interactions.
+        """
         self.fill_req()
         self.logout()
         self.login("67647092")
@@ -183,10 +238,27 @@ class Internal_requests_test(TestCase):
         self.assertEqual(table1.text, "DEVUELTO")
         
     def select_option(self, selector):
+        """
+        Select an option from a dropdown menu.
+
+        Args:
+            selector (str): CSS selector for the dropdown menu.
+
+        Returns:
+            None
+        """
         self.driver.find_element(By.CSS_SELECTOR, selector).click()
         self.driver.find_element(By.CSS_SELECTOR, selector+' option:nth-child(2)').click()
 
     def fill_req(self):
+        """
+        Fill out a request form for testing purposes.
+
+        This method simulates filling out a request form with dummy data for testing purposes.
+
+        Returns:
+            None
+        """
         self.login("99685182")
         self.click_form("5")
 
@@ -212,10 +284,28 @@ class Internal_requests_test(TestCase):
         self.driver.find_element(By.XPATH, '//*[@id="mainContainer"]/form/div[3]/div/button').click()
 
     def click_form(self, number):
+        """
+        Click on a specific form in the application.
+
+        Args:
+            number (str): The number of the form to click.
+
+        Returns:
+            None
+        """
         self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/a').click()
         self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[3]/ul/li['+number+']').click()
 
     def sign(self, sign):
+        """
+        Sign a document or form with a specified signature.
+
+        Args:
+            sign (str): The signature to use.
+
+        Returns:
+            None
+        """
         self.driver.find_element(By.ID, "signButton").click()
         self.select_option("#swal2-select")
 
@@ -225,12 +315,29 @@ class Internal_requests_test(TestCase):
         self.driver.find_element(By.XPATH, '/html/body/div[4]/div/div[6]/button[1]').click()
 
     def check_all_fields(self):
+        """
+        Check all fields in a form.
+
+        This method simulates checking all fields in a form for review purposes.
+
+        Returns:
+            None
+        """
         reason_fl = self.driver.find_element(By.ID, "reason").send_keys("Razon válida")
 
         checkAll = self.driver.find_element(By.ID, "markAll")
         checkAll.click() 
 
     def accept_all_fields(self):
+        """
+        Accept all fields in a form.
+
+        This method simulates accepting all fields in a form after review.
+
+        Returns:
+            None
+        """
+
         reason_fl = self.driver.find_element(By.ID, "reason").send_keys("Razon válida")
 
         checkAll = self.driver.find_element(By.ID, "markAll")
@@ -240,7 +347,15 @@ class Internal_requests_test(TestCase):
 
 
     def accept_alert(self, selector):
-        
+        """
+        Accept an alert dialog.
+
+        Args:
+            selector: Selector for the alert dialog element.
+
+        Returns:
+            None
+        """
         WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable(selector)
         ).click()
@@ -255,28 +370,67 @@ class Internal_requests_test(TestCase):
         )   
 
     def scroll_element(self, element):
+        """
+        Scroll to a specific element on the page.
+
+        Args:
+            element: Element to scroll to.
+
+        Returns:
+            None
+        """
         scroll_height = element.size['height']
         self.driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", element)
 
     def extract_gestor(self):
+        """
+        Extract the manager from a request table.
+
+        Returns:
+            List of manager names extracted from the request table.
+        """
         tableUser = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(6)")
         return self.extraer_texto(tableUser.text)
 
     def logout(self):
+        """
+        Log out from the application.
+
+        Returns:
+            None
+        """
         logout = self.driver.find_element(By.XPATH, '//*[@id="layout-navbar"]/div[3]')
         logout.click()
 
     def get_status(self):
+        """
+        Get the status of a request.
+
+        Returns:
+            The status element of the request.
+        """
         return WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(7)"))
         )    
 
     def get_alert(self):
+        """
+        Get an alert message.
+
+        Returns:
+            The alert message element.
+        """
         return WebDriverWait(self.driver, 15).until(
             EC.visibility_of_element_located((By.ID, "toast-body"))
         ) 
 
     def click_change_state(self):
+        """
+        Click to change the state of a request.
+
+        Returns:
+            None
+        """
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button")
         table1.click()
         table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div div button:nth-child(2)")
@@ -284,6 +438,15 @@ class Internal_requests_test(TestCase):
         
 
     def search(self, criteria):
+        """
+        Search for a request using specified criteria.
+
+        Args:
+            criteria (str): The search criteria.
+
+        Returns:
+            None
+        """
         input_search =  WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.ID, "requestsTableSearch"))
             
@@ -291,6 +454,15 @@ class Internal_requests_test(TestCase):
         input_search.send_keys(criteria)
 
     def input_change_reason(self, reason):
+        """
+        Input a change reason for request state change.
+
+        Args:
+            reason (str): The reason for the state change.
+
+        Returns:
+            None
+        """
         reasonTxt = WebDriverWait(self.driver, 3).until(
             EC.visibility_of_element_located((By.ID, "reasonTextarea"))
         ) 
@@ -304,22 +476,52 @@ class Internal_requests_test(TestCase):
         confirmBtn.click()
 
     def click_inner_requests(self):
+        """
+        Click to access internal requests.
+
+        Returns:
+            None
+        """
         intern = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[2]/ul/li[2]/a')
         intern.click()
 
     def click_review_first(self):
+        """
+        Click to review the first request in the table.
+
+        Returns:
+            None
+        """
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button")
         table1.click()
         table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div div button:nth-child(1)")
         table2.click()
 
     def click_first(self, num):
+        """
+        Click the first request in the table with specified action number.
+
+        Args:
+            num (str): The action number.
+
+        Returns:
+            None
+        """
         table1 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div button")
         table1.click()
         table2 = self.driver.find_element(By.CSS_SELECTOR, "table#requestsTable tbody td:nth-child(8) div div button:nth-child("+num+")")
         table2.click()
 
     def login(self, user): 
+        """
+        Log in to the application using specified credentials.
+
+        Args:
+            user (str): The username to log in with.
+
+        Returns:
+            None
+        """
         client = Client()
         self.driver.get("http://127.0.0.1:8000/")
         user_input = self.driver.find_element(By.ID,"usuario")
@@ -342,6 +544,15 @@ class Internal_requests_test(TestCase):
         code_btn.click()
 
     def extraer_texto(self, texto):
+        """
+        Extract text using regular expressions.
+
+        Args:
+            texto (str): The text to extract from.
+
+        Returns:
+            List of extracted text.
+        """
     # Define el patrón de búsqueda utilizando una expresión regular
         patron = r'@([^)]+)'
         # Busca todas las ocurrencias del patrón en el texto

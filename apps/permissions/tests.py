@@ -6,19 +6,44 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.test import TestCase, Client
 
 class permission_test(TestCase):
+    """
+    Test case for permission-related functionalities.
+
+    This test case covers various scenarios related to user permissions, 
+    such as changing a user from leader to member, member with requests, 
+    member to leader, and leader to member when the user is a member of a team.
+    """
     def setUp(self):
+        """
+        Set up method to initialize the test environment.
+
+        This method sets up the WebDriver environment for testing.
+        """
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(5)
+        self.login("123456789")
+        tab = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul')
+        self.driver.execute_script("arguments[0].scrollTop = arguments[1];", tab, 200)
+        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[9]/a').click()
         
 
     def tearDown(self):
+        """
+        Tear down method to clean up after the tests.
+
+        This method quits the WebDriver after each test.
+        """
         self.driver.quit()
 
     def test_change_leader_to_member(self):
-        self.login("123456789")
+        """
+        Test changing a leader to a member.
+
+        This test verifies the functionality of changing a user's role from
+        leader to member.
+        """
         
-        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[8]/a').click()
         self.search("Natali")
         self.driver.find_element(By.CSS_SELECTOR, 'table#usersTable tbody tr td:nth-child(6) input').click()
         self.driver.find_element(By.ID, "saveButton").click()
@@ -26,17 +51,23 @@ class permission_test(TestCase):
         self.assertEqual(alert.text, 'Permisos actualizados correctamente.')
 
     def test_change_member_with_req(self):
-        self.login("123456789")
-        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[8]/a').click()
+        """
+        Test changing a member with requests.
 
+        This test verifies the behavior when attempting to change a member's
+        role to leader when the member has active requests.
+        """
         self.driver.find_element(By.CSS_SELECTOR, 'table#usersTable tbody tr td:nth-child(7) input').click()
         self.driver.find_element(By.ID, "saveButton").click()
         alert = self.get_alert()
         self.assertIn('No se puede cambiar el permiso de miembro a un usuario que es miembro de un equipo', alert.text)
 
     def test_change_member_to_leader(self):
-        self.login("123456789")
-        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[8]/a').click()
+        """
+        Test changing a member to a leader.
+
+        This test checks the functionality of promoting a member to a leader.
+        """
         self.search("Kath")
         self.driver.find_element(By.CSS_SELECTOR, 'table#usersTable tbody tr td:nth-child(5) input').click()
         self.driver.find_element(By.ID, "saveButton").click()
@@ -44,30 +75,55 @@ class permission_test(TestCase):
         self.assertEqual(alert.text, 'Permisos actualizados correctamente.')
 
     def test_change_leader_to_member_with_team(self):
-        self.login("123456789")
-        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[8]/a').click()
+        """
+        Test changing a leader to a member with team membership.
+
+        This test verifies the behavior when trying to change a leader to a
+        member when the user is already a member of a team.
+        """
         self.driver.find_element(By.CSS_SELECTOR, 'table#usersTable tbody tr td:nth-child(7) input').click()
         self.driver.find_element(By.ID, "saveButton").click()
         alert = self.get_alert()
         
         self.assertIn('No se puede cambiar el permiso de miembro a un usuario que es miembro de un equipo.', alert.text)
 
+
     def search(self, criteria):
+        """
+        Helper method to perform a search.
+
+        This method performs a search operation based on the provided criteria.
+        """
         input_search =  WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located((By.ID, "usersTableSearch"))
         )    
         input_search.send_keys(criteria)
 
     def logout(self):
+        """
+        Helper method to perform logout.
+
+        This method simulates the logout functionality.
+        """
         logout = self.driver.find_element(By.XPATH, '//*[@id="layout-navbar"]/div[3]')
         logout.click()
 
     def get_alert(self):
+        """
+        Helper method to get the alert message.
+
+        This method retrieves the alert message displayed on the page.
+        """
         return WebDriverWait(self.driver, 15).until(
             EC.visibility_of_element_located((By.ID, "toast-body"))
         ) 
 
     def login(self, user): 
+        """
+        Helper method to perform login.
+
+        This method simulates the login process for the specified user.
+        """
         client = Client()
         self.driver.get("http://127.0.0.1:8000/")
         user_input = self.driver.find_element(By.ID,"usuario")

@@ -31,6 +31,14 @@ from apps.internalRequests.views import get_all_requests
 
 
 def get_next_id():
+    """
+    Get the next available ID for various models.
+
+    This function queries multiple models to find the maximum ID and returns the next available ID by incrementing the maximum ID by 1.
+
+    Returns:
+        int: The next available ID.
+    """
     max_id1 = TravelAdvanceRequest.objects.all().aggregate(Max("id"))["id__max"] or 0
     max_id2 = AdvanceLegalization.objects.all().aggregate(Max("id"))["id__max"] or 0
     max_id3 = BillingAccount.objects.all().aggregate(Max("id"))["id__max"] or 0
@@ -45,12 +53,28 @@ User = get_user_model()
 
 """
 README:
-- Add to the .env file the ADMIN_PASSWORD and ADMIN_EMAIL fields
-- Delete the current database sqlite3
+Make sure to follow these steps before executing the script:
+- Create a virtual environment and install the requirements.txt file
+
+    py -m venv venv
+    ./venv/Scripts/activate
+    pip install -r requirements.txt
+
+- Delete the current database sqlite3 file (if it exists)
+- Add to the .env file the ADMIN_PASSWORD, ADMIN_EMAIL, EMAIL_HOST_PASSWORD, EMAIL_HOST_ADDRESS fields:
+
+    ADMIN_PASSWORD=123456789
+    ADMIN_EMAIL=youremail@domain.com
+    EMAIL_HOST_PASSWORD=njbt qgre zevu ohwi
+    EMAIL_HOST_ADDRESS=ccsa101010@gmail.com 
+
+- Add the .env provided by the project manager to the accounting_system folder
 - Make migrations with 'py manage.py makemigrations' and 'py manage.py migrate' commands
 - Execute the python script with 'py generate.py shell'
     - If you do not have permissions to execute scripts, open PowerShell as administrator and execute 'Set-ExecutionPolicy Unrestricted'
     - Now execute the command, this will generate sample data for the current models
+- Execute the command 'npm install' to install the node modules
+- Initialize the server with 'py manage.py runserver'
 - Select all code written by Playermast86, delete it and add it to the gitignore file.
 """
 
@@ -99,7 +123,7 @@ for _ in range(users_amount):
     last_name = fake.last_name()
     username = id
     email = fake.email()
-    password = "12345678"
+    password = id
     user = User.objects.create_user(
         id=id,
         username=username,
@@ -402,6 +426,15 @@ for i in range(len(t_request)):
 
 
 def generate_traceability(id):
+    """
+    Generate traceability entries for a given ID.
+
+    Args:
+        id (int): The ID for which traceability entries are generated.
+
+    Returns:
+        None
+    """
     for _ in range(fake.random_int(min=3, max=10)):
         Traceability.objects.create(
             modified_by=random.choice(User.objects.all()),
@@ -414,6 +447,12 @@ def generate_traceability(id):
 
 
 def create_fake_travel_request():
+    """
+    Create a fake travel request.
+
+    Returns:
+        TravelAdvanceRequest: The created travel request.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelAdvanceRequest"])
     expenses_dict = {
         "airportTransport": fake.random_int(min=50, max=500),
@@ -455,6 +494,12 @@ def create_fake_travel_request():
 
 
 def create_fake_travel_expense_legalization():
+    """
+    Create a fake travel expense legalization.
+
+    Returns:
+        TravelExpenseLegalization: The created travel expense legalization.
+    """
     person = random.choice(applicants)
     team = Team.objects.get(typeForm=settings.FORM_TYPES["TravelExpenseLegalization"])
     travel_expense = TravelExpenseLegalization(
@@ -514,6 +559,12 @@ def create_fake_travel_expense_legalization():
 
 
 def create_fake_advance_legalization():
+    """
+    Create a fake advance legalization.
+
+    Returns:
+        AdvanceLegalization: The created advance legalization.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["AdvanceLegalization"])
     person = random.choice(applicants)
     advance_legalization = AdvanceLegalization(
@@ -558,6 +609,12 @@ def create_fake_advance_legalization():
 
 
 def create_fake_billing_account():
+    """
+    Create a fake billing account.
+
+    Returns:
+        BillingAccount: The created billing account.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["BillingAccount"])
     person = random.choice(applicants)
     billing_account = BillingAccount(
@@ -591,6 +648,12 @@ def create_fake_billing_account():
 
 
 def create_fake_requisition():
+    """
+    Create a fake requisition.
+
+    Returns:
+        Requisition: The created requisition.
+    """
     team = Team.objects.get(typeForm=settings.FORM_TYPES["Requisition"])
     person = random.choice(applicants)
     requisition = Requisition(
@@ -622,33 +685,26 @@ def create_fake_requisition():
 filled_forms = []
 
 form_amount = 10
-print(f"Generateing {form_amount} billing account forms")
+print(f"Generating {form_amount} billing account forms")
 for _ in range(form_amount):
     billing_account = create_fake_billing_account()
     filled_forms.append(billing_account)
-print(f"Generateing {form_amount} requisition forms")
+print(f"Generating {form_amount} requisition forms")
 for _ in range(form_amount):
     requisition = create_fake_requisition()
     filled_forms.append(requisition)
-print(f"Generateing {form_amount} advance legalization forms")
+print(f"Generating {form_amount} advance legalization forms")
 for _ in range(form_amount):
     advance_legalization = create_fake_advance_legalization()
     filled_forms.append(advance_legalization)
-print(f"Generateing {form_amount} travel expense legalization forms")
+print(f"Generating {form_amount} travel expense legalization forms")
 for _ in range(form_amount):
     travel_expense = create_fake_travel_expense_legalization()
     filled_forms.append(travel_expense)
-print(f"Generateing {form_amount} travel forms")
+print(f"Generating {form_amount} travel forms")
 for _ in range(form_amount):
     travel_request = create_fake_travel_request()
     filled_forms.append(travel_request)
-
-"""
-for r in get_all_requests():
-    if r.status in ["RECHAZADO", "DEVUELTO", "RESUELTO"]:
-        r.member = None
-        r.save()
-"""
 
 admin = User.objects.create_user(
     id=os.getenv("ADMIN_PASSWORD"),
@@ -660,8 +716,6 @@ admin = User.objects.create_user(
     is_superuser=True,
 )
 admin.save()
-
-# Generar países y ciudades
 
 print("Generating countries and cities...")
 
@@ -677,8 +731,6 @@ for city in cities:
     city_instance.save()
 
 
-# Generar bancos
-
 print("Generating banks...")
 
 for bank in banks:
@@ -686,25 +738,17 @@ for bank in banks:
     bank_instance.save()
 
 
-# Generar tipos de cuenta
-
 print("Generating account types...")
 
 for account_type in account_types:
     account_type_instance = AccountType(name=account_type)
     account_type_instance.save()
 
-
-# Generar dependencias
-
 print("Generating dependencies...")
 
 for dependency in dependencies:
     dependency_instance = Dependency(name=dependency)
     dependency_instance.save()
-
-
-# Generar centros de costo
 
 print("Generating cost centers...")
 
@@ -739,6 +783,7 @@ for i in range(notification_number):
 print("Generating FillFormNotifications")
 client = Client()
 client.login(id=os.getenv("ADMIN_PASSWORD"), password=os.getenv("ADMIN_PASSWORD"))
+print("Generating PDFs")
 for form_type in settings.FORM_TYPES:
     data = generate_notification_data()
     ready_forms = [ form for form in filled_forms if form.team_id.typeForm == settings.FORM_TYPES[form_type]]
@@ -763,4 +808,8 @@ for i in range(notification_number):
     data["new_date"] = fake.date_between(start_date="+1d", end_date="+30d")
     DateChangeNotification.objects.create(**data)
 
+for form in filled_forms:
+    if form.pdf_file == None:
+        form.status = random.choice(["PENDIENTE", "EN REVISIÓN", "DEVUELTO"])
+        form.save()
 print("Done")

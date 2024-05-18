@@ -31,17 +31,29 @@ class Notification(models.Model):
     date = models.DateField()
 
 class AssignNotification(Notification):
+    """
+    Notification class for assignment notifications.
+    """
     team = models.ForeignKey('teams.Team', on_delete=models.CASCADE, related_name="team", default=None)
 
 class StatusNotification(Notification):
+    """
+    Notification class for status change notifications.
+    """
     prev_state = models.CharField(max_length=50, null=True, default=None)
     new_state = models.CharField(max_length=50, null=True, default=None)
-    reason = models.CharField(max_length=100, null=True, default=None)
+    reason = models.CharField(max_length=300, null=True, default=None)
 
 class FillFormNotification(Notification):
+    """
+    Notification class for form filling notifications.
+    """
     pdf_link = models.CharField(max_length=100, null=True, default=None)
     form_type = models.CharField(max_length=50, null=True, default=None)
 
 class DateChangeNotification(Notification):
+    """
+    Notification class for date change notifications.
+    """
     prev_date = models.DateField()
     new_date = models.DateField()

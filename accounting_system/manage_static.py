@@ -1,6 +1,7 @@
 import boto3
 import os
 import environ
+import mimetypes
 
 from settings import BASE_DIR
 
@@ -55,12 +56,9 @@ for root, dirs, files in os.walk(static_files_dir):
         # Get the relative path to the file from the static files directory
         s3_key = os.path.relpath(file_path, static_files_dir)
 
-        # Determine if the file is an OTF font file
-        if file.endswith(".otf"):
-            # Apply specific configurations for OTF font files
-            extra_args = {"ContentType": "font/otf"}  # Adjust Content-Type as needed
-        else:
-            extra_args = {}  # No special configurations for other files
+        # Determine the content type of the file
+        content_type, _ = mimetypes.guess_type(file_path)
+        extra_args = {"ContentType": content_type} if content_type else {}
 
         # Upload the file to S3
         s3.upload_file(file_path, bucket_name, s3_key, ExtraArgs=extra_args)
