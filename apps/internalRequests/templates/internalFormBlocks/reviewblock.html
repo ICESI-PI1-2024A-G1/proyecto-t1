@@ -14,12 +14,15 @@
     $(document).ready(function() {
         var allChecked = false;
         var textbox;
-        var messages;
+        var messages, textMessages;
         function checkCheckboxes() {
             var unchecked = $('input[type="checkbox"]:not(:checked)');
             messages = unchecked.map(function() {
                 return "- " + $(this).attr('data-message');
             }).get().join('<br>');
+            textMessages = unchecked.map(function() {
+                return $(this).attr('data-message');
+            }).get().join(', ');
 
             if (unchecked.length > 0) {
                 $('#uncheckedMessages').html('Por favor, marque todos los campos que considere válidos. Los siguientes elementos no están marcados: <br><br>' + messages);
@@ -75,23 +78,20 @@
                 dangerMode: true,
             })
             .then((willConfirm) => {
-                Swal.showLoading();
                 if (willConfirm) {
                     var csrftoken = $('[name=csrfmiddlewaretoken]').val();
                     var id = $('#request_id').val();
                     var newStatus;
+                    var reason = $('#reason').val();
                     if (action === 'enviar a Ventanilla Única') {
                         newStatus = 'POR APROBAR';
+                        reason = 'Enviado a Ventanilla Única, en espera de aprobación.';
                     } else if (action === 'devolver') {
                         newStatus = 'DEVUELTO';
+                        reason += "$zhk$" + textMessages;
                     } else if (action === 'rechazar') {
                         newStatus = 'RECHAZADO';
-                    }
-                    var reason = $('#reason').val();
-                    if (reason === '') {
-                        reason = 'Enviado a Ventanilla Única, en espera de aprobación.';
-                    } else {
-                        reason = '<strong>Celdas afectadas:</strong><br>' + messages + '<br><strong>Motivo:</strong> ' + reason;
+                        reason += "$zhk$" + textMessages;
                     }
                     $.ajax({
                         url: '/requests/change-status/' + id + '/',

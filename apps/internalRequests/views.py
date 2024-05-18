@@ -1271,6 +1271,16 @@ def update_request(request, request_id):
         request=request_id,
     )
 
+    StatusNotification.objects.create(
+        user_target=curr_request.team_id.leader,
+        modified_by=request.user,
+        request_id=curr_request.id,
+        date=datetime.now(),
+        prev_state="DEVUELTO",
+        new_state="EN REVISIÓN",
+        reason="Corrección de formulario.",
+    )
+
     return JsonResponse(
         {
             "message": f"El estado de la solicitud {id} ha sido actualizado correctamente."
