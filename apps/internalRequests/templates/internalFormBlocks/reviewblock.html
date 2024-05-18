@@ -88,10 +88,10 @@
                         reason = 'Enviado a Ventanilla Única, en espera de aprobación.';
                     } else if (action === 'devolver') {
                         newStatus = 'DEVUELTO';
-                        reason += "$zhk$" + textMessages;
+                        reason = "Se ha devuelto el formulario, puede corregirlo en la sección de solicitudes y enviarlo nuevamente"
                     } else if (action === 'rechazar') {
                         newStatus = 'RECHAZADO';
-                        reason += "$zhk$" + textMessages;
+                        reason = "El miembro/administrador de la Ventanilla Única ha rechazado la solicitud";
                     }
                     $.ajax({
                         url: '/requests/change-status/' + id + '/',

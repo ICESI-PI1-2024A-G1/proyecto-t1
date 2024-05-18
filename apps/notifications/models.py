@@ -42,7 +42,7 @@ class StatusNotification(Notification):
     """
     prev_state = models.CharField(max_length=50, null=True, default=None)
     new_state = models.CharField(max_length=50, null=True, default=None)
-    reason = models.CharField(max_length=100, null=True, default=None)
+    reason = models.CharField(max_length=300, null=True, default=None)
 
 class FillFormNotification(Notification):
     """
