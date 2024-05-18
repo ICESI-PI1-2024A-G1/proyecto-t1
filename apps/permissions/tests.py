@@ -22,6 +22,10 @@ class permission_test(TestCase):
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.driver.implicitly_wait(5)
+        self.login("123456789")
+        tab = self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul')
+        self.driver.execute_script("arguments[0].scrollTop = arguments[1];", tab, 200)
+        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[9]/a').click()
         
 
     def tearDown(self):
@@ -39,9 +43,7 @@ class permission_test(TestCase):
         This test verifies the functionality of changing a user's role from
         leader to member.
         """
-        self.login("123456789")
         
-        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[8]/a').click()
         self.search("Natali")
         self.driver.find_element(By.CSS_SELECTOR, 'table#usersTable tbody tr td:nth-child(6) input').click()
         self.driver.find_element(By.ID, "saveButton").click()
@@ -55,9 +57,6 @@ class permission_test(TestCase):
         This test verifies the behavior when attempting to change a member's
         role to leader when the member has active requests.
         """
-        self.login("123456789")
-        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[8]/a').click()
-
         self.driver.find_element(By.CSS_SELECTOR, 'table#usersTable tbody tr td:nth-child(7) input').click()
         self.driver.find_element(By.ID, "saveButton").click()
         alert = self.get_alert()
@@ -69,8 +68,6 @@ class permission_test(TestCase):
 
         This test checks the functionality of promoting a member to a leader.
         """
-        self.login("123456789")
-        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[8]/a').click()
         self.search("Kath")
         self.driver.find_element(By.CSS_SELECTOR, 'table#usersTable tbody tr td:nth-child(5) input').click()
         self.driver.find_element(By.ID, "saveButton").click()
@@ -84,13 +81,12 @@ class permission_test(TestCase):
         This test verifies the behavior when trying to change a leader to a
         member when the user is already a member of a team.
         """
-        self.login("123456789")
-        self.driver.find_element(By.XPATH, '//*[@id="layout-menu"]/ul/li[8]/a').click()
         self.driver.find_element(By.CSS_SELECTOR, 'table#usersTable tbody tr td:nth-child(7) input').click()
         self.driver.find_element(By.ID, "saveButton").click()
         alert = self.get_alert()
         
         self.assertIn('No se puede cambiar el permiso de miembro a un usuario que es miembro de un equipo.', alert.text)
+
 
     def search(self, criteria):
         """
