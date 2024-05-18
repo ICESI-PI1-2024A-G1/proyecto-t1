@@ -228,7 +228,7 @@ class TestChangePasswordView(TestCase):
         request.user = self.user
         request.session = {'has_logged': True, 'has_requested_password': False}  # Simular sesión
         response = login_view(request)
-        self.assertEquals(response.status_code, 302)  # Verificar redirección para superusuario
+        self.assertEqual(response.status_code, 302)  # Verificar redirección para superusuario
 
     def test_login_view_leader_authenticated(self):
         self.user.is_superuser = False
@@ -238,7 +238,7 @@ class TestChangePasswordView(TestCase):
         request.user = self.user
         request.session = {'has_logged': True, 'has_requested_password': False}  # Simular sesión
         response = login_view(request)
-        self.assertEquals(response.status_code, 302)  # Verificar redirección para líder
+        self.assertEqual(response.status_code, 302)  # Verificar redirección para líder
 
     def test_login_view_regular_authenticated(self):
         self.user.is_applicant = True
@@ -248,4 +248,4 @@ class TestChangePasswordView(TestCase):
         request.user = self.user
         request.session = {'has_logged': True, 'has_requested_password': False}  # Simular sesión
         response = login_view(request)
-        self.assertEquals(response.status_code, 302)  # Verificar redirección para usuario regular
+        self.assertEqual(response.status_code, 302)  # Verificar redirección para usuario regular

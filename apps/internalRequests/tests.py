@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.test import TestCase, Client
 import re
+import time
 class Internal_requests_test(TestCase):
     """
     Test case for internal requests functionality.

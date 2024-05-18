@@ -198,7 +198,7 @@ class FormTestCase(TestCase):
 
     def test_get_cities_with_countries(self):
         cities = get_cities_with_countries()
-        self.assertEquals(len(cities), len(self.countries))
+        self.assertEqual(len(cities), len(self.countries))
 
     def test_get_bank_data(self):
         banks = get_bank_data()
