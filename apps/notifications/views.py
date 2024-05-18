@@ -52,11 +52,6 @@ def show_notifications(request):
     for notification in status_notifications:
         notification.prev_color = statusMap[notification.prev_state] if notification.prev_state in statusMap else "secondary"
         notification.new_color = statusMap[notification.new_state] if notification.new_state in statusMap else "secondary"
-        zhk = "$zhk$"
-        if zhk in notification.reason:
-            splitReason = notification.reason.split(zhk)
-            notification.reason = splitReason[0]
-            notification.affected_fields = splitReason[1]
     context = {
         "status_notifications": status_notifications,
         "assign_notifications": assign_notifications,
