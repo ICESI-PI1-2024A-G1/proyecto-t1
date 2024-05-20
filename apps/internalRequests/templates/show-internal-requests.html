@@ -63,13 +63,11 @@
                               <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                {% if request.status != "PENDIENTE" %}
                                 <button onclick="showModal('Detalles de la solicitud', '/requests/{{request.id}}/', 'xxl')"
                                     class="dropdown-item details-btn show-details" data-request-id="{{ request.id }}">
                                     <i class="mr-2 fa fa-info"></i>
                                     Revisar
                                 </button>
-                                {% endif %}
                                 <button onclick="showModal('Estados de la solicitud', '/requests/show-traceability/{{ request.id }}/', 'xl')"
                                     class="dropdown-item details-btn">
                                     <i class="mr-2 fa fa-eye"></i>
